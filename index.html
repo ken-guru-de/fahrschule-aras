@@ -638,7 +638,7 @@ function showPruefResult(sid,datum,pi,typ){
       <div style="display:flex;flex-direction:column;gap:10px">
         <button class="btn-full gruen" onclick="savePruefResult('${sid}','${datum}',${pi},true)"><i class="ti ti-circle-check" style="font-size:20px"></i> Bestanden ✓</button>
         <button class="btn-full rot" onclick="savePruefResult('${sid}','${datum}',${pi},false)"><i class="ti ti-circle-x" style="font-size:20px"></i> Nicht bestanden ✗</button>
-        ${pi>=0?`<button class="btn-full" onclick="savePruefResult('${sid}','${datum}',${pi},null)"><i class="ti ti-refresh"></i> Zurücksetzen</button>`:""}
+        <button class="btn-full" onclick="savePruefResult('${sid}','${datum}',${pi},null)"><i class="ti ti-clock"></i> Offen</button>
       </div></div>
       <button class="btn-full" style="margin-top:4px" onclick="renderSchueler('${sid}')"><i class="ti ti-user"></i> Zum Schüler</button>
     </div>
