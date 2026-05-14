@@ -1086,7 +1086,22 @@ function renderNeuKalTermin(date){
         </div>
         <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Startzeit</span><input type="time" id="k-uhr" value="09:00" oninput="kalUpdateEnd()"/></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-clock-check"></i>Endzeit</span><span id="k-endzeit" style="flex:1;text-align:right;font-size:15px;font-weight:500;color:var(--accent)">10:20</span></div>
-        <div class="card-row"><span class="card-label"><i class="ti ti-hourglass"></i>Minuten</span>
+        <div class="card-row" style="flex-direction:column;align-items:stretch;gap:8px;padding:12px 14px">
+          <span style="font-size:13px;color:var(--tx2)">Art der Fahrt</span>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button class="pill active" id="ktyp-normal" onclick="setKTyp('normal')" style="font-size:13px;padding:7px 12px">Fahrstunde</button>
+            <button class="pill" id="ktyp-sonder" onclick="setKTyp('sonder')" style="font-size:13px;padding:7px 12px">Sonderfahrt</button>
+            <button class="pill" id="ktyp-pruef" onclick="setKTyp('pruef')" style="font-size:13px;padding:7px 12px">Prüfung</button>
+          </div>
+        </div>
+        <div class="card-row" id="kal-sonder-row" style="display:none;flex-direction:column;align-items:stretch;gap:8px;padding:12px 14px">
+          <span style="font-size:13px;color:var(--tx2)">Sonderfahrt auswählen</span>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            ${SONDER.map(sf=>`<button class="pill" id="ksf-${sf.key}" onclick="setKSonder('${sf.key}',${sf.min})" style="font-size:13px;padding:7px 12px">${sf.label} · ${sf.min} min</button>`).join("")}
+          </div>
+        </div>
+        <div class="card-row">
+          <span class="card-label"><i class="ti ti-hourglass"></i>Minuten</span>
           <div style="display:flex;align-items:center;gap:10px;justify-content:flex-end;flex:1">
             <button class="cir-btn" onclick="changeKalMin(-10);kalUpdateEnd()">−</button>
             <span id="kal-min-disp" style="font-size:16px;font-weight:500;min-width:52px;text-align:center">80 min</span>
@@ -1108,6 +1123,24 @@ function renderNeuKalTermin(date){
 }
 function changeKalMin(d){window._kalMin=Math.max(10,Math.min(300,window._kalMin+d));const el=document.getElementById("kal-min-disp");if(el)el.textContent=window._kalMin+" min";}
 
+function setKTyp(typ){
+  window._kalTyp=typ;
+  ["normal","sonder","pruef"].forEach(t=>{const el=document.getElementById("ktyp-"+t);if(el)el.classList.toggle("active",t===typ);});
+  const sr=document.getElementById("kal-sonder-row");
+  if(sr)sr.style.display=typ==="sonder"?"":"none";
+  if(typ==="normal")window._kalMin=80;
+  else if(typ==="pruef")window._kalMin=100;
+  const el=document.getElementById("kal-min-disp");if(el)el.textContent=window._kalMin+" min";
+  kalUpdateEnd();
+}
+
+function setKSonder(key,min){
+  SONDER.forEach(sf=>{const el=document.getElementById("ksf-"+sf.key);if(el)el.classList.toggle("active",sf.key===key);});
+  window._kalMin=min;window._kalSonderKey=key;
+  const el=document.getElementById("kal-min-disp");if(el)el.textContent=min+" min";
+  kalUpdateEnd();
+}
+
 function kalUpdateEnd(){
   const uhr=document.getElementById("k-uhr");
   const endEl=document.getElementById("k-endzeit");
@@ -1125,7 +1158,9 @@ function saveKalTermin(date){
   const min=window._kalMin||80;
   if(!termine[date])termine[date]=[];
   const knotiz=document.getElementById('k-notiz');const notizVal=knotiz?knotiz.value.trim():'';
-  termine[date].push({sid,uhr,min,notiz:notizVal});
+  const ksf2=window._kalSonderKey;const ktyp2=window._kalTyp||'normal';
+  const autoN=ktyp2==='pruef'?'Prüfung':ktyp2==='sonder'&&ksf2?(SONDER.find(s=>s.key===ksf2)||{}).label||'':'';
+  termine[date].push({sid,uhr,min,notiz:notizVal||autoN});
   termine[date].sort((a,b)=>a.uhr.localeCompare(b.uhr));
   saveAll();
   const s=getS(sid);
