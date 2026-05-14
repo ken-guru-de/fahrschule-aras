@@ -1039,6 +1039,7 @@ function renderEditDashTermin(date,idx){
         <div class="card-row" style="align-items:flex-start;padding-top:12px"><span class="card-label" style="padding-top:2px"><i class="ti ti-notes"></i>Notiz</span><textarea id="et-notiz" style="flex:1;border:none;background:transparent;font-size:15px;color:var(--tx);font-family:inherit;outline:none;text-align:left;resize:none;height:60px" placeholder="Optional…">${t.notiz||""}</textarea></div>
       </div></div>
       <button class="btn-full" onclick="saveEditDashTermin()"><i class="ti ti-circle-check"></i> Speichern</button>
+      <button class="btn-full" style="margin-top:6px" onclick="renderSchueler('${t.sid}')"><i class="ti ti-user"></i> Zum Schüler</button>
       <button class="btn-full danger" style="margin-top:6px" onclick="deleteEditDashTermin()"><i class="ti ti-trash"></i> Termin löschen</button>
     </div>
   </div>`;
