@@ -840,7 +840,7 @@ function renderCalDetail(){
   html+=`<button class="btn-full" style="margin-top:6px" onclick="renderNeuKalTermin('${selDate}')"><i class="ti ti-plus"></i> Termin hinzufügen</button>`;
   el.innerHTML=html;
 }
-function delKalTermin(key,i){if(!termine[key])return;termine[key].splice(i,1);if(!termine[key].length)delete termine[key];saveAll();renderCalGrid();renderCalDetail();}
+function delKalTermin(key,i){if(!termine[key])return;const t=termine[key][i];const s=getS(t.sid);const name=s?s.vorname+" "+s.nachname:"Termin";if(!confirm(name+" · "+t.uhr+" Uhr wirklich löschen?"))return;termine[key].splice(i,1);if(!termine[key].length)delete termine[key];saveAll();renderCalGrid();renderCalDetail();}
 function prevMonth(){curMonth--;if(curMonth<1){curMonth=12;curYear--;}renderCalGrid();renderCalDetail();}
 function nextMonth(){curMonth++;if(curMonth>12){curMonth=1;curYear++;}renderCalGrid();renderCalDetail();}
 
