@@ -435,7 +435,7 @@ function renderSchueler(sid){
       </div></div>
 
       <div><div class="sec-row"><div class="sec-label" style="margin:0">Fahrstunden</div><button class="fab-btn" onclick="renderNeuFahrstunde('${s.id}')"><i class="ti ti-plus"></i></button></div>
-      ${(s.fahrstunden&&s.fahrstunden.length)?s.fahrstunden.slice(0,5).map(f=>{
+      ${(s.fahrstunden&&s.fahrstunden.length)?[...s.fahrstunden].sort((a,b)=>b.datum.localeCompare(a.datum)).slice(0,5).map(f=>{
         const fd=fmtDate(f.datum);
         const zukunft=f.datum>todayStr();
         const heute=f.datum===todayStr();
