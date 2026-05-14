@@ -49,6 +49,15 @@ html, body { height: 100%; background: var(--bg); color: var(--tx); font-family:
 /* SCROLL BODY */
 .scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 16px 20px calc(var(--safe-bot) + 24px); display: flex; flex-direction: column; gap: 14px; overscroll-behavior: contain; }
 
+/* GRUNDFAHRAUFGABEN */
+.gfa-row { display: flex; align-items: center; padding: 11px 14px; border-bottom: 0.5px solid var(--br); }
+.gfa-row:last-child { border-bottom: none; }
+.gfa-label { flex: 1; font-size: 15px; color: var(--tx); }
+.gfa-controls { display: flex; align-items: center; gap: 10px; }
+.gfa-count { font-size: 17px; font-weight: 600; min-width: 28px; text-align: center; color: var(--tx); }
+.gfa-btn { width: 32px; height: 32px; border-radius: 50%; border: 0.5px solid var(--br2); background: var(--bg2); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--tx2); font-family: inherit; line-height: 1; }
+.gfa-btn:active { transform: scale(0.9); background: var(--accent); color: white; border-color: var(--accent); }
+
 /* PRUEFUNG */
 .pruef-result-item { background: var(--bg); border: 0.5px solid var(--br); border-radius: var(--r-lg); padding: 10px 14px; display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
 .pruef-versuch { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; flex-shrink: 0; }
@@ -290,7 +299,16 @@ const FARBEN = [
   { key:"amber",  bg:"#FAC775", tx:"#633806" },
 ];
 const KLASSEN = ["B","BA","B197","B17"];
-const STUFEN = ["Grundfahraufgaben","Landstraße","Autobahn","Nachtfahrt","Prüfungsvorbereitung"];
+const STUFEN = ["Grundfahraufgaben","Überlandfahrt","Stadtverkehr","Einparken","Prüfungsvorbereitung"];
+const GRUNDFAHRAUFGABEN = [
+  { key:"laengs",      label:"Einparken längs" },
+  { key:"rechts",      label:"Einparken rechts" },
+  { key:"umkehr",      label:"Umkehren" },
+  { key:"rueckwaerts", label:"Rückwärts um die Ecke" },
+  { key:"stopp_mit",   label:"Stopschild mit Haltelinie" },
+  { key:"stopp_ohne",  label:"Stopschild ohne Haltelinie" },
+];
+
 const SONDER = [
   { key:"ueberland", label:"Überlandfahrt", icon:"ti-trees" },
   { key:"autobahn",  label:"Autobahnfahrt", icon:"ti-road" },
@@ -304,11 +322,11 @@ function load(k, def) { try { const v = localStorage.getItem(k); return v ? JSON
 function save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch(e) {} }
 
 let schueler = load("fs_schueler", [
-  { id:"s1", vorname:"Lena",  nachname:"Müller",  spitz:"Leni",  farbe:"blue",   klasse:"B",  beginn:"2025-01-03", prufort:"DEKRA Pankow", theorie:true,  stufe:3, sonder:[true,true,false], prueftermin:"2026-06-22", notiz:"Sehr motiviert. Schwäche: Spurwechsel auf der Autobahn.", fahrstunden:[{datum:"2026-04-16",einh:1,typ:"normal",thema:"Landstraße"},{datum:"2026-04-22",einh:1,typ:"normal",thema:"Autobahnfahrt"}], pruefungen:[] },
-  { id:"s2", vorname:"Tom",   nachname:"Fischer", spitz:"",      farbe:"purple", klasse:"BE", beginn:"2026-03-15", prufort:"Stuttgart",  theorie:false, stufe:1, sonder:[false,false,false], prueftermin:"", notiz:"", fahrstunden:[], pruefungen:[] },
-  { id:"s3", vorname:"Sara",  nachname:"Wagner",  spitz:"",      farbe:"coral",  klasse:"A",  beginn:"2024-11-10", prufort:"Mannheim",   theorie:true,  stufe:4, sonder:[true,true,true],  prueftermin:"2026-06-08", notiz:"Prüfung in Mannheim, Treffpunkt 07:45 Uhr.", fahrstunden:[], pruefungen:[] },
-  { id:"s4", vorname:"Max",   nachname:"Becker",  spitz:"Maxi", farbe:"teal",   klasse:"B",  beginn:"2026-02-20", prufort:"Heidelberg", theorie:true,  stufe:2, sonder:[true,false,false], prueftermin:"", notiz:"", fahrstunden:[], pruefungen:[] },
-  { id:"s5", vorname:"Julia", nachname:"Schäfer", spitz:"",      farbe:"green",  klasse:"AM", beginn:"2026-04-05", prufort:"Freiburg",   theorie:false, stufe:1, sonder:[false,false,false], prueftermin:"", notiz:"", fahrstunden:[], pruefungen:[] },
+  { id:"s1", vorname:"Lena",  nachname:"Müller",  spitz:"Leni",  farbe:"blue",   klasse:"B",  beginn:"2025-01-03", prufort:"DEKRA Pankow", theorie:true,  stufe:3, sonder:[true,true,false], prueftermin:"2026-06-22", notiz:"Sehr motiviert. Schwäche: Spurwechsel auf der Autobahn.", fahrstunden:[{datum:"2026-04-16",einh:1,typ:"normal",thema:"Überlandfahrt"},{datum:"2026-04-22",einh:1,typ:"normal",thema:"Autobahnfahrt"}], pruefungen:[], gfa:{laengs:0,rechts:0,umkehr:0,rueckwaerts:0,stopp_mit:0,stopp_ohne:0} },
+  { id:"s2", vorname:"Tom",   nachname:"Fischer", spitz:"",      farbe:"purple", klasse:"BE", beginn:"2026-03-15", prufort:"Stuttgart",  theorie:false, stufe:1, sonder:[false,false,false], prueftermin:"", notiz:"", fahrstunden:[], pruefungen:[], gfa:{laengs:0,rechts:0,umkehr:0,rueckwaerts:0,stopp_mit:0,stopp_ohne:0} },
+  { id:"s3", vorname:"Sara",  nachname:"Wagner",  spitz:"",      farbe:"coral",  klasse:"A",  beginn:"2024-11-10", prufort:"Mannheim",   theorie:true,  stufe:4, sonder:[true,true,true],  prueftermin:"2026-06-08", notiz:"Prüfung in Mannheim, Treffpunkt 07:45 Uhr.", fahrstunden:[], pruefungen:[], gfa:{laengs:0,rechts:0,umkehr:0,rueckwaerts:0,stopp_mit:0,stopp_ohne:0} },
+  { id:"s4", vorname:"Max",   nachname:"Becker",  spitz:"Maxi", farbe:"teal",   klasse:"B",  beginn:"2026-02-20", prufort:"Heidelberg", theorie:true,  stufe:2, sonder:[true,false,false], prueftermin:"", notiz:"", fahrstunden:[], pruefungen:[], gfa:{laengs:0,rechts:0,umkehr:0,rueckwaerts:0,stopp_mit:0,stopp_ohne:0} },
+  { id:"s5", vorname:"Julia", nachname:"Schäfer", spitz:"",      farbe:"green",  klasse:"AM", beginn:"2026-04-05", prufort:"Freiburg",   theorie:false, stufe:1, sonder:[false,false,false], prueftermin:"", notiz:"", fahrstunden:[], pruefungen:[], gfa:{laengs:0,rechts:0,umkehr:0,rueckwaerts:0,stopp_mit:0,stopp_ohne:0} },
 ]);
 let termine = load("fs_termine", {
   "2026-04-22": [{sid:"s1",uhr:"09:00",min:80}],
@@ -548,11 +566,11 @@ function renderSchueler(sid) {
                <div class="foto-overlay"><i class="ti ti-camera"></i></div>
              </div>`
         }
-        <input type="file" id="foto-input-${s.id}" accept="image/*" capture="user" style="display:none" onchange="saveFoto('${s.id}', this)"/>
+        <input type="file" id="foto-input-${s.id}" accept="image/*" style="display:none" onchange="saveFoto('${s.id}', this)"/>
         <div>
           <div style="font-size:18px;font-weight:600">${s.vorname}${s.spitz?' <span style="font-size:14px;color:var(--tx3);font-weight:400">«'+s.spitz+'»</span>':''} ${s.nachname}</div>
           <div style="font-size:13px;color:var(--tx2);margin-top:2px">Klasse ${s.klasse} · ${s.prufort}</div>
-          <div style="font-size:11px;color:var(--tx3);margin-top:3px">Foto antippen zum Ändern</div>
+          <div style="font-size:11px;color:var(--tx3);margin-top:3px">Foto antippen — Kamera oder Datei</div>
         </div>
       </div>
 
@@ -584,6 +602,21 @@ function renderSchueler(sid) {
         ${SONDER.map((sf,i)=>{
           const done=s.sonder[i], next=!done&&i===nsi;
           return `<div class="sp-step ${done?"done":next?"next":""}"><i class="ti ${done?"ti-circle-check":next?"ti-circle-dashed":"ti-circle"}"></i>${sf.label}</div>`;
+        }).join("")}
+      </div></div>
+
+      <div><div class="sec-label">Grundfahraufgaben</div>
+      <div class="card">
+        ${GRUNDFAHRAUFGABEN.map(g => {
+          const cnt = (s.gfa&&s.gfa[g.key])||0;
+          return `<div class="gfa-row">
+            <span class="gfa-label">${g.label}</span>
+            <div class="gfa-controls">
+              <button class="gfa-btn" onclick="changeGFA('${s.id}','${g.key}',-1)">−</button>
+              <span class="gfa-count" id="gfa-${s.id}-${g.key}">${cnt}</span>
+              <button class="gfa-btn" onclick="changeGFA('${s.id}','${g.key}',1)">+</button>
+            </div>
+          </div>`;
         }).join("")}
       </div></div>
 
@@ -722,7 +755,7 @@ function saveSchueler() {
       prufort:document.getElementById("n-pf").value.trim(),
       prueftermin:document.getElementById("n-pt").value,
       theorie:document.getElementById("n-th").checked,
-      stufe:1, sonder:[false,false,false], notiz:"", fahrstunden:[], pruefungen:[] };
+      stufe:1, sonder:[false,false,false], notiz:"", fahrstunden:[], pruefungen:[], gfa:{laengs:0,rechts:0,umkehr:0,rueckwaerts:0,stopp_mit:0,stopp_ohne:0} };
     schueler.push(ns); saveAll();
     document.getElementById("toast-neu-msg").textContent = vn+" "+nn+" wurde angelegt";
     document.getElementById("toast-neu").classList.add("show");
@@ -773,7 +806,6 @@ function renderNeuFahrstunde(sid) {
           <select id="f-th">
             <option value="">Auswählen…</option>
             ${STUFEN.map(st=>`<option>${st}</option>`).join("")}
-            <option>Stadtverkehr</option><option>Einparken</option>
           </select>
         </div>
       </div></div>`;
@@ -990,6 +1022,16 @@ function saveKalTermin(date) {
   document.getElementById("toast-kal-msg").textContent=`${s.vorname} ${s.nachname} · ${uhr} Uhr · ${min} min`;
   document.getElementById("toast-kal").classList.add("show");
   setTimeout(()=>{ selDate=date; buildKalender(); },1800);
+}
+
+// ── GRUNDFAHRAUFGABEN ─────────────────────────────────────────────────────────
+function changeGFA(sid, key, d) {
+  const s = getS(sid); if(!s) return;
+  if (!s.gfa) s.gfa = {laengs:0, rechts:0, umkehr:0, rueckwaerts:0};
+  s.gfa[key] = Math.max(0, (s.gfa[key]||0) + d);
+  saveAll();
+  const el = document.getElementById("gfa-"+sid+"-"+key);
+  if (el) el.textContent = s.gfa[key];
 }
 
 // ── PRUEFUNG ERFASSEN ────────────────────────────────────────────────────────
