@@ -512,7 +512,7 @@ function renderSchueler(sid){
         return`<div class="pruef-result-item" style="margin-bottom:6px">
           <div class="pruef-versuch" style="background:${bgCol};color:${txCol}">${p.versuch}</div>
           <div style="flex:1">
-            <div style="font-size:14px;font-weight:500;color:var(--tx)">${p.versuch}. Prüfung · ${fd.day}. ${fd.mon} ${fd.year}</div>
+            <div style="font-size:14px;font-weight:500;color:var(--tx)">${p.versuch}. Prüfung · ${fd.day}. ${fd.mon} ${fd.year}${p.uhr?" · "+p.uhr+" Uhr":""}</div>
             <div style="font-size:12px;color:${txCol};margin-top:2px">${label}</div>
           </div>
           <button class="btn-icon dark" style="font-size:18px;min-width:36px;min-height:36px" onclick="renderEditPruefung('${s.id}',${pi})"><i class="ti ti-edit"></i></button>
@@ -857,6 +857,7 @@ function renderNeuPruefungInline(sid){
       <div><div class="sec-label">Prüfungstermin</div>
       <div class="card">
         <div class="card-row"><span class="card-label"><i class="ti ti-calendar"></i>Datum</span><input type="date" id="pn-datum" value="${todayStr()}"/></div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Uhrzeit</span><input type="time" id="pn-uhr" value="08:00"/></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-list-numbers"></i>Prüfung Nr.</span>
           <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end;flex:1">
             <button class="cir-btn" onclick="changePNVersuch(-1)">−</button>
@@ -893,7 +894,8 @@ function saveNeuPruefung(sid){
   const s=getS(sid);if(!s)return;
   const datum=document.getElementById("pn-datum").value;if(!datum)return;
   if(!s.pruefungen)s.pruefungen=[];
-  s.pruefungen.push({datum,versuch:window._pnVersuch||1,bestanden:window._pnBestanden});
+  const pnuhr=document.getElementById("pn-uhr")?document.getElementById("pn-uhr").value:"08:00";
+  s.pruefungen.push({datum,uhr:pnuhr,versuch:window._pnVersuch||1,bestanden:window._pnBestanden});
   s.pruefungen.sort((a,b)=>a.datum.localeCompare(b.datum));
   saveAll();renderSchueler(sid);
 }
@@ -911,6 +913,7 @@ function renderEditPruefung(sid,idx){
       <div><div class="sec-label">Prüfungsergebnis</div>
       <div class="card">
         <div class="card-row"><span class="card-label"><i class="ti ti-calendar"></i>Datum</span><input type="date" id="pe-datum" value="${p.datum}"/></div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Uhrzeit</span><input type="time" id="pe-uhr" value="${p.uhr||'08:00'}"/></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-list-numbers"></i>Prüfung Nr.</span>
           <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end;flex:1">
             <button class="cir-btn" onclick="changePEVersuch(-1)">−</button>
