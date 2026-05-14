@@ -188,7 +188,15 @@ const START_DATE=new Date(2026,3,15);
 
 function load(k,def){try{const v=localStorage.getItem(k);return v?JSON.parse(v):def;}catch(e){return def;}}
 function save(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
-function saveAll(){save("fs_schueler",schueler);save("fs_termine",termine);}
+function saveAll(){
+  // cleanup orphaned termine
+  const ids=new Set(schueler.map(s=>s.id));
+  Object.keys(termine).forEach(d=>{
+    termine[d]=termine[d].filter(t=>ids.has(t.sid));
+    if(!termine[d].length)delete termine[d];
+  });
+  save("fs_schueler",schueler);save("fs_termine",termine);
+}
 
 let schueler=load("fs_schueler",[
   {id:"s1",vorname:"Lena",nachname:"Müller",spitz:"Leni",farbe:"blue",klasse:"B",beginn:"2025-01-03",prufort:"DEKRA Pankow",theorie:true,sonder:[true,true,false],prueftermin:"2026-06-22",tel:"",notiz:"Sehr motiviert.",fahrstunden:[{datum:"2026-04-22",einh:1,typ:"normal",sonder:null}],pruefungen:[],gfa:{laengs:3,rechts:2,umkehr:1,rueckwaerts:0,stopp_mit:2,stopp_ohne:1},foto:null},
@@ -1149,6 +1157,7 @@ function importDaten(input){
 }
 
 // ── BOOT ──────────────────────────────────────────────────────────────────────
+saveAll(); // cleanup orphaned termine on startup
 renderDashboard();
 </script>
 </body>
