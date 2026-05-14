@@ -354,7 +354,7 @@ function renderListe(q="",sortMode="heute"){
         <div class="swipe-item list-item" id="swipe-${s.id}" onclick="handleTap('${s.id}')" style="${bestanden?"border-left:3px solid #639922;":""}">
           ${s.foto?`<div class="avatar" style="overflow:hidden;flex-shrink:0"><img src="${s.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/></div>`:`<div class="avatar av-${s.farbe}">${initials(s)}</div>`}
           <div class="item-info">
-            <div class="item-name">${s.vorname} ${s.nachname}${s.spitz?` <span style="color:var(--tx3);font-size:12px">«${s.spitz}»</span>`:""}</div>
+            <div class="item-name">${s.geschlecht==="w"?"👧":"👦"} ${s.vorname} ${s.nachname}${s.spitz?` <span style="color:var(--tx3);font-size:12px">«${s.spitz}»</span>`:""}</div>
             ${bestanden?`<div style="margin-top:3px"><span style="font-size:11px;color:#27500A;background:#EAF3DE;padding:2px 8px;border-radius:20px">✓ Bestanden</span></div>`:""}
             <div class="item-sub">${sortMode==="termin"?
             (()=>{const ndt=nextTerminDateTime(s);if(ndt==="9999")return"Kein Termin geplant";const nd=ndt.split("T")[0];const t=(termine[nd]||[]).find(t=>t.sid===s.id);return fmtDate(nd).day+". "+fmtDate(nd).mon+" "+fmtDate(nd).year+(t?" · "+t.uhr+" Uhr":"");})()
@@ -553,6 +553,12 @@ function renderNeuSchueler(fromSid){
         <div class="card-row"><span class="card-label"><i class="ti ti-user"></i>Vorname</span><input type="text" id="n-vn" value="${s?s.vorname:""}" placeholder="Pflichtfeld"/></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-user"></i>Nachname</span><input type="text" id="n-nn" value="${s?s.nachname:""}" placeholder="Pflichtfeld"/></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-mood-smile"></i>Spitzname</span><input type="text" id="n-sp" value="${s?s.spitz:""}" placeholder="Optional"/></div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-user-circle"></i>Geschlecht</span>
+          <div style="display:flex;gap:6px;justify-content:flex-end;flex:1">
+            <button class="pill ${!s||s.geschlecht!=='w'?'active':''}" id="g-m" onclick="setGeschlecht('m')" style="font-size:14px;padding:6px 14px">👦 Junge</button>
+            <button class="pill ${s&&s.geschlecht==='w'?'active':''}" id="g-w" onclick="setGeschlecht('w')" style="font-size:14px;padding:6px 14px">👧 Mädchen</button>
+          </div>
+        </div>
       </div></div>
       <div><div class="sec-label">Ausbildung</div>
       <div class="card">
@@ -583,11 +589,20 @@ function renderNeuSchueler(fromSid){
   </div>`;
   document.getElementById("app").innerHTML=html;
   window._selFarbe=selFarbe;
+  window._geschlecht=s?s.geschlecht||'m':'m';
   renderFarbDots("farb-row-neu");
   setTimeout(initPTR,50);
 }
 function renderEditSchueler(sid){renderNeuSchueler(sid);}
 function renderFarbDots(cid){const el=document.getElementById(cid);if(!el)return;el.innerHTML=FARBEN.map(f=>`<div class="farb-dot ${f.key===window._selFarbe?"sel":""}" style="background:${f.bg}" onclick="window._selFarbe='${f.key}';renderFarbDots('${cid}')"></div>`).join("");}
+
+function setGeschlecht(g){
+  window._geschlecht=g;
+  const gm=document.getElementById("g-m");
+  const gw=document.getElementById("g-w");
+  if(gm)gm.classList.toggle("active",g==="m");
+  if(gw)gw.classList.toggle("active",g==="w");
+}
 function saveSchueler(editSid){
   const vn=document.getElementById("n-vn").value.trim();
   const nn=document.getElementById("n-nn").value.trim();
@@ -600,10 +615,10 @@ function saveSchueler(editSid){
   const bg=document.getElementById("n-bg").value;
   if(editSid){
     const s=getS(editSid);
-    s.vorname=vn;s.nachname=nn;s.spitz=sp;s.tel=document.getElementById('n-tel').value.trim();s.beginn=bg;s.klasse=kl;s.prufort=pf;s.prueftermin=pt;s.pruefzeit=document.getElementById('n-pt-uhr').value;s.theorie=th;s.farbe=window._selFarbe;
+    s.vorname=vn;s.nachname=nn;s.spitz=sp;s.geschlecht=window._geschlecht||'m';s.tel=document.getElementById('n-tel').value.trim();s.beginn=bg;s.klasse=kl;s.prufort=pf;s.prueftermin=pt;s.pruefzeit=document.getElementById('n-pt-uhr').value;s.theorie=th;s.farbe=window._selFarbe;
     saveAll();syncFahrstundenToKalender();renderSchueler(editSid);
   }else{
-    const tel2=document.getElementById('n-tel').value.trim();const ptuhr=document.getElementById('n-pt-uhr').value;const ns={id:"s"+Date.now(),vorname:vn,nachname:nn,spitz:sp,tel:tel2,farbe:window._selFarbe,klasse:kl,beginn:bg,prufort:pf,prueftermin:pt,pruefzeit:ptuhr,theorie:th,sonder:[false,false,false],notiz:"",fahrstunden:[],pruefungen:[],gfa:{laengs:0,rechts:0,umkehr:0,rueckwaerts:0,stopp_mit:0,stopp_ohne:0,stadtautobahn:0,strassenbahn:0},foto:null};
+    const tel2=document.getElementById('n-tel').value.trim();const ptuhr=document.getElementById('n-pt-uhr').value;const ns={id:"s"+Date.now(),vorname:vn,nachname:nn,spitz:sp,geschlecht:window._geschlecht||'m',tel:tel2,farbe:window._selFarbe,klasse:kl,beginn:bg,prufort:pf,prueftermin:pt,pruefzeit:ptuhr,theorie:th,sonder:[false,false,false],notiz:"",fahrstunden:[],pruefungen:[],gfa:{laengs:0,rechts:0,umkehr:0,rueckwaerts:0,stopp_mit:0,stopp_ohne:0,stadtautobahn:0,strassenbahn:0},foto:null};
     schueler.push(ns);saveAll();
     document.getElementById("toast-neu-msg").textContent=vn+" "+nn+" wurde angelegt";
     document.getElementById("toast-neu").classList.add("show");
