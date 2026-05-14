@@ -279,6 +279,11 @@ function renderDashboard(){
     <button class="btn-full" onclick="renderListe()"><i class="ti ti-users"></i> Alle Schüler</button>
     <button class="btn-full" onclick="renderStatistik()"><i class="ti ti-chart-bar"></i> Statistik</button>
     <button class="btn-full" onclick="renderNeuSchueler()"><i class="ti ti-user-plus"></i> Neuen Schüler anlegen</button>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <button class="btn-full" onclick="exportDaten()" style="font-size:14px"><i class="ti ti-download"></i> Sichern</button>
+      <button class="btn-full" onclick="document.getElementById(\'import-input\').click()" style="font-size:14px"><i class="ti ti-upload"></i> Wiederherstellen</button>
+    </div>
+    <input type="file" id="import-input" accept=".json" style="display:none" onchange="importDaten(this)"/>
   </div></div></div>`;
   document.getElementById("app").innerHTML=html;
   setTimeout(initPTR,50);
@@ -1093,6 +1098,43 @@ function initPTR(){
     if(triggered){indicator.style.top="0px";setTimeout(()=>{const sp=document.getElementById("ptr-spinner");if(sp)sp.classList.remove("spinning");indicator.style.top="-56px";location.reload();},600);}
     else indicator.style.top="-56px";
   },{passive:true});
+}
+
+// ── BACKUP / RESTORE ─────────────────────────────────────────────────────────
+function exportDaten(){
+  const data = { schueler, termine, exportiert: new Date().toISOString() };
+  const json = JSON.stringify(data, null, 2);
+  const blob = new Blob([json], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  const datum = new Date().toISOString().split("T")[0];
+  a.href = url;
+  a.download = "fahrschule-backup-"+datum+".json";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importDaten(input){
+  const file = input.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e){
+    try {
+      const data = JSON.parse(e.target.result);
+      if(!data.schueler || !data.termine) {
+        alert("Ungültige Backup-Datei."); return;
+      }
+      if(!confirm("Alle aktuellen Daten werden ersetzt. Fortfahren?")) return;
+      schueler = data.schueler;
+      termine = data.termine;
+      saveAll();
+      renderDashboard();
+      alert("Daten erfolgreich wiederhergestellt.");
+    } catch(err) {
+      alert("Fehler beim Einlesen der Datei.");
+    }
+  };
+  reader.readAsText(file);
+  input.value = "";
 }
 
 // ── BOOT ──────────────────────────────────────────────────────────────────────
