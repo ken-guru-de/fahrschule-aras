@@ -1403,6 +1403,17 @@ function renderEditKalTermin(date,idx){
         </div>
         <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Startzeit</span><input type="time" id="ekt-uhr" value="${t.uhr}" oninput="ektUpdateEnd()"/></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-clock-check"></i>Endzeit</span><span id="ekt-endzeit" style="flex:1;text-align:right;font-size:15px;font-weight:500;color:var(--accent)"></span></div>
+        <div class="card-row" style="flex-direction:column;align-items:stretch;gap:8px;padding:12px 14px">
+          <span style="font-size:13px;color:var(--tx2)">Art der Fahrt</span>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button class="pill ${t.min===100?"":""}${t.min!==100&&t.min!==225&&t.min!==220&&t.min!==135?"active":""}" id="ektyp-normal" onclick="setEKTyp('normal')" style="font-size:13px;padding:6px 10px">Fahrstunde</button>
+            <button class="pill ${t.min===225||t.min===220||t.min===135?"active":""}" id="ektyp-sonder" onclick="setEKTyp('sonder')" style="font-size:13px;padding:6px 10px">Sonderfahrt</button>
+            <button class="pill ${t.min===100?"active":""}" id="ektyp-pruef" onclick="setEKTyp('pruef')" style="font-size:13px;padding:6px 10px">Prüfung</button>
+          </div>
+          <div id="ek-sonder-row" style="${t.min===225||t.min===220||t.min===135?"":"display:none"};display:flex;gap:6px;flex-wrap:wrap;margin-top:4px">
+            ${SONDER.map(sf=>`<button class="pill ${t.min===sf.min?"active":""}" id="eksf-${sf.key}" onclick="setEKSonder('${sf.key}',${sf.min})" style="font-size:12px;padding:5px 10px">${sf.label}</button>`).join("")}
+          </div>
+        </div>
         <div class="card-row"><span class="card-label"><i class="ti ti-hourglass"></i>Minuten</span>
           <div style="display:flex;align-items:center;gap:10px;justify-content:flex-end;flex:1">
             <button class="cir-btn" onclick="changeETMin(-10);ektUpdateEnd()">−</button>
@@ -1432,6 +1443,23 @@ function ektUpdateEnd(){
   const eh=Math.floor(total/60)%24;
   const em=total%60;
   endEl.textContent=String(eh).padStart(2,"0")+":"+String(em).padStart(2,"0")+" Uhr";
+}
+
+function setEKTyp(typ){
+  ["normal","sonder","pruef"].forEach(t=>{const el=document.getElementById("ektyp-"+t);if(el)el.classList.toggle("active",t===typ);});
+  const sr=document.getElementById("ek-sonder-row");
+  if(sr)sr.style.display=typ==="sonder"?"flex":"none";
+  if(typ==="normal"){window._etMin=80;}
+  else if(typ==="pruef"){window._etMin=100;}
+  const el=document.getElementById("et-min-disp");if(el)el.textContent=window._etMin+" min";
+  ektUpdateEnd();
+}
+
+function setEKSonder(key,min){
+  SONDER.forEach(sf=>{const el=document.getElementById("eksf-"+sf.key);if(el)el.classList.toggle("active",sf.key===key);});
+  window._etMin=min;
+  const el=document.getElementById("et-min-disp");if(el)el.textContent=min+" min";
+  ektUpdateEnd();
 }
 
 function saveEktTermin(date,idx){
