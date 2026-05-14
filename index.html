@@ -480,7 +480,7 @@ function renderSchueler(sid){
           </div>
           <div class="t-info">
             <div class="t-name">${f.typ==="pruef"?"Prüfungsfahrt":"Fahrstunde"}</div>
-            <div class="t-sub">${f.typ==="pruef"?"100 min":f.einh+" × 80 min"}</div>
+            <div class="t-sub">${f.uhr?f.uhr+" Uhr · ":""}${f.typ==="pruef"?"100 min":f.einh+" × 80 min"}</div>
           </div>
           <span style="font-size:11px;font-weight:500;padding:3px 8px;border-radius:20px;${
             zukunft?"background:rgba(255,107,43,.12);color:var(--accent)":
@@ -645,6 +645,7 @@ function renderNeuFahrstunde(sid){
           </div>
         </div>
         <div class="card-row"><span class="card-label"><i class="ti ti-calendar"></i>Datum</span><input type="date" id="f-dat" value="${todayStr()}"/></div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Uhrzeit</span><input type="time" id="f-uhr" value="09:00"/></div>
         <div class="card-row" id="einh-row2">
           <span class="card-label"><i class="ti ti-clock"></i>Einheiten</span>
           <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end;flex:1">
@@ -684,7 +685,8 @@ function saveFahrstunde(sid){
   let sonderGemacht=null;
   if(nsi!==-1){const sfEl=document.getElementById("sf-"+SONDER[nsi].key);if(sfEl&&sfEl.checked&&!s.sonder[nsi]){s.sonder[nsi]=true;sonderGemacht=SONDER[nsi].label;}}
   if(!s.fahrstunden)s.fahrstunden=[];
-  s.fahrstunden.unshift({datum:dat,einh,typ,sonder:sonderGemacht});
+  const fuhr=document.getElementById("f-uhr")?document.getElementById("f-uhr").value:"09:00";
+  s.fahrstunden.unshift({datum:dat,uhr:fuhr,einh,typ,sonder:sonderGemacht});
   saveAll();
   const msg=sonderGemacht?sonderGemacht+" abgeschlossen":"Fahrstunde gespeichert";
   document.getElementById("toast-fahrt-msg").textContent=msg;
@@ -763,6 +765,7 @@ function renderEditFahrstunde(sid, idx){
           </div>
         </div>
         <div class="card-row"><span class="card-label"><i class="ti ti-calendar"></i>Datum</span><input type="date" id="ef-dat" value="${f.datum}"/></div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Uhrzeit</span><input type="time" id="ef-uhr" value="${f.uhr||'09:00'}"/></div>
         <div class="card-row" id="eeinh-row">
           <span class="card-label"><i class="ti ti-clock"></i>Einheiten</span>
           <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end;flex:1">
@@ -800,8 +803,10 @@ function changeEEinh(d){
 function saveEditFahrstunde(sid,idx){
   const s=getS(sid);if(!s)return;
   const dat=document.getElementById("ef-dat").value;if(!dat)return;
+  const uhr=document.getElementById("ef-uhr")?document.getElementById("ef-uhr").value:"09:00";
   s.fahrstunden[idx]={
     datum:dat,
+    uhr:uhr,
     typ:window._efahrtTyp||"normal",
     einh:window._efahrtEinh||1,
     sonder:s.fahrstunden[idx].sonder
