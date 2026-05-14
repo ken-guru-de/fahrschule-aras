@@ -1502,8 +1502,29 @@ function importDaten(input){
   input.value = "";
 }
 
+// ── SYNC FAHRSTUNDEN → KALENDER ──────────────────────────────────────────────
+function syncFahrstundenToKalender(){
+  schueler.forEach(s=>{
+    (s.fahrstunden||[]).forEach(f=>{
+      if(!f.datum)return;
+      const uhr=f.uhr||"09:00";
+      const min=f.typ==="pruef"?100:(f.einh||1)*80;
+      if(!termine[f.datum])termine[f.datum]=[];
+      // only add if not already there
+      const exists=termine[f.datum].find(t=>t.sid===s.id&&t.uhr===uhr);
+      if(!exists){
+        const notiz=f.sonder||"";
+        termine[f.datum].push({sid:s.id,uhr,min,notiz});
+        termine[f.datum].sort((a,b)=>a.uhr.localeCompare(b.uhr));
+      }
+    });
+  });
+  save("fs_termine",termine);
+}
+
 // ── BOOT ──────────────────────────────────────────────────────────────────────
 saveAll(); // cleanup orphaned termine on startup
+syncFahrstundenToKalender();
 renderDashboard();
 </script>
 </body>
