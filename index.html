@@ -243,13 +243,14 @@ function renderDashboard(){
 
   html+=`<div><div class="sec-label">Heute</div>`;
   if(heuteTermine.length){
-    heuteTermine.forEach(t=>{
+    heuteTermine.forEach((t,ti)=>{
       const s=getS(t.sid);if(!s)return;
       const nick=s.spitz?` «${s.spitz}»`:"";
-      html+=`<div class="list-item" style="margin-bottom:6px" onclick="renderSchueler('${s.id}')">
+      html+=`<div class="list-item" style="margin-bottom:6px" onclick="renderEditDashTermin('${td}',${ti})">
         ${s.foto?`<div class="avatar" style="overflow:hidden;flex-shrink:0"><img src="${s.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/></div>`:`<div class="avatar av-${s.farbe}">${initials(s)}</div>`}
-        <div class="item-info"><div class="item-name">${s.vorname}${nick}</div><div class="item-sub">${t.uhr} Uhr · ${t.min} min</div></div>
+        <div class="item-info"><div class="item-name">${s.vorname}${nick}</div><div class="item-sub">${t.uhr} Uhr · ${t.min} min${t.notiz?" · "+t.notiz:""}</div></div>
         <span class="badge badge-${s.klasse}">${s.klasse}</span>
+        <i class="ti ti-chevron-right" style="color:var(--tx3);font-size:16px"></i>
       </div>`;
     });
   }else{
@@ -833,7 +834,7 @@ function renderCalDetail(){
     const nick=s.spitz?` «${s.spitz}»`:"";
     html+=`<div class="termin-item" style="margin-bottom:6px">
       <div class="t-avatar av-${s.farbe}">${initials(s)}</div>
-      <div class="t-info"><div class="t-name">${s.vorname}${nick} ${s.nachname}</div><div class="t-sub">${e.uhr} Uhr · ${e.min} min · Kl. ${s.klasse}</div></div>
+      <div class="t-info"><div class="t-name">${s.vorname}${nick} ${s.nachname}</div><div class="t-sub">${e.uhr} Uhr · ${e.min} min · Kl. ${s.klasse}${e.notiz?" · "+e.notiz:""}</div></div>
       <button class="t-del" onclick="delKalTermin('${selDate}',${i})"><i class="ti ti-trash"></i></button>
     </div>`;
   });
@@ -871,6 +872,12 @@ function renderNeuKalTermin(date){
           </div>
         </div>
       </div></div>
+      <div><div class="card" style="margin-top:0">
+        <div class="card-row" style="align-items:flex-start;padding-top:12px">
+          <span class="card-label" style="padding-top:2px"><i class="ti ti-notes"></i>Notiz</span>
+          <textarea id="k-notiz" style="flex:1;border:none;background:transparent;font-size:15px;color:var(--tx);font-family:inherit;outline:none;text-align:left;resize:none;height:60px" placeholder="Optional…"></textarea>
+        </div>
+      </div></div>
       <button class="btn-full" onclick="saveKalTermin('${date}')"><i class="ti ti-circle-check"></i> Termin speichern</button>
     </div>
   </div>`;
@@ -884,7 +891,8 @@ function saveKalTermin(date){
   if(!sid||!uhr){if(!sid){document.getElementById("k-sid").classList.add("err-border");setTimeout(()=>document.getElementById("k-sid").classList.remove("err-border"),1500);}return;}
   const min=window._kalMin||80;
   if(!termine[date])termine[date]=[];
-  termine[date].push({sid,uhr,min});
+  const knotiz=document.getElementById('k-notiz');const notizVal=knotiz?knotiz.value.trim():'';
+  termine[date].push({sid,uhr,min,notiz:notizVal});
   termine[date].sort((a,b)=>a.uhr.localeCompare(b.uhr));
   saveAll();
   const s=getS(sid);
@@ -951,6 +959,76 @@ function renderStatistik(){
   html+=`</div></div>`;
   document.getElementById("app").innerHTML=html;
   setTimeout(initPTR,50);
+}
+
+// ── TERMIN BEARBEITEN (Dashboard) ────────────────────────────────────────────
+function renderEditDashTermin(date,idx){
+  const t=(termine[date]||[])[idx];if(!t)return;
+  const s=getS(t.sid);if(!s)return;
+  const fd=fmtDate(date);
+  window._etDate=date;window._etIdx=idx;window._etMin=t.min;
+  let html=`<div class="screen active" id="scr-edit-termin">
+    <div class="topbar">
+      <button class="btn-icon" onclick="renderDashboard()"><i class="ti ti-x"></i></button>
+      <span class="topbar-title">Termin bearbeiten</span>
+    </div>
+    <div class="scroll">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:4px">
+        ${s.foto?`<div class="avatar" style="overflow:hidden;flex-shrink:0"><img src="${s.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/></div>`:`<div class="avatar av-${s.farbe}">${initials(s)}</div>`}
+        <div><div style="font-size:17px;font-weight:600">${s.vorname} ${s.nachname}</div>
+        <div style="font-size:13px;color:var(--tx2)">${fd.day}. ${fd.mon} ${fd.year}</div></div>
+      </div>
+      <div><div class="sec-label">Termin</div>
+      <div class="card">
+        <div class="card-row"><span class="card-label"><i class="ti ti-user"></i>Schüler</span>
+          <select id="et-sid">
+            ${schueler.map(sc=>`<option value="${sc.id}" ${sc.id===t.sid?"selected":""}>${sc.vorname} ${sc.nachname}${sc.spitz?" «"+sc.spitz+"»":""}</option>`).join("")}
+          </select>
+        </div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Uhrzeit</span><input type="time" id="et-uhr" value="${t.uhr}"/></div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-hourglass"></i>Minuten</span>
+          <div style="display:flex;align-items:center;gap:10px;justify-content:flex-end;flex:1">
+            <button class="cir-btn" onclick="changeETMin(-10)">−</button>
+            <span id="et-min-disp" style="font-size:16px;font-weight:500;min-width:52px;text-align:center">${t.min} min</span>
+            <button class="cir-btn" onclick="changeETMin(10)">+</button>
+          </div>
+        </div>
+        <div class="card-row" style="align-items:flex-start;padding-top:12px"><span class="card-label" style="padding-top:2px"><i class="ti ti-notes"></i>Notiz</span><textarea id="et-notiz" style="flex:1;border:none;background:transparent;font-size:15px;color:var(--tx);font-family:inherit;outline:none;text-align:left;resize:none;height:60px" placeholder="Optional…">${t.notiz||""}</textarea></div>
+      </div></div>
+      <button class="btn-full" onclick="saveEditDashTermin()"><i class="ti ti-circle-check"></i> Speichern</button>
+      <button class="btn-full danger" style="margin-top:6px" onclick="deleteEditDashTermin()"><i class="ti ti-trash"></i> Termin löschen</button>
+    </div>
+  </div>`;
+  document.getElementById("app").innerHTML=html;
+  setTimeout(initPTR,50);
+}
+
+function changeETMin(d){
+  window._etMin=Math.max(10,Math.min(300,(window._etMin||80)+d));
+  const el=document.getElementById("et-min-disp");
+  if(el)el.textContent=window._etMin+" min";
+}
+
+function saveEditDashTermin(){
+  const date=window._etDate;const idx=window._etIdx;
+  if(!termine[date]||!termine[date][idx])return;
+  termine[date][idx].sid=document.getElementById("et-sid").value;
+  termine[date][idx].uhr=document.getElementById("et-uhr").value;
+  termine[date][idx].min=window._etMin||80;
+  termine[date][idx].notiz=document.getElementById("et-notiz").value.trim();
+  termine[date].sort((a,b)=>a.uhr.localeCompare(b.uhr));
+  saveAll();renderDashboard();
+}
+
+function deleteEditDashTermin(){
+  const date=window._etDate;const idx=window._etIdx;
+  if(!termine[date])return;
+  const t=termine[date][idx];const s=getS(t.sid);
+  const name=s?s.vorname+" "+s.nachname:"Termin";
+  if(!confirm(name+" · "+t.uhr+" Uhr wirklich löschen?"))return;
+  termine[date].splice(idx,1);
+  if(!termine[date].length)delete termine[date];
+  saveAll();renderDashboard();
 }
 
 // ── PULL TO REFRESH ───────────────────────────────────────────────────────────
