@@ -358,8 +358,18 @@ function renderListe(q="",sortMode="heute"){
             ${bestanden?`<div style="margin-top:3px"><span style="font-size:11px;color:#27500A;background:#EAF3DE;padding:2px 8px;border-radius:20px">✓ Bestanden</span></div>`:""}
             <div class="item-sub">${sortMode==="termin"?
             (()=>{const nd=nextTerminDate(s);const t=(termine[nd]||[]).find(t=>t.sid===s.id);return nd==="9999"?"Kein Termin geplant":fmtDate(nd).day+". "+fmtDate(nd).mon+" "+fmtDate(nd).year+(t?" · "+t.uhr+" Uhr":"");})()
-            :"Beginn "+fmtDate(s.beginn).day+". "+fmtDate(s.beginn).mon+" "+fmtDate(s.beginn).year+" · "+(s.fahrstunden||[]).reduce((a,f)=>a+(f.typ==="normal"?f.einh:0),0)+" Einh."
+            :"Beginn "+fmtDate(s.beginn).day+". "+fmtDate(s.beginn).mon+" "+fmtDate(s.beginn).year
           }</div>
+            <div style="font-size:12px;color:var(--tx3);margin-top:2px;white-space:nowrap">${
+              (()=>{
+                const td2=todayStr();
+                const alleTermine=Object.entries(termine).filter(([d])=>d<=td2).flatMap(([d,ts])=>ts.filter(t=>t.sid===s.id));
+                const geplant=Object.entries(termine).filter(([d])=>d>td2).flatMap(([d,ts])=>ts.filter(t=>t.sid===s.id));
+                const gefahren=alleTermine.length;
+                const offen=geplant.length;
+                return gefahren+" gefahren · "+offen+" geplant";
+              })()
+            }</div>
           </div>
           <span class="badge badge-${s.klasse}">${s.klasse}</span>
           <span class="status-dot ${dot}" style="${dot==="dot-amber"?"background:var(--accent)":dot==="dot-green"?"background:#639922":"background:#378ADD"}"></span>
