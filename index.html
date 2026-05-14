@@ -181,7 +181,7 @@ const FARBEN=[{key:"blue",bg:"#B5D4F4",tx:"#0C447C"},{key:"teal",bg:"#9FE1CB",tx
 const KLASSEN=["B","BA","B197","B17"];
 const PRUFORTE=["DEKRA Pankow","DEKRA Ferdi","TÜV Hornbach"];
 const GRUNDFAHRAUFGABEN=[{key:"laengs",label:"Einparken längs"},{key:"rechts",label:"Einparken rechts"},{key:"umkehr",label:"Umkehren"},{key:"rueckwaerts",label:"Rückwärts um die Ecke"},{key:"stopp_mit",label:"Stopschild mit Haltelinie"},{key:"stopp_ohne",label:"Stopschild ohne Haltelinie"}];
-const SONDER=[{key:"ueberland",label:"Überlandfahrt",icon:"ti-trees"},{key:"autobahn",label:"Autobahnfahrt",icon:"ti-road"},{key:"nacht",label:"Nachtfahrt",icon:"ti-moon"}];
+const SONDER=[{key:"ueberland",label:"Überlandfahrt",icon:"ti-trees",min:225},{key:"autobahn",label:"Autobahnfahrt",icon:"ti-road",min:220},{key:"nacht",label:"Nachtfahrt",icon:"ti-moon",min:135}];
 const MONATE=["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
 const MONATE_K=["Jan","Feb","Mär","Apr","Mai","Jun","Jul","Aug","Sep","Okt","Nov","Dez"];
 const START_DATE=new Date(2026,3,15);
@@ -431,7 +431,7 @@ function renderSchueler(sid){
 
       <div><div class="sec-label">Sonderfahrten</div>
       <div class="sonder-progress">
-        ${SONDER.map((sf,i)=>{const done=s.sonder[i],next=!done&&i===nsi;return`<div class="sp-step ${done?"done":next?"next":""}"><i class="ti ${done?"ti-circle-check":next?"ti-circle-dashed":"ti-circle"}"></i>${sf.label}</div>`;}).join("")}
+        ${SONDER.map((sf,i)=>{const done=s.sonder[i],next=!done&&i===nsi;return`<div class="sp-step ${done?"done":next?"next":""}"><i class="ti ${done?"ti-circle-check":next?"ti-circle-dashed":"ti-circle"}"></i>${sf.label}<span style="font-size:9px;opacity:.7">${sf.min} min</span></div>`;}).join("")}
       </div></div>
 
       <div><div class="sec-label">Grundfahraufgaben</div>
@@ -621,7 +621,7 @@ function renderNeuFahrstunde(sid){
     ${SONDER.map((sf,i)=>{
       const done=s.sonder[i],isNext=i===nsi,locked=!done&&!isNext;
       return`<div class="sonder-btn-row ${done?"done":""}">
-        <span class="sonder-btn-label"><i class="ti ${sf.icon}"></i>${i+1}. ${sf.label}${locked?` <span style="font-size:10px;color:var(--tx3)">(gesperrt)</span>`:""}</span>
+        <span class="sonder-btn-label"><i class="ti ${sf.icon}"></i>${i+1}. ${sf.label} <span style="font-size:11px;color:var(--tx3)">${sf.min} min</span>${locked?` <span style="font-size:10px;color:var(--tx3)">(gesperrt)</span>`:""}</span>
         <label class="toggle-wrap"><input type="checkbox" id="sf-${sf.key}" ${done?"checked disabled":""} ${locked?"disabled":""}/><div class="toggle-track ${locked||done?"locked":""}"></div><div class="toggle-thumb"></div></label>
       </div>`;
     }).join("")}
