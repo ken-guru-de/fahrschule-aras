@@ -6,539 +6,370 @@
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="Fahrschule"/>
-<meta name="theme-color" content="#1a2744" media="(prefers-color-scheme: light)"/>
-<meta name="theme-color" content="#1c1c1e" media="(prefers-color-scheme: dark)"/>
+<meta name="theme-color" content="#1a2744"/>
 <title>Fahrschule</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css"/>
 <style>
 :root {
-  --bg: #ffffff; --bg2: #f5f5f5; --bg3: #efefef;
-  --tx: #111111; --tx2: #666666; --tx3: #999999;
-  --br: rgba(0,0,0,0.12); --br2: rgba(0,0,0,0.22);
-  --r-md: 8px; --r-lg: 12px;
-  --accent: #FF6B2B; --accent2: #ff8c55; --accent-dark: #1a2744; --accent-tx: #ffffff;
-  --safe-top: env(safe-area-inset-top, 59px);
-  --safe-bot: env(safe-area-inset-bottom, 34px);
+  --bg:#ffffff;--bg2:#f5f5f5;--bg3:#efefef;
+  --tx:#111111;--tx2:#666666;--tx3:#999999;
+  --br:rgba(0,0,0,0.12);--br2:rgba(0,0,0,0.22);
+  --r-md:8px;--r-lg:12px;
+  --accent:#FF6B2B;--accent2:#ff8c55;--accent-dark:#1a2744;--accent-tx:#ffffff;
+  --safe-top:env(safe-area-inset-top,59px);--safe-bot:env(safe-area-inset-bottom,34px);
 }
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #1c1c1e; --bg2: #2c2c2e; --bg3: #3a3a3c;
-    --tx: #f2f2f7; --tx2: #aeaeb2; --tx3: #636366;
-    --br: rgba(255,255,255,0.1); --br2: rgba(255,255,255,0.2);
-    --accent: #FF6B2B; --accent2: #ff8c55; --accent-dark: #1a2744; --accent-tx: #ffffff;
-  }
-}
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-html, body { height: 100%; background: var(--bg); color: var(--tx); font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif; overflow: hidden; }
-
-.app { display: flex; flex-direction: column; height: 100%; }
-.screen { display: none; flex-direction: column; height: 100%; }
-.screen.active { display: flex; }
-
-/* TOPBAR */
-.topbar {
-  display: flex; align-items: center; gap: 8px;
-  padding: calc(var(--safe-top) + 10px) 20px 12px;
-  border-bottom: none;
-  background: var(--accent-dark); flex-shrink: 0; min-height: 52px;
-}
-.topbar-title { font-size: 18px; font-weight: 600; flex: 1; color: white; }
-.btn-icon { background: none; border: none; cursor: pointer; color: rgba(255,255,255,0.85); font-size: 22px; display: flex; align-items: center; padding: 8px; border-radius: 10px; min-width: 44px; min-height: 44px; justify-content: center; }
-.btn-icon:active { background: rgba(255,255,255,0.15); }
-
-/* SCROLL BODY */
-.scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 16px 20px calc(var(--safe-bot) + 24px); display: flex; flex-direction: column; gap: 14px; overscroll-behavior: contain; }
-
-/* GRUNDFAHRAUFGABEN */
-.gfa-row { display: flex; align-items: center; padding: 11px 14px; border-bottom: 0.5px solid var(--br); }
-.gfa-row:last-child { border-bottom: none; }
-.gfa-label { flex: 1; font-size: 15px; color: var(--tx); }
-.gfa-controls { display: flex; align-items: center; gap: 10px; }
-.gfa-count { font-size: 17px; font-weight: 600; min-width: 28px; text-align: center; color: var(--tx); }
-.gfa-btn { width: 32px; height: 32px; border-radius: 50%; border: 0.5px solid var(--br2); background: var(--bg2); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--tx2); font-family: inherit; line-height: 1; }
-.gfa-btn:active { transform: scale(0.9); background: var(--accent); color: white; border-color: var(--accent); }
-
-/* PRUEFUNG */
-.pruef-result-item { background: var(--bg); border: 0.5px solid var(--br); border-radius: var(--r-lg); padding: 10px 14px; display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
-.pruef-versuch { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; flex-shrink: 0; }
-.pruef-best { background: #EAF3DE; color: #27500A; }
-.pruef-nicht { background: #FCEBEB; color: #A32D2D; }
-.stat-card { background: var(--bg); border: 0.5px solid var(--br); border-radius: var(--r-lg); padding: 14px 16px; }
-.stat-card-title { font-size: 13px; color: var(--tx2); margin-bottom: 10px; }
-.stat-bar-wrap { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
-.stat-bar-label { font-size: 12px; color: var(--tx2); min-width: 28px; }
-.stat-bar-bg { flex: 1; height: 8px; border-radius: 4px; background: var(--bg3); }
-.stat-bar-fill { height: 8px; border-radius: 4px; background: var(--accent); }
-.stat-bar-val { font-size: 12px; color: var(--tx2); min-width: 28px; text-align: right; }
-
-/* PULL TO REFRESH */
-.ptr-wrap { position: relative; flex: 1; overflow: hidden; display: flex; flex-direction: column; }
-.ptr-indicator {
-  position: absolute; top: -56px; left: 0; right: 0;
-  height: 56px; display: flex; align-items: center; justify-content: center;
-  transition: top 0.2s ease; z-index: 10; pointer-events: none;
-}
-.ptr-indicator.visible { top: 0; }
-.ptr-spinner {
-  width: 28px; height: 28px; border-radius: 50%;
-  border: 2.5px solid rgba(255,107,43,0.25);
-  border-top-color: var(--accent);
-  animation: none;
-}
-.ptr-spinner.spinning { animation: ptr-spin 0.7s linear infinite; }
-@keyframes ptr-spin { to { transform: rotate(360deg); } }
-.ptr-spinner.arc {
-  background: none;
-  transform-origin: center;
-}
-
-/* SECTIONS */
-.sec-label { font-size: 12px; font-weight: 600; color: var(--tx3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
-.sec-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
-
-/* CARDS */
-.card { background: var(--bg); border: 0.5px solid var(--br); border-radius: var(--r-lg); overflow: hidden; }
-.card-row { display: flex; align-items: center; gap: 10px; padding: 13px 16px; border-bottom: 0.5px solid var(--br); min-height: 52px; }
-.card-row:last-child { border-bottom: none; }
-.card-label { font-size: 15px; color: var(--tx2); display: flex; align-items: center; gap: 6px; min-width: 130px; flex-shrink: 0; }
-.card-label i { font-size: 15px; }
-.card-val { font-size: 13px; font-weight: 500; flex: 1; text-align: right; color: var(--tx); }
-.card-row input, .card-row select, .card-row textarea {
-  flex: 1; border: none; background: transparent; font-size: 15px; color: var(--tx);
-  font-family: inherit; outline: none; text-align: right;
-}
-.card-row textarea { text-align: left; resize: none; }
-.card-row select option { background: var(--bg); }
-
-/* STAT GRID */
-.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.stat-box { background: var(--bg2); border-radius: var(--r-md); padding: 10px 12px; }
-.stat-box.accent { background: var(--accent-dark); }
-.stat-box.accent .stat-lbl { color: rgba(255,255,255,0.7); }
-.stat-box.accent .stat-num { color: white; }
-.stat-box.accent .stat-unit { color: rgba(255,255,255,0.6); }
-.stat-lbl { font-size: 11px; color: var(--tx2); margin-bottom: 3px; }
-.stat-num { font-size: 24px; font-weight: 600; color: var(--tx); line-height: 1.1; }
-.stat-unit { font-size: 12px; color: var(--tx2); font-weight: 400; margin-left: 2px; }
-
-/* MINUTE COUNTER */
-.min-counter { background: var(--bg2); border-radius: var(--r-md); padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; }
-.min-counter-left .stat-lbl { font-size: 11px; color: var(--tx2); margin-bottom: 3px; }
-.min-counter-left .stat-num { font-size: 22px; font-weight: 600; }
-.min-btns { display: flex; flex-direction: column; gap: 5px; align-items: flex-end; }
-.min-btn-row { display: flex; align-items: center; gap: 6px; }
-.min-btn-row span { font-size: 11px; color: var(--tx3); min-width: 42px; text-align: center; }
-.cir-btn { width: 28px; height: 28px; border-radius: 50%; border: 0.5px solid var(--br2); background: var(--bg); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; color: var(--tx2); line-height: 1; }
-.cir-btn:active { transform: scale(0.9); }
-.min-reset { font-size: 11px; color: var(--tx3); background: none; border: none; cursor: pointer; font-family: inherit; margin-top: 2px; }
-
-/* LIST ITEMS */
-.list-item { background: var(--bg); border: 0.5px solid var(--br); border-radius: var(--r-lg); padding: 13px 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; min-height: 64px; }
-.list-item:active { background: var(--bg2); }
-.avatar { width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 600; flex-shrink: 0; }
-.av-blue   { background: #B5D4F4; color: #0C447C; }
-.av-teal   { background: #9FE1CB; color: #085041; }
-.av-purple { background: #CECBF6; color: #3C3489; }
-.av-coral  { background: #F5C4B3; color: #712B13; }
-.av-green  { background: #C0DD97; color: #27500A; }
-.av-amber  { background: #FAC775; color: #633806; }
-.item-info { flex: 1; min-width: 0; }
-.item-name { font-size: 16px; font-weight: 500; }
-.item-sub  { font-size: 13px; color: var(--tx2); margin-top: 3px; }
-.badge { font-size: 12px; font-weight: 500; padding: 4px 10px; border-radius: 20px; flex-shrink: 0; }
-.badge-B    { background: var(--accent-dark); color: white; }
-.badge-BA   { background: var(--accent); color: white; }
-.badge-B197 { background: #3C3489; color: white; }
-.badge-B17  { background: #27500A; color: white; }
-.status-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.dot-green { background: #639922; } .dot-amber { background: var(--accent); } .dot-blue { background: #378ADD; }
-
-/* SWIPE DELETE */
-.swipe-wrap { position: relative; overflow: hidden; border-radius: var(--r-lg); margin-bottom: 6px; }
-.swipe-del-bg { position: absolute; right: 0; top: 0; bottom: 0; width: 80px; background: #E24B4A; display: flex; align-items: center; justify-content: center; color: white; font-size: 22px; border-radius: var(--r-lg); }
-.swipe-item { position: relative; transition: transform 0.2s ease; touch-action: pan-y; background: var(--bg); border-radius: var(--r-lg); }
-.swipe-item.swiped { transform: translateX(-80px); }
-
-/* SEARCH */
-.search-wrap { position: relative; }
-.search-wrap input { width: 100%; height: 44px; padding: 0 12px 0 38px; border: 0.5px solid var(--br2); border-radius: var(--r-lg); background: var(--bg2); color: var(--tx); font-size: 16px; font-family: inherit; outline: none; }
-.search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--tx3); font-size: 18px; pointer-events: none; }
-
-/* BUTTONS */
-.btn-full { width: 100%; padding: 15px; background: var(--bg); border: 0.5px solid var(--br2); border-radius: var(--r-lg); font-size: 17px; font-weight: 500; color: var(--tx); cursor: pointer; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 54px; }
-.btn-full:active { transform: scale(0.98); background: var(--bg2); }
-.btn-full.primary { background: var(--accent); color: white; border-color: var(--accent); }
-.btn-full.primary:active { background: var(--accent2); }
-.fab-btn { background: none; border: none; cursor: pointer; color: var(--tx2); font-size: 22px; display: flex; align-items: center; padding: 4px; }
-
-/* TOAST */
-.toast { display: none; background: var(--accent-dark); color: white; border: none; border-radius: var(--r-md); padding: 10px 14px; font-size: 13px; align-items: center; gap: 8px; flex-shrink: 0; }
-.toast.show { display: flex; }
-
-/* MIN SELECT PILLS */
-.pill-row { display: flex; gap: 6px; justify-content: flex-end; flex: 1; flex-wrap: wrap; }
-.pill { padding: 8px 16px; border-radius: 20px; border: 0.5px solid var(--br2); background: var(--bg2); font-size: 15px; color: var(--tx2); cursor: pointer; font-family: inherit; min-height: 44px; display: flex; align-items: center; }
-.pill.active { background: var(--accent); color: white; border-color: var(--accent); }
-.andere-row { display: flex; align-items: center; gap: 10px; padding: 0 14px; max-height: 0; overflow: hidden; border-top: 0px solid var(--br); transition: max-height 0.2s, padding 0.2s, border-top-width 0.1s; }
-.andere-row.open { max-height: 60px; padding: 10px 14px; border-top: 0.5px solid var(--br); }
-.andere-row input { flex: 1; border: none; background: transparent; font-size: 13px; color: var(--tx); font-family: inherit; outline: none; text-align: right; }
-
-/* FARBE DOTS */
-.farb-row { display: flex; gap: 8px; justify-content: flex-end; flex: 1; }
-.farb-dot { width: 26px; height: 26px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; }
-.farb-dot.sel { border-color: var(--tx); }
-
-/* SONDER PROGRESS */
-.sonder-progress { display: flex; border: 0.5px solid var(--br); border-radius: var(--r-lg); overflow: hidden; }
-.sp-step { flex: 1; padding: 8px 6px; display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 10px; text-align: center; border-right: 0.5px solid var(--br); color: var(--tx3); }
-.sp-step:last-child { border-right: none; }
-.sp-step i { font-size: 16px; }
-.sp-step.done { background: var(--accent-dark); color: white; }
-.sp-step.next { background: rgba(255,107,43,0.12); color: var(--accent); }
-
-
-
-/* TOGGLE */
-.toggle-wrap { position: relative; width: 51px; height: 31px; flex-shrink: 0; }
-.toggle-wrap input { opacity: 0; width: 0; height: 0; position: absolute; }
-.toggle-track { position: absolute; inset: 0; border-radius: 16px; background: var(--bg3); border: 0.5px solid var(--br2); cursor: pointer; transition: background 0.15s; }
-.toggle-track.locked { cursor: not-allowed; opacity: 0.4; }
-.toggle-thumb { position: absolute; top: 3px; left: 3px; width: 25px; height: 25px; border-radius: 50%; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.3); transition: transform 0.15s; pointer-events: none; }
-.toggle-wrap input:checked + .toggle-track { background: var(--accent); border-color: var(--accent); }
-.toggle-wrap input:checked + .toggle-track + .toggle-thumb { transform: translateX(20px); }
-.sonder-btn-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-bottom: 0.5px solid var(--br); }
-.sonder-btn-row:last-child { border-bottom: none; }
-.sonder-btn-row.done { background: rgba(255,107,43,0.1); }
-.sonder-btn-row.done .sonder-btn-label { color: var(--accent); }
-.sonder-btn-label { font-size: 13px; color: var(--tx2); display: flex; align-items: center; gap: 8px; }
-.sonder-btn-label i { font-size: 15px; }
-
-/* CALENDAR */
-.month-nav { display: flex; align-items: center; justify-content: space-between; padding: 10px 20px; border-bottom: 0.5px solid var(--br); flex-shrink: 0; }
-.month-label { font-size: 17px; font-weight: 600; }
-.weekdays { display: grid; grid-template-columns: repeat(5,1fr); padding: 10px 12px 4px; flex-shrink: 0; }
-.wd { text-align: center; font-size: 12px; font-weight: 600; color: var(--tx3); letter-spacing: 0.03em; }
-.cal-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
-.cal-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 3px; padding: 4px 12px 12px; }
-.cal-day { min-height: 58px; border-radius: var(--r-md); padding: 5px; cursor: pointer; border: 0.5px solid transparent; display: flex; flex-direction: column; gap: 2px; }
-.cal-day:active { background: var(--bg2); }
-.cal-day.today { border-color: var(--accent); background: rgba(255,107,43,0.1); }
-.cal-day.sel { background: rgba(255,107,43,0.12); border-color: var(--accent); }
-.cal-day.disabled { cursor: default; opacity: 0.25; pointer-events: none; }
-.cal-day.past .day-num { color: var(--tx3); }
-.day-num { font-size: 15px; font-weight: 500; color: var(--tx); line-height: 1; }
-.cal-day.today .day-num { color: var(--accent); }
-.dot-row { display: flex; gap: 2px; flex-wrap: wrap; }
-.cdot { width: 5px; height: 5px; border-radius: 50%; }
-.cdot-b { background: #378ADD; } .cdot-o { background: #BA7517; }
-.cal-day-detail { padding: 10px 16px; border-top: 0.5px solid var(--br); flex-shrink: 0; }
-.spacer-day { min-height: 48px; }
-
-/* DETAIL HEADER */
-.detail-header { padding: 14px 16px 12px; border-bottom: 0.5px solid var(--br); flex-shrink: 0; }
-.detail-avatar-row { display: flex; align-items: center; gap: 14px; }
-.detail-avatar { width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 600; }
-
-/* FOTO AVATAR */
-.foto-circle { width: 80px; height: 80px; border-radius: 50%; overflow: hidden; flex-shrink: 0; position: relative; cursor: pointer; }
-.foto-circle img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.foto-circle .foto-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.35); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.15s; border-radius: 50%; }
-.foto-circle:active .foto-overlay { opacity: 1; }
-.foto-circle .foto-overlay i { color: white; font-size: 22px; }
-.foto-initials { width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 600; flex-shrink: 0; cursor: pointer; position: relative; }
-.foto-initials .foto-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.25); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.15s; border-radius: 50%; }
-.foto-initials:active .foto-overlay { opacity: 1; }
-.foto-initials .foto-overlay i { color: white; font-size: 20px; }
-
-/* NOTIZ */
-.notiz-area { width: 100%; min-height: 200px; border: none; background: transparent; font-size: 20px; line-height: 1.7; color: var(--tx); font-family: inherit; outline: none; resize: none; padding: 0; }
-
-/* PROGRESS BAR */
-
-
-/* TERMIN ITEMS */
-.termin-item { background: var(--bg); border: 0.5px solid var(--br); border-radius: var(--r-lg); padding: 9px 12px; display: flex; align-items: center; gap: 10px; }
-.t-avatar { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; flex-shrink: 0; }
-.t-info { flex: 1; }
-.t-name { font-size: 13px; font-weight: 500; }
-.t-sub  { font-size: 11px; color: var(--tx2); margin-top: 1px; }
-.t-del { background: none; border: none; cursor: pointer; color: var(--tx3); font-size: 16px; padding: 3px; display: flex; align-items: center; }
-.t-del:active { color: #E24B4A; }
-
-/* PRUEF CARD */
-.pruef-card { background: var(--accent-dark); border: none; border-radius: var(--r-lg); padding: 12px 14px; display: flex; align-items: center; gap: 12px; }
-
-/* INFO ROW */
-.info-row { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 0.5px solid var(--br); min-height: 52px; }
-.info-row:last-child { border-bottom: none; }
-.info-lbl { font-size: 15px; color: var(--tx2); display: flex; align-items: center; gap: 6px; min-width: 140px; }
-.info-lbl i { font-size: 14px; }
-.info-val { font-size: 15px; font-weight: 500; flex: 1; text-align: right; }
-
-.empty-hint { text-align: center; padding: 24px 0; font-size: 13px; color: var(--tx3); }
-.err-border { outline: 2px solid #E24B4A !important; border-radius: 4px; }
+@media(prefers-color-scheme:dark){:root{--bg:#1c1c1e;--bg2:#2c2c2e;--bg3:#3a3a3c;--tx:#f2f2f7;--tx2:#aeaeb2;--tx3:#636366;--br:rgba(255,255,255,0.1);--br2:rgba(255,255,255,0.2);}}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;background:var(--bg);color:var(--tx);font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;overflow:hidden;}
+.app{display:flex;flex-direction:column;height:100%;}
+.screen{display:none;flex-direction:column;height:100%;}
+.screen.active{display:flex;}
+.topbar{display:flex;align-items:center;gap:8px;padding:calc(var(--safe-top) + 10px) 20px 12px;border-bottom:none;background:var(--accent-dark);flex-shrink:0;min-height:52px;}
+.topbar-title{font-size:18px;font-weight:600;flex:1;color:white;}
+.btn-icon{background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.85);font-size:22px;display:flex;align-items:center;padding:8px;border-radius:10px;min-width:44px;min-height:44px;justify-content:center;}
+.btn-icon:active{background:rgba(255,255,255,0.15);}
+.btn-icon.dark{color:var(--tx2);}
+.btn-icon.dark:active{background:var(--bg2);}
+.scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 20px calc(var(--safe-bot) + 24px);display:flex;flex-direction:column;gap:14px;overscroll-behavior:contain;}
+.sec-label{font-size:12px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}
+.sec-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.card{background:var(--bg);border:.5px solid var(--br);border-radius:var(--r-lg);overflow:hidden;}
+.card-row{display:flex;align-items:center;gap:10px;padding:13px 16px;border-bottom:.5px solid var(--br);min-height:52px;}
+.card-row:last-child{border-bottom:none;}
+.card-label{font-size:15px;color:var(--tx2);display:flex;align-items:center;gap:6px;min-width:130px;flex-shrink:0;}
+.card-label i{font-size:15px;}
+.card-row input,.card-row select,.card-row textarea{flex:1;border:none;background:transparent;font-size:15px;color:var(--tx);font-family:inherit;outline:none;text-align:right;}
+.card-row input[type=text],.card-row input[type=tel],.card-row input[type=search],.card-row textarea{text-align:left;}
+.card-row textarea{text-align:left;resize:none;}
+.card-row select option{background:var(--bg);}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.stat-box{background:var(--bg2);border-radius:var(--r-md);padding:10px 12px;}
+.stat-box.accent{background:var(--accent-dark);}
+.stat-box.accent .stat-lbl{color:rgba(255,255,255,0.7);}
+.stat-box.accent .stat-num{color:white;}
+.stat-box.accent .stat-unit{color:rgba(255,255,255,0.6);}
+.stat-lbl{font-size:11px;color:var(--tx2);margin-bottom:3px;}
+.stat-num{font-size:24px;font-weight:600;color:var(--tx);line-height:1.1;}
+.stat-unit{font-size:12px;color:var(--tx2);font-weight:400;margin-left:2px;}
+.list-item{background:var(--bg);border:.5px solid var(--br);border-radius:var(--r-lg);padding:13px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;min-height:64px;}
+.list-item:active{background:var(--bg2);}
+.avatar{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600;flex-shrink:0;}
+.av-blue{background:#B5D4F4;color:#0C447C;}
+.av-teal{background:#9FE1CB;color:#085041;}
+.av-purple{background:#CECBF6;color:#3C3489;}
+.av-coral{background:#F5C4B3;color:#712B13;}
+.av-green{background:#C0DD97;color:#27500A;}
+.av-amber{background:#FAC775;color:#633806;}
+.item-name{font-size:16px;font-weight:500;}
+.item-sub{font-size:13px;color:var(--tx2);margin-top:3px;}
+.item-info{flex:1;min-width:0;}
+.badge{font-size:12px;font-weight:500;padding:4px 10px;border-radius:20px;flex-shrink:0;}
+.badge-B{background:var(--accent-dark);color:white;}
+.badge-BA{background:var(--accent);color:white;}
+.badge-B197{background:#3C3489;color:white;}
+.badge-B17{background:#27500A;color:white;}
+.status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.dot-blue{background:#378ADD;}
+.search-wrap{position:relative;}
+.search-wrap input{width:100%;height:44px;padding:0 12px 0 38px;border:.5px solid var(--br2);border-radius:var(--r-lg);background:var(--bg2);color:var(--tx);font-size:16px;font-family:inherit;outline:none;}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--tx3);font-size:18px;pointer-events:none;}
+.btn-full{width:100%;padding:15px;background:var(--bg);border:.5px solid var(--br2);border-radius:var(--r-lg);font-size:17px;font-weight:500;color:var(--tx);cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;min-height:54px;}
+.btn-full:active{transform:scale(.98);background:var(--bg2);}
+.btn-full.gruen{background:#EAF3DE;border-color:#97C459;color:#27500A;}
+.btn-full.rot{background:#FCEBEB;border-color:#F09595;color:#A32D2D;}
+.btn-full.danger{color:#E24B4A;border-color:#E24B4A;}
+.fab-btn{background:none;border:none;cursor:pointer;color:var(--tx2);font-size:22px;display:flex;align-items:center;padding:4px;}
+.toast{display:none;background:var(--accent-dark);color:white;border:none;border-radius:var(--r-md);padding:10px 14px;font-size:13px;align-items:center;gap:8px;flex-shrink:0;}
+.toast.show{display:flex;}
+.pill{padding:8px 16px;border-radius:20px;border:.5px solid var(--br2);background:var(--bg2);font-size:15px;color:var(--tx2);cursor:pointer;font-family:inherit;min-height:44px;display:flex;align-items:center;}
+.pill.active{background:var(--accent);color:white;border-color:var(--accent);}
+.farb-row{display:flex;gap:8px;justify-content:flex-end;flex:1;}
+.farb-dot{width:26px;height:26px;border-radius:50%;cursor:pointer;border:2px solid transparent;}
+.farb-dot.sel{border-color:var(--tx);}
+.toggle-wrap{position:relative;width:51px;height:31px;flex-shrink:0;}
+.toggle-wrap input{opacity:0;width:0;height:0;position:absolute;}
+.toggle-track{position:absolute;inset:0;border-radius:16px;background:var(--bg3);border:.5px solid var(--br2);cursor:pointer;transition:background .15s;}
+.toggle-track.locked{cursor:not-allowed;opacity:.4;}
+.toggle-thumb{position:absolute;top:3px;left:3px;width:25px;height:25px;border-radius:50%;background:white;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:transform .15s;pointer-events:none;}
+.toggle-wrap input:checked+.toggle-track{background:var(--accent);border-color:var(--accent);}
+.toggle-wrap input:checked+.toggle-track+.toggle-thumb{transform:translateX(20px);}
+.sonder-btn-row{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:.5px solid var(--br);}
+.sonder-btn-row:last-child{border-bottom:none;}
+.sonder-btn-row.done{background:rgba(255,107,43,.1);}
+.sonder-btn-row.done .sonder-btn-label{color:var(--accent);}
+.sonder-btn-label{font-size:13px;color:var(--tx2);display:flex;align-items:center;gap:8px;}
+.sonder-btn-label i{font-size:15px;}
+.sonder-progress{display:flex;border:.5px solid var(--br);border-radius:var(--r-lg);overflow:hidden;}
+.sp-step{flex:1;padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;text-align:center;border-right:.5px solid var(--br);color:var(--tx3);}
+.sp-step:last-child{border-right:none;}
+.sp-step i{font-size:16px;}
+.sp-step.done{background:var(--accent-dark);color:white;}
+.sp-step.next{background:rgba(255,107,43,.12);color:var(--accent);}
+.info-row{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:.5px solid var(--br);min-height:52px;}
+.info-row:last-child{border-bottom:none;}
+.info-lbl{font-size:15px;color:var(--tx2);display:flex;align-items:center;gap:6px;min-width:140px;}
+.info-lbl i{font-size:14px;}
+.info-val{font-size:15px;font-weight:500;flex:1;text-align:right;}
+.pruef-card{background:var(--accent-dark);border:none;border-radius:var(--r-lg);padding:12px 14px;display:flex;align-items:center;gap:12px;}
+.pruef-result-item{background:var(--bg);border:.5px solid var(--br);border-radius:var(--r-lg);padding:10px 14px;display:flex;align-items:center;gap:12px;margin-bottom:6px;}
+.pruef-versuch{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-shrink:0;}
+.pruef-best{background:#EAF3DE;color:#27500A;}
+.pruef-nicht{background:#FCEBEB;color:#A32D2D;}
+.gfa-row{display:flex;align-items:center;padding:11px 14px;border-bottom:.5px solid var(--br);}
+.gfa-row:last-child{border-bottom:none;}
+.gfa-label{flex:1;font-size:15px;color:var(--tx);}
+.gfa-controls{display:flex;align-items:center;gap:10px;}
+.gfa-count{font-size:17px;font-weight:600;min-width:28px;text-align:center;color:var(--tx);}
+.gfa-btn{width:32px;height:32px;border-radius:50%;border:.5px solid var(--br2);background:var(--bg2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--tx2);font-family:inherit;line-height:1;}
+.gfa-btn:active{transform:scale(.9);background:var(--accent);color:white;border-color:var(--accent);}
+.stat-card{background:var(--bg);border:.5px solid var(--br);border-radius:var(--r-lg);padding:14px 16px;}
+.stat-bar-wrap{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.stat-bar-label{font-size:12px;color:var(--tx2);min-width:28px;}
+.stat-bar-bg{flex:1;height:8px;border-radius:4px;background:var(--bg3);}
+.stat-bar-fill{height:8px;border-radius:4px;background:var(--accent);}
+.stat-bar-val{font-size:12px;color:var(--tx2);min-width:28px;text-align:right;}
+.month-nav{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;border-bottom:.5px solid var(--br);flex-shrink:0;}
+.month-label{font-size:17px;font-weight:600;}
+.weekdays{display:grid;grid-template-columns:repeat(5,1fr);padding:10px 12px 4px;flex-shrink:0;}
+.wd{text-align:center;font-size:12px;font-weight:600;color:var(--tx3);letter-spacing:.03em;}
+.cal-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.cal-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;padding:4px 12px 12px;}
+.cal-day{min-height:58px;border-radius:var(--r-md);padding:5px;cursor:pointer;border:.5px solid transparent;display:flex;flex-direction:column;gap:2px;}
+.cal-day:active{background:var(--bg2);}
+.cal-day.today{border-color:var(--accent);background:rgba(255,107,43,.1);}
+.cal-day.sel{background:rgba(255,107,43,.12);border-color:var(--accent);}
+.cal-day.disabled{cursor:default;opacity:.25;pointer-events:none;}
+.day-num{font-size:15px;font-weight:500;color:var(--tx);line-height:1;}
+.cal-day.today .day-num{color:var(--accent);}
+.dot-row{display:flex;gap:2px;flex-wrap:wrap;}
+.cdot{width:5px;height:5px;border-radius:50%;}
+.cdot-b{background:#378ADD;}.cdot-o{background:#BA7517;}
+.spacer-day{min-height:58px;}
+.termin-item{background:var(--bg);border:.5px solid var(--br);border-radius:var(--r-lg);padding:9px 12px;display:flex;align-items:center;gap:10px;}
+.t-avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0;}
+.t-info{flex:1;}
+.t-name{font-size:13px;font-weight:500;}
+.t-sub{font-size:11px;color:var(--tx2);margin-top:1px;}
+.t-del{background:none;border:none;cursor:pointer;color:var(--tx3);font-size:16px;padding:3px;display:flex;align-items:center;}
+.t-del:active{color:#E24B4A;}
+.cir-btn{width:32px;height:32px;border-radius:50%;border:.5px solid var(--br2);background:var(--bg2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--tx2);font-family:inherit;line-height:1;}
+.cir-btn:active{transform:scale(.93);}
+.notiz-area{width:100%;min-height:200px;border:none;background:transparent;font-size:20px;line-height:1.7;color:var(--tx);font-family:inherit;outline:none;resize:none;padding:0;}
+.empty-hint{text-align:center;padding:24px 0;font-size:13px;color:var(--tx3);}
+.err-border{outline:2px solid #E24B4A !important;border-radius:4px;}
+.foto-circle{width:80px;height:80px;border-radius:50%;overflow:hidden;flex-shrink:0;position:relative;cursor:pointer;}
+.foto-circle img{width:100%;height:100%;object-fit:cover;display:block;}
+.foto-circle .foto-overlay,.foto-initials .foto-overlay{position:absolute;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s;border-radius:50%;}
+.foto-circle:active .foto-overlay,.foto-initials:active .foto-overlay{opacity:1;}
+.foto-overlay i{color:white;font-size:22px;}
+.foto-initials{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:600;flex-shrink:0;cursor:pointer;position:relative;}
+.swipe-wrap{position:relative;overflow:hidden;border-radius:var(--r-lg);margin-bottom:6px;}
+.swipe-del-bg{position:absolute;right:0;top:0;bottom:0;width:80px;background:#E24B4A;display:flex;align-items:center;justify-content:center;color:white;font-size:22px;border-radius:var(--r-lg);}
+.swipe-item{position:relative;transition:transform .2s ease;touch-action:pan-y;background:var(--bg);border-radius:var(--r-lg);}
+.swipe-item.swiped{transform:translateX(-80px);}
+.ptr-wrap{position:relative;flex:1;overflow:hidden;display:flex;flex-direction:column;}
+.ptr-indicator{position:absolute;top:-56px;left:0;right:0;height:56px;display:flex;align-items:center;justify-content:center;transition:top .2s ease;z-index:10;pointer-events:none;}
+.ptr-spinner{width:28px;height:28px;border-radius:50%;border:2.5px solid rgba(255,107,43,.25);border-top-color:var(--accent);}
+@keyframes ptr-spin{to{transform:rotate(360deg);}}
+.ptr-spinner.spinning{animation:ptr-spin .7s linear infinite;}
 </style>
 </head>
 <body>
 <div class="app" id="app"></div>
-
 <script>
-// ── DATA ──────────────────────────────────────────────────────────────────────
-const FARBEN = [
-  { key:"blue",   bg:"#B5D4F4", tx:"#0C447C" },
-  { key:"teal",   bg:"#9FE1CB", tx:"#085041" },
-  { key:"purple", bg:"#CECBF6", tx:"#3C3489" },
-  { key:"coral",  bg:"#F5C4B3", tx:"#712B13" },
-  { key:"green",  bg:"#C0DD97", tx:"#27500A" },
-  { key:"amber",  bg:"#FAC775", tx:"#633806" },
-];
-const KLASSEN = ["B","BA","B197","B17"];
-const GRUNDFAHRAUFGABEN = [
-  { key:"laengs",      label:"Einparken längs" },
-  { key:"rechts",      label:"Einparken rechts" },
-  { key:"umkehr",      label:"Umkehren" },
-  { key:"rueckwaerts", label:"Rückwärts um die Ecke" },
-  { key:"stopp_mit",   label:"Stopschild mit Haltelinie" },
-  { key:"stopp_ohne",  label:"Stopschild ohne Haltelinie" },
-];
+const FARBEN=[{key:"blue",bg:"#B5D4F4",tx:"#0C447C"},{key:"teal",bg:"#9FE1CB",tx:"#085041"},{key:"purple",bg:"#CECBF6",tx:"#3C3489"},{key:"coral",bg:"#F5C4B3",tx:"#712B13"},{key:"green",bg:"#C0DD97",tx:"#27500A"},{key:"amber",bg:"#FAC775",tx:"#633806"}];
+const KLASSEN=["B","BA","B197","B17"];
+const PRUFORTE=["DEKRA Pankow","DEKRA Ferdi","TÜV Hornbach"];
+const GRUNDFAHRAUFGABEN=[{key:"laengs",label:"Einparken längs"},{key:"rechts",label:"Einparken rechts"},{key:"umkehr",label:"Umkehren"},{key:"rueckwaerts",label:"Rückwärts um die Ecke"},{key:"stopp_mit",label:"Stopschild mit Haltelinie"},{key:"stopp_ohne",label:"Stopschild ohne Haltelinie"}];
+const SONDER=[{key:"ueberland",label:"Überlandfahrt",icon:"ti-trees"},{key:"autobahn",label:"Autobahnfahrt",icon:"ti-road"},{key:"nacht",label:"Nachtfahrt",icon:"ti-moon"}];
+const MONATE=["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
+const MONATE_K=["Jan","Feb","Mär","Apr","Mai","Jun","Jul","Aug","Sep","Okt","Nov","Dez"];
+const START_DATE=new Date(2026,3,15);
 
-const SONDER = [
-  { key:"ueberland", label:"Überlandfahrt", icon:"ti-trees" },
-  { key:"autobahn",  label:"Autobahnfahrt", icon:"ti-road" },
-  { key:"nacht",     label:"Nachtfahrt",    icon:"ti-moon" },
-];
-const MONATE = ["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
-const MONATE_K = ["Jan","Feb","Mär","Apr","Mai","Jun","Jul","Aug","Sep","Okt","Nov","Dez"];
-const START_DATE = new Date(2026,3,15);
+function load(k,def){try{const v=localStorage.getItem(k);return v?JSON.parse(v):def;}catch(e){return def;}}
+function save(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+function saveAll(){save("fs_schueler",schueler);save("fs_termine",termine);}
 
-function load(k, def) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : def; } catch(e) { return def; } }
-function save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch(e) {} }
-
-let schueler = load("fs_schueler", [
-  { id:"s1", vorname:"Lena",  nachname:"Müller",  spitz:"Leni",  farbe:"blue",   klasse:"B",  beginn:"2025-01-03", prufort:"DEKRA Pankow", theorie:true,  stufe:3, sonder:[true,true,false], prueftermin:"2026-06-22", notiz:"Sehr motiviert. Schwäche: Spurwechsel auf der Autobahn.", fahrstunden:[{datum:"2026-04-16",einh:1,typ:"normal",thema:"Überlandfahrt"},{datum:"2026-04-22",einh:1,typ:"normal",thema:"Autobahnfahrt"}], pruefungen:[], gfa:{laengs:0,rechts:0,umkehr:0,rueckwaerts:0,stopp_mit:0,stopp_ohne:0} },
-  { id:"s2", vorname:"Tom",   nachname:"Fischer", spitz:"",      farbe:"purple", klasse:"BE", beginn:"2026-03-15", prufort:"Stuttgart",  theorie:false, stufe:1, sonder:[false,false,false], prueftermin:"", notiz:"", fahrstunden:[], pruefungen:[], gfa:{laengs:0,rechts:0,umkehr:0,rueckwaerts:0,stopp_mit:0,stopp_ohne:0} },
-  { id:"s3", vorname:"Sara",  nachname:"Wagner",  spitz:"",      farbe:"coral",  klasse:"A",  beginn:"2024-11-10", prufort:"Mannheim",   theorie:true,  stufe:4, sonder:[true,true,true],  prueftermin:"2026-06-08", notiz:"Prüfung in Mannheim, Treffpunkt 07:45 Uhr.", fahrstunden:[], pruefungen:[], gfa:{laengs:0,rechts:0,umkehr:0,rueckwaerts:0,stopp_mit:0,stopp_ohne:0} },
-  { id:"s4", vorname:"Max",   nachname:"Becker",  spitz:"Maxi", farbe:"teal",   klasse:"B",  beginn:"2026-02-20", prufort:"Heidelberg", theorie:true,  stufe:2, sonder:[true,false,false], prueftermin:"", notiz:"", fahrstunden:[], pruefungen:[], gfa:{laengs:0,rechts:0,umkehr:0,rueckwaerts:0,stopp_mit:0,stopp_ohne:0} },
-  { id:"s5", vorname:"Julia", nachname:"Schäfer", spitz:"",      farbe:"green",  klasse:"AM", beginn:"2026-04-05", prufort:"Freiburg",   theorie:false, stufe:1, sonder:[false,false,false], prueftermin:"", notiz:"", fahrstunden:[], pruefungen:[], gfa:{laengs:0,rechts:0,umkehr:0,rueckwaerts:0,stopp_mit:0,stopp_ohne:0} },
+let schueler=load("fs_schueler",[
+  {id:"s1",vorname:"Lena",nachname:"Müller",spitz:"Leni",farbe:"blue",klasse:"B",beginn:"2025-01-03",prufort:"DEKRA Pankow",theorie:true,sonder:[true,true,false],prueftermin:"2026-06-22",tel:"",notiz:"Sehr motiviert.",fahrstunden:[{datum:"2026-04-22",einh:1,typ:"normal",sonder:null}],pruefungen:[],gfa:{laengs:3,rechts:2,umkehr:1,rueckwaerts:0,stopp_mit:2,stopp_ohne:1},foto:null},
+  {id:"s2",vorname:"Tom",nachname:"Fischer",spitz:"",farbe:"purple",klasse:"B197",beginn:"2026-03-15",prufort:"DEKRA Ferdi",theorie:false,sonder:[false,false,false],prueftermin:"",tel:"",notiz:"",fahrstunden:[],pruefungen:[],gfa:{laengs:0,rechts:0,umkehr:0,rueckwaerts:0,stopp_mit:0,stopp_ohne:0},foto:null},
+  {id:"s3",vorname:"Sara",nachname:"Wagner",spitz:"",farbe:"coral",klasse:"BA",beginn:"2024-11-10",prufort:"TÜV Hornbach",theorie:true,sonder:[true,true,true],prueftermin:"2026-06-08",tel:"",notiz:"",fahrstunden:[],pruefungen:[],gfa:{laengs:4,rechts:3,umkehr:2,rueckwaerts:2,stopp_mit:1,stopp_ohne:2},foto:null},
+  {id:"s4",vorname:"Max",nachname:"Becker",spitz:"Maxi",farbe:"teal",klasse:"B",beginn:"2026-02-20",prufort:"DEKRA Pankow",theorie:true,sonder:[true,false,false],prueftermin:"",tel:"",notiz:"",fahrstunden:[],pruefungen:[],gfa:{laengs:1,rechts:0,umkehr:0,rueckwaerts:0,stopp_mit:0,stopp_ohne:0},foto:null},
+  {id:"s5",vorname:"Julia",nachname:"Schäfer",spitz:"",farbe:"green",klasse:"B17",beginn:"2026-04-05",prufort:"DEKRA Ferdi",theorie:false,sonder:[false,false,false],prueftermin:"",tel:"",notiz:"",fahrstunden:[],pruefungen:[],gfa:{laengs:0,rechts:0,umkehr:0,rueckwaerts:0,stopp_mit:0,stopp_ohne:0},foto:null}
 ]);
-let termine = load("fs_termine", {
-  "2026-04-22": [{sid:"s1",uhr:"09:00",min:80}],
-  "2026-04-24": [{sid:"s4",uhr:"11:20",min:80},{sid:"s3",uhr:"14:00",min:100}],
-  "2026-05-05": [{sid:"s1",uhr:"09:00",min:80}],
-  "2026-05-14": [{sid:"s3",uhr:"08:00",min:60}],
-});
-let tagesMin = load("fs_tagesmin", {date:"", min:0});
-let selFarbe = "blue";
-let gewMin = 80;
-let curYear = 2026, curMonth = 5;
-let selDate = null;
-let editSid = null;
+let termine=load("fs_termine",{"2026-05-14":[{sid:"s3",uhr:"08:00",min:60}],"2026-05-16":[{sid:"s1",uhr:"09:00",min:80},{sid:"s4",uhr:"11:20",min:80}]});
 
-function saveAll() {
-  save("fs_schueler", schueler);
-  save("fs_termine", termine);
-  save("fs_tagesmin", tagesMin);
-}
-
-// ── HELPERS ───────────────────────────────────────────────────────────────────
-function toKey(y,m,d) { return y+"-"+String(m).padStart(2,"0")+"-"+String(d).padStart(2,"0"); }
-function todayStr() { const t=new Date(); return toKey(t.getFullYear(),t.getMonth()+1,t.getDate()); }
-function initials(s) { return s.vorname[0]+s.nachname[0]; }
-function getS(id) { return schueler.find(s=>s.id===id); }
-function fmtDate(d) { const p=d.split("-"); return {day:parseInt(p[2]),mon:MONATE_K[parseInt(p[1])-1],year:p[0]}; }
-function isWeekday(y,m,d) { const dw=new Date(y,m-1,d).getDay(); return dw>=1&&dw<=5; }
-function isBefore(y,m,d) { return new Date(y,m-1,d)<START_DATE; }
-function todayTotalMin() {
-  const td = todayStr();
-  const t = termine[td] || [];
-  return t.reduce((a, e) => a + (e.min || 0), 0);
-}
-function nextSonder(s) { return s.sonder.findIndex(x=>!x); }
-function todayMinCheck() { /* auto-calculated from termine */ }
-function farbStyle(farbe) {
-  const f = FARBEN.find(x=>x.key===farbe)||FARBEN[0];
-  return `background:${f.bg};color:${f.tx}`;
-}
-
-// ── NAVIGATION ────────────────────────────────────────────────────────────────
-function show(id) {
-  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
-  const el = document.getElementById(id);
-  if (el) el.classList.add("active");
-}
+function toKey(y,m,d){return y+"-"+String(m).padStart(2,"0")+"-"+String(d).padStart(2,"0");}
+function todayStr(){const t=new Date();return toKey(t.getFullYear(),t.getMonth()+1,t.getDate());}
+function initials(s){return s.vorname[0]+s.nachname[0];}
+function getS(id){return schueler.find(s=>s.id===id);}
+function fmtDate(d){const p=d.split("-");return{day:parseInt(p[2]),mon:MONATE_K[parseInt(p[1])-1],year:p[0]};}
+function isWeekday(y,m,d){const dw=new Date(y,m-1,d).getDay();return dw>=1&&dw<=5;}
+function isBefore(y,m,d){return new Date(y,m-1,d)<START_DATE;}
+function nextSonder(s){return s.sonder.findIndex(x=>!x);}
+function todayTotalMin(){const td=todayStr();return(termine[td]||[]).reduce((a,e)=>a+(e.min||0),0);}
+function todayMinCheck(){}
+function farbStyle(farbe){const f=FARBEN.find(x=>x.key===farbe)||FARBEN[0];return`background:${f.bg};color:${f.tx}`;}
 
 // ── DASHBOARD ─────────────────────────────────────────────────────────────────
-function renderDashboard() {
-  todayMinCheck();
-  const td = todayStr();
-  const heuteTermine = (termine[td]||[]).sort((a,b)=>a.uhr.localeCompare(b.uhr));
-  const naechstePruef = schueler.filter(s=>s.prueftermin&&s.prueftermin>=td).sort((a,b)=>a.prueftermin.localeCompare(b.prueftermin)).slice(0,3);
+function renderDashboard(){
+  const td=todayStr();
+  const heuteTermine=(termine[td]||[]).sort((a,b)=>a.uhr.localeCompare(b.uhr));
+  const allePruef=[];
+  schueler.forEach(s=>{
+    if(s.prueftermin&&s.prueftermin>=td){
+      const exists=(s.pruefungen||[]).find(p=>p.datum===s.prueftermin);
+      if(!exists)allePruef.push({sid:s.id,datum:s.prueftermin,versuch:null,pi:-1,typ:"geplant"});
+    }
+    (s.pruefungen||[]).forEach((p,pi)=>{
+      if(p.bestanden===null||p.bestanden===undefined)
+        allePruef.push({sid:s.id,datum:p.datum,versuch:p.versuch,pi,typ:"offen"});
+    });
+  });
+  allePruef.sort((a,b)=>a.datum.localeCompare(b.datum));
 
-  let html = `
-  <div class="screen active" id="scr-dash">
+  let html=`<div class="screen active" id="scr-dash">
     <div class="topbar">
       <span class="topbar-title"><i class="ti ti-steering-wheel" style="font-size:19px;vertical-align:-2px;margin-right:6px"></i>Fahrschule</span>
       <button class="btn-icon" onclick="renderNeuSchueler()" aria-label="Schüler anlegen"><i class="ti ti-user-plus"></i></button>
-      <button class="btn-icon" onclick="renderKalender()" aria-label="Kalender"><i class="ti ti-calendar"></i></button>
+      <button class="btn-icon" onclick="renderStatistik()" aria-label="Statistik"><i class="ti ti-chart-bar"></i></button>
       <button class="btn-icon" onclick="renderListe()" aria-label="Schülerliste"><i class="ti ti-users"></i></button>
     </div>
     <div class="scroll">
       <div class="stat-grid">
         <div class="stat-box accent"><div class="stat-lbl">Aktive Schüler</div><div class="stat-num">${schueler.length}</div></div>
-        <div class="stat-box">
-          <div class="stat-lbl">Heute gefahren</div>
-          <div class="stat-num" id="dash-min">${todayTotalMin()}<span class="stat-unit">min</span></div>
-        </div>
+        <div class="stat-box"><div class="stat-lbl">Heute gefahren</div><div class="stat-num">${todayTotalMin()}<span class="stat-unit">min</span></div></div>
       </div>`;
 
-  if (heuteTermine.length) {
-    html += `<div><div class="sec-label">Heute</div>`;
+  html+=`<div><div class="sec-label">Heute</div>`;
+  if(heuteTermine.length){
     heuteTermine.forEach(t=>{
-      const s = getS(t.sid); if(!s) return;
-      const nick = s.spitz ? ` «${s.spitz}»` : "";
-      html += `<div class="list-item" style="margin-bottom:6px" onclick="renderSchueler('${s.id}')">
-        ${s.foto
-          ? `<div class="avatar" style="overflow:hidden;flex-shrink:0"><img src="${s.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/></div>`
-          : `${s.foto
-          ? `<div class="avatar" style="overflow:hidden;flex-shrink:0"><img src="${s.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/></div>`
-          : `<div class="avatar av-${s.farbe}">${initials(s)}</div>`
-        }`
-        }
+      const s=getS(t.sid);if(!s)return;
+      const nick=s.spitz?` «${s.spitz}»`:"";
+      html+=`<div class="list-item" style="margin-bottom:6px" onclick="renderSchueler('${s.id}')">
+        ${s.foto?`<div class="avatar" style="overflow:hidden;flex-shrink:0"><img src="${s.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/></div>`:`<div class="avatar av-${s.farbe}">${initials(s)}</div>`}
         <div class="item-info"><div class="item-name">${s.vorname}${nick}</div><div class="item-sub">${t.uhr} Uhr · ${t.min} min</div></div>
         <span class="badge badge-${s.klasse}">${s.klasse}</span>
       </div>`;
     });
-    html += `</div>`;
+  }else{
+    html+=`<div style="padding:12px 0;font-size:13px;color:var(--tx3)">Keine Termine heute</div>`;
   }
+  html+=`</div>`;
 
-  if (naechstePruef.length) {
-    html += `<div><div class="sec-label">Nächste Prüfungen</div>`;
-    naechstePruef.forEach(s=>{
-      const fd = fmtDate(s.prueftermin);
-      html += `<div class="list-item" style="margin-bottom:6px" onclick="renderSchueler('${s.id}')">
-        <span class="status-dot dot-amber"></span>
-        <div class="item-info"><div class="item-name">${s.vorname} ${s.nachname}</div><div class="item-sub">Klasse ${s.klasse} · ${s.prufort}</div></div>
-        <span style="font-size:12px;color:var(--tx2)">${fd.day}. ${fd.mon}</span>
+  if(allePruef.length){
+    html+=`<div><div class="sec-label">Prüfungen</div>`;
+    allePruef.forEach(ep=>{
+      const s2=getS(ep.sid);if(!s2)return;
+      const fd=fmtDate(ep.datum);
+      const vergangen=ep.datum<td;
+      const sub=ep.typ==="geplant"?`Klasse ${s2.klasse} · ${s2.prufort}`:`${ep.versuch}. Prüfung · Ergebnis ausstehend`;
+      html+=`<div class="list-item" style="margin-bottom:6px" onclick="showPruefResult('${ep.sid}','${ep.datum}',${ep.pi},'${ep.typ}')">
+        <span class="status-dot" style="background:${vergangen?"var(--accent)":"#378ADD"}"></span>
+        <div class="item-info"><div class="item-name">${s2.vorname} ${s2.nachname}</div><div class="item-sub">${sub}</div></div>
+        <span style="font-size:13px;color:var(--tx2);font-weight:500">${fd.day}. ${fd.mon}${vergangen?" ⚠️":""}</span>
       </div>`;
     });
-    html += `</div>`;
+    html+=`</div>`;
   }
 
-  html += `
-      <button class="btn-full" onclick="renderListe()"><i class="ti ti-users"></i> Alle Schüler</button>
-      <button class="btn-full" onclick="renderKalender()"><i class="ti ti-calendar"></i> Kalender öffnen</button>
-      <button class="btn-full" onclick="renderStatistik()"><i class="ti ti-chart-bar"></i> Statistik</button>
-      <button class="btn-full" onclick="renderNeuSchueler()"><i class="ti ti-user-plus"></i> Neuen Schüler anlegen</button>
-    </div>
-  </div>`;
-  document.getElementById("app").innerHTML = html;
+  html+=`<div style="display:flex;flex-direction:column;gap:8px">
+    <button class="btn-full" onclick="renderKalender()"><i class="ti ti-calendar"></i> Kalender</button>
+    <button class="btn-full" onclick="renderListe()"><i class="ti ti-users"></i> Alle Schüler</button>
+    <button class="btn-full" onclick="renderStatistik()"><i class="ti ti-chart-bar"></i> Statistik</button>
+    <button class="btn-full" onclick="renderNeuSchueler()"><i class="ti ti-user-plus"></i> Neuen Schüler anlegen</button>
+  </div></div></div>`;
+  document.getElementById("app").innerHTML=html;
+  setTimeout(initPTR,50);
 }
 
-
-
 // ── SCHÜLERLISTE ──────────────────────────────────────────────────────────────
-function renderListe(q="") {
-  const filtered = q ? schueler.filter(s=>(s.vorname+" "+s.nachname+" "+(s.spitz||"")).toLowerCase().includes(q.toLowerCase())) : schueler;
-  let html = `
-  <div class="screen active" id="scr-liste">
+function renderListe(q=""){
+  const td=todayStr();
+  const heuteIds=new Set((termine[td]||[]).map(t=>t.sid));
+  const basis=q?schueler.filter(s=>(s.vorname+" "+s.nachname+" "+(s.spitz||"")).toLowerCase().includes(q.toLowerCase())):schueler;
+  const filtered=[...basis].sort((a,b)=>{
+    const aH=heuteIds.has(a.id)?0:1;
+    const bH=heuteIds.has(b.id)?0:1;
+    return aH-bH;
+  });
+  let html=`<div class="screen active" id="scr-liste">
     <div class="topbar">
       <button class="btn-icon" onclick="renderDashboard()"><i class="ti ti-arrow-left"></i></button>
       <span class="topbar-title">Schüler</span>
       <button class="btn-icon" onclick="renderNeuSchueler()"><i class="ti ti-user-plus"></i></button>
     </div>
     <div class="scroll">
-      <div class="search-wrap"><i class="ti ti-search search-icon"></i><input type="search" placeholder="Suchen…" value="${q}" oninput="renderListe(this.value)" /></div>`;
-  if (!filtered.length) {
-    html += `<div class="empty-hint"><i class="ti ti-search" style="font-size:28px;display:block;margin:0 auto 8px"></i>Keine Schüler gefunden</div>`;
-  } else {
-    filtered.forEach(s => {
-      const dot = s.prueftermin ? "dot-amber" : s.stufe>=STUFEN.length ? "dot-green" : "dot-blue";
-      html += `<div class="swipe-wrap" id="wrap-${s.id}">
+      <div class="search-wrap">
+        <i class="ti ti-search search-icon"></i>
+        <input type="search" placeholder="Suchen…" value="${q}" oninput="renderListe(this.value)" id="search-input" style="padding-right:${q?'40px':'12px'}"/>
+        ${q?`<button onclick="renderListe('')" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--tx3);font-size:18px;display:flex;align-items:center;padding:4px"><i class="ti ti-x"></i></button>`:""}
+      </div>`;
+  if(!filtered.length){
+    html+=`<div class="empty-hint"><i class="ti ti-search" style="font-size:28px;display:block;margin:0 auto 8px"></i>Keine Schüler gefunden</div>`;
+  }else{
+    filtered.forEach(s=>{
+      const dot=s.prueftermin?"dot-amber":s.sonder.every(Boolean)?"dot-green":"dot-blue";
+      html+=`<div class="swipe-wrap" id="wrap-${s.id}">
         <div class="swipe-del-bg" onclick="confirmDelete('${s.id}')"><i class="ti ti-trash"></i></div>
         <div class="swipe-item list-item" id="swipe-${s.id}" onclick="handleTap('${s.id}')">
-          ${s.foto
-          ? `<div class="avatar" style="overflow:hidden;flex-shrink:0"><img src="${s.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/></div>`
-          : `${s.foto
-          ? `<div class="avatar" style="overflow:hidden;flex-shrink:0"><img src="${s.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/></div>`
-          : `<div class="avatar av-${s.farbe}">${initials(s)}</div>`
-        }`
-        }
+          ${s.foto?`<div class="avatar" style="overflow:hidden;flex-shrink:0"><img src="${s.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/></div>`:`<div class="avatar av-${s.farbe}">${initials(s)}</div>`}
           <div class="item-info">
-            <div class="item-name">${s.vorname} ${s.nachname}${s.spitz?' <span style="color:var(--tx3);font-size:12px">«'+s.spitz+'»</span>':''}</div>
+            <div class="item-name">${s.vorname} ${s.nachname}${s.spitz?` <span style="color:var(--tx3);font-size:12px">«${s.spitz}»</span>`:""}</div>
             <div class="item-sub">Beginn ${fmtDate(s.beginn).day}. ${fmtDate(s.beginn).mon} ${fmtDate(s.beginn).year} · ${(s.fahrstunden||[]).reduce((a,f)=>a+(f.typ==="normal"?f.einh:0),0)} Einh.</div>
           </div>
           <span class="badge badge-${s.klasse}">${s.klasse}</span>
-          <span class="status-dot ${dot}"></span>
+          <span class="status-dot ${dot}" style="${dot==="dot-amber"?"background:var(--accent)":""}"></span>
         </div>
       </div>`;
     });
   }
-  html += `</div></div>`;
-  document.getElementById("app").innerHTML = html;
+  html+=`</div></div>`;
+  document.getElementById("app").innerHTML=html;
   initSwipe();
-  setTimeout(initPTR, 50);
+  setTimeout(initPTR,50);
 }
 
-function initSwipe() {
-  document.querySelectorAll(".swipe-item").forEach(el => {
-    const sid = el.id.replace("swipe-","");
-    let startX, startY, dragging=false;
-    el.addEventListener("touchstart", e=>{
-      startX=e.touches[0].clientX; startY=e.touches[0].clientY; dragging=false;
-    },{passive:true});
-    el.addEventListener("touchmove", e=>{
-      const dx=e.touches[0].clientX-startX, dy=e.touches[0].clientY-startY;
-      if(!dragging && Math.abs(dy)>Math.abs(dx)+5) return;
+function initSwipe(){
+  document.querySelectorAll(".swipe-item").forEach(el=>{
+    const sid=el.id.replace("swipe-","");
+    let startX,startY,dragging=false;
+    el.addEventListener("touchstart",e=>{startX=e.touches[0].clientX;startY=e.touches[0].clientY;dragging=false;},{passive:true});
+    el.addEventListener("touchmove",e=>{
+      const dx=e.touches[0].clientX-startX,dy=e.touches[0].clientY-startY;
+      if(!dragging&&Math.abs(dy)>Math.abs(dx)+5)return;
       dragging=true;
       const base=el.classList.contains("swiped")?-80:0;
-      const tx=Math.max(Math.min(base+dx,0),-80);
       el.style.transition="none";
-      el.style.transform=`translateX(${tx}px)`;
+      el.style.transform=`translateX(${Math.max(Math.min(base+dx,0),-80)}px)`;
     },{passive:true});
-    el.addEventListener("touchend", e=>{
-      if(!dragging){ return; }
+    el.addEventListener("touchend",e=>{
+      if(!dragging)return;
       const dx=e.changedTouches[0].clientX-startX;
-      el.style.transition="transform 0.2s ease";
-      if(el.classList.contains("swiped")){
-        if(dx>30){ el.style.transform="translateX(0)"; el.classList.remove("swiped"); }
-        else { el.style.transform="translateX(-80px)"; }
-      } else {
-        if(dx<-30){ el.style.transform="translateX(-80px)"; el.classList.add("swiped"); }
-        else { el.style.transform="translateX(0)"; }
-      }
-      setTimeout(()=>{ el.style.transition=""; dragging=false; },220);
+      el.style.transition="transform .2s ease";
+      if(el.classList.contains("swiped")){if(dx>30){el.style.transform="translateX(0)";el.classList.remove("swiped");}else el.style.transform="translateX(-80px)";}
+      else{if(dx<-30){el.style.transform="translateX(-80px)";el.classList.add("swiped");}else el.style.transform="translateX(0)";}
+      setTimeout(()=>{el.style.transition="";dragging=false;},220);
     });
   });
 }
-
-function handleTap(sid) {
-  const el = document.getElementById("swipe-"+sid);
-  if(el && el.classList.contains("swiped")){
-    el.style.transition="transform 0.2s ease";
-    el.style.transform="translateX(0)";
-    el.classList.remove("swiped");
-    return;
-  }
+function handleTap(sid){
+  const el=document.getElementById("swipe-"+sid);
+  if(el&&el.classList.contains("swiped")){el.style.transition="transform .2s ease";el.style.transform="translateX(0)";el.classList.remove("swiped");return;}
   renderSchueler(sid);
 }
-
-function confirmDelete(sid) {
-  const s = getS(sid); if(!s) return;
-  if(confirm(`${s.vorname} ${s.nachname} wirklich löschen?`)){
-    schueler = schueler.filter(x=>x.id!==sid);
-    saveAll(); renderListe();
-  }
+function confirmDelete(sid){
+  const s=getS(sid);if(!s)return;
+  if(confirm(`${s.vorname} ${s.nachname} wirklich löschen?`)){schueler=schueler.filter(x=>x.id!==sid);saveAll();renderListe();}
 }
 
 // ── SCHÜLER DETAIL ────────────────────────────────────────────────────────────
-function renderSchueler(sid) {
-  const s = getS(sid);
-  if (!s) return;
-  const nsi = nextSonder(s);
-  const totalEinh = (s.fahrstunden||[]).reduce((a,f)=>a+(f.typ==="normal"?f.einh:0),0);
+function renderSchueler(sid){
+  const s=getS(sid);if(!s)return;
+  const nsi=nextSonder(s);
+  const totalEinh=(s.fahrstunden||[]).reduce((a,f)=>a+(f.typ==="normal"?f.einh:0),0);
 
-  let html = `
-  <div class="screen active" id="scr-detail">
+  let html=`<div class="screen active" id="scr-detail">
     <div class="topbar">
       <button class="btn-icon" onclick="renderListe()"><i class="ti ti-arrow-left"></i></button>
       <span class="topbar-title">${s.nachname}</span>
@@ -547,18 +378,12 @@ function renderSchueler(sid) {
     <div class="scroll">
       <div style="display:flex;align-items:center;gap:16px;padding-bottom:4px">
         ${s.foto
-          ? `<div class="foto-circle" onclick="triggerFotoUpload('${s.id}')">
-               <img src="${s.foto}" alt="${s.vorname}"/>
-               <div class="foto-overlay"><i class="ti ti-camera"></i></div>
-             </div>`
-          : `<div class="foto-initials av-${s.farbe}" style="${farbStyle(s.farbe)}" onclick="triggerFotoUpload('${s.id}')">
-               ${initials(s)}
-               <div class="foto-overlay"><i class="ti ti-camera"></i></div>
-             </div>`
+          ?`<div class="foto-circle" onclick="triggerFotoUpload('${s.id}')"><img src="${s.foto}" alt="${s.vorname}"/><div class="foto-overlay"><i class="ti ti-camera"></i></div></div>`
+          :`<div class="foto-initials av-${s.farbe}" style="${farbStyle(s.farbe)}" onclick="triggerFotoUpload('${s.id}')">${initials(s)}<div class="foto-overlay"><i class="ti ti-camera"></i></div></div>`
         }
-        <input type="file" id="foto-input-${s.id}" accept="image/*" style="display:none" onchange="saveFoto('${s.id}', this)"/>
+        <input type="file" id="foto-input-${s.id}" accept="image/*" style="display:none" onchange="saveFoto('${s.id}',this)"/>
         <div>
-          <div style="font-size:18px;font-weight:600">${s.vorname}${s.spitz?' <span style="font-size:14px;color:var(--tx3);font-weight:400">«'+s.spitz+'»</span>':''} ${s.nachname}</div>
+          <div style="font-size:18px;font-weight:600">${s.vorname}${s.spitz?` <span style="font-size:14px;color:var(--tx3);font-weight:400">«${s.spitz}»</span>`:""} ${s.nachname}</div>
           <div style="font-size:13px;color:var(--tx2);margin-top:2px">Klasse ${s.klasse} · ${s.prufort}</div>
           <div style="font-size:11px;color:var(--tx3);margin-top:3px">Foto antippen — Kamera oder Datei</div>
         </div>
@@ -572,64 +397,42 @@ function renderSchueler(sid) {
       <div><div class="sec-label">Stammdaten</div>
       <div class="card">
         <div class="info-row"><span class="info-lbl"><i class="ti ti-calendar-plus"></i>Beginn</span><span class="info-val">${fmtDate(s.beginn).day}. ${fmtDate(s.beginn).mon} ${fmtDate(s.beginn).year}</span></div>
-        <div class="info-row"><span class="info-lbl"><i class="ti ti-book"></i>Theorie</span><span class="info-val" style="color:${s.theorie?'#3B6D11':'#993C1D'}">${s.theorie?"✓ Bestanden":"✗ Ausstehend"}</span></div>
+        <div class="info-row"><span class="info-lbl"><i class="ti ti-book"></i>Theorie</span><span class="info-val" style="color:${s.theorie?"#3B6D11":"#993C1D"}">${s.theorie?"✓ Bestanden":"✗ Ausstehend"}</span></div>
         <div class="info-row"><span class="info-lbl"><i class="ti ti-map-pin"></i>Prüfort</span><span class="info-val">${s.prufort}</span></div>
+        ${s.tel?`<div class="info-row"><span class="info-lbl"><i class="ti ti-brand-whatsapp"></i>WhatsApp</span>
+          <a href="https://wa.me/${s.tel.replace(/[^0-9]/g,'')}" style="font-size:15px;font-weight:500;color:var(--accent);text-decoration:none" onclick="event.stopPropagation()">${s.tel}</a>
+        </div>`:""}
       </div></div>
-
-
 
       <div><div class="sec-label">Sonderfahrten</div>
       <div class="sonder-progress">
-        ${SONDER.map((sf,i)=>{
-          const done=s.sonder[i], next=!done&&i===nsi;
-          return `<div class="sp-step ${done?"done":next?"next":""}"><i class="ti ${done?"ti-circle-check":next?"ti-circle-dashed":"ti-circle"}"></i>${sf.label}</div>`;
-        }).join("")}
+        ${SONDER.map((sf,i)=>{const done=s.sonder[i],next=!done&&i===nsi;return`<div class="sp-step ${done?"done":next?"next":""}"><i class="ti ${done?"ti-circle-check":next?"ti-circle-dashed":"ti-circle"}"></i>${sf.label}</div>`;}).join("")}
       </div></div>
 
       <div><div class="sec-label">Grundfahraufgaben</div>
       <div class="card">
-        ${GRUNDFAHRAUFGABEN.map(g => {
-          const cnt = (s.gfa&&s.gfa[g.key])||0;
-          return `<div class="gfa-row">
-            <span class="gfa-label">${g.label}</span>
-            <div class="gfa-controls">
-              <button class="gfa-btn" onclick="changeGFA('${s.id}','${g.key}',-1)">−</button>
-              <span class="gfa-count" id="gfa-${s.id}-${g.key}">${cnt}</span>
-              <button class="gfa-btn" onclick="changeGFA('${s.id}','${g.key}',1)">+</button>
-            </div>
-          </div>`;
-        }).join("")}
+        ${GRUNDFAHRAUFGABEN.map(g=>{const cnt=(s.gfa&&s.gfa[g.key])||0;return`<div class="gfa-row"><span class="gfa-label">${g.label}</span><div class="gfa-controls"><button class="gfa-btn" onclick="changeGFA('${s.id}','${g.key}',-1)">−</button><span class="gfa-count" id="gfa-${s.id}-${g.key}">${cnt}</span><button class="gfa-btn" onclick="changeGFA('${s.id}','${g.key}',1)">+</button></div></div>`;}).join("")}
       </div></div>
 
       <div><div class="sec-row"><div class="sec-label" style="margin:0">Fahrstunden</div><button class="fab-btn" onclick="renderNeuFahrstunde('${s.id}')"><i class="ti ti-plus"></i></button></div>
-      ${(s.fahrstunden&&s.fahrstunden.length)?s.fahrstunden.slice(0,5).map(f=>{
-        const fd=fmtDate(f.datum);
-        return `<div class="termin-item" style="margin-bottom:6px">
-          <div style="display:flex;flex-direction:column;align-items:center;min-width:28px"><span style="font-size:15px;font-weight:600">${fd.day}</span><span style="font-size:10px;color:var(--tx3)">${fd.mon}</span></div>
-          <div class="t-info"><div class="t-name">${f.typ==="pruef"?"Prüfungsfahrt":"Fahrstunde"}</div><div class="t-sub">${f.typ==="pruef"?"100 min · Prüfungsfahrt":f.einh+" × 80 min"}</div></div>
-        </div>`;
-      }).join(""):`<div class="empty-hint">Noch keine Fahrstunden</div>`}
+      ${(s.fahrstunden&&s.fahrstunden.length)?s.fahrstunden.slice(0,5).map(f=>{const fd=fmtDate(f.datum);return`<div class="termin-item" style="margin-bottom:6px"><div style="display:flex;flex-direction:column;align-items:center;min-width:28px"><span style="font-size:15px;font-weight:600">${fd.day}</span><span style="font-size:10px;color:var(--tx3)">${fd.mon}</span></div><div class="t-info"><div class="t-name">${f.typ==="pruef"?"Prüfungsfahrt":"Fahrstunde"}</div><div class="t-sub">${f.typ==="pruef"?"100 min":f.einh+" × 80 min"}</div></div></div>`;}).join(""):
+      `<div class="empty-hint" style="padding:10px 0">Noch keine Fahrstunden</div>`}
       </div>
 
       <div><div class="sec-label">Prüftermin</div>
       ${s.prueftermin
-        ? `<div class="pruef-card"><i class="ti ti-calendar-event" style="font-size:24px;color:var(--accent)"></i><div><div style="font-size:15px;font-weight:600;color:white">${fmtDate(s.prueftermin).day}. ${fmtDate(s.prueftermin).mon} ${fmtDate(s.prueftermin).year}</div><div style="font-size:12px;color:rgba(255,255,255,0.75);margin-top:2px">${s.prufort} · Klasse ${s.klasse}</div></div></div>`
-        : `<div class="card"><div class="info-row"><span class="info-lbl"><i class="ti ti-calendar-x"></i>Prüftermin</span><span class="info-val" style="color:var(--tx3)">Noch nicht vergeben</span></div></div>`}
+        ?`<div class="pruef-card" style="cursor:pointer" onclick="showPruefResult('${s.id}','${s.prueftermin}',-1,'geplant')"><i class="ti ti-calendar-event" style="font-size:24px;color:var(--accent)"></i><div style="flex:1"><div style="font-size:15px;font-weight:600;color:white">${fmtDate(s.prueftermin).day}. ${fmtDate(s.prueftermin).mon} ${fmtDate(s.prueftermin).year}</div><div style="font-size:12px;color:rgba(255,255,255,.75);margin-top:2px">${s.prufort} · Klasse ${s.klasse}</div></div><i class="ti ti-chevron-right" style="color:rgba(255,255,255,.5);font-size:16px"></i></div>`
+        :`<div class="card"><div class="info-row"><span class="info-lbl"><i class="ti ti-calendar-x"></i>Prüftermin</span><span class="info-val" style="color:var(--tx3)">Noch nicht vergeben</span></div></div>`}
       </div>
 
-      <div><div class="sec-row"><div class="sec-label" style="margin:0">Prüfungen</div><button class="fab-btn" onclick="renderNeuPruefung('${s.id}')"><i class="ti ti-plus"></i></button></div>
+      <div><div class="sec-label">Prüfungen</div>
       ${(s.pruefungen&&s.pruefungen.length)?s.pruefungen.map((p,pi)=>{
         const fd=fmtDate(p.datum);
-        const best=p.bestanden;
-        return `<div class="pruef-result-item">
-          <div class="pruef-versuch ${best?"pruef-best":"pruef-nicht"}">${p.versuch}</div>
-          <div style="flex:1">
-            <div style="font-size:13px;font-weight:500;color:var(--tx)">${p.versuch}. Prüfung · ${best?"Bestanden ✓":"Nicht bestanden ✗"}</div>
-            <div style="font-size:11px;color:var(--tx2);margin-top:2px">${fd.day}. ${fd.mon} ${fd.year}</div>
-          </div>
-          <button class="btn-icon" style="color:var(--tx3);font-size:18px;min-width:36px;min-height:36px" onclick="renderEditPruefung('${s.id}',${pi})"><i class="ti ti-edit"></i></button>
-        </div>`;
-      }).join(""):`<div class="empty-hint" style="padding:12px 0">Noch keine Prüfung eingetragen</div>`}
+        const offen=p.bestanden===null||p.bestanden===undefined;
+        const best=p.bestanden===true;
+        return`<div class="pruef-result-item"><div class="pruef-versuch ${best?"pruef-best":offen?"":"pruef-nicht"}" style="${offen?"background:var(--bg3);color:var(--tx2)":""}">${p.versuch}</div><div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--tx)">${p.versuch}. Prüfung · ${offen?"Ergebnis ausstehend":best?"Bestanden ✓":"Nicht bestanden ✗"}</div><div style="font-size:11px;color:var(--tx2);margin-top:2px">${fd.day}. ${fd.mon} ${fd.year}</div></div><button class="btn-icon dark" style="font-size:18px;min-width:36px;min-height:36px" onclick="renderEditPruefung('${s.id}',${pi})"><i class="ti ti-edit"></i></button></div>`;
+      }).join(""):
+      `<div class="empty-hint" style="padding:10px 0">Prüftermine vom Dashboard aus eintragen</div>`}
       </div>
 
       <div><div class="sec-label">Notizen</div>
@@ -639,23 +442,20 @@ function renderSchueler(sid) {
 
     </div>
   </div>`;
-  document.getElementById("app").innerHTML = html;
+  document.getElementById("app").innerHTML=html;
+  setTimeout(initPTR,50);
 }
 
-function saveNotiz(sid, val) {
-  const s = getS(sid); if(!s) return;
-  s.notiz = val; saveAll();
-}
+function saveNotiz(sid,val){const s=getS(sid);if(!s)return;s.notiz=val;saveAll();}
+function changeGFA(sid,key,d){const s=getS(sid);if(!s)return;if(!s.gfa)s.gfa={};s.gfa[key]=Math.max(0,(s.gfa[key]||0)+d);saveAll();const el=document.getElementById("gfa-"+sid+"-"+key);if(el)el.textContent=s.gfa[key];}
 
-// ── SCHÜLER ANLEGEN ───────────────────────────────────────────────────────────
-function renderNeuSchueler(fromSid) {
-  editSid = fromSid||null;
-  const s = editSid ? getS(editSid) : null;
-  selFarbe = s ? s.farbe : "blue";
-  const title = s ? "Schüler bearbeiten" : "Neuer Schüler";
-  const back = s ? `renderSchueler('${s.id}')` : "renderListe()";
-  let html = `
-  <div class="screen active" id="scr-neu">
+// ── SCHÜLER ANLEGEN/BEARBEITEN ────────────────────────────────────────────────
+function renderNeuSchueler(fromSid){
+  const s=fromSid?getS(fromSid):null;
+  let selFarbe=s?s.farbe:"blue";
+  const title=s?"Schüler bearbeiten":"Neuer Schüler";
+  const back=s?`renderSchueler('${s.id}')`:"renderListe()";
+  let html=`<div class="screen active" id="scr-neu">
     <div class="topbar">
       <button class="btn-icon" onclick="${back}"><i class="ti ti-arrow-left"></i></button>
       <span class="topbar-title">${title}</span>
@@ -670,16 +470,15 @@ function renderNeuSchueler(fromSid) {
       </div></div>
       <div><div class="sec-label">Ausbildung</div>
       <div class="card">
-        <div class="card-row"><span class="card-label"><i class="ti ti-calendar-plus"></i>Beginn</span><input type="date" id="n-bg" value="${s?s.beginn:new Date().toISOString().split('T')[0]}"/></div>
-        <div class="card-row"><span class="card-label"><i class="ti ti-license"></i>Führerscheinklasse</span>
+        <div class="card-row"><span class="card-label"><i class="ti ti-phone"></i>Telefon</span><input type="tel" id="n-tel" value="${s?s.tel||'':''}" placeholder="+49 …"/></div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-calendar-plus"></i>Beginn</span><input type="date" id="n-bg" value="${s?s.beginn:new Date().toISOString().split("T")[0]}"/></div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-license"></i>Klasse</span>
           <select id="n-kl">${KLASSEN.map(k=>`<option value="${k}" ${s&&s.klasse===k?"selected":""}>${k}</option>`).join("")}</select>
         </div>
         <div class="card-row"><span class="card-label"><i class="ti ti-map-pin"></i>Prüfort</span>
           <select id="n-pf">
             <option value="">Auswählen…</option>
-            <option value="DEKRA Pankow" ${s&&s.prufort==="DEKRA Pankow"?"selected":""}>DEKRA Pankow</option>
-            <option value="DEKRA Ferdi" ${s&&s.prufort==="DEKRA Ferdi"?"selected":""}>DEKRA Ferdi</option>
-            <option value="TÜV Hornbach" ${s&&s.prufort==="TÜV Hornbach"?"selected":""}>TÜV Hornbach</option>
+            ${PRUFORTE.map(p=>`<option value="${p}" ${s&&s.prufort===p?"selected":""}>${p}</option>`).join("")}
           </select>
         </div>
         <div class="card-row"><span class="card-label"><i class="ti ti-calendar-event"></i>Prüftermin</span><input type="date" id="n-pt" value="${s?s.prueftermin:""}"/></div>
@@ -691,71 +490,46 @@ function renderNeuSchueler(fromSid) {
       <div class="card"><div class="card-row"><span class="card-label"><i class="ti ti-palette"></i>Farbe</span>
         <div class="farb-row" id="farb-row-neu"></div>
       </div></div></div>
-      <button class="btn-full" onclick="saveSchueler()"><i class="ti ti-circle-check"></i> ${s?"Änderungen speichern":"Schüler speichern"}</button>
-      ${s?`<button class="btn-full" style="color:#E24B4A;border-color:#E24B4A" onclick="deleteSchueler('${s.id}')"><i class="ti ti-trash"></i> Schüler löschen</button>`:""}
+      <button class="btn-full" onclick="saveSchueler('${s?s.id:""}')">${s?"Änderungen speichern":"Schüler speichern"}</button>
+      ${s?`<button class="btn-full danger" style="margin-top:6px" onclick="deleteSchueler('${s.id}')"><i class="ti ti-trash"></i> Schüler löschen</button>`:""}
     </div>
   </div>`;
-  document.getElementById("app").innerHTML = html;
+  document.getElementById("app").innerHTML=html;
+  window._selFarbe=selFarbe;
   renderFarbDots("farb-row-neu");
+  setTimeout(initPTR,50);
 }
-
-function renderEditSchueler(sid) { renderNeuSchueler(sid); }
-
-function renderFarbDots(containerId) {
-  const el = document.getElementById(containerId);
-  if (!el) return;
-  el.innerHTML = FARBEN.map(f=>`<div class="farb-dot ${f.key===selFarbe?"sel":""}" style="background:${f.bg}" onclick="selFarb('${f.key}','${containerId}')"></div>`).join("");
-}
-function selFarb(key, cid) { selFarbe = key; renderFarbDots(cid); }
-
-function saveSchueler() {
-  const vn = document.getElementById("n-vn").value.trim();
-  const nn = document.getElementById("n-nn").value.trim();
-  const kl = document.getElementById("n-kl").value;
-  if (!vn||!nn) {
-    if(!vn) document.getElementById("n-vn").classList.add("err-border");
-    if(!nn) document.getElementById("n-nn").classList.add("err-border");
-    setTimeout(()=>{ document.querySelectorAll(".err-border").forEach(e=>e.classList.remove("err-border")); },1500);
-    return;
-  }
-  if (editSid) {
-    const s = getS(editSid);
-    s.vorname=vn; s.nachname=nn; s.spitz=document.getElementById("n-sp").value.trim();
-    s.beginn=document.getElementById("n-bg").value; s.klasse=kl;
-    s.prufort=document.getElementById("n-pf").value.trim();
-    s.prueftermin=document.getElementById("n-pt").value;
-    s.theorie=document.getElementById("n-th").checked;
-    s.farbe=selFarbe;
-    saveAll();
-    renderSchueler(editSid);
-  } else {
-    const ns = {
-      id:"s"+Date.now(), vorname:vn, nachname:nn,
-      spitz:document.getElementById("n-sp").value.trim(),
-      farbe:selFarbe, klasse:kl,
-      beginn:document.getElementById("n-bg").value,
-      prufort:document.getElementById("n-pf").value.trim(),
-      prueftermin:document.getElementById("n-pt").value,
-      theorie:document.getElementById("n-th").checked,
-      stufe:1, sonder:[false,false,false], notiz:"", fahrstunden:[], pruefungen:[], gfa:{laengs:0,rechts:0,umkehr:0,rueckwaerts:0,stopp_mit:0,stopp_ohne:0} };
-    schueler.push(ns); saveAll();
-    document.getElementById("toast-neu-msg").textContent = vn+" "+nn+" wurde angelegt";
+function renderEditSchueler(sid){renderNeuSchueler(sid);}
+function renderFarbDots(cid){const el=document.getElementById(cid);if(!el)return;el.innerHTML=FARBEN.map(f=>`<div class="farb-dot ${f.key===window._selFarbe?"sel":""}" style="background:${f.bg}" onclick="window._selFarbe='${f.key}';renderFarbDots('${cid}')"></div>`).join("");}
+function saveSchueler(editSid){
+  const vn=document.getElementById("n-vn").value.trim();
+  const nn=document.getElementById("n-nn").value.trim();
+  const kl=document.getElementById("n-kl").value;
+  if(!vn||!nn){if(!vn)document.getElementById("n-vn").classList.add("err-border");if(!nn)document.getElementById("n-nn").classList.add("err-border");setTimeout(()=>document.querySelectorAll(".err-border").forEach(e=>e.classList.remove("err-border")),1500);return;}
+  const pf=document.getElementById("n-pf").value;
+  const pt=document.getElementById("n-pt").value;
+  const th=document.getElementById("n-th").checked;
+  const sp=document.getElementById("n-sp").value.trim();
+  const bg=document.getElementById("n-bg").value;
+  if(editSid){
+    const s=getS(editSid);
+    s.vorname=vn;s.nachname=nn;s.spitz=sp;s.tel=document.getElementById('n-tel').value.trim();s.beginn=bg;s.klasse=kl;s.prufort=pf;s.prueftermin=pt;s.theorie=th;s.farbe=window._selFarbe;
+    saveAll();renderSchueler(editSid);
+  }else{
+    const tel2=document.getElementById('n-tel').value.trim();const ns={id:"s"+Date.now(),vorname:vn,nachname:nn,spitz:sp,tel:tel2,farbe:window._selFarbe,klasse:kl,beginn:bg,prufort:pf,prueftermin:pt,theorie:th,sonder:[false,false,false],notiz:"",fahrstunden:[],pruefungen:[],gfa:{laengs:0,rechts:0,umkehr:0,rueckwaerts:0,stopp_mit:0,stopp_ohne:0},foto:null};
+    schueler.push(ns);saveAll();
+    document.getElementById("toast-neu-msg").textContent=vn+" "+nn+" wurde angelegt";
     document.getElementById("toast-neu").classList.add("show");
-    setTimeout(()=>{ renderSchueler(ns.id); },1600);
+    setTimeout(()=>renderSchueler(ns.id),1600);
   }
 }
+function deleteSchueler(sid){const s=getS(sid);if(!s)return;if(confirm(`${s.vorname} ${s.nachname} wirklich löschen?`)){schueler=schueler.filter(x=>x.id!==sid);saveAll();renderListe();}}
 
-function deleteSchueler(sid) {
-  schueler = schueler.filter(s=>s.id!==sid);
-  saveAll(); renderListe();
-}
-
-// ── FAHRSTUNDE ERFASSEN ───────────────────────────────────────────────────────
-function renderNeuFahrstunde(sid) {
-  const s = getS(sid); if(!s) return;
-  gewMin = 80;
-  let html = `
-  <div class="screen active" id="scr-fahrt">
+// ── FAHRSTUNDE ────────────────────────────────────────────────────────────────
+function renderNeuFahrstunde(sid){
+  const s=getS(sid);if(!s)return;
+  const nsi=nextSonder(s);
+  let html=`<div class="screen active" id="scr-fahrt">
     <div class="topbar">
       <button class="btn-icon" onclick="renderSchueler('${sid}')"><i class="ti ti-x"></i></button>
       <span class="topbar-title">Fahrstunde · ${s.vorname}</span>
@@ -766,10 +540,10 @@ function renderNeuFahrstunde(sid) {
       <div class="card">
         <div class="card-row">
           <div style="display:flex;gap:0;width:100%">
-            <button class="pill active" id="typ-normal" style="flex:1;border-radius:var(--r-md) 0 0 var(--r-md);justify-content:center;display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 8px" onclick="setTypF('normal',this)">
+            <button class="pill active" id="typ-normal" style="flex:1;border-radius:var(--r-md) 0 0 var(--r-md);justify-content:center;flex-direction:column;align-items:center;gap:2px;padding:10px 8px" onclick="setTypF('normal')">
               <i class="ti ti-steering-wheel" style="font-size:18px"></i><span style="font-size:12px">Fahrstunde</span><span style="font-size:10px;opacity:.7">80 min/Einh.</span>
             </button>
-            <button class="pill" id="typ-pruef" style="flex:1;border-radius:0 var(--r-md) var(--r-md) 0;justify-content:center;display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 8px;border-left:none" onclick="setTypF('pruef',this)">
+            <button class="pill" id="typ-pruef" style="flex:1;border-radius:0 var(--r-md) var(--r-md) 0;justify-content:center;flex-direction:column;align-items:center;gap:2px;padding:10px 8px;border-left:none" onclick="setTypF('pruef')">
               <i class="ti ti-license" style="font-size:18px"></i><span style="font-size:12px">Prüfungsfahrt</span><span style="font-size:10px;opacity:.7">100 min</span>
             </button>
           </div>
@@ -779,142 +553,210 @@ function renderNeuFahrstunde(sid) {
           <span class="card-label"><i class="ti ti-clock"></i>Einheiten</span>
           <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end;flex:1">
             <button class="cir-btn" onclick="changeEinh(-1)">−</button>
-            <span id="einh-disp" style="font-size:13px;font-weight:500;min-width:72px;text-align:center">1 × 80 min</span>
+            <span id="einh-disp" style="font-size:16px;font-weight:500;min-width:72px;text-align:center">1 × 80 min</span>
             <button class="cir-btn" onclick="changeEinh(1)">+</button>
           </div>
         </div>
-        <div class="card-row" id="pruef-row2" style="display:none"><span class="card-label"><i class="ti ti-clock"></i>Dauer</span><span class="card-val">100 min (fest)</span></div>
-
+        <div class="card-row" id="pruef-row2" style="display:none"><span class="card-label"><i class="ti ti-clock"></i>Dauer</span><span class="card-val" style="flex:1;text-align:right;font-size:13px;color:var(--tx2)">100 min (fest)</span></div>
       </div></div>`;
 
-  const nsi = nextSonder(s);
-  if (nsi !== -1) {
-    html += `<div><div class="sec-label">Sonderfahrt dabei?</div><div class="card">
+  if(nsi!==-1){
+    html+=`<div><div class="sec-label">Sonderfahrt dabei?</div><div class="card">
     ${SONDER.map((sf,i)=>{
-      const done=s.sonder[i], isNext=i===nsi, locked=!done&&!isNext;
-      return `<div class="sonder-btn-row ${done?"done":""}">
-        <span class="sonder-btn-label"><i class="ti ${sf.icon}"></i>${i+1}. ${sf.label}${locked?' <span style="font-size:10px;color:var(--tx3)">(gesperrt)</span>':''}</span>
-        <label class="toggle-wrap"><input type="checkbox" id="sf-${sf.key}" ${done?"checked disabled":""} ${locked?"disabled":""} /><div class="toggle-track ${locked||done?"locked":""}"></div><div class="toggle-thumb"></div></label>
+      const done=s.sonder[i],isNext=i===nsi,locked=!done&&!isNext;
+      return`<div class="sonder-btn-row ${done?"done":""}">
+        <span class="sonder-btn-label"><i class="ti ${sf.icon}"></i>${i+1}. ${sf.label}${locked?` <span style="font-size:10px;color:var(--tx3)">(gesperrt)</span>`:""}</span>
+        <label class="toggle-wrap"><input type="checkbox" id="sf-${sf.key}" ${done?"checked disabled":""} ${locked?"disabled":""}/><div class="toggle-track ${locked||done?"locked":""}"></div><div class="toggle-thumb"></div></label>
       </div>`;
     }).join("")}
     </div></div>`;
   }
 
-  html += `
-      <button class="btn-full" onclick="saveFahrstunde('${sid}')"><i class="ti ti-circle-check"></i> Fahrstunde speichern</button>
-    </div>
-  </div>`;
-  document.getElementById("app").innerHTML = html;
-  window._fahrtEinh = 1;
-  window._fahrtTyp = "normal";
+  html+=`<button class="btn-full" onclick="saveFahrstunde('${sid}')"><i class="ti ti-circle-check"></i> Fahrstunde speichern</button></div></div>`;
+  document.getElementById("app").innerHTML=html;
+  window._fahrtEinh=1;window._fahrtTyp="normal";
+  setTimeout(initPTR,50);
 }
-
-function setTypF(typ, el) {
-  window._fahrtTyp = typ;
-  document.getElementById("typ-normal").classList.toggle("active", typ==="normal");
-  document.getElementById("typ-pruef").classList.toggle("active", typ==="pruef");
-  document.getElementById("einh-row2").style.display = typ==="normal"?"":"none";
-  document.getElementById("pruef-row2").style.display = typ==="pruef"?"":"none";
-}
-function changeEinh(d) {
-  window._fahrtEinh = Math.max(1, Math.min(4, (window._fahrtEinh||1)+d));
-  document.getElementById("einh-disp").textContent = window._fahrtEinh+" × 80 min";
-}
-
-function saveFahrstunde(sid) {
-  const s = getS(sid); if(!s) return;
-  const dat = document.getElementById("f-dat").value;
-  if (!dat) return;
-  const typ = window._fahrtTyp||"normal";
-  const einh = window._fahrtEinh||1;
-  const nsi = nextSonder(s);
-  let sonderGemacht = null;
-  if (nsi!==-1) {
-    const sfEl = document.getElementById("sf-"+SONDER[nsi].key);
-    if (sfEl&&sfEl.checked&&!s.sonder[nsi]) { s.sonder[nsi]=true; sonderGemacht=SONDER[nsi].label; }
-  }
-  if (!s.fahrstunden) s.fahrstunden=[];
+function setTypF(typ){window._fahrtTyp=typ;document.getElementById("typ-normal").classList.toggle("active",typ==="normal");document.getElementById("typ-pruef").classList.toggle("active",typ==="pruef");document.getElementById("einh-row2").style.display=typ==="normal"?"":"none";document.getElementById("pruef-row2").style.display=typ==="pruef"?"":"none";}
+function changeEinh(d){window._fahrtEinh=Math.max(1,Math.min(4,(window._fahrtEinh||1)+d));document.getElementById("einh-disp").textContent=window._fahrtEinh+" × 80 min";}
+function saveFahrstunde(sid){
+  const s=getS(sid);if(!s)return;
+  const dat=document.getElementById("f-dat").value;if(!dat)return;
+  const typ=window._fahrtTyp||"normal";
+  const einh=window._fahrtEinh||1;
+  const nsi=nextSonder(s);
+  let sonderGemacht=null;
+  if(nsi!==-1){const sfEl=document.getElementById("sf-"+SONDER[nsi].key);if(sfEl&&sfEl.checked&&!s.sonder[nsi]){s.sonder[nsi]=true;sonderGemacht=SONDER[nsi].label;}}
+  if(!s.fahrstunden)s.fahrstunden=[];
   s.fahrstunden.unshift({datum:dat,einh,typ,sonder:sonderGemacht});
   saveAll();
-  const msg = sonderGemacht ? sonderGemacht+" abgeschlossen" : "Fahrstunde gespeichert";
-  document.getElementById("toast-fahrt-msg").textContent = msg;
+  const msg=sonderGemacht?sonderGemacht+" abgeschlossen":"Fahrstunde gespeichert";
+  document.getElementById("toast-fahrt-msg").textContent=msg;
   document.getElementById("toast-fahrt").classList.add("show");
-  setTimeout(()=>renderSchueler(sid), 1800);
+  setTimeout(()=>renderSchueler(sid),1800);
+}
+
+// ── PRÜFUNG ERGEBNIS ──────────────────────────────────────────────────────────
+function showPruefResult(sid,datum,pi,typ){
+  const s=getS(sid);if(!s)return;
+  const fd=fmtDate(datum);
+  const versuchNr=pi>=0?(s.pruefungen[pi]||{}).versuch||1:((s.pruefungen||[]).length+1);
+  let html=`<div class="screen active" id="scr-pruef-res">
+    <div class="topbar">
+      <button class="btn-icon" onclick="renderDashboard()"><i class="ti ti-x"></i></button>
+      <span class="topbar-title">${s.vorname} ${s.nachname}</span>
+    </div>
+    <div class="scroll">
+      <div style="text-align:center;padding:20px 0 16px">
+        <div class="foto-initials av-${s.farbe}" style="${farbStyle(s.farbe)};width:60px;height:60px;font-size:18px;margin:0 auto 10px;cursor:default">${initials(s)}</div>
+        <div style="font-size:16px;font-weight:600">${fd.day}. ${fd.mon} ${fd.year}</div>
+        <div style="font-size:13px;color:var(--tx2);margin-top:4px">Klasse ${s.klasse} · ${s.prufort}</div>
+      </div>
+      <div><div class="sec-label">Prüfungsnummer</div>
+      <div class="card"><div class="card-row">
+        <span class="card-label"><i class="ti ti-list-numbers"></i>Prüfung Nr.</span>
+        <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end;flex:1">
+          <button class="cir-btn" onclick="changePRVersuch(-1)">−</button>
+          <span id="pr-versuch-disp" style="font-size:16px;font-weight:500;min-width:40px;text-align:center">${versuchNr}.</span>
+          <button class="cir-btn" onclick="changePRVersuch(1)">+</button>
+        </div>
+      </div></div></div>
+      <div><div class="sec-label">Ergebnis</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <button class="btn-full gruen" onclick="savePruefResult('${sid}','${datum}',${pi},true)"><i class="ti ti-circle-check" style="font-size:20px"></i> Bestanden ✓</button>
+        <button class="btn-full rot" onclick="savePruefResult('${sid}','${datum}',${pi},false)"><i class="ti ti-circle-x" style="font-size:20px"></i> Nicht bestanden ✗</button>
+        ${pi>=0?`<button class="btn-full" onclick="savePruefResult('${sid}','${datum}',${pi},null)"><i class="ti ti-refresh"></i> Zurücksetzen</button>`:""}
+      </div></div>
+      <button class="btn-full" style="margin-top:4px" onclick="renderSchueler('${sid}')"><i class="ti ti-user"></i> Zum Schüler</button>
+    </div>
+  </div>`;
+  document.getElementById("app").innerHTML=html;
+  window._prVersuch=versuchNr;
+  setTimeout(initPTR,50);
+}
+function changePRVersuch(d){window._prVersuch=Math.max(1,Math.min(4,(window._prVersuch||1)+d));const el=document.getElementById("pr-versuch-disp");if(el)el.textContent=window._prVersuch+".";}
+function savePruefResult(sid,datum,pi,bestanden){
+  const s=getS(sid);if(!s)return;
+  if(!s.pruefungen)s.pruefungen=[];
+  if(pi>=0&&s.pruefungen[pi]){s.pruefungen[pi].bestanden=bestanden;s.pruefungen[pi].versuch=window._prVersuch||1;}
+  else{s.pruefungen.push({datum,versuch:window._prVersuch||1,bestanden});s.pruefungen.sort((a,b)=>a.datum.localeCompare(b.datum));}
+  saveAll();renderDashboard();
+}
+
+// ── PRÜFUNG BEARBEITEN ────────────────────────────────────────────────────────
+function renderEditPruefung(sid,idx){
+  const s=getS(sid);if(!s)return;
+  const p=s.pruefungen[idx];if(!p)return;
+  let html=`<div class="screen active" id="scr-pruef-edit">
+    <div class="topbar">
+      <button class="btn-icon" onclick="renderSchueler('${sid}')"><i class="ti ti-x"></i></button>
+      <span class="topbar-title">Prüfung bearbeiten</span>
+    </div>
+    <div class="scroll">
+      <div><div class="sec-label">Prüfungsergebnis</div>
+      <div class="card">
+        <div class="card-row"><span class="card-label"><i class="ti ti-calendar"></i>Datum</span><input type="date" id="pe-datum" value="${p.datum}"/></div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-list-numbers"></i>Prüfung Nr.</span>
+          <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end;flex:1">
+            <button class="cir-btn" onclick="changePEVersuch(-1)">−</button>
+            <span id="pe-versuch-disp" style="font-size:16px;font-weight:500;min-width:40px;text-align:center">${p.versuch}.</span>
+            <button class="cir-btn" onclick="changePEVersuch(1)">+</button>
+          </div>
+        </div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-trophy"></i>Ergebnis</span>
+          <div style="display:flex;gap:8px;justify-content:flex-end;flex:1">
+            <button class="pill ${p.bestanden===true?"active":""}" id="pe-best" onclick="setPEResult(true)">Bestanden ✓</button>
+            <button class="pill ${p.bestanden===false?"active":""}" id="pe-nicht" onclick="setPEResult(false)">Nicht bestanden ✗</button>
+          </div>
+        </div>
+      </div></div>
+      <button class="btn-full" onclick="saveEditPruefung('${sid}',${idx})"><i class="ti ti-circle-check"></i> Speichern</button>
+      <button class="btn-full danger" style="margin-top:6px" onclick="deletePruefung('${sid}',${idx})"><i class="ti ti-trash"></i> Prüfung löschen</button>
+    </div>
+  </div>`;
+  document.getElementById("app").innerHTML=html;
+  window._peVersuch=p.versuch;window._peBestanden=p.bestanden;
+  setTimeout(initPTR,50);
+}
+function changePEVersuch(d){window._peVersuch=Math.max(1,Math.min(4,(window._peVersuch||1)+d));const el=document.getElementById("pe-versuch-disp");if(el)el.textContent=window._peVersuch+".";}
+function setPEResult(best){window._peBestanden=best;document.getElementById("pe-best").classList.toggle("active",best);document.getElementById("pe-nicht").classList.toggle("active",!best);}
+function saveEditPruefung(sid,idx){const s=getS(sid);if(!s)return;const datum=document.getElementById("pe-datum").value;if(!datum)return;s.pruefungen[idx]={datum,versuch:window._peVersuch||1,bestanden:window._peBestanden};s.pruefungen.sort((a,b)=>a.datum.localeCompare(b.datum));saveAll();renderSchueler(sid);}
+function deletePruefung(sid,idx){const s=getS(sid);if(!s)return;if(confirm("Prüfung wirklich löschen?")){s.pruefungen.splice(idx,1);saveAll();renderSchueler(sid);}}
+
+// ── FOTO ──────────────────────────────────────────────────────────────────────
+function triggerFotoUpload(sid){const inp=document.getElementById("foto-input-"+sid);if(inp)inp.click();}
+function saveFoto(sid,input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    const img=new Image();
+    img.onload=function(){
+      const canvas=document.createElement("canvas");
+      const MAX=300;let w=img.width,h=img.height;
+      if(w>h){if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}}else{if(h>MAX){w=Math.round(w*MAX/h);h=MAX;}}
+      canvas.width=w;canvas.height=h;
+      canvas.getContext("2d").drawImage(img,0,0,w,h);
+      const s=getS(sid);if(s){s.foto=canvas.toDataURL("image/jpeg",.8);saveAll();renderSchueler(sid);}
+    };
+    img.src=e.target.result;
+  };
+  reader.readAsDataURL(file);
 }
 
 // ── KALENDER ──────────────────────────────────────────────────────────────────
-function renderKalender() {
-  const td = todayStr();
-  const tp = td.split("-");
-  curYear = parseInt(tp[0]); curMonth = parseInt(tp[1]);
-  selDate = td;
-  buildKalender();
-}
-
-function buildKalender() {
-  let html = `
-  <div class="screen active" id="scr-kal">
+let curYear=2026,curMonth=5,selDate=null;
+function renderKalender(){const td=todayStr();const p=td.split("-");curYear=parseInt(p[0]);curMonth=parseInt(p[1]);selDate=td;buildKalender();}
+function buildKalender(){
+  let html=`<div class="screen active" id="scr-kal">
     <div class="topbar">
       <button class="btn-icon" onclick="renderDashboard()"><i class="ti ti-arrow-left"></i></button>
       <span class="topbar-title">Kalender</span>
     </div>
     <div class="month-nav">
-      <button class="btn-icon" onclick="prevMonth()"><i class="ti ti-chevron-left"></i></button>
-      <span class="month-label">${MONATE[curMonth-1]} ${curYear}</span>
-      <button class="btn-icon" onclick="nextMonth()"><i class="ti ti-chevron-right"></i></button>
+      <button class="btn-icon dark" onclick="prevMonth()"><i class="ti ti-chevron-left"></i></button>
+      <span class="month-label" style="color:var(--tx)">${MONATE[curMonth-1]} ${curYear}</span>
+      <button class="btn-icon dark" onclick="nextMonth()"><i class="ti ti-chevron-right"></i></button>
     </div>
     <div class="weekdays"><div class="wd">Mo</div><div class="wd">Di</div><div class="wd">Mi</div><div class="wd">Do</div><div class="wd">Fr</div></div>
     <div class="cal-scroll"><div class="cal-grid" id="cal-grid"></div>
-    <div id="cal-detail" style="padding:10px 16px 20px"></div>
-    </div>
+    <div id="cal-detail" style="padding:10px 16px 20px"></div></div>
   </div>`;
-  document.getElementById("app").innerHTML = html;
-  renderCalGrid();
-  renderCalDetail();
+  document.getElementById("app").innerHTML=html;
+  renderCalGrid();renderCalDetail();
 }
-
-function renderCalGrid() {
-  const grid = document.getElementById("cal-grid");
-  if (!grid) return;
-  grid.innerHTML = "";
-  const td = todayStr();
-  let weekdays = [];
-  const dim = new Date(curYear, curMonth, 0).getDate();
-  for (let d=1;d<=dim;d++) {
-    if (isWeekday(curYear,curMonth,d)) weekdays.push(d);
-  }
-  if (!weekdays.length) return;
-  const firstDow = new Date(curYear,curMonth-1,weekdays[0]).getDay();
-  for (let i=1;i<firstDow;i++) { const sp=document.createElement("div"); sp.className="spacer-day"; grid.appendChild(sp); }
+function renderCalGrid(){
+  const grid=document.getElementById("cal-grid");if(!grid)return;
+  grid.innerHTML="";
+  const td=todayStr();
+  const dim=new Date(curYear,curMonth,0).getDate();
+  let weekdays=[];
+  for(let d=1;d<=dim;d++)if(isWeekday(curYear,curMonth,d))weekdays.push(d);
+  if(!weekdays.length)return;
+  const firstDow=new Date(curYear,curMonth-1,weekdays[0]).getDay();
+  for(let i=1;i<firstDow;i++){const sp=document.createElement("div");sp.className="spacer-day";grid.appendChild(sp);}
   weekdays.forEach(d=>{
     const key=toKey(curYear,curMonth,d);
-    const el=document.createElement("div");
-    el.className="cal-day";
-    if (isBefore(curYear,curMonth,d)) el.classList.add("disabled");
-    if (key===td) el.classList.add("today");
-    if (key===selDate) el.classList.add("sel");
-    const dn=document.createElement("div"); dn.className="day-num"; dn.textContent=d; el.appendChild(dn);
+    const el=document.createElement("div");el.className="cal-day";
+    if(isBefore(curYear,curMonth,d))el.classList.add("disabled");
+    if(key===td)el.classList.add("today");
+    if(key===selDate)el.classList.add("sel");
+    const dn=document.createElement("div");dn.className="day-num";dn.textContent=d;el.appendChild(dn);
     const t=termine[key];
-    if (t&&t.length) {
-      const dr=document.createElement("div"); dr.className="dot-row";
-      t.slice(0,4).forEach(e=>{ const dot=document.createElement("div"); dot.className="cdot "+(e.min===100?"cdot-o":"cdot-b"); dr.appendChild(dot); });
-      el.appendChild(dr);
-    }
-    el.onclick=()=>{ selDate=key; renderCalGrid(); renderCalDetail(); };
+    if(t&&t.length){const dr=document.createElement("div");dr.className="dot-row";t.slice(0,4).forEach(e=>{const dot=document.createElement("div");dot.className="cdot "+(e.min===100?"cdot-o":"cdot-b");dr.appendChild(dot);});el.appendChild(dr);}
+    el.onclick=()=>{selDate=key;renderCalGrid();renderCalDetail();};
     grid.appendChild(el);
   });
 }
-
-function renderCalDetail() {
-  const el = document.getElementById("cal-detail"); if(!el) return;
-  if (!selDate) { el.innerHTML=""; return; }
+function renderCalDetail(){
+  const el=document.getElementById("cal-detail");if(!el)return;
+  if(!selDate){el.innerHTML="";return;}
   const p=selDate.split("-");
   const lbl=`${parseInt(p[2])}. ${MONATE_K[parseInt(p[1])-1]} ${p[0]}`;
   const t=termine[selDate]||[];
   let html=`<div class="sec-label" style="margin-bottom:8px">${lbl}</div>`;
-  if (!t.length) html+=`<div class="empty-hint" style="padding:12px 0">Kein Termin</div>`;
+  if(!t.length)html+=`<div class="empty-hint" style="padding:12px 0">Kein Termin</div>`;
   else t.forEach((e,i)=>{
-    const s=getS(e.sid); if(!s) return;
+    const s=getS(e.sid);if(!s)return;
     const nick=s.spitz?` «${s.spitz}»`:"";
     html+=`<div class="termin-item" style="margin-bottom:6px">
       <div class="t-avatar av-${s.farbe}">${initials(s)}</div>
@@ -925,23 +767,15 @@ function renderCalDetail() {
   html+=`<button class="btn-full" style="margin-top:6px" onclick="renderNeuKalTermin('${selDate}')"><i class="ti ti-plus"></i> Termin hinzufügen</button>`;
   el.innerHTML=html;
 }
+function delKalTermin(key,i){if(!termine[key])return;termine[key].splice(i,1);if(!termine[key].length)delete termine[key];saveAll();renderCalGrid();renderCalDetail();}
+function prevMonth(){curMonth--;if(curMonth<1){curMonth=12;curYear--;}renderCalGrid();renderCalDetail();}
+function nextMonth(){curMonth++;if(curMonth>12){curMonth=1;curYear++;}renderCalGrid();renderCalDetail();}
 
-function delKalTermin(key,i) {
-  if(!termine[key]) return;
-  termine[key].splice(i,1);
-  if(!termine[key].length) delete termine[key];
-  saveAll(); renderCalGrid(); renderCalDetail();
-}
-
-function prevMonth() { curMonth--; if(curMonth<1){curMonth=12;curYear--;} renderCalGrid(); renderCalDetail(); }
-function nextMonth() { curMonth++; if(curMonth>12){curMonth=1;curYear++;} renderCalGrid(); renderCalDetail(); }
-
-function renderNeuKalTermin(date) {
-  window._kalMin = 80;
+function renderNeuKalTermin(date){
+  window._kalMin=80;
   const p=date.split("-");
   const lbl=`${parseInt(p[2])}. ${MONATE_K[parseInt(p[1])-1]} ${p[0]}`;
-  let html=`
-  <div class="screen active" id="scr-kal-neu">
+  let html=`<div class="screen active" id="scr-kal-neu">
     <div class="topbar">
       <button class="btn-icon" onclick="buildKalender()"><i class="ti ti-x"></i></button>
       <span class="topbar-title">${lbl}</span>
@@ -952,7 +786,7 @@ function renderNeuKalTermin(date) {
       <div class="card">
         <div class="card-row"><span class="card-label"><i class="ti ti-user"></i>Schüler</span>
           <select id="k-sid"><option value="">Auswählen…</option>
-          ${schueler.map(s=>`<option value="${s.id}">${s.vorname} ${s.nachname}${s.spitz?' «'+s.spitz+'»':''}</option>`).join("")}
+          ${schueler.map(s=>`<option value="${s.id}">${s.vorname} ${s.nachname}${s.spitz?" «"+s.spitz+"»":""}</option>`).join("")}
           </select>
         </div>
         <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Uhrzeit</span><input type="time" id="k-uhr" value="09:00"/></div>
@@ -963,416 +797,117 @@ function renderNeuKalTermin(date) {
             <button class="cir-btn" onclick="changeKalMin(10)">+</button>
           </div>
         </div>
-      </d
       </div></div>
       <button class="btn-full" onclick="saveKalTermin('${date}')"><i class="ti ti-circle-check"></i> Termin speichern</button>
     </div>
   </div>`;
   document.getElementById("app").innerHTML=html;
+  setTimeout(initPTR,50);
 }
-
-window._kalMin = 80;
-function changeKalMin(d) {
-  window._kalMin = Math.max(10, Math.min(300, window._kalMin + d));
-  const el = document.getElementById("kal-min-disp");
-  if (el) el.textContent = window._kalMin + " min";
-}
-
-function saveKalTermin(date) {
+function changeKalMin(d){window._kalMin=Math.max(10,Math.min(300,window._kalMin+d));const el=document.getElementById("kal-min-disp");if(el)el.textContent=window._kalMin+" min";}
+function saveKalTermin(date){
   const sid=document.getElementById("k-sid").value;
   const uhr=document.getElementById("k-uhr").value;
-  if(!sid||!uhr){
-    if(!sid){document.getElementById("k-sid").classList.add("err-border");setTimeout(()=>document.getElementById("k-sid").classList.remove("err-border"),1500);}
-    return;
-  }
-  const min = window._kalMin || 80;
-  if(!termine[date]) termine[date]=[];
+  if(!sid||!uhr){if(!sid){document.getElementById("k-sid").classList.add("err-border");setTimeout(()=>document.getElementById("k-sid").classList.remove("err-border"),1500);}return;}
+  const min=window._kalMin||80;
+  if(!termine[date])termine[date]=[];
   termine[date].push({sid,uhr,min});
   termine[date].sort((a,b)=>a.uhr.localeCompare(b.uhr));
   saveAll();
   const s=getS(sid);
   document.getElementById("toast-kal-msg").textContent=`${s.vorname} ${s.nachname} · ${uhr} Uhr · ${min} min`;
   document.getElementById("toast-kal").classList.add("show");
-  setTimeout(()=>{ selDate=date; buildKalender(); },1800);
+  setTimeout(()=>{selDate=date;buildKalender();},1800);
 }
 
-// ── GRUNDFAHRAUFGABEN ─────────────────────────────────────────────────────────
-function changeGFA(sid, key, d) {
-  const s = getS(sid); if(!s) return;
-  if (!s.gfa) s.gfa = {laengs:0, rechts:0, umkehr:0, rueckwaerts:0};
-  s.gfa[key] = Math.max(0, (s.gfa[key]||0) + d);
-  saveAll();
-  const el = document.getElementById("gfa-"+sid+"-"+key);
-  if (el) el.textContent = s.gfa[key];
-}
-
-// ── PRUEFUNG ERFASSEN ────────────────────────────────────────────────────────
-function renderNeuPruefung(sid) {
-  const s = getS(sid); if(!s) return;
-  const versuchNr = (s.pruefungen||[]).length + 1;
-  let html = `
-  <div class="screen active" id="scr-pruef">
-    <div class="topbar">
-      <button class="btn-icon" onclick="renderSchueler('${sid}')"><i class="ti ti-x"></i></button>
-      <span class="topbar-title">Prüfung · ${s.vorname}</span>
-    </div>
-    <div class="scroll">
-      <div id="toast-pruef" class="toast"><i class="ti ti-circle-check" style="font-size:16px"></i><span id="toast-pruef-msg"></span></div>
-      <div><div class="sec-label">Prüfungsergebnis</div>
-      <div class="card">
-        <div class="card-row">
-          <span class="card-label"><i class="ti ti-calendar"></i>Datum</span>
-          <input type="date" id="p-datum" value="${todayStr()}"/>
-        </div>
-        <div class="card-row">
-          <span class="card-label"><i class="ti ti-list-numbers"></i>Prüfung Nr.</span>
-          <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end;flex:1">
-            <button class="cir-btn" onclick="changePVersuch(-1)">−</button>
-            <span id="p-versuch-disp" style="font-size:16px;font-weight:500;min-width:40px;text-align:center">${versuchNr}.</span>
-            <button class="cir-btn" onclick="changePVersuch(1)">+</button>
-          </div>
-        </div>
-        <div class="card-row">
-          <span class="card-label"><i class="ti ti-trophy"></i>Ergebnis</span>
-          <div style="display:flex;gap:8px;justify-content:flex-end;flex:1">
-            <button class="pill active" id="p-best" onclick="setPResult(true)">Bestanden ✓</button>
-            <button class="pill" id="p-nicht" onclick="setPResult(false)">Nicht bestanden ✗</button>
-          </div>
-        </div>
-      </div></div>
-      <button class="btn-full" onclick="savePruefung('${sid}')"><i class="ti ti-circle-check"></i> Prüfung speichern</button>
-    </div>
-  </div>`;
-  document.getElementById("app").innerHTML = html;
-  window._pVersuch = versuchNr;
-  window._pBestanden = true;
-  setTimeout(initPTR, 50);
-}
-
-function changePVersuch(d) {
-  window._pVersuch = Math.max(1, Math.min(4, (window._pVersuch||1) + d));
-  const el = document.getElementById("p-versuch-disp");
-  if (el) el.textContent = window._pVersuch + ".";
-}
-
-function setPResult(best) {
-  window._pBestanden = best;
-  const elB = document.getElementById("p-best");
-  const elN = document.getElementById("p-nicht");
-  if (elB) elB.classList.toggle("active", best);
-  if (elN) elN.classList.toggle("active", !best);
-}
-
-function savePruefung(sid) {
-  const s = getS(sid); if(!s) return;
-  const datum = document.getElementById("p-datum").value;
-  if (!datum) return;
-  if (!s.pruefungen) s.pruefungen = [];
-  s.pruefungen.push({ datum, versuch: window._pVersuch||1, bestanden: window._pBestanden!==false });
-  s.pruefungen.sort((a,b)=>a.datum.localeCompare(b.datum));
-  saveAll();
-  const msg = (window._pBestanden!==false?"Bestanden ✓":"Nicht bestanden ✗") + " · " + window._pVersuch + ". Prüfung";
-  document.getElementById("toast-pruef-msg").textContent = msg;
-  document.getElementById("toast-pruef").classList.add("show");
-  setTimeout(()=>renderSchueler(sid), 1800);
-}
-
-// ── PRUEFUNG BEARBEITEN ───────────────────────────────────────────────────────
-function renderEditPruefung(sid, idx) {
-  const s = getS(sid); if(!s) return;
-  const p = s.pruefungen[idx];
-  if (!p) return;
-  let html = `
-  <div class="screen active" id="scr-pruef-edit">
-    <div class="topbar">
-      <button class="btn-icon" onclick="renderSchueler('${sid}')"><i class="ti ti-x"></i></button>
-      <span class="topbar-title">Prüfung bearbeiten</span>
-    </div>
-    <div class="scroll">
-      <div><div class="sec-label">Prüfungsergebnis</div>
-      <div class="card">
-        <div class="card-row">
-          <span class="card-label"><i class="ti ti-calendar"></i>Datum</span>
-          <input type="date" id="pe-datum" value="${p.datum}"/>
-        </div>
-        <div class="card-row">
-          <span class="card-label"><i class="ti ti-list-numbers"></i>Prüfung Nr.</span>
-          <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end;flex:1">
-            <button class="cir-btn" onclick="changePEVersuch(-1)">−</button>
-            <span id="pe-versuch-disp" style="font-size:16px;font-weight:500;min-width:40px;text-align:center">${p.versuch}.</span>
-            <button class="cir-btn" onclick="changePEVersuch(1)">+</button>
-          </div>
-        </div>
-        <div class="card-row">
-          <span class="card-label"><i class="ti ti-trophy"></i>Ergebnis</span>
-          <div style="display:flex;gap:8px;justify-content:flex-end;flex:1">
-            <button class="pill ${p.bestanden?"active":""}" id="pe-best" onclick="setPEResult(true)">Bestanden ✓</button>
-            <button class="pill ${!p.bestanden?"active":""}" id="pe-nicht" onclick="setPEResult(false)">Nicht bestanden ✗</button>
-          </div>
-        </div>
-      </div></div>
-      <button class="btn-full" onclick="saveEditPruefung('${sid}',${idx})"><i class="ti ti-circle-check"></i> Änderungen speichern</button>
-      <button class="btn-full" style="color:#E24B4A;border-color:#E24B4A;margin-top:6px" onclick="deletePruefung('${sid}',${idx})"><i class="ti ti-trash"></i> Prüfung löschen</button>
-    </div>
-  </div>`;
-  document.getElementById("app").innerHTML = html;
-  window._peVersuch = p.versuch;
-  window._peBestanden = p.bestanden;
-  setTimeout(initPTR, 50);
-}
-
-function changePEVersuch(d) {
-  window._peVersuch = Math.max(1, Math.min(4, (window._peVersuch||1) + d));
-  const el = document.getElementById("pe-versuch-disp");
-  if (el) el.textContent = window._peVersuch + ".";
-}
-
-function setPEResult(best) {
-  window._peBestanden = best;
-  const elB = document.getElementById("pe-best");
-  const elN = document.getElementById("pe-nicht");
-  if (elB) elB.classList.toggle("active", best);
-  if (elN) elN.classList.toggle("active", !best);
-}
-
-function saveEditPruefung(sid, idx) {
-  const s = getS(sid); if(!s) return;
-  const datum = document.getElementById("pe-datum").value;
-  if (!datum) return;
-  s.pruefungen[idx] = { datum, versuch: window._peVersuch||1, bestanden: window._peBestanden!==false };
-  s.pruefungen.sort((a,b)=>a.datum.localeCompare(b.datum));
-  saveAll();
-  renderSchueler(sid);
-}
-
-function deletePruefung(sid, idx) {
-  const s = getS(sid); if(!s) return;
-  if (confirm("Prüfung wirklich löschen?")) {
-    s.pruefungen.splice(idx, 1);
-    saveAll();
-    renderSchueler(sid);
-  }
-}
-
-// ── FOTO ──────────────────────────────────────────────────────────────────────
-function triggerFotoUpload(sid) {
-  const inp = document.getElementById("foto-input-" + sid);
-  if (inp) inp.click();
-}
-
-function saveFoto(sid, input) {
-  const file = input.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    // Resize to max 300px for storage efficiency
-    const img = new Image();
-    img.onload = function() {
-      const canvas = document.createElement("canvas");
-      const MAX = 300;
-      let w = img.width, h = img.height;
-      if (w > h) { if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; } }
-      else { if (h > MAX) { w = Math.round(w * MAX / h); h = MAX; } }
-      canvas.width = w; canvas.height = h;
-      const ctx = canvas.getContext("2d");
-      ctx.drawImage(img, 0, 0, w, h);
-      const dataUrl = canvas.toDataURL("image/jpeg", 0.8);
-      const s = getS(sid);
-      if (s) { s.foto = dataUrl; saveAll(); renderSchueler(sid); }
-    };
-    img.src = e.target.result;
-  };
-  reader.readAsDataURL(file);
-}
-
-function deleteFoto(sid) {
-  const s = getS(sid);
-  if (s) { s.foto = null; saveAll(); renderSchueler(sid); }
-}
-
-// ── STATISTIK ────────────────────────────────────────────────────────────────
-function renderStatistik() {
-  const alle = schueler.flatMap(s=>(s.pruefungen||[]).map(p=>({...p, sid:s.id, name:s.vorname+" "+s.nachname, klasse:s.klasse})));
-  const gesamt = alle.length;
-  const bestanden = alle.filter(p=>p.bestanden).length;
-  const quote = gesamt ? Math.round((bestanden/gesamt)*100) : 0;
-
-  // By attempt
-  const v1 = alle.filter(p=>p.versuch===1);
-  const v2 = alle.filter(p=>p.versuch===2);
-  const v3 = alle.filter(p=>p.versuch===3);
-  const v4 = alle.filter(p=>p.versuch===4);
-  const v1best = v1.filter(p=>p.bestanden).length;
-  const v2best = v2.filter(p=>p.bestanden).length;
-  const v3best = v3.filter(p=>p.bestanden).length;
-  const v4best = v4.filter(p=>p.bestanden).length;
-
-  // By Prüfort
-  const orte = ["DEKRA Pankow","DEKRA Ferdi","TÜV Hornbach"];
-  const ortStats = orte.map(o=>{
-    const s = schueler.filter(s=>s.prufort===o);
-    const pruef = s.flatMap(s=>(s.pruefungen||[]));
-    const tot = pruef.length;
-    const best = pruef.filter(p=>p.bestanden).length;
-    return { ort:o, tot, best, quote: tot ? Math.round((best/tot)*100) : null };
+// ── STATISTIK ─────────────────────────────────────────────────────────────────
+function renderStatistik(){
+  const alle=schueler.flatMap(s=>(s.pruefungen||[]).filter(p=>p.bestanden!==null&&p.bestanden!==undefined).map(p=>({...p,sid:s.id,name:s.vorname+" "+s.nachname,klasse:s.klasse,prufort:s.prufort})));
+  const gesamt=alle.length;
+  const bestanden=alle.filter(p=>p.bestanden).length;
+  const quote=gesamt?Math.round((bestanden/gesamt)*100):0;
+  const v=[1,2,3,4].map(n=>({n,list:alle.filter(p=>p.versuch===n)}));
+  const ortStats=PRUFORTE.map(o=>{
+    const ps=schueler.filter(s=>s.prufort===o).flatMap(s=>(s.pruefungen||[]).filter(p=>p.bestanden!==null&&p.bestanden!==undefined));
+    const tot=ps.length,best=ps.filter(p=>p.bestanden).length;
+    return{ort:o,tot,best,quote:tot?Math.round((best/tot)*100):null};
   }).filter(o=>o.tot>0);
+  const recent=[...alle].sort((a,b)=>b.datum.localeCompare(a.datum)).slice(0,8);
 
-  // Recent results
-  const recent = [...alle].sort((a,b)=>b.datum.localeCompare(a.datum)).slice(0,8);
-
-  let html = `
-  <div class="screen active" id="scr-stat">
+  let html=`<div class="screen active" id="scr-stat">
     <div class="topbar">
       <button class="btn-icon" onclick="renderDashboard()"><i class="ti ti-arrow-left"></i></button>
       <span class="topbar-title">Statistik</span>
     </div>
     <div class="scroll">
-
       <div class="stat-grid">
-        <div class="stat-box accent">
-          <div class="stat-lbl">Bestehensquote</div>
-          <div class="stat-num">${quote}<span class="stat-unit">%</span></div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-lbl">Prüfungen gesamt</div>
-          <div class="stat-num">${gesamt}</div>
-        </div>
+        <div class="stat-box accent"><div class="stat-lbl">Bestehensquote</div><div class="stat-num">${quote}<span class="stat-unit">%</span></div></div>
+        <div class="stat-box"><div class="stat-lbl">Prüfungen gesamt</div><div class="stat-num">${gesamt}</div></div>
       </div>
-
       <div class="stat-grid">
-        <div class="stat-box">
-          <div class="stat-lbl">Bestanden</div>
-          <div class="stat-num" style="color:#27500A">${bestanden}</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-lbl">Nicht bestanden</div>
-          <div class="stat-num" style="color:#A32D2D">${gesamt-bestanden}</div>
-        </div>
-      </div>
+        <div class="stat-box"><div class="stat-lbl">Bestanden</div><div class="stat-num" style="color:#27500A">${bestanden}</div></div>
+        <div class="stat-box"><div class="stat-lbl">Nicht bestanden</div><div class="stat-num" style="color:#A32D2D">${gesamt-bestanden}</div></div>
+      </div>`;
 
-      ${gesamt===0?`<div class="empty-hint"><i class="ti ti-chart-bar" style="font-size:32px;display:block;margin:0 auto 10px"></i>Noch keine Prüfungsdaten vorhanden.<br>Trage beim Schüler die Prüfungsergebnisse ein.</div>`:`
-
-      <div><div class="sec-label">Nach Prüfungsversuch</div>
-      <div class="stat-card">
-        ${[[1,v1,v1best],[2,v2,v2best],[3,v3,v3best],[4,v4,v4best]].filter(([n,v])=>v.length>0).map(([n,v,vb])=>{
-          const pct2 = v.length ? Math.round((vb/v.length)*100) : 0;
-          return `<div class="stat-bar-wrap">
-            <span class="stat-bar-label">${n}.</span>
-            <div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${pct2}%"></div></div>
-            <span class="stat-bar-val">${pct2}%</span>
-            <span style="font-size:11px;color:var(--tx3);min-width:36px">${vb}/${v.length}</span>
-          </div>`;
-        }).join("")}
-      </div></div>
-
-      ${ortStats.length?`<div><div class="sec-label">Nach Prüfort</div>
-      <div class="stat-card">
-        ${ortStats.map(o=>`<div class="stat-bar-wrap">
-          <span class="stat-bar-label" style="min-width:90px;font-size:11px">${o.ort.replace("DEKRA ","").replace("TÜV ","")}</span>
-          <div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${o.quote}%"></div></div>
-          <span class="stat-bar-val">${o.quote}%</span>
-          <span style="font-size:11px;color:var(--tx3);min-width:36px">${o.best}/${o.tot}</span>
-        </div>`).join("")}
-      </div></div>`:""}
-
-      <div><div class="sec-label">Letzte Prüfungen</div>
-      ${recent.map(p=>{
+  if(gesamt===0){
+    html+=`<div class="empty-hint"><i class="ti ti-chart-bar" style="font-size:32px;display:block;margin:0 auto 10px"></i>Noch keine Prüfungsdaten.<br>Ergebnisse über das Dashboard eintragen.</div>`;
+  }else{
+    html+=`<div><div class="sec-label">Nach Prüfungsversuch</div><div class="stat-card">`;
+    v.filter(x=>x.list.length>0).forEach(x=>{
+      const best=x.list.filter(p=>p.bestanden).length;
+      const pct=x.list.length?Math.round((best/x.list.length)*100):0;
+      html+=`<div class="stat-bar-wrap"><span class="stat-bar-label">${x.n}.</span><div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${pct}%"></div></div><span class="stat-bar-val">${pct}%</span><span style="font-size:11px;color:var(--tx3);min-width:36px">${best}/${x.list.length}</span></div>`;
+    });
+    html+=`</div></div>`;
+    if(ortStats.length){
+      html+=`<div><div class="sec-label">Nach Prüfort</div><div class="stat-card">`;
+      ortStats.forEach(o=>{
+        html+=`<div class="stat-bar-wrap"><span class="stat-bar-label" style="min-width:90px;font-size:11px">${o.ort.replace("DEKRA ","").replace("TÜV ","")}</span><div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${o.quote}%"></div></div><span class="stat-bar-val">${o.quote}%</span><span style="font-size:11px;color:var(--tx3);min-width:36px">${o.best}/${o.tot}</span></div>`;
+      });
+      html+=`</div></div>`;
+    }
+    if(recent.length){
+      html+=`<div><div class="sec-label">Letzte Prüfungen</div>`;
+      recent.forEach(p=>{
         const fd=fmtDate(p.datum);
-        const s=getS(p.sid);
-        return `<div class="pruef-result-item">
-          <div class="pruef-versuch ${p.bestanden?"pruef-best":"pruef-nicht"}">${p.versuch}</div>
-          <div style="flex:1">
-            <div style="font-size:13px;font-weight:500;color:var(--tx)">${p.name}</div>
-            <div style="font-size:11px;color:var(--tx2);margin-top:2px">${p.versuch}. Prüfung · ${fd.day}. ${fd.mon} ${fd.year}${s?" · "+s.prufort:""}</div>
-          </div>
-          <span style="font-size:12px;font-weight:500;color:${p.bestanden?"#27500A":"#A32D2D"}">${p.bestanden?"✓":"✗"}</span>
-        </div>`;
-      }).join("")}
-      </div>
-      `}
-
-    </div>
-  </div>`;
-  document.getElementById("app").innerHTML = html;
-  setTimeout(initPTR, 50);
+        html+=`<div class="pruef-result-item"><div class="pruef-versuch ${p.bestanden?"pruef-best":"pruef-nicht"}">${p.versuch}</div><div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--tx)">${p.name}</div><div style="font-size:11px;color:var(--tx2);margin-top:2px">${p.versuch}. Prüfung · ${fd.day}. ${fd.mon} ${fd.year} · ${p.prufort}</div></div><span style="font-size:12px;font-weight:500;color:${p.bestanden?"#27500A":"#A32D2D"}">${p.bestanden?"✓":"✗"}</span></div>`;
+      });
+      html+=`</div>`;
+    }
+  }
+  html+=`</div></div>`;
+  document.getElementById("app").innerHTML=html;
+  setTimeout(initPTR,50);
 }
 
-// ── PULL TO REFRESH ──────────────────────────────────────────────────────────
-function initPTR() {
-  const scrollEl = document.querySelector(".scroll");
-  if (!scrollEl) return;
-
-  // Wrap scroll in ptr-wrap if not already
-  const parent = scrollEl.parentElement;
-  let ptrWrap = parent.querySelector(".ptr-wrap");
-  if (!ptrWrap) {
-    ptrWrap = document.createElement("div");
-    ptrWrap.className = "ptr-wrap";
-    parent.insertBefore(ptrWrap, scrollEl);
-    ptrWrap.appendChild(scrollEl);
-  }
-
-  // Add indicator
-  let indicator = ptrWrap.querySelector(".ptr-indicator");
-  if (!indicator) {
-    indicator = document.createElement("div");
-    indicator.className = "ptr-indicator";
-    indicator.innerHTML = '<div class="ptr-spinner" id="ptr-spinner"></div>';
-    ptrWrap.insertBefore(indicator, scrollEl);
-  }
-
-  let startY = 0, pulling = false, triggered = false;
-  const THRESHOLD = 72;
-
-  scrollEl.addEventListener("touchstart", e => {
-    if (scrollEl.scrollTop === 0) {
-      startY = e.touches[0].clientY;
-      pulling = true;
-      triggered = false;
-    }
-  }, { passive: true });
-
-  scrollEl.addEventListener("touchmove", e => {
-    if (!pulling) return;
-    const dy = e.touches[0].clientY - startY;
-    if (dy <= 0) { pulling = false; return; }
-    const pull = Math.min(dy * 0.45, 70);
-    const spinner = document.getElementById("ptr-spinner");
-    if (pull > 10) {
-      indicator.style.top = (pull - 56) + "px";
-      if (spinner) {
-        const rot = Math.round((pull / THRESHOLD) * 270);
-        spinner.style.transform = `rotate(${rot}deg)`;
-        spinner.style.borderTopColor = pull >= THRESHOLD ? "var(--accent)" : "rgba(255,107,43,0.5)";
-      }
-    }
-    if (pull >= THRESHOLD && !triggered) {
-      triggered = true;
-      if (spinner) spinner.classList.add("spinning");
-    }
-  }, { passive: true });
-
-  scrollEl.addEventListener("touchend", e => {
-    if (!pulling) return;
-    pulling = false;
-    const indicator2 = ptrWrap.querySelector(".ptr-indicator");
-    const spinner = document.getElementById("ptr-spinner");
-    if (triggered) {
-      if (indicator2) indicator2.style.top = "0px";
-      setTimeout(() => {
-        if (spinner) spinner.classList.remove("spinning");
-        if (indicator2) indicator2.style.top = "-56px";
-        location.reload();
-      }, 600);
-    } else {
-      if (indicator2) indicator2.style.top = "-56px";
-    }
-  }, { passive: true });
+// ── PULL TO REFRESH ───────────────────────────────────────────────────────────
+function initPTR(){
+  const scrollEl=document.querySelector(".scroll");if(!scrollEl)return;
+  const parent=scrollEl.parentElement;
+  let ptrWrap=parent.querySelector(".ptr-wrap");
+  if(!ptrWrap){ptrWrap=document.createElement("div");ptrWrap.className="ptr-wrap";parent.insertBefore(ptrWrap,scrollEl);ptrWrap.appendChild(scrollEl);}
+  let indicator=ptrWrap.querySelector(".ptr-indicator");
+  if(!indicator){indicator=document.createElement("div");indicator.className="ptr-indicator";indicator.innerHTML='<div class="ptr-spinner" id="ptr-spinner"></div>';ptrWrap.insertBefore(indicator,scrollEl);}
+  let startY=0,pulling=false,triggered=false;
+  const THRESHOLD=72;
+  scrollEl.addEventListener("touchstart",e=>{if(scrollEl.scrollTop===0){startY=e.touches[0].clientY;pulling=true;triggered=false;}},{passive:true});
+  scrollEl.addEventListener("touchmove",e=>{
+    if(!pulling)return;
+    const dy=e.touches[0].clientY-startY;if(dy<=0){pulling=false;return;}
+    const pull=Math.min(dy*.45,70);
+    const spinner=document.getElementById("ptr-spinner");
+    if(pull>10){indicator.style.top=(pull-56)+"px";if(spinner){spinner.style.transform=`rotate(${Math.round((pull/THRESHOLD)*270)}deg)`;spinner.style.borderTopColor=pull>=THRESHOLD?"var(--accent)":"rgba(255,107,43,.5)";}}
+    if(pull>=THRESHOLD&&!triggered){triggered=true;const sp=document.getElementById("ptr-spinner");if(sp)sp.classList.add("spinning");}
+  },{passive:true});
+  scrollEl.addEventListener("touchend",e=>{
+    if(!pulling)return;pulling=false;
+    if(triggered){indicator.style.top="0px";setTimeout(()=>{const sp=document.getElementById("ptr-spinner");if(sp)sp.classList.remove("spinning");indicator.style.top="-56px";location.reload();},600);}
+    else indicator.style.top="-56px";
+  },{passive:true});
 }
 
 // ── BOOT ──────────────────────────────────────────────────────────────────────
 renderDashboard();
-setTimeout(initPTR, 100);
 </script>
 </body>
 </html>
