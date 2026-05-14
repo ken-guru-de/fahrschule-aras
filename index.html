@@ -435,7 +435,26 @@ function renderSchueler(sid){
       </div></div>
 
       <div><div class="sec-row"><div class="sec-label" style="margin:0">Fahrstunden</div><button class="fab-btn" onclick="renderNeuFahrstunde('${s.id}')"><i class="ti ti-plus"></i></button></div>
-      ${(s.fahrstunden&&s.fahrstunden.length)?s.fahrstunden.slice(0,5).map(f=>{const fd=fmtDate(f.datum);return`<div class="termin-item" style="margin-bottom:6px"><div style="display:flex;flex-direction:column;align-items:center;min-width:28px"><span style="font-size:15px;font-weight:600">${fd.day}</span><span style="font-size:10px;color:var(--tx3)">${fd.mon}</span></div><div class="t-info"><div class="t-name">${f.typ==="pruef"?"Prüfungsfahrt":"Fahrstunde"}</div><div class="t-sub">${f.typ==="pruef"?"100 min":f.einh+" × 80 min"}</div></div></div>`;}).join(""):
+      ${(s.fahrstunden&&s.fahrstunden.length)?s.fahrstunden.slice(0,5).map(f=>{
+        const fd=fmtDate(f.datum);
+        const zukunft=f.datum>todayStr();
+        const heute=f.datum===todayStr();
+        return`<div class="termin-item" style="margin-bottom:6px;${zukunft?"opacity:.6":""}">
+          <div style="display:flex;flex-direction:column;align-items:center;min-width:28px">
+            <span style="font-size:15px;font-weight:600;color:${zukunft?"var(--accent)":"var(--tx)"}">${fd.day}</span>
+            <span style="font-size:10px;color:var(--tx3)">${fd.mon}</span>
+          </div>
+          <div class="t-info">
+            <div class="t-name">${f.typ==="pruef"?"Prüfungsfahrt":"Fahrstunde"}</div>
+            <div class="t-sub">${f.typ==="pruef"?"100 min":f.einh+" × 80 min"}</div>
+          </div>
+          <span style="font-size:11px;font-weight:500;padding:3px 8px;border-radius:20px;${
+            zukunft?"background:rgba(255,107,43,.12);color:var(--accent)":
+            heute?"background:#E6F1FB;color:#0C447C":
+            "background:#EAF3DE;color:#27500A"
+          }">${zukunft?"Geplant":heute?"Heute":"✓"}</span>
+        </div>`;
+      }).join(""):
       `<div class="empty-hint" style="padding:10px 0">Noch keine Fahrstunden</div>`}
       </div>
 
