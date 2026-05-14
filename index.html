@@ -196,12 +196,7 @@ html, body { height: 100%; background: var(--bg); color: var(--tx); font-family:
 .sp-step.done { background: var(--accent-dark); color: white; }
 .sp-step.next { background: rgba(255,107,43,0.12); color: var(--accent); }
 
-/* STUFEN */
-.stufe-row { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: var(--r-md); font-size: 13px; margin-bottom: 4px; }
-.stufe-row.done { background: var(--accent-dark); color: white; }
-.stufe-row.active { background: rgba(255,107,43,0.12); color: var(--accent); }
-.stufe-row.open { background: var(--bg2); color: var(--tx2); }
-.stufe-row i { font-size: 15px; }
+
 
 /* TOGGLE */
 .toggle-wrap { position: relative; width: 51px; height: 31px; flex-shrink: 0; }
@@ -259,8 +254,7 @@ html, body { height: 100%; background: var(--bg); color: var(--tx); font-family:
 .notiz-area { width: 100%; min-height: 200px; border: none; background: transparent; font-size: 20px; line-height: 1.7; color: var(--tx); font-family: inherit; outline: none; resize: none; padding: 0; }
 
 /* PROGRESS BAR */
-.prog-bg { height: 6px; border-radius: 3px; background: var(--bg2); margin: 4px 0 2px; }
-.prog-fill { height: 6px; border-radius: 3px; }
+
 
 /* TERMIN ITEMS */
 .termin-item { background: var(--bg); border: 0.5px solid var(--br); border-radius: var(--r-lg); padding: 9px 12px; display: flex; align-items: center; gap: 10px; }
@@ -299,7 +293,6 @@ const FARBEN = [
   { key:"amber",  bg:"#FAC775", tx:"#633806" },
 ];
 const KLASSEN = ["B","BA","B197","B17"];
-const STUFEN = ["Grundfahraufgaben","Stadtverkehr","Einparken"];
 const GRUNDFAHRAUFGABEN = [
   { key:"laengs",      label:"Einparken längs" },
   { key:"rechts",      label:"Einparken rechts" },
@@ -355,7 +348,6 @@ function getS(id) { return schueler.find(s=>s.id===id); }
 function fmtDate(d) { const p=d.split("-"); return {day:parseInt(p[2]),mon:MONATE_K[parseInt(p[1])-1],year:p[0]}; }
 function isWeekday(y,m,d) { const dw=new Date(y,m-1,d).getDay(); return dw>=1&&dw<=5; }
 function isBefore(y,m,d) { return new Date(y,m-1,d)<START_DATE; }
-function pct(s) { return Math.round((s.stufe/STUFEN.length)*100); }
 function todayTotalMin() {
   const td = todayStr();
   const t = termine[td] || [];
@@ -542,8 +534,6 @@ function confirmDelete(sid) {
 function renderSchueler(sid) {
   const s = getS(sid);
   if (!s) return;
-  const p = pct(s);
-  const barColor = p>=100 ? "#639922" : p>=50 ? "#378ADD" : "#BA7517";
   const nsi = nextSonder(s);
   const totalEinh = (s.fahrstunden||[]).reduce((a,f)=>a+(f.typ==="normal"?f.einh:0),0);
 
@@ -586,16 +576,7 @@ function renderSchueler(sid) {
         <div class="info-row"><span class="info-lbl"><i class="ti ti-map-pin"></i>Prüfort</span><span class="info-val">${s.prufort}</span></div>
       </div></div>
 
-      <div><div class="sec-label">Ausbildungsstand</div>
-      <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--tx2);margin-bottom:4px"><span>Fortschritt</span><span>${p} %</span></div>
-      <div class="prog-bg"><div class="prog-fill" style="width:${p}%;background:${barColor}"></div></div>
-      ${STUFEN.map((st,i)=>{
-        const done=i<s.stufe, cur=i===s.stufe-1&&p<100;
-        const cls=done?"done":cur?"active":"open";
-        const ico=done?"ti-circle-check":cur?"ti-loader":"ti-circle";
-        return `<div class="stufe-row ${cls}"><i class="ti ${ico}"></i>${st}</div>`;
-      }).join("")}
-      </div>
+
 
       <div><div class="sec-label">Sonderfahrten</div>
       <div class="sonder-progress">
