@@ -288,10 +288,8 @@ function renderDashboard(){
     <button class="btn-full" onclick="renderListe()"><i class="ti ti-users"></i> Alle Schüler</button>
     <button class="btn-full" onclick="renderStatistik()"><i class="ti ti-chart-bar"></i> Statistik</button>
     <button class="btn-full" onclick="renderNeuSchueler()"><i class="ti ti-user-plus"></i> Neuen Schüler anlegen</button>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-      <button class="btn-full" onclick="exportDaten()" style="font-size:14px"><i class="ti ti-download"></i> Sichern</button>
-      <button class="btn-full" onclick="document.getElementById(\'import-input\').click()" style="font-size:14px"><i class="ti ti-upload"></i> Wiederherstellen</button>
-    </div>
+    <button class="btn-full" onclick="exportDaten()" style="background:#EAF3DE;border-color:#97C459;color:#27500A;font-size:15px"><i class="ti ti-download"></i> Daten sichern</button>
+    <button class="btn-full" onclick="document.getElementById(\'import-input\').click()" style="background:#E6F1FB;border-color:#85B7EB;color:#0C447C;font-size:15px"><i class="ti ti-upload"></i> Daten wiederherstellen</button>
     <input type="file" id="import-input" accept=".json" style="display:none" onchange="importDaten(this)"/>
   </div></div></div>`;
   document.getElementById("app").innerHTML=html;
