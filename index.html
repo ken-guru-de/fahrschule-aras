@@ -687,6 +687,13 @@ function saveFahrstunde(sid){
   if(!s.fahrstunden)s.fahrstunden=[];
   const fuhr=document.getElementById("f-uhr")?document.getElementById("f-uhr").value:"09:00";
   s.fahrstunden.unshift({datum:dat,uhr:fuhr,einh,typ,sonder:sonderGemacht});
+  // Sync to Kalender
+  const kalMin = typ==="pruef" ? 100 : einh*80;
+  if(!termine[dat])termine[dat]=[];
+  // avoid duplicate
+  const exists=termine[dat].find(t=>t.sid===s.id&&t.uhr===fuhr);
+  if(!exists)termine[dat].push({sid:s.id,uhr:fuhr,min:kalMin,notiz:sonderGemacht||""});
+  termine[dat].sort((a,b)=>a.uhr.localeCompare(b.uhr));
   saveAll();
   const msg=sonderGemacht?sonderGemacht+" abgeschlossen":"Fahrstunde gespeichert";
   document.getElementById("toast-fahrt-msg").textContent=msg;
@@ -804,13 +811,21 @@ function saveEditFahrstunde(sid,idx){
   const s=getS(sid);if(!s)return;
   const dat=document.getElementById("ef-dat").value;if(!dat)return;
   const uhr=document.getElementById("ef-uhr")?document.getElementById("ef-uhr").value:"09:00";
-  s.fahrstunden[idx]={
-    datum:dat,
-    uhr:uhr,
-    typ:window._efahrtTyp||"normal",
-    einh:window._efahrtEinh||1,
-    sonder:s.fahrstunden[idx].sonder
-  };
+  const oldF=s.fahrstunden[idx];
+  const newTyp=window._efahrtTyp||"normal";
+  const newEinh=window._efahrtEinh||1;
+  // Remove old kalender entry if exists
+  if(oldF.datum&&oldF.uhr&&termine[oldF.datum]){
+    termine[oldF.datum]=termine[oldF.datum].filter(t=>!(t.sid===s.id&&t.uhr===oldF.uhr));
+    if(!termine[oldF.datum].length)delete termine[oldF.datum];
+  }
+  s.fahrstunden[idx]={datum:dat,uhr:uhr,typ:newTyp,einh:newEinh,sonder:oldF.sonder};
+  // Add new kalender entry
+  const newMin=newTyp==="pruef"?100:newEinh*80;
+  if(!termine[dat])termine[dat]=[];
+  const ex2=termine[dat].find(t=>t.sid===s.id&&t.uhr===uhr);
+  if(!ex2)termine[dat].push({sid:s.id,uhr:uhr,min:newMin,notiz:""});
+  termine[dat].sort((a,b)=>a.uhr.localeCompare(b.uhr));
   s.fahrstunden.sort((a,b)=>b.datum.localeCompare(a.datum));
   saveAll();renderSchueler(sid);
 }
@@ -818,6 +833,11 @@ function saveEditFahrstunde(sid,idx){
 function deleteEditFahrstunde(sid,idx){
   const s=getS(sid);if(!s)return;
   if(confirm("Fahrstunde wirklich löschen?")){
+    const df=s.fahrstunden[idx];
+    if(df.datum&&df.uhr&&termine[df.datum]){
+      termine[df.datum]=termine[df.datum].filter(t=>!(t.sid===s.id&&t.uhr===df.uhr));
+      if(!termine[df.datum].length)delete termine[df.datum];
+    }
     s.fahrstunden.splice(idx,1);
     saveAll();renderSchueler(sid);
   }
