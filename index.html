@@ -266,7 +266,7 @@ function renderDashboard(){
       const nick=s.spitz?` «${s.spitz}»`:"";
       html+=`<div class="list-item" style="margin-bottom:6px" onclick="renderEditDashTermin('${td}',${ti})">
         ${s.foto?`<div class="avatar" style="overflow:hidden;flex-shrink:0"><img src="${s.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/></div>`:`<div class="avatar av-${s.farbe}">${initials(s)}</div>`}
-        <div class="item-info"><div class="item-name">${s.vorname}${nick}</div><div class="item-sub">${t.uhr} Uhr · ${t.min} min${t.notiz?" · "+t.notiz:""}</div></div>
+        <div class="item-info"><div class="item-name">${s.vorname}${nick}</div><div class="item-sub">${t.uhr}–${(()=>{const [h,m]=t.uhr.split(":").map(Number);const tot=h*60+m+t.min;return String(Math.floor(tot/60)%24).padStart(2,"0")+":"+String(tot%60).padStart(2,"0");})()}Uhr · ${t.min} min${t.notiz?" · "+t.notiz:""}</div></div>
         <span class="badge badge-${s.klasse}">${s.klasse}</span>
         <i class="ti ti-chevron-right" style="color:var(--tx3);font-size:16px"></i>
       </div>`;
@@ -311,16 +311,16 @@ function renderListe(q="",sortMode="heute"){
   const heuteIds=new Set((termine[td]||[]).map(t=>t.sid));
   const basis=q?schueler.filter(s=>(s.vorname+" "+s.nachname+" "+(s.spitz||"")).toLowerCase().includes(q.toLowerCase())):schueler;
 
-  function nextTerminDate(s){
+  function nextTerminDateTime(s){
     const all=Object.entries(termine)
       .filter(([d])=>d>=td)
-      .flatMap(([d,ts])=>ts.filter(t=>t.sid===s.id).map(()=>d));
+      .flatMap(([d,ts])=>ts.filter(t=>t.sid===s.id).map(t=>d+"T"+(t.uhr||"00:00")));
     return all.sort()[0]||"9999";
   }
 
   const filtered=[...basis].sort((a,b)=>{
     if(sortMode==="termin"){
-      return nextTerminDate(a).localeCompare(nextTerminDate(b));
+      return nextTerminDateTime(a).localeCompare(nextTerminDateTime(b));
     }
     const aH=heuteIds.has(a.id)?0:1;
     const bH=heuteIds.has(b.id)?0:1;
@@ -357,7 +357,7 @@ function renderListe(q="",sortMode="heute"){
             <div class="item-name">${s.vorname} ${s.nachname}${s.spitz?` <span style="color:var(--tx3);font-size:12px">«${s.spitz}»</span>`:""}</div>
             ${bestanden?`<div style="margin-top:3px"><span style="font-size:11px;color:#27500A;background:#EAF3DE;padding:2px 8px;border-radius:20px">✓ Bestanden</span></div>`:""}
             <div class="item-sub">${sortMode==="termin"?
-            (()=>{const nd=nextTerminDate(s);const t=(termine[nd]||[]).find(t=>t.sid===s.id);return nd==="9999"?"Kein Termin geplant":fmtDate(nd).day+". "+fmtDate(nd).mon+" "+fmtDate(nd).year+(t?" · "+t.uhr+" Uhr":"");})()
+            (()=>{const ndt=nextTerminDateTime(s);if(ndt==="9999")return"Kein Termin geplant";const nd=ndt.split("T")[0];const t=(termine[nd]||[]).find(t=>t.sid===s.id);return fmtDate(nd).day+". "+fmtDate(nd).mon+" "+fmtDate(nd).year+(t?" · "+t.uhr+" Uhr":"");})()
             :"Beginn "+fmtDate(s.beginn).day+". "+fmtDate(s.beginn).mon+" "+fmtDate(s.beginn).year
           }</div>
             <div style="font-size:12px;color:var(--tx3);margin-top:2px;white-space:nowrap">${
@@ -915,7 +915,7 @@ function renderCalDetail(){
     const nick=s.spitz?` «${s.spitz}»`:"";
     html+=`<div class="termin-item" style="margin-bottom:6px">
       <div class="t-avatar av-${s.farbe}">${initials(s)}</div>
-      <div class="t-info"><div class="t-name">${s.vorname}${nick} ${s.nachname}</div><div class="t-sub">${e.uhr} Uhr · ${e.min} min · Kl. ${s.klasse}${e.notiz?" · "+e.notiz:""}</div></div>
+      <div class="t-info"><div class="t-name">${s.vorname}${nick} ${s.nachname}</div><div class="t-sub">${e.uhr}–${(()=>{const [h,m]=e.uhr.split(":").map(Number);const t=h*60+m+e.min;return String(Math.floor(t/60)%24).padStart(2,"0")+":"+String(t%60).padStart(2,"0");})()}Uhr · ${e.min} min · Kl. ${s.klasse}${e.notiz?" · "+e.notiz:""}</div></div>
       <button class="t-del" onclick="delKalTermin('${selDate}',${i})"><i class="ti ti-trash"></i></button>
     </div>`;
   });
@@ -944,12 +944,13 @@ function renderNeuKalTermin(date){
           ${schueler.map(s=>`<option value="${s.id}">${s.vorname} ${s.nachname}${s.spitz?" «"+s.spitz+"»":""}</option>`).join("")}
           </select>
         </div>
-        <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Uhrzeit</span><input type="time" id="k-uhr" value="09:00"/></div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Startzeit</span><input type="time" id="k-uhr" value="09:00" oninput="kalUpdateEnd()"/></div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-clock-check"></i>Endzeit</span><span id="k-endzeit" style="flex:1;text-align:right;font-size:15px;font-weight:500;color:var(--accent)">10:20</span></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-hourglass"></i>Minuten</span>
           <div style="display:flex;align-items:center;gap:10px;justify-content:flex-end;flex:1">
-            <button class="cir-btn" onclick="changeKalMin(-10)">−</button>
+            <button class="cir-btn" onclick="changeKalMin(-10);kalUpdateEnd()">−</button>
             <span id="kal-min-disp" style="font-size:16px;font-weight:500;min-width:52px;text-align:center">80 min</span>
-            <button class="cir-btn" onclick="changeKalMin(10)">+</button>
+            <button class="cir-btn" onclick="changeKalMin(10);kalUpdateEnd()">+</button>
           </div>
         </div>
       </div></div>
@@ -966,6 +967,17 @@ function renderNeuKalTermin(date){
   setTimeout(initPTR,50);
 }
 function changeKalMin(d){window._kalMin=Math.max(10,Math.min(300,window._kalMin+d));const el=document.getElementById("kal-min-disp");if(el)el.textContent=window._kalMin+" min";}
+
+function kalUpdateEnd(){
+  const uhr=document.getElementById("k-uhr");
+  const endEl=document.getElementById("k-endzeit");
+  if(!uhr||!endEl)return;
+  const [h,m]=uhr.value.split(":").map(Number);
+  const total=h*60+m+(window._kalMin||80);
+  const eh=Math.floor(total/60)%24;
+  const em=total%60;
+  endEl.textContent=String(eh).padStart(2,"0")+":"+String(em).padStart(2,"0")+" Uhr";
+}
 function saveKalTermin(date){
   const sid=document.getElementById("k-sid").value;
   const uhr=document.getElementById("k-uhr").value;
