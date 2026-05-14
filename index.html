@@ -579,7 +579,17 @@ function saveSchueler(editSid){
     setTimeout(()=>renderSchueler(ns.id),1600);
   }
 }
-function deleteSchueler(sid){const s=getS(sid);if(!s)return;if(confirm(`${s.vorname} ${s.nachname} wirklich löschen?`)){schueler=schueler.filter(x=>x.id!==sid);saveAll();renderListe();}}
+function deleteSchueler(sid){
+  const s=getS(sid);if(!s)return;
+  if(confirm(`${s.vorname} ${s.nachname} wirklich löschen?`)){
+    schueler=schueler.filter(x=>x.id!==sid);
+    Object.keys(termine).forEach(d=>{
+      termine[d]=termine[d].filter(t=>t.sid!==sid);
+      if(!termine[d].length)delete termine[d];
+    });
+    saveAll();renderListe();
+  }
+}
 
 // ── FAHRSTUNDE ────────────────────────────────────────────────────────────────
 function renderNeuFahrstunde(sid){
