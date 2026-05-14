@@ -144,7 +144,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:-apple-sy
 .cal-day.today .day-num{color:var(--accent);}
 .dot-row{display:flex;gap:2px;flex-wrap:wrap;}
 .cdot{width:5px;height:5px;border-radius:50%;}
-.cdot-b{background:#378ADD;}.cdot-o{background:#BA7517;}
+.cdot-r{background:#E24B4A;}.cdot-g{background:#639922;}.cdot-b{background:#378ADD;}
 .spacer-day{min-height:58px;}
 .termin-item{background:var(--bg);border:.5px solid var(--br);border-radius:var(--r-lg);padding:9px 12px;display:flex;align-items:center;gap:10px;}
 .t-avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0;}
@@ -978,8 +978,20 @@ function renderCalGrid(){
     if(key===selDate)el.classList.add("sel");
     const dn=document.createElement("div");dn.className="day-num";dn.textContent=d;el.appendChild(dn);
     const t=termine[key];
-    if(t&&t.length){const dr=document.createElement("div");dr.className="dot-row";t.slice(0,4).forEach(e=>{const dot=document.createElement("div");dot.className="cdot "+(e.min===100?"cdot-o":"cdot-b");dr.appendChild(dot);});el.appendChild(dr);}
-    el.onclick=()=>{selDate=key;renderCalGrid();renderCalDetail();};
+    if(t&&t.length){
+      const dr=document.createElement("div");dr.className="dot-row";
+      t.slice(0,4).forEach(e=>{
+        const dot=document.createElement("div");
+        // red=pruef(100min), blue=sonder(225/220/135min), green=normal
+        let cls="cdot-g";
+        if(e.min===100)cls="cdot-r";
+        else if(e.min===225||e.min===220||e.min===135)cls="cdot-b";
+        dot.className="cdot "+cls;
+        dr.appendChild(dot);
+      });
+      el.appendChild(dr);
+    }
+    el.onclick=()=>{selDate=key;renderTagAnsicht(key);};
     grid.appendChild(el);
   });
 }
@@ -990,7 +1002,7 @@ function renderCalDetail(){
   const lbl=`${parseInt(p[2])}. ${MONATE_K[parseInt(p[1])-1]} ${p[0]}`;
   const t=termine[selDate]||[];
   let html=`<div class="sec-label" style="margin-bottom:8px">${lbl}</div>`;
-  if(!t.length)html+=`<div class="empty-hint" style="padding:12px 0">Kein Termin</div>`;
+  if(!t.length)html+=`<div style="padding:12px 0;font-size:13px;color:var(--tx3)">Kein Termin — tippe + zum Hinzufügen</div>`;
   else t.forEach((e,i)=>{
     const s=getS(e.sid);if(!s)return;
     const nick=s.spitz?` «${s.spitz}»`:"";
@@ -1006,12 +1018,14 @@ function renderCalDetail(){
 function delKalTermin(key,i){if(!termine[key])return;const t=termine[key][i];const s=getS(t.sid);const name=s?s.vorname+" "+s.nachname:"Termin";if(!confirm(name+" · "+t.uhr+" Uhr wirklich löschen?"))return;termine[key].splice(i,1);if(!termine[key].length)delete termine[key];saveAll();renderCalGrid();renderCalDetail();}
 function prevMonth(){
   curMonth--;if(curMonth<1){curMonth=12;curYear--;}
+  selDate=null;
   const ml=document.getElementById("cal-month-label");
   if(ml)ml.textContent=MONATE[curMonth-1]+" "+curYear;
   renderCalGrid();renderCalDetail();
 }
 function nextMonth(){
   curMonth++;if(curMonth>12){curMonth=1;curYear++;}
+  selDate=null;
   const ml=document.getElementById("cal-month-label");
   if(ml)ml.textContent=MONATE[curMonth-1]+" "+curYear;
   renderCalGrid();renderCalDetail();
@@ -1214,6 +1228,142 @@ function deleteEditDashTermin(){
   termine[date].splice(idx,1);
   if(!termine[date].length)delete termine[date];
   saveAll();renderDashboard();
+}
+
+// ── TAGESANSICHT ─────────────────────────────────────────────────────────────
+function renderTagAnsicht(date){
+  const p=date.split("-");
+  const fd=fmtDate(date);
+  const wochentage=["So","Mo","Di","Mi","Do","Fr","Sa"];
+  const dow=wochentage[new Date(date).getDay()];
+  const t=termine[date]||[];
+  const td=todayStr();
+
+  let html=`<div class="screen active" id="scr-tag">
+    <div class="topbar">
+      <button class="btn-icon" onclick="buildKalender()"><i class="ti ti-arrow-left"></i></button>
+      <span class="topbar-title">${dow}, ${fd.day}. ${fd.mon} ${fd.year}</span>
+      <button class="btn-icon" onclick="renderNeuKalTermin('${date}')"><i class="ti ti-plus"></i></button>
+    </div>
+    <div class="scroll">`;
+
+  if(!t.length){
+    html+=`<div class="empty-hint"><i class="ti ti-calendar-off" style="font-size:32px;display:block;margin:0 auto 10px"></i>Keine Termine<br><span style="font-size:12px">Tippe + um einen Termin hinzuzufügen</span></div>`;
+  } else {
+    // Sort by time
+    const sorted=[...t].sort((a,b)=>a.uhr.localeCompare(b.uhr));
+    let totalMin=0;
+    sorted.forEach((e,i)=>{
+      const s=getS(e.sid);if(!s)return;
+      const nick=s.spitz?` «${s.spitz}»`:"";
+      const endMin=(()=>{const [h,m]=e.uhr.split(":").map(Number);const tot=h*60+m+e.min;return String(Math.floor(tot/60)%24).padStart(2,"0")+":"+String(tot%60).padStart(2,"0");})();
+      const isSonder=e.min===225||e.min===220||e.min===135;
+      const isPruef=e.min===100;
+      const dotCol=isPruef?"#E24B4A":isSonder?"#378ADD":"#639922";
+      totalMin+=e.min;
+      html+=`<div class="card" style="margin-bottom:8px;cursor:pointer" onclick="renderEditKalTermin('${date}',${t.indexOf(e)})">
+        <div class="card-row" style="gap:14px">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:2px;min-width:44px">
+            <span style="font-size:14px;font-weight:600;color:var(--tx)">${e.uhr}</span>
+            <span style="font-size:11px;color:var(--tx3)">–${endMin}</span>
+          </div>
+          <div style="width:3px;border-radius:2px;background:${dotCol};align-self:stretch;flex-shrink:0"></div>
+          <div style="flex:1">
+            <div style="font-size:15px;font-weight:500">${s.vorname}${nick} ${s.nachname}</div>
+            <div style="font-size:12px;color:var(--tx2);margin-top:2px">${e.min} min · Kl. ${s.klasse}${e.notiz?" · "+e.notiz:""}</div>
+            <div style="margin-top:4px"><span class="badge badge-${s.klasse}">${s.klasse}</span></div>
+          </div>
+          <i class="ti ti-chevron-right" style="color:var(--tx3);font-size:16px"></i>
+        </div>
+      </div>`;
+    });
+    html+=`<div class="stat-box" style="margin-top:4px">
+      <div class="stat-lbl">Gesamtzeit heute</div>
+      <div class="stat-num">${totalMin}<span class="stat-unit">min</span></div>
+    </div>`;
+  }
+
+  html+=`<button class="btn-full" style="margin-top:8px" onclick="renderNeuKalTermin('${date}')"><i class="ti ti-plus"></i> Termin hinzufügen</button>
+    </div>
+  </div>`;
+  document.getElementById("app").innerHTML=html;
+  setTimeout(initPTR,50);
+}
+
+function renderEditKalTermin(date,idx){
+  const t=(termine[date]||[])[idx];if(!t)return;
+  const s=getS(t.sid);if(!s)return;
+  window._etDate=date;window._etIdx=idx;window._etMin=t.min;
+  const fd=fmtDate(date);
+  let html=`<div class="screen active" id="scr-edit-kaltermin">
+    <div class="topbar">
+      <button class="btn-icon" onclick="renderTagAnsicht('${date}')"><i class="ti ti-x"></i></button>
+      <span class="topbar-title">Termin bearbeiten</span>
+    </div>
+    <div class="scroll">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:4px">
+        ${s.foto?`<div class="avatar" style="overflow:hidden;flex-shrink:0"><img src="${s.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/></div>`:`<div class="avatar av-${s.farbe}">${initials(s)}</div>`}
+        <div><div style="font-size:17px;font-weight:600">${s.vorname} ${s.nachname}</div>
+        <div style="font-size:13px;color:var(--tx2)">${fd.day}. ${fd.mon} ${fd.year}</div></div>
+      </div>
+      <div><div class="sec-label">Termin</div>
+      <div class="card">
+        <div class="card-row"><span class="card-label"><i class="ti ti-user"></i>Schüler</span>
+          <select id="ekt-sid">
+            ${schueler.map(sc=>`<option value="${sc.id}" ${sc.id===t.sid?"selected":""}>${sc.vorname} ${sc.nachname}${sc.spitz?" «"+sc.spitz+"»":""}</option>`).join("")}
+          </select>
+        </div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Startzeit</span><input type="time" id="ekt-uhr" value="${t.uhr}" oninput="ektUpdateEnd()"/></div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-clock-check"></i>Endzeit</span><span id="ekt-endzeit" style="flex:1;text-align:right;font-size:15px;font-weight:500;color:var(--accent)"></span></div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-hourglass"></i>Minuten</span>
+          <div style="display:flex;align-items:center;gap:10px;justify-content:flex-end;flex:1">
+            <button class="cir-btn" onclick="changeETMin(-10);ektUpdateEnd()">−</button>
+            <span id="et-min-disp" style="font-size:16px;font-weight:500;min-width:52px;text-align:center">${t.min} min</span>
+            <button class="cir-btn" onclick="changeETMin(10);ektUpdateEnd()">+</button>
+          </div>
+        </div>
+        <div class="card-row" style="align-items:flex-start;padding-top:12px"><span class="card-label" style="padding-top:2px"><i class="ti ti-notes"></i>Notiz</span>
+          <textarea id="ekt-notiz" style="flex:1;border:none;background:transparent;font-size:15px;color:var(--tx);font-family:inherit;outline:none;text-align:left;resize:none;height:60px" placeholder="Optional…">${t.notiz||""}</textarea>
+        </div>
+      </div></div>
+      <button class="btn-full" onclick="saveEktTermin('${date}',${idx})"><i class="ti ti-circle-check"></i> Speichern</button>
+      <button class="btn-full danger" style="margin-top:6px" onclick="deleteEktTermin('${date}',${idx})"><i class="ti ti-trash"></i> Termin löschen</button>
+    </div>
+  </div>`;
+  document.getElementById("app").innerHTML=html;
+  window._etMin=t.min;
+  setTimeout(()=>{ektUpdateEnd();initPTR();},50);
+}
+
+function ektUpdateEnd(){
+  const uhr=document.getElementById("ekt-uhr");
+  const endEl=document.getElementById("ekt-endzeit");
+  if(!uhr||!endEl)return;
+  const [h,m]=uhr.value.split(":").map(Number);
+  const total=h*60+m+(window._etMin||80);
+  const eh=Math.floor(total/60)%24;
+  const em=total%60;
+  endEl.textContent=String(eh).padStart(2,"0")+":"+String(em).padStart(2,"0")+" Uhr";
+}
+
+function saveEktTermin(date,idx){
+  if(!termine[date]||!termine[date][idx])return;
+  termine[date][idx].sid=document.getElementById("ekt-sid").value;
+  termine[date][idx].uhr=document.getElementById("ekt-uhr").value;
+  termine[date][idx].min=window._etMin||80;
+  termine[date][idx].notiz=document.getElementById("ekt-notiz").value.trim();
+  termine[date].sort((a,b)=>a.uhr.localeCompare(b.uhr));
+  saveAll();renderTagAnsicht(date);
+}
+
+function deleteEktTermin(date,idx){
+  if(!termine[date])return;
+  const t=termine[date][idx];
+  const s=getS(t.sid);
+  if(!confirm((s?s.vorname+" "+s.nachname:"Termin")+" · "+t.uhr+" Uhr wirklich löschen?"))return;
+  termine[date].splice(idx,1);
+  if(!termine[date].length)delete termine[date];
+  saveAll();renderTagAnsicht(date);
 }
 
 // ── PULL TO REFRESH ───────────────────────────────────────────────────────────
