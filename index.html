@@ -468,11 +468,12 @@ function renderSchueler(sid){
       </div></div>
 
       <div><div class="sec-row"><div class="sec-label" style="margin:0">Fahrstunden</div><button class="fab-btn" onclick="renderNeuFahrstunde('${s.id}')"><i class="ti ti-plus"></i></button></div>
-      ${(s.fahrstunden&&s.fahrstunden.length)?[...s.fahrstunden].sort((a,b)=>b.datum.localeCompare(a.datum)).slice(0,5).map(f=>{
+      ${(s.fahrstunden&&s.fahrstunden.length)?[...s.fahrstunden].sort((a,b)=>b.datum.localeCompare(a.datum)).slice(0,10).map((f,fi)=>{
         const fd=fmtDate(f.datum);
         const zukunft=f.datum>todayStr();
         const heute=f.datum===todayStr();
-        return`<div class="termin-item" style="margin-bottom:6px;${zukunft?"opacity:.6":""}">
+        const origIdx=s.fahrstunden.indexOf(f);
+        return`<div class="termin-item" style="margin-bottom:6px;${zukunft?"opacity:.7":""}">
           <div style="display:flex;flex-direction:column;align-items:center;min-width:28px">
             <span style="font-size:15px;font-weight:600;color:${zukunft?"var(--accent)":"var(--tx)"}">${fd.day}</span>
             <span style="font-size:10px;color:var(--tx3)">${fd.mon}</span>
@@ -486,6 +487,7 @@ function renderSchueler(sid){
             heute?"background:#E6F1FB;color:#0C447C":
             "background:#EAF3DE;color:#27500A"
           }">${zukunft?"Geplant":heute?"Heute":"✓"}</span>
+          <button class="btn-icon dark" style="font-size:17px;min-width:32px;min-height:32px" onclick="renderEditFahrstunde('${s.id}',${origIdx})"><i class="ti ti-edit"></i></button>
         </div>`;
       }).join(""):
       `<div class="empty-hint" style="padding:10px 0">Noch keine Fahrstunden</div>`}
@@ -737,6 +739,85 @@ function savePruefResult(sid,datum,pi,bestanden){
   saveAll();renderDashboard();
 }
 
+// ── FAHRSTUNDE BEARBEITEN ────────────────────────────────────────────────────
+function renderEditFahrstunde(sid, idx){
+  const s=getS(sid);if(!s)return;
+  const f=s.fahrstunden[idx];if(!f)return;
+  const nsi=nextSonder(s);
+  let html=`<div class="screen active" id="scr-edit-fahrt">
+    <div class="topbar">
+      <button class="btn-icon" onclick="renderSchueler('${sid}')"><i class="ti ti-x"></i></button>
+      <span class="topbar-title">Fahrstunde bearbeiten</span>
+    </div>
+    <div class="scroll">
+      <div><div class="sec-label">Fahrstunde</div>
+      <div class="card">
+        <div class="card-row">
+          <div style="display:flex;gap:0;width:100%">
+            <button class="pill ${f.typ==="normal"?"active":""}" id="etyp-normal" style="flex:1;border-radius:var(--r-md) 0 0 var(--r-md);justify-content:center;flex-direction:column;align-items:center;gap:2px;padding:10px 8px" onclick="setETypF('normal')">
+              <i class="ti ti-steering-wheel" style="font-size:18px"></i><span style="font-size:12px">Fahrstunde</span><span style="font-size:10px;opacity:.7">80 min/Einh.</span>
+            </button>
+            <button class="pill ${f.typ==="pruef"?"active":""}" id="etyp-pruef" style="flex:1;border-radius:0 var(--r-md) var(--r-md) 0;justify-content:center;flex-direction:column;align-items:center;gap:2px;padding:10px 8px;border-left:none" onclick="setETypF('pruef')">
+              <i class="ti ti-license" style="font-size:18px"></i><span style="font-size:12px">Prüfungsfahrt</span><span style="font-size:10px;opacity:.7">100 min</span>
+            </button>
+          </div>
+        </div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-calendar"></i>Datum</span><input type="date" id="ef-dat" value="${f.datum}"/></div>
+        <div class="card-row" id="eeinh-row">
+          <span class="card-label"><i class="ti ti-clock"></i>Einheiten</span>
+          <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end;flex:1">
+            <button class="cir-btn" onclick="changeEEinh(-1)">−</button>
+            <span id="eeinh-disp" style="font-size:16px;font-weight:500;min-width:72px;text-align:center">${f.einh||1} × 80 min</span>
+            <button class="cir-btn" onclick="changeEEinh(1)">+</button>
+          </div>
+        </div>
+        <div class="card-row" id="epruef-row" style="${f.typ==="pruef"?"":"display:none"}"><span class="card-label"><i class="ti ti-clock"></i>Dauer</span><span style="flex:1;text-align:right;font-size:13px;color:var(--tx2)">100 min (fest)</span></div>
+      </div></div>
+      <button class="btn-full" onclick="saveEditFahrstunde('${sid}',${idx})"><i class="ti ti-circle-check"></i> Speichern</button>
+      <button class="btn-full danger" style="margin-top:6px" onclick="deleteEditFahrstunde('${sid}',${idx})"><i class="ti ti-trash"></i> Fahrstunde löschen</button>
+    </div>
+  </div>`;
+  document.getElementById("app").innerHTML=html;
+  window._efahrtTyp=f.typ||"normal";
+  window._efahrtEinh=f.einh||1;
+  setTimeout(initPTR,50);
+}
+
+function setETypF(typ){
+  window._efahrtTyp=typ;
+  document.getElementById("etyp-normal").classList.toggle("active",typ==="normal");
+  document.getElementById("etyp-pruef").classList.toggle("active",typ==="pruef");
+  document.getElementById("eeinh-row").style.display=typ==="normal"?"":"none";
+  document.getElementById("epruef-row").style.display=typ==="pruef"?"":"none";
+}
+
+function changeEEinh(d){
+  window._efahrtEinh=Math.max(1,Math.min(4,(window._efahrtEinh||1)+d));
+  const el=document.getElementById("eeinh-disp");
+  if(el)el.textContent=window._efahrtEinh+" × 80 min";
+}
+
+function saveEditFahrstunde(sid,idx){
+  const s=getS(sid);if(!s)return;
+  const dat=document.getElementById("ef-dat").value;if(!dat)return;
+  s.fahrstunden[idx]={
+    datum:dat,
+    typ:window._efahrtTyp||"normal",
+    einh:window._efahrtEinh||1,
+    sonder:s.fahrstunden[idx].sonder
+  };
+  s.fahrstunden.sort((a,b)=>b.datum.localeCompare(a.datum));
+  saveAll();renderSchueler(sid);
+}
+
+function deleteEditFahrstunde(sid,idx){
+  const s=getS(sid);if(!s)return;
+  if(confirm("Fahrstunde wirklich löschen?")){
+    s.fahrstunden.splice(idx,1);
+    saveAll();renderSchueler(sid);
+  }
+}
+
 // ── PRÜFUNG NEU (inline vom Schüler) ─────────────────────────────────────────
 function renderNeuPruefungInline(sid){
   const s=getS(sid);if(!s)return;
@@ -869,7 +950,7 @@ function buildKalender(){
     </div>
     <div class="month-nav">
       <button class="btn-icon dark" onclick="prevMonth()"><i class="ti ti-chevron-left"></i></button>
-      <span class="month-label" style="color:var(--tx)">${MONATE[curMonth-1]} ${curYear}</span>
+      <span class="month-label" id="cal-month-label" style="color:var(--tx)">${MONATE[curMonth-1]} ${curYear}</span>
       <button class="btn-icon dark" onclick="nextMonth()"><i class="ti ti-chevron-right"></i></button>
     </div>
     <div class="weekdays"><div class="wd">Mo</div><div class="wd">Di</div><div class="wd">Mi</div><div class="wd">Do</div><div class="wd">Fr</div></div>
@@ -923,8 +1004,18 @@ function renderCalDetail(){
   el.innerHTML=html;
 }
 function delKalTermin(key,i){if(!termine[key])return;const t=termine[key][i];const s=getS(t.sid);const name=s?s.vorname+" "+s.nachname:"Termin";if(!confirm(name+" · "+t.uhr+" Uhr wirklich löschen?"))return;termine[key].splice(i,1);if(!termine[key].length)delete termine[key];saveAll();renderCalGrid();renderCalDetail();}
-function prevMonth(){curMonth--;if(curMonth<1){curMonth=12;curYear--;}renderCalGrid();renderCalDetail();}
-function nextMonth(){curMonth++;if(curMonth>12){curMonth=1;curYear++;}renderCalGrid();renderCalDetail();}
+function prevMonth(){
+  curMonth--;if(curMonth<1){curMonth=12;curYear--;}
+  const ml=document.getElementById("cal-month-label");
+  if(ml)ml.textContent=MONATE[curMonth-1]+" "+curYear;
+  renderCalGrid();renderCalDetail();
+}
+function nextMonth(){
+  curMonth++;if(curMonth>12){curMonth=1;curYear++;}
+  const ml=document.getElementById("cal-month-label");
+  if(ml)ml.textContent=MONATE[curMonth-1]+" "+curYear;
+  renderCalGrid();renderCalDetail();
+}
 
 function renderNeuKalTermin(date){
   window._kalMin=80;
