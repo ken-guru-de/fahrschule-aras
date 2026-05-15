@@ -720,7 +720,10 @@ function renderNeuSchueler(fromSid){
             ${PRUFORTE.map(p=>`<option value="${p}" ${s&&s.prufort===p?"selected":""}>${p}</option>`).join("")}
           </select>
         </div>
-        <div class="card-row"><span class="card-label"><i class="ti ti-calendar-event"></i>Prüftermin</span><input type="date" id="n-pt" value="${s?s.prueftermin:""}"/></div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-calendar-event"></i>Prüftermin</span>
+          <input type="date" id="n-pt" value="${s?s.prueftermin:""}"/>
+          ${s&&s.prueftermin?`<button onclick="document.getElementById('n-pt').value=''" style="background:none;border:none;cursor:pointer;color:var(--tx3);font-size:16px;padding:4px;margin-left:4px"><i class="ti ti-x"></i></button>`:""}
+        </div>
         <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Prüfzeit</span><input type="time" id="n-pt-uhr" value="${s&&s.pruefzeit?s.pruefzeit:'08:00'}"/></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-book"></i>Theorie</span>
           <label class="toggle-wrap"><input type="checkbox" id="n-th" ${s&&s.theorie?"checked":""}/><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
