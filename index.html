@@ -429,9 +429,10 @@ function renderListe(q="",sortMode="heute"){
       </div>
       <div class="search-wrap">
         <i class="ti ti-search search-icon"></i>
-        <input type="search" placeholder="Suchen…" value="${q}" oninput="renderListe(this.value,'${sortMode}')" id="search-input" style="padding-right:${q?'40px':'12px'}"/>
-        ${q?`<button onclick="renderListe('','${sortMode}')" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--tx3);font-size:18px;display:flex;align-items:center;padding:4px"><i class="ti ti-x"></i></button>`:""}
+        <input type="search" placeholder="Suchen…" value="${q}" oninput="filterListeOnly(this.value,'${sortMode}')" id="search-input" style="padding-right:${q?'40px':'12px'}"/>
+        <button class="search-clear-x" onclick="renderListe('','${sortMode}')" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--tx3);font-size:18px;display:${q?'flex':'none'};align-items:center;padding:4px"><i class="ti ti-x"></i></button>
       </div>`;
+  html+=`<div id="liste-items">`;
   if(!filtered.length){
     html+=`<div class="empty-hint"><i class="ti ti-search" style="font-size:28px;display:block;margin:0 auto 8px"></i>Keine Schüler gefunden</div>`;
   }else{
@@ -466,21 +467,59 @@ function renderListe(q="",sortMode="heute"){
       </div>`;
     });
   }
-  html+=`</div></div>`;
+  html+=`</div></div></div>`;
   renderApp(html);
   initSwipe();
-  if(q){
-    setTimeout(()=>{
-      const si=document.getElementById("search-input");
-      if(si){
-        si.focus();
-        si.setSelectionRange(si.value.length,si.value.length);
-        // iOS needs this trick to keep keyboard open
-        si.click();
-      }
-    },10);
-  }
+
   setTimeout(initPTR,50);
+}
+
+function filterListeOnly(q, sortMode){
+  const container=document.getElementById("liste-items");
+  if(!container){renderListe(q,sortMode);return;}
+
+  // Update clear button visibility
+  const clearBtns=document.querySelectorAll(".search-clear-x");
+  clearBtns.forEach(b=>b.style.display=q?"flex":"none");
+
+  const td=todayStr();
+  const heuteIds=new Set((termine[td]||[]).map(t=>t.sid));
+  const basis=q?schueler.filter(s=>(s.vorname+" "+s.nachname+" "+(s.spitz||"")).toLowerCase().includes(q.toLowerCase())):schueler;
+
+  function nextTerminDateTime(s){
+    const all=Object.entries(termine).filter(([d])=>d>=td).flatMap(([d,ts])=>ts.filter(t=>t.sid===s.id).map(t=>d+"T"+(t.uhr||"00:00")));
+    return all.sort()[0]||"9999";
+  }
+
+  const filtered=[...basis].sort((a,b)=>{
+    if(sortMode==="termin") return nextTerminDateTime(a).localeCompare(nextTerminDateTime(b));
+    return (heuteIds.has(a.id)?0:1)-(heuteIds.has(b.id)?0:1);
+  });
+
+  let html="";
+  if(!filtered.length){
+    html=`<div class="empty-hint"><i class="ti ti-search" style="font-size:28px;display:block;margin:0 auto 8px"></i>Keine Schüler gefunden</div>`;
+  } else {
+    filtered.forEach(s=>{
+      const bestanden=(s.pruefungen||[]).some(p=>p.bestanden===true);
+      html+=`<div class="swipe-wrap" id="wrap-${s.id}">
+        <div class="swipe-del-bg" onclick="confirmDelete('${s.id}')"><i class="ti ti-trash"></i></div>
+        <div class="swipe-item list-item" id="swipe-${s.id}" onclick="handleTap('${s.id}')" style="${bestanden?"border-left:3px solid #639922;":""}">
+          ${s.foto?`<div class="avatar" style="overflow:hidden;flex-shrink:0"><img src="${s.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/></div>`:`<div class="avatar av-${s.farbe}">${initials(s)}</div>`}
+          <div class="item-info">
+            <div class="item-name">${s.geschlecht==="w"?"👧":"👦"} ${s.vorname} ${s.nachname}${s.spitz?` <span style="color:var(--tx3);font-size:12px">«${s.spitz}»</span>`:""}</div>
+            ${bestanden?`<div style="margin-top:3px"><span style="font-size:11px;color:#27500A;background:#EAF3DE;padding:2px 8px;border-radius:20px">✓ Bestanden</span></div>`:""}
+            <div class="item-sub">${sortMode==="termin"?(()=>{const ndt=nextTerminDateTime(s);if(ndt==="9999")return"Kein Termin geplant";const nd=ndt.split("T")[0];const t=(termine[nd]||[]).find(t=>t.sid===s.id);return fmtDate(nd).day+". "+fmtDate(nd).mon+" "+fmtDate(nd).year+(t?" · "+t.uhr+" Uhr":"");})():"Beginn "+fmtDate(s.beginn).day+". "+fmtDate(s.beginn).mon+" "+fmtDate(s.beginn).year}</div>
+            <div style="font-size:12px;color:var(--tx3);margin-top:2px;white-space:nowrap">${(()=>{const td2=todayStr();const gefahren=Object.entries(termine).filter(([d])=>d<=td2).flatMap(([d,ts])=>ts.filter(t=>t.sid===s.id)).length;const offen=Object.entries(termine).filter(([d])=>d>td2).flatMap(([d,ts])=>ts.filter(t=>t.sid===s.id)).length;return gefahren+" gefahren · "+offen+" geplant";})()}</div>
+          </div>
+          <span class="badge badge-${s.klasse}">${s.klasse}</span>
+          <span class="status-dot" style="background:${bestanden?"#639922":heuteIds.has(s.id)?"var(--accent)":"#378ADD"}"></span>
+        </div>
+      </div>`;
+    });
+  }
+  container.innerHTML=html;
+  initSwipe();
 }
 
 function initSwipe(){
