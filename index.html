@@ -325,6 +325,7 @@ function renderDashboard(){
     <div class="topbar">
       <span class="topbar-title"><i class="ti ti-steering-wheel" style="font-size:19px;vertical-align:-2px;margin-right:6px"></i>Fahrschule <span style="font-size:11px;opacity:0.5;font-weight:400">v1.8</span></span>
       <span id="sync-status" style="font-size:11px;color:rgba(255,255,255,0.6);transition:opacity 1s;opacity:0"></span>
+      <button class="btn-icon" onclick="renderKalender()" aria-label="Kalender"><i class="ti ti-calendar"></i></button>
       <button class="btn-icon" onclick="renderNeuSchueler()" aria-label="Schüler anlegen"><i class="ti ti-user-plus"></i></button>
       <button class="btn-icon" onclick="renderStatistik()" aria-label="Statistik"><i class="ti ti-chart-bar"></i></button>
       <button class="btn-icon" onclick="renderListe()" aria-label="Schülerliste"><i class="ti ti-users"></i></button>
@@ -382,10 +383,6 @@ function renderDashboard(){
   }
 
   html+=`<div style="display:flex;flex-direction:column;gap:8px">
-    <button class="btn-full" onclick="renderKalender()"><i class="ti ti-calendar"></i> Kalender</button>
-    <button class="btn-full" onclick="renderListe()"><i class="ti ti-users"></i> Alle Schüler</button>
-    <button class="btn-full" onclick="renderStatistik()"><i class="ti ti-chart-bar"></i> Statistik</button>
-    <button class="btn-full" onclick="renderNeuSchueler()"><i class="ti ti-user-plus"></i> Neuen Schüler anlegen</button>
     <button class="btn-full" onclick="exportDaten()" style="background:#EAF3DE;border-color:#97C459;color:#27500A;font-size:15px"><i class="ti ti-download"></i> Daten sichern</button>
     <button class="btn-full" onclick="document.getElementById(\'import-input\').click()" style="background:#E6F1FB;border-color:#85B7EB;color:#0C447C;font-size:15px"><i class="ti ti-upload"></i> Daten wiederherstellen</button>
     <input type="file" id="import-input" accept=".json" style="display:none" onchange="importDaten(this)"/>
