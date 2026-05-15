@@ -1762,7 +1762,7 @@ function renderApp(html){
     const d=document.getElementById("ipad-detail");
     if(d){d.innerHTML=`<div style="display:flex;flex-direction:column;height:100%;overflow:hidden">${html}</div>`;return;}
   }
-  renderApp(html);
+  document.getElementById("app").innerHTML=html;
 }
 
 // ── SUPABASE SYNC ────────────────────────────────────────────────────────────
