@@ -842,7 +842,7 @@ function renderNeuFahrstunde(sid){
             <input type="number" id="f-dat-mon" min="1" max="12" placeholder="MM" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" value="${todayStr()?parseInt((todayStr()).split('-')[1]):''}"/>
             <input type="number" id="f-dat-jahr" min="2024" max="2030" placeholder="JJJJ" style="width:64px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" value="${todayStr()?(todayStr()).split('-')[0]:''}"/>
           </div></div>
-        <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Uhrzeit</span><input type="time" id="f-uhr" value="09:00"/></div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Uhrzeit</span><input type="time" step="300" id="f-uhr" value="09:00"/></div>
         <div class="card-row" id="einh-row2">
           <span class="card-label"><i class="ti ti-clock"></i>Einheiten</span>
           <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end;flex:1">
@@ -974,7 +974,7 @@ function renderEditFahrstunde(sid, idx){
             <input type="number" id="ef-dat-mon" min="1" max="12" placeholder="MM" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" value="${f.datum?parseInt((f.datum).split('-')[1]):''}"/>
             <input type="number" id="ef-dat-jahr" min="2024" max="2030" placeholder="JJJJ" style="width:64px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" value="${f.datum?(f.datum).split('-')[0]:''}"/>
           </div></div>
-        <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Uhrzeit</span><input type="time" id="ef-uhr" value="${f.uhr||'09:00'}"/></div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Uhrzeit</span><input type="time" step="300" id="ef-uhr" value="${f.uhr||'09:00'}"/></div>
         <div class="card-row" id="eeinh-row">
           <span class="card-label"><i class="ti ti-clock"></i>Einheiten</span>
           <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end;flex:1">
@@ -1063,7 +1063,7 @@ function renderNeuPruefungInline(sid){
             <input type="number" id="pn-datum-mon" min="1" max="12" placeholder="MM" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" value="${todayStr()?parseInt((todayStr()).split('-')[1]):''}"/>
             <input type="number" id="pn-datum-jahr" min="2024" max="2030" placeholder="JJJJ" style="width:64px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" value="${todayStr()?(todayStr()).split('-')[0]:''}"/>
           </div></div>
-        <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Uhrzeit</span><input type="time" id="pn-uhr" value="08:00"/></div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Uhrzeit</span><input type="time" step="300" id="pn-uhr" value="08:00"/></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-list-numbers"></i>Prüfung Nr.</span>
           <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end;flex:1">
             <button class="cir-btn" onclick="changePNVersuch(-1)">−</button>
@@ -1124,7 +1124,7 @@ function renderEditPruefung(sid,idx){
             <input type="number" id="pe-datum-mon" min="1" max="12" placeholder="MM" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" value="${p.datum?parseInt((p.datum).split('-')[1]):''}"/>
             <input type="number" id="pe-datum-jahr" min="2024" max="2030" placeholder="JJJJ" style="width:64px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" value="${p.datum?(p.datum).split('-')[0]:''}"/>
           </div></div>
-        <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Uhrzeit</span><input type="time" id="pe-uhr" value="${p.uhr||'08:00'}"/></div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Uhrzeit</span><input type="time" step="300" id="pe-uhr" value="${p.uhr||'08:00'}"/></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-list-numbers"></i>Prüfung Nr.</span>
           <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end;flex:1">
             <button class="cir-btn" onclick="changePEVersuch(-1)">−</button>
@@ -1312,7 +1312,7 @@ function renderNeuKalTermin(date){
         <div class="card-row" id="k-auffrisch-row" style="display:none"><span class="card-label"><i class="ti ti-user-check"></i>Name</span>
           <input type="text" id="k-auffrisch-name" placeholder="Vor- und Nachname" style="text-align:right"/>
         </div>
-        <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Startzeit</span><input type="time" id="k-uhr" value="09:00" oninput="kalUpdateEnd()"/></div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Startzeit</span><input type="time" step="300" id="k-uhr" value="09:00" oninput="kalUpdateEnd()"/></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-clock-check"></i>Endzeit</span><span id="k-endzeit" style="flex:1;text-align:right;font-size:15px;font-weight:500;color:var(--accent)">10:20</span></div>
         <div class="card-row" style="flex-direction:column;align-items:stretch;gap:8px;padding:12px 14px">
           <span style="font-size:13px;color:var(--tx2)">Art der Fahrt</span>
@@ -1507,7 +1507,7 @@ function renderEditDashTermin(date,idx){
             ${schueler.map(sc=>`<option value="${sc.id}" ${sc.id===t.sid?"selected":""}>${sc.vorname} ${sc.nachname}${sc.spitz?" «"+sc.spitz+"»":""}</option>`).join("")}
           </select>
         </div>
-        <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Uhrzeit</span><input type="time" id="et-uhr" value="${t.uhr}"/></div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Uhrzeit</span><input type="time" step="300" id="et-uhr" value="${t.uhr}"/></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-hourglass"></i>Minuten</span>
           <div style="display:flex;align-items:center;gap:10px;justify-content:flex-end;flex:1">
             <button class="cir-btn" onclick="changeETMin(-10)">−</button>
@@ -1646,7 +1646,7 @@ function renderEditKalTermin(date,idx){
             <input type="number" id="ekt-dat-jahr" min="2024" max="2030" placeholder="JJJJ" style="width:64px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" value="${date.split('-')[0]}"/>
           </div>
         </div>
-        <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Startzeit</span><input type="time" id="ekt-uhr" value="${t.uhr}" oninput="ektUpdateEnd()"/></div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Startzeit</span><input type="time" step="300" id="ekt-uhr" value="${t.uhr}" oninput="ektUpdateEnd()"/></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-clock-check"></i>Endzeit</span><span id="ekt-endzeit" style="flex:1;text-align:right;font-size:15px;font-weight:500;color:var(--accent)"></span></div>
         <div class="card-row" style="flex-direction:column;align-items:stretch;gap:8px;padding:12px 14px">
           <span style="font-size:13px;color:var(--tx2)">Art der Fahrt</span>
