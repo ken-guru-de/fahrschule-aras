@@ -473,6 +473,10 @@ function renderListe(q="",sortMode="heute"){
   html+=`</div></div>`;
   renderApp(html);
   initSwipe();
+  if(q){
+    const si=document.getElementById("search-input");
+    if(si){si.focus();si.setSelectionRange(si.value.length,si.value.length);}
+  }
   setTimeout(initPTR,50);
 }
 
