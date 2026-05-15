@@ -721,8 +721,11 @@ function renderNeuSchueler(fromSid){
           </select>
         </div>
         <div class="card-row"><span class="card-label"><i class="ti ti-calendar-event"></i>Prüftermin</span>
-          <input type="date" id="n-pt" value="${s?s.prueftermin:""}"/>
-          ${s&&s.prueftermin?`<button onclick="document.getElementById('n-pt').value=''" style="background:none;border:none;cursor:pointer;color:var(--tx3);font-size:16px;padding:4px;margin-left:4px"><i class="ti ti-x"></i></button>`:""}
+          <div style="display:flex;gap:4px;justify-content:flex-end;flex:1">
+            <input type="number" id="n-pt-tag" min="1" max="31" placeholder="TT" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" value="${s&&s.prueftermin?parseInt(s.prueftermin.split('-')[2]):''}"/>
+            <input type="number" id="n-pt-mon" min="1" max="12" placeholder="MM" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" value="${s&&s.prueftermin?parseInt(s.prueftermin.split('-')[1]):''}"/>
+            <input type="number" id="n-pt-jahr" min="2026" max="2030" placeholder="JJJJ" style="width:64px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" value="${s&&s.prueftermin?s.prueftermin.split('-')[0]:''}"/>
+          </div>
         </div>
         <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Prüfzeit</span><input type="time" id="n-pt-uhr" value="${s&&s.pruefzeit?s.pruefzeit:'08:00'}"/></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-book"></i>Theorie</span>
@@ -755,7 +758,10 @@ function saveSchueler(editSid){
   const kl=document.getElementById("n-kl").value;
   if(!vn||!nn){if(!vn)document.getElementById("n-vn").classList.add("err-border");if(!nn)document.getElementById("n-nn").classList.add("err-border");setTimeout(()=>document.querySelectorAll(".err-border").forEach(e=>e.classList.remove("err-border")),1500);return;}
   const pf=document.getElementById("n-pf").value;
-  const pt=document.getElementById("n-pt").value;
+  const ptTag=document.getElementById('n-pt-tag').value;
+  const ptMon=document.getElementById('n-pt-mon').value;
+  const ptJahr=document.getElementById('n-pt-jahr').value;
+  const pt=(ptTag&&ptMon&&ptJahr)?ptJahr+'-'+String(ptMon).padStart(2,'0')+'-'+String(ptTag).padStart(2,'0'):'';
   const th=document.getElementById("n-th").checked;
   const sp=document.getElementById("n-sp").value.trim();
   const bg=document.getElementById("n-bg").value;
@@ -1267,16 +1273,12 @@ function renderNeuKalTermin(date){
           <span style="font-size:13px;color:var(--tx2)">Art der Fahrt</span>
           <div style="display:flex;gap:6px;flex-wrap:wrap">
             <button class="pill active" id="ktyp-normal" onclick="setKTyp('normal')" style="font-size:13px;padding:7px 12px">Fahrstunde</button>
-            <button class="pill" id="ktyp-sonder" onclick="setKTyp('sonder')" style="font-size:13px;padding:7px 12px">Sonderfahrt</button>
             <button class="pill" id="ktyp-pruef" onclick="setKTyp('pruef')" style="font-size:13px;padding:7px 12px">Prüfung</button>
+            <button class="pill" id="ktyp-ueberland" onclick="setKTyp('ueberland')" style="font-size:13px;padding:7px 12px">Überlandfahrt</button>
+            <button class="pill" id="ktyp-autobahn" onclick="setKTyp('autobahn')" style="font-size:13px;padding:7px 12px">Autobahnfahrt</button>
+            <button class="pill" id="ktyp-nacht" onclick="setKTyp('nacht')" style="font-size:13px;padding:7px 12px">Nachtfahrt</button>
+            <button class="pill" id="ktyp-auffrisch" onclick="setKTyp('auffrisch')" style="font-size:13px;padding:7px 12px">Auffrischung</button>
           </div>
-        </div>
-        <div class="card-row" id="kal-sonder-row" style="display:none;flex-direction:column;align-items:stretch;gap:8px;padding:12px 14px">
-          <span style="font-size:13px;color:var(--tx2)">Sonderfahrt auswählen</span>
-          <div style="display:flex;gap:6px;flex-wrap:wrap">
-            ${SONDER.map(sf=>`<button class="pill" id="ksf-${sf.key}" onclick="setKSonder('${sf.key}',${sf.min})" style="font-size:13px;padding:7px 12px">${sf.label} · ${sf.min} min</button>`).join("")}
-          </div>
-        </div>
         <div class="card-row">
           <span class="card-label"><i class="ti ti-hourglass"></i>Minuten</span>
           <div style="display:flex;align-items:center;gap:10px;justify-content:flex-end;flex:1">
@@ -1302,11 +1304,13 @@ function changeKalMin(d){window._kalMin=Math.max(10,Math.min(300,window._kalMin+
 
 function setKTyp(typ){
   window._kalTyp=typ;
-  ["normal","sonder","pruef"].forEach(t=>{const el=document.getElementById("ktyp-"+t);if(el)el.classList.toggle("active",t===typ);});
-  const sr=document.getElementById("kal-sonder-row");
-  if(sr)sr.style.display=typ==="sonder"?"":"none";
+  ["normal","pruef","ueberland","autobahn","nacht","auffrisch"].forEach(t=>{const el=document.getElementById("ktyp-"+t);if(el)el.classList.toggle("active",t===typ);});
   if(typ==="normal")window._kalMin=80;
   else if(typ==="pruef")window._kalMin=100;
+  else if(typ==="ueberland")window._kalMin=225;
+  else if(typ==="autobahn")window._kalMin=220;
+  else if(typ==="nacht")window._kalMin=135;
+  else if(typ==="auffrisch")window._kalMin=80;
   const el=document.getElementById("kal-min-disp");if(el)el.textContent=window._kalMin+" min";
   kalUpdateEnd();
 }
@@ -1361,7 +1365,7 @@ function saveKalTermin(date){
   if(!termine[date])termine[date]=[];
   const knotiz=document.getElementById('k-notiz');const notizVal=knotiz?knotiz.value.trim():'';
   const ksf2=window._kalSonderKey;const ktyp2=window._kalTyp||'normal';
-  const autoN=ktyp2==='pruef'?'Prüfung':ktyp2==='sonder'&&ksf2?(SONDER.find(s=>s.key===ksf2)||{}).label||'':'';
+  const autoN=ktyp2==='pruef'?'Prüfung':ktyp2==='auffrisch'?'Auffrischung':ktyp2==='ueberland'?'Überlandfahrt':ktyp2==='autobahn'?'Autobahnfahrt':ktyp2==='nacht'?'Nachtfahrt':'';
   termine[date].push({sid,uhr,min,notiz:notizVal||autoN});
   termine[date].sort((a,b)=>a.uhr.localeCompare(b.uhr));
   saveAll();
@@ -1595,13 +1599,12 @@ function renderEditKalTermin(date,idx){
         <div class="card-row" style="flex-direction:column;align-items:stretch;gap:8px;padding:12px 14px">
           <span style="font-size:13px;color:var(--tx2)">Art der Fahrt</span>
           <div style="display:flex;gap:6px;flex-wrap:wrap">
-            <button class="pill ${t.min===100?"":""}${t.min!==100&&t.min!==225&&t.min!==220&&t.min!==135?"active":""}" id="ektyp-normal" onclick="setEKTyp('normal')" style="font-size:13px;padding:6px 10px">Fahrstunde</button>
-            <button class="pill ${t.min===225||t.min===220||t.min===135?"active":""}" id="ektyp-sonder" onclick="setEKTyp('sonder')" style="font-size:13px;padding:6px 10px">Sonderfahrt</button>
+            <button class="pill ${t.min===80?"active":""}" id="ektyp-normal" onclick="setEKTyp('normal')" style="font-size:13px;padding:6px 10px">Fahrstunde</button>
             <button class="pill ${t.min===100?"active":""}" id="ektyp-pruef" onclick="setEKTyp('pruef')" style="font-size:13px;padding:6px 10px">Prüfung</button>
-          </div>
-          <div id="ek-sonder-row" style="${t.min===225||t.min===220||t.min===135?"":"display:none"};display:flex;gap:6px;flex-wrap:wrap;margin-top:4px">
-            ${SONDER.map(sf=>`<button class="pill ${t.min===sf.min?"active":""}" id="eksf-${sf.key}" onclick="setEKSonder('${sf.key}',${sf.min})" style="font-size:12px;padding:5px 10px">${sf.label}</button>`).join("")}
-          </div>
+            <button class="pill ${t.min===225?"active":""}" id="ektyp-ueberland" onclick="setEKTyp('ueberland')" style="font-size:12px;padding:5px 8px">Überland</button>
+            <button class="pill ${t.min===220?"active":""}" id="ektyp-autobahn" onclick="setEKTyp('autobahn')" style="font-size:12px;padding:5px 8px">Autobahn</button>
+            <button class="pill ${t.min===135?"active":""}" id="ektyp-nacht" onclick="setEKTyp('nacht')" style="font-size:12px;padding:5px 8px">Nacht</button>
+            <button class="pill" id="ektyp-auffrisch" onclick="setEKTyp('auffrisch')" style="font-size:12px;padding:5px 8px">Auffrischung</button>
         </div>
         <div class="card-row"><span class="card-label"><i class="ti ti-hourglass"></i>Minuten</span>
           <div style="display:flex;align-items:center;gap:10px;justify-content:flex-end;flex:1">
@@ -1635,11 +1638,12 @@ function ektUpdateEnd(){
 }
 
 function setEKTyp(typ){
-  ["normal","sonder","pruef"].forEach(t=>{const el=document.getElementById("ektyp-"+t);if(el)el.classList.toggle("active",t===typ);});
-  const sr=document.getElementById("ek-sonder-row");
-  if(sr)sr.style.display=typ==="sonder"?"flex":"none";
-  if(typ==="normal"){window._etMin=80;}
-  else if(typ==="pruef"){window._etMin=100;}
+  ["normal","pruef","ueberland","autobahn","nacht","auffrisch"].forEach(t=>{const el=document.getElementById("ektyp-"+t);if(el)el.classList.toggle("active",t===typ);});
+  if(typ==="normal"||typ==="auffrisch")window._etMin=80;
+  else if(typ==="pruef")window._etMin=100;
+  else if(typ==="ueberland")window._etMin=225;
+  else if(typ==="autobahn")window._etMin=220;
+  else if(typ==="nacht")window._etMin=135;
   const el=document.getElementById("et-min-disp");if(el)el.textContent=window._etMin+" min";
   ektUpdateEnd();
 }
