@@ -1191,7 +1191,7 @@ function renderCalGrid(){
       });
       el.appendChild(dr);
     }
-    el.onclick=()=>{selDate=key;renderTagAnsicht(key);};
+    el.setAttribute("onclick",`selDate='${key}';renderTagAnsicht('${key}')`);
     grid.appendChild(el);
   }
 }
@@ -1932,7 +1932,7 @@ function renderIPadDashboard(){
 
   let html=`<div style="display:flex;flex-direction:column;height:100%">
     <div style="background:var(--accent-dark);padding:calc(var(--safe-top)+14px) 20px 14px;min-height:64px;display:flex;align-items:center;gap:8px;flex-shrink:0">
-      <span style="font-size:20px;font-weight:600;color:white;flex:1"><i class="ti ti-steering-wheel" style="font-size:20px;margin-right:6px"></i>Fahrschule</span>
+      <span style="font-size:20px;font-weight:600;color:white;flex:1"><i class="ti ti-steering-wheel" style="font-size:20px;margin-right:6px"></i>Fahrschule <span style="font-size:11px;opacity:0.5;font-weight:400">v1.8</span></span>
       <span id="sync-status" style="font-size:11px;color:rgba(255,255,255,0.6);transition:opacity 1s;opacity:0"></span>
       <button class="btn-icon" onclick="renderIPadKalender()" title="Kalender"><i class="ti ti-calendar"></i></button>
       <button class="btn-icon" onclick="renderIPadStatistik()" title="Statistik"><i class="ti ti-chart-bar"></i></button>
