@@ -315,8 +315,8 @@ function renderDashboard(){
   const allePruef=[];
   schueler.forEach(s=>{
     (s.pruefungen||[]).forEach((p,pi)=>{
-      if(p.bestanden===null||p.bestanden===undefined)
-        allePruef.push({sid:s.id,datum:p.datum,versuch:p.versuch,pi,typ:"offen"});
+      if((p.bestanden===null||p.bestanden===undefined)&&p.datum>=td)
+        allePruef.push({sid:s.id,datum:p.datum,versuch:p.versuch,pi,bestanden:p.bestanden,typ:"offen"});
     });
   });
   allePruef.sort((a,b)=>a.datum.localeCompare(b.datum));
@@ -369,16 +369,18 @@ function renderDashboard(){
   html+=`</div>`;
 
   if(allePruef.length){
-    html+=`<div><div class="sec-label">Prüfungen</div><div style="max-height:280px;overflow-y:auto;-webkit-overflow-scrolling:touch">`;
+    html+=`<div><div class="sec-label">Prüfungen</div><div style="max-height:420px;overflow-y:auto;-webkit-overflow-scrolling:touch">`;
     allePruef.forEach(ep=>{
       const s2=getS(ep.sid);if(!s2)return;
       const fd=fmtDate(ep.datum);
       const vergangen=ep.datum<td;
-      const sub=`${ep.versuch}. Prüfung · ${fmtDate(ep.datum).day}. ${fmtDate(ep.datum).mon} · Ergebnis ausstehend`;
+      const dotCol=ep.bestanden===true?"#639922":ep.bestanden===false?"#E24B4A":vergangen?"var(--accent)":"#378ADD";
+      const ergebnis=ep.bestanden===true?"✓ Bestanden":ep.bestanden===false?"✗ Nicht bestanden":"Ergebnis ausstehend";
+      const sub=`${ep.versuch}. Prüfung · ${ergebnis}`;
       html+=`<div class="list-item" style="margin-bottom:6px" onclick="showPruefResult('${ep.sid}','${ep.datum}',${ep.pi},'${ep.typ}')">
-        <span class="status-dot" style="background:${vergangen?"var(--accent)":"#378ADD"}"></span>
+        <span class="status-dot" style="background:${dotCol}"></span>
         <div class="item-info"><div class="item-name">${s2.vorname} ${s2.nachname}</div><div class="item-sub">${sub}</div></div>
-        <span style="font-size:13px;color:var(--tx2);font-weight:500">${fd.day}. ${fd.mon}${vergangen?" ⚠️":""}</span>
+        <span style="font-size:13px;color:var(--tx2);font-weight:500">${fd.day}. ${fd.mon}${vergangen&&ep.typ==="offen"?" ⚠️":""}</span>
       </div>`;
     });
     html+=`</div></div>`;
@@ -2034,7 +2036,7 @@ function renderIPadDashboard(){
   const anzT=(termine[anzeigeDatum]||[]).sort((a,b)=>a.uhr.localeCompare(b.uhr));
   const allePruef=[];
   schueler.forEach(s=>{
-    (s.pruefungen||[]).forEach((p,pi)=>{if(p.bestanden===null||p.bestanden===undefined)allePruef.push({sid:s.id,datum:p.datum,versuch:p.versuch,pi,typ:"offen"});});
+    (s.pruefungen||[]).forEach((p,pi)=>{if((p.bestanden===null||p.bestanden===undefined)&&p.datum>=td)allePruef.push({sid:s.id,datum:p.datum,versuch:p.versuch,pi,bestanden:p.bestanden,typ:"offen"});});
   });
   allePruef.sort((a,b)=>a.datum.localeCompare(b.datum));
 
