@@ -1594,6 +1594,13 @@ function renderEditKalTermin(date,idx){
             ${schueler.map(sc=>`<option value="${sc.id}" ${sc.id===t.sid?"selected":""}>${sc.vorname} ${sc.nachname}${sc.spitz?" «"+sc.spitz+"»":""}</option>`).join("")}
           </select>
         </div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-calendar"></i>Datum</span>
+          <div style="display:flex;gap:4px;justify-content:flex-end;flex:1">
+            <input type="number" id="ekt-dat-tag" min="1" max="31" placeholder="TT" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" value="${parseInt(date.split('-')[2])}"/>
+            <input type="number" id="ekt-dat-mon" min="1" max="12" placeholder="MM" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" value="${parseInt(date.split('-')[1])}"/>
+            <input type="number" id="ekt-dat-jahr" min="2024" max="2030" placeholder="JJJJ" style="width:64px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" value="${date.split('-')[0]}"/>
+          </div>
+        </div>
         <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Startzeit</span><input type="time" id="ekt-uhr" value="${t.uhr}" oninput="ektUpdateEnd()"/></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-clock-check"></i>Endzeit</span><span id="ekt-endzeit" style="flex:1;text-align:right;font-size:15px;font-weight:500;color:var(--accent)"></span></div>
         <div class="card-row" style="flex-direction:column;align-items:stretch;gap:8px;padding:12px 14px">
@@ -1657,12 +1664,26 @@ function setEKSonder(key,min){
 
 function saveEktTermin(date,idx){
   if(!termine[date]||!termine[date][idx])return;
-  termine[date][idx].sid=document.getElementById("ekt-sid").value;
-  termine[date][idx].uhr=document.getElementById("ekt-uhr").value;
-  termine[date][idx].min=window._etMin||80;
-  termine[date][idx].notiz=document.getElementById("ekt-notiz").value.trim();
-  termine[date].sort((a,b)=>a.uhr.localeCompare(b.uhr));
-  saveAll();renderTagAnsicht(date);
+  const ekTag=document.getElementById('ekt-dat-tag').value;
+  const ekMon=document.getElementById('ekt-dat-mon').value;
+  const ekJahr=document.getElementById('ekt-dat-jahr').value;
+  const newDate=(ekTag&&ekMon&&ekJahr)?ekJahr+'-'+String(ekMon).padStart(2,'0')+'-'+String(ekTag).padStart(2,'0'):date;
+  const entry=termine[date][idx];
+  entry.sid=document.getElementById("ekt-sid").value;
+  entry.uhr=document.getElementById("ekt-uhr").value;
+  entry.min=window._etMin||80;
+  entry.notiz=document.getElementById("ekt-notiz").value.trim();
+  // Move to new date if changed
+  if(newDate!==date){
+    termine[date].splice(idx,1);
+    if(!termine[date].length)delete termine[date];
+    if(!termine[newDate])termine[newDate]=[];
+    termine[newDate].push(entry);
+    termine[newDate].sort((a,b)=>a.uhr.localeCompare(b.uhr));
+  } else {
+    termine[date].sort((a,b)=>a.uhr.localeCompare(b.uhr));
+  }
+  saveAll();renderTagAnsicht(newDate);
 }
 
 function deleteEktTermin(date,idx){
