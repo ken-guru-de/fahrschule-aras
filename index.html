@@ -534,9 +534,24 @@ function renderSchueler(sid){
       `<div class="empty-hint" style="padding:10px 0">Noch keine Prüfung eingetragen</div>`}
       </div>
 
-      <div><div class="sec-label">Notizen</div>
-      <div class="card" style="padding:12px 14px">
-        <textarea class="notiz-area" id="notiz-${s.id}" placeholder="Notizen zu ${s.vorname}…" onchange="saveNotiz('${s.id}',this.value)" onblur="saveNotiz('${s.id}',this.value)">${s.notiz||""}</textarea>
+      <div><div class="sec-row"><div class="sec-label" style="margin:0">Notizen</div>
+        <button class="fab-btn" onclick="addNotizItem('${s.id}')"><i class="ti ti-plus"></i></button>
+      </div>
+      <div class="card" id="notiz-list-${s.id}">
+        ${(()=>{
+          const items=Array.isArray(s.notiz)?s.notiz:(s.notiz?[{text:s.notiz,done:false}]:[]);
+          if(!items.length)return`<div class="empty-hint" style="padding:14px 0">Tippe + für eine neue Notiz</div>`;
+          return items.map((item,ni)=>`
+            <div class="notiz-item" style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:.5px solid var(--br);">
+              <label class="toggle-wrap" style="width:28px;height:28px;flex-shrink:0">
+                <input type="checkbox" ${item.done?"checked":""} onchange="toggleNotiz('${s.id}',${ni},this.checked)"/>
+                <div class="toggle-track" style="border-radius:50%"></div>
+                <div class="toggle-thumb" style="width:22px;height:22px;top:3px;left:3px"></div>
+              </label>
+              <span style="flex:1;font-size:18px;color:var(--tx);${item.done?"text-decoration:line-through;color:var(--tx3)":""}" onclick="editNotizItem('${s.id}',${ni})">${item.text||"…"}</span>
+              <button onclick="deleteNotizItem('${s.id}',${ni})" style="background:none;border:none;cursor:pointer;color:var(--tx3);font-size:16px;padding:4px"><i class="ti ti-x"></i></button>
+            </div>`).join("");
+        })()}
       </div></div>
 
     </div>
@@ -546,6 +561,41 @@ function renderSchueler(sid){
 }
 
 function saveNotiz(sid,val){const s=getS(sid);if(!s)return;s.notiz=val;saveAll();}
+
+function addNotizItem(sid){
+  const s=getS(sid);if(!s)return;
+  const text=prompt("Neue Notiz:");
+  if(!text||!text.trim())return;
+  if(!Array.isArray(s.notiz))s.notiz=s.notiz?[{text:s.notiz,done:false}]:[];
+  s.notiz.push({text:text.trim(),done:false});
+  saveAll();renderSchueler(sid);
+}
+
+function toggleNotiz(sid,idx,done){
+  const s=getS(sid);if(!s)return;
+  if(!Array.isArray(s.notiz))return;
+  s.notiz[idx].done=done;
+  saveAll();
+  // update visual without full re-render
+  const span=event.target.closest(".notiz-item").querySelector("span");
+  if(span){span.style.textDecoration=done?"line-through":"";span.style.color=done?"var(--tx3)":"var(--tx)";}
+}
+
+function editNotizItem(sid,idx){
+  const s=getS(sid);if(!s)return;
+  if(!Array.isArray(s.notiz))return;
+  const text=prompt("Notiz bearbeiten:",s.notiz[idx].text);
+  if(text===null)return;
+  s.notiz[idx].text=text.trim()||s.notiz[idx].text;
+  saveAll();renderSchueler(sid);
+}
+
+function deleteNotizItem(sid,idx){
+  const s=getS(sid);if(!s)return;
+  if(!Array.isArray(s.notiz))return;
+  s.notiz.splice(idx,1);
+  saveAll();renderSchueler(sid);
+}
 function changeGFA(sid,key,d){const s=getS(sid);if(!s)return;if(!s.gfa)s.gfa={};s.gfa[key]=Math.max(0,(s.gfa[key]||0)+d);saveAll();const el=document.getElementById("gfa-"+sid+"-"+key);if(el)el.textContent=s.gfa[key];}
 
 // ── SCHÜLER ANLEGEN/BEARBEITEN ────────────────────────────────────────────────
