@@ -173,6 +173,83 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:-apple-sy
 .ptr-spinner{width:28px;height:28px;border-radius:50%;border:2.5px solid rgba(255,107,43,.25);border-top-color:var(--accent);}
 @keyframes ptr-spin{to{transform:rotate(360deg);}}
 .ptr-spinner.spinning{animation:ptr-spin .7s linear infinite;}
+
+/* ── IPAD OPTIMIERUNG ────────────────────────────────────────────────────────*/
+@media (min-width: 768px) {
+  .app { max-width: 680px; margin: 0 auto; }
+  body { background: var(--bg2); }
+
+  .topbar { padding: calc(var(--safe-top) + 14px) 28px 14px; }
+  .topbar-title { font-size: 22px; }
+  .btn-icon { font-size: 24px; min-width: 48px; min-height: 48px; }
+
+  .scroll { padding: 20px 28px calc(var(--safe-bot) + 28px); gap: 18px; }
+
+  .stat-num { font-size: 30px; }
+  .stat-lbl { font-size: 13px; }
+
+  .list-item { padding: 16px 20px; min-height: 80px; gap: 16px; }
+  .avatar { width: 54px; height: 54px; font-size: 18px; }
+  .item-name { font-size: 19px; }
+  .item-sub { font-size: 15px; margin-top: 5px; }
+  .badge { font-size: 14px; padding: 5px 12px; }
+
+  .card-row { padding: 15px 20px; min-height: 58px; }
+  .card-label { font-size: 17px; min-width: 150px; }
+  .card-row input, .card-row select, .card-row textarea { font-size: 17px; }
+
+  .info-row { padding: 14px 20px; min-height: 58px; }
+  .info-lbl { font-size: 17px; min-width: 160px; }
+  .info-val { font-size: 17px; }
+
+  .btn-full { padding: 17px; font-size: 19px; min-height: 60px; }
+
+  .sec-label { font-size: 13px; margin-bottom: 10px; }
+
+  .gfa-row { padding: 14px 20px; }
+  .gfa-label { font-size: 17px; }
+  .gfa-count { font-size: 20px; }
+  .gfa-btn { width: 36px; height: 36px; font-size: 20px; }
+
+  .notiz-area { font-size: 22px; min-height: 240px; }
+
+  .cal-day { min-height: 68px; }
+  .day-num { font-size: 17px; }
+  .wd { font-size: 14px; }
+  .month-label { font-size: 20px; }
+
+  .cir-btn { width: 36px; height: 36px; font-size: 20px; }
+  .pill { font-size: 16px; padding: 9px 18px; }
+
+  .foto-circle, .foto-initials { width: 90px; height: 90px; font-size: 26px; }
+  .detail-avatar { width: 60px; height: 60px; font-size: 20px; }
+
+  .sonder-btn-label { font-size: 15px; }
+  .sp-step { font-size: 12px; padding: 10px 8px; }
+  .sp-step i { font-size: 18px; }
+
+  .search-wrap input { height: 50px; font-size: 18px; }
+  .search-icon { font-size: 20px; }
+
+  .toggle-wrap { width: 56px; height: 34px; }
+  .toggle-thumb { width: 28px; height: 28px; }
+  .toggle-wrap input:checked + .toggle-track + .toggle-thumb { transform: translateX(22px); }
+
+  .swipe-del-bg { width: 90px; font-size: 26px; }
+
+  .termin-item { padding: 12px 16px; }
+  .t-name { font-size: 15px; }
+  .t-sub { font-size: 13px; }
+
+  .pruef-result-item { padding: 12px 16px; }
+  .pruef-versuch { width: 38px; height: 38px; font-size: 15px; }
+
+  .stat-card { padding: 16px 20px; }
+  .stat-bar-label { font-size: 14px; }
+  .stat-bar-val { font-size: 14px; }
+  .stat-bar-bg { height: 10px; }
+  .stat-bar-fill { height: 10px; }
+}
 </style>
 </head>
 <body>
