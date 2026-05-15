@@ -792,7 +792,11 @@ function renderNeuFahrstunde(sid){
             </button>
           </div>
         </div>
-        <div class="card-row"><span class="card-label"><i class="ti ti-calendar"></i>Datum</span><input type="date" id="f-dat" value="${todayStr()}"/></div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-calendar"></i>Datum</span><div style="display:flex;gap:4px;justify-content:flex-end;flex:1">
+            <input type="number" id="f-dat-tag" min="1" max="31" placeholder="TT" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" value="${todayStr()?parseInt((todayStr()).split('-')[2]):''}"/>
+            <input type="number" id="f-dat-mon" min="1" max="12" placeholder="MM" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" value="${todayStr()?parseInt((todayStr()).split('-')[1]):''}"/>
+            <input type="number" id="f-dat-jahr" min="2024" max="2030" placeholder="JJJJ" style="width:64px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" value="${todayStr()?(todayStr()).split('-')[0]:''}"/>
+          </div></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Uhrzeit</span><input type="time" id="f-uhr" value="09:00"/></div>
         <div class="card-row" id="einh-row2">
           <span class="card-label"><i class="ti ti-clock"></i>Einheiten</span>
@@ -826,7 +830,8 @@ function setTypF(typ){window._fahrtTyp=typ;document.getElementById("typ-normal")
 function changeEinh(d){window._fahrtEinh=Math.max(1,Math.min(4,(window._fahrtEinh||1)+d));document.getElementById("einh-disp").textContent=window._fahrtEinh+" × 80 min";}
 function saveFahrstunde(sid){
   const s=getS(sid);if(!s)return;
-  const dat=document.getElementById("f-dat").value;if(!dat)return;
+  const fTag=document.getElementById('f-dat-tag').value,fMon=document.getElementById('f-dat-mon').value,fJahr=document.getElementById('f-dat-jahr').value;
+  const dat=(fTag&&fMon&&fJahr)?fJahr+'-'+String(fMon).padStart(2,'0')+'-'+String(fTag).padStart(2,'0'):'';if(!dat)return;
   const typ=window._fahrtTyp||"normal";
   const einh=window._fahrtEinh||1;
   const nsi=nextSonder(s);
@@ -919,7 +924,11 @@ function renderEditFahrstunde(sid, idx){
             </button>
           </div>
         </div>
-        <div class="card-row"><span class="card-label"><i class="ti ti-calendar"></i>Datum</span><input type="date" id="ef-dat" value="${f.datum}"/></div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-calendar"></i>Datum</span><div style="display:flex;gap:4px;justify-content:flex-end;flex:1">
+            <input type="number" id="ef-dat-tag" min="1" max="31" placeholder="TT" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" value="${f.datum?parseInt((f.datum).split('-')[2]):''}"/>
+            <input type="number" id="ef-dat-mon" min="1" max="12" placeholder="MM" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" value="${f.datum?parseInt((f.datum).split('-')[1]):''}"/>
+            <input type="number" id="ef-dat-jahr" min="2024" max="2030" placeholder="JJJJ" style="width:64px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" value="${f.datum?(f.datum).split('-')[0]:''}"/>
+          </div></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Uhrzeit</span><input type="time" id="ef-uhr" value="${f.uhr||'09:00'}"/></div>
         <div class="card-row" id="eeinh-row">
           <span class="card-label"><i class="ti ti-clock"></i>Einheiten</span>
@@ -957,7 +966,8 @@ function changeEEinh(d){
 
 function saveEditFahrstunde(sid,idx){
   const s=getS(sid);if(!s)return;
-  const dat=document.getElementById("ef-dat").value;if(!dat)return;
+  const efTag=document.getElementById('ef-dat-tag').value,efMon=document.getElementById('ef-dat-mon').value,efJahr=document.getElementById('ef-dat-jahr').value;
+  const dat=(efTag&&efMon&&efJahr)?efJahr+'-'+String(efMon).padStart(2,'0')+'-'+String(efTag).padStart(2,'0'):'';if(!dat)return;
   const uhr=document.getElementById("ef-uhr")?document.getElementById("ef-uhr").value:"09:00";
   const oldF=s.fahrstunden[idx];
   const newTyp=window._efahrtTyp||"normal";
@@ -1003,7 +1013,11 @@ function renderNeuPruefungInline(sid){
     <div class="scroll">
       <div><div class="sec-label">Prüfungstermin</div>
       <div class="card">
-        <div class="card-row"><span class="card-label"><i class="ti ti-calendar"></i>Datum</span><input type="date" id="pn-datum" value="${todayStr()}"/></div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-calendar"></i>Datum</span><div style="display:flex;gap:4px;justify-content:flex-end;flex:1">
+            <input type="number" id="pn-datum-tag" min="1" max="31" placeholder="TT" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" value="${todayStr()?parseInt((todayStr()).split('-')[2]):''}"/>
+            <input type="number" id="pn-datum-mon" min="1" max="12" placeholder="MM" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" value="${todayStr()?parseInt((todayStr()).split('-')[1]):''}"/>
+            <input type="number" id="pn-datum-jahr" min="2024" max="2030" placeholder="JJJJ" style="width:64px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" value="${todayStr()?(todayStr()).split('-')[0]:''}"/>
+          </div></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Uhrzeit</span><input type="time" id="pn-uhr" value="08:00"/></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-list-numbers"></i>Prüfung Nr.</span>
           <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end;flex:1">
@@ -1039,7 +1053,8 @@ function setPNResult(val){
 }
 function saveNeuPruefung(sid){
   const s=getS(sid);if(!s)return;
-  const datum=document.getElementById("pn-datum").value;if(!datum)return;
+  const pnTag=document.getElementById('pn-datum-tag').value,pnMon=document.getElementById('pn-datum-mon').value,pnJahr=document.getElementById('pn-datum-jahr').value;
+  const datum=(pnTag&&pnMon&&pnJahr)?pnJahr+'-'+String(pnMon).padStart(2,'0')+'-'+String(pnTag).padStart(2,'0'):'';if(!datum)return;
   if(!s.pruefungen)s.pruefungen=[];
   const pnuhr=document.getElementById("pn-uhr")?document.getElementById("pn-uhr").value:"08:00";
   s.pruefungen.push({datum,uhr:pnuhr,versuch:window._pnVersuch||1,bestanden:window._pnBestanden});
@@ -1059,7 +1074,11 @@ function renderEditPruefung(sid,idx){
     <div class="scroll">
       <div><div class="sec-label">Prüfungsergebnis</div>
       <div class="card">
-        <div class="card-row"><span class="card-label"><i class="ti ti-calendar"></i>Datum</span><input type="date" id="pe-datum" value="${p.datum}"/></div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-calendar"></i>Datum</span><div style="display:flex;gap:4px;justify-content:flex-end;flex:1">
+            <input type="number" id="pe-datum-tag" min="1" max="31" placeholder="TT" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" value="${p.datum?parseInt((p.datum).split('-')[2]):''}"/>
+            <input type="number" id="pe-datum-mon" min="1" max="12" placeholder="MM" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" value="${p.datum?parseInt((p.datum).split('-')[1]):''}"/>
+            <input type="number" id="pe-datum-jahr" min="2024" max="2030" placeholder="JJJJ" style="width:64px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" value="${p.datum?(p.datum).split('-')[0]:''}"/>
+          </div></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Uhrzeit</span><input type="time" id="pe-uhr" value="${p.uhr||'08:00'}"/></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-list-numbers"></i>Prüfung Nr.</span>
           <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end;flex:1">
@@ -1092,7 +1111,8 @@ function setPEResult(val){
   else if(val===true){const el=document.getElementById("pe-best");if(el)el.classList.add("active");}
   else{const el=document.getElementById("pe-nicht");if(el)el.classList.add("active");}
 }
-function saveEditPruefung(sid,idx){const s=getS(sid);if(!s)return;const datum=document.getElementById("pe-datum").value;if(!datum)return;s.pruefungen[idx]={datum,versuch:window._peVersuch||1,bestanden:window._peBestanden};s.pruefungen.sort((a,b)=>a.datum.localeCompare(b.datum));saveAll();renderSchueler(sid);}
+function saveEditPruefung(sid,idx){const s=getS(sid);if(!s)return;const peTag=document.getElementById('pe-datum-tag').value,peMon=document.getElementById('pe-datum-mon').value,peJahr=document.getElementById('pe-datum-jahr').value;
+  const datum=(peTag&&peMon&&peJahr)?peJahr+'-'+String(peMon).padStart(2,'0')+'-'+String(peTag).padStart(2,'0'):'';if(!datum)return;s.pruefungen[idx]={datum,versuch:window._peVersuch||1,bestanden:window._peBestanden};s.pruefungen.sort((a,b)=>a.datum.localeCompare(b.datum));saveAll();renderSchueler(sid);}
 function deletePruefung(sid,idx){const s=getS(sid);if(!s)return;if(confirm("Prüfung wirklich löschen?")){s.pruefungen.splice(idx,1);saveAll();renderSchueler(sid);}}
 
 // ── FOTO ──────────────────────────────────────────────────────────────────────
