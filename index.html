@@ -323,8 +323,10 @@ function renderDashboard(){
 
   let html=`<div class="screen active" id="scr-dash">
     <div class="topbar">
-      <span class="topbar-title"><i class="ti ti-steering-wheel" style="font-size:19px;vertical-align:-2px;margin-right:6px"></i>Fahrschule <span style="font-size:11px;opacity:0.5;font-weight:400">v1.8</span></span>
-      <span id="sync-status" style="font-size:11px;color:rgba(255,255,255,0.6);transition:opacity 1s;opacity:0"></span>
+      <div style="flex:1">
+        <div style="font-size:18px;font-weight:600;color:white"><i class="ti ti-steering-wheel" style="font-size:19px;vertical-align:-2px;margin-right:6px"></i>Fahrschule <span style="font-size:11px;opacity:0.5;font-weight:400">v1.8</span></div>
+        <div id="sync-status" style="font-size:11px;color:rgba(255,255,255,0.55);transition:opacity 1s;opacity:0;margin-top:1px"></div>
+      </div>
       <button class="btn-icon" onclick="renderKalender()" aria-label="Kalender"><i class="ti ti-calendar"></i></button>
       <button class="btn-icon" onclick="renderNeuSchueler()" aria-label="Schüler anlegen"><i class="ti ti-user-plus"></i></button>
       <button class="btn-icon" onclick="renderStatistik()" aria-label="Statistik"><i class="ti ti-chart-bar"></i></button>
