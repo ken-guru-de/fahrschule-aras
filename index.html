@@ -1755,6 +1755,21 @@ function saveEktTermin(date,idx){
   } else {
     termine[date].sort((a,b)=>a.uhr.localeCompare(b.uhr));
   }
+  // If Prüfung type: sync to student's pruefungen
+  if(entry.min===100&&!entry.sid.startsWith("__auffrisch__")){
+    const ps=getS(entry.sid);
+    if(ps){
+      if(!ps.pruefungen)ps.pruefungen=[];
+      const versuch=(ps.pruefungen.length+1);
+      const existIdx=ps.pruefungen.findIndex(p=>p.datum===newDate);
+      if(existIdx>=0){
+        ps.pruefungen[existIdx].uhr=entry.uhr;
+      } else {
+        ps.pruefungen.push({datum:newDate,uhr:entry.uhr,versuch,bestanden:null,prufort:ps.prufort||""});
+        ps.pruefungen.sort((a,b)=>a.datum.localeCompare(b.datum));
+      }
+    }
+  }
   saveAll();renderTagAnsicht(newDate);
 }
 
