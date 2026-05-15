@@ -402,7 +402,7 @@ function renderDashboard(){
     <button class="btn-full" onclick="document.getElementById(\'import-input\').click()" style="background:#E6F1FB;border-color:#85B7EB;color:#0C447C;font-size:15px"><i class="ti ti-upload"></i> Daten wiederherstellen</button>
     <input type="file" id="import-input" accept=".json" style="display:none" onchange="importDaten(this)"/>
   </div></div></div>`;
-  document.getElementById("app").innerHTML=html;
+  renderApp(html);
   setTimeout(initPTR,50);
 }
 
@@ -479,7 +479,7 @@ function renderListe(q="",sortMode="heute"){
     });
   }
   html+=`</div></div>`;
-  document.getElementById("app").innerHTML=html;
+  renderApp(html);
   initSwipe();
   setTimeout(initPTR,50);
 }
@@ -644,7 +644,7 @@ function renderSchueler(sid){
 
     </div>
   </div>`;
-  document.getElementById("app").innerHTML=html;
+  renderApp(html);
   setTimeout(initPTR,50);
 }
 
@@ -735,7 +735,7 @@ function renderNeuSchueler(fromSid){
       ${s?`<button class="btn-full danger" style="margin-top:6px" onclick="deleteSchueler('${s.id}')"><i class="ti ti-trash"></i> Schüler löschen</button>`:""}
     </div>
   </div>`;
-  document.getElementById("app").innerHTML=html;
+  renderApp(html);
   window._selFarbe=selFarbe;
   window._geschlecht=s?s.geschlecht||'m':'m';
   setTimeout(initPTR,50);
@@ -833,7 +833,7 @@ function renderNeuFahrstunde(sid){
   }
 
   html+=`<button class="btn-full" onclick="saveFahrstunde('${sid}')"><i class="ti ti-circle-check"></i> Fahrstunde speichern</button></div></div>`;
-  document.getElementById("app").innerHTML=html;
+  renderApp(html);
   window._fahrtEinh=1;window._fahrtTyp="normal";
   setTimeout(initPTR,50);
 }
@@ -898,7 +898,7 @@ function showPruefResult(sid,datum,pi,typ){
       <button class="btn-full" style="margin-top:4px" onclick="renderSchueler('${sid}')"><i class="ti ti-user"></i> Zum Schüler</button>
     </div>
   </div>`;
-  document.getElementById("app").innerHTML=html;
+  renderApp(html);
   window._prVersuch=versuchNr;
   setTimeout(initPTR,50);
 }
@@ -950,7 +950,7 @@ function renderEditFahrstunde(sid, idx){
       <button class="btn-full danger" style="margin-top:6px" onclick="deleteEditFahrstunde('${sid}',${idx})"><i class="ti ti-trash"></i> Fahrstunde löschen</button>
     </div>
   </div>`;
-  document.getElementById("app").innerHTML=html;
+  renderApp(html);
   window._efahrtTyp=f.typ||"normal";
   window._efahrtEinh=f.einh||1;
   setTimeout(initPTR,50);
@@ -1038,7 +1038,7 @@ function renderNeuPruefungInline(sid){
       <button class="btn-full" onclick="saveNeuPruefung('${sid}')"><i class="ti ti-circle-check"></i> Prüfung speichern</button>
     </div>
   </div>`;
-  document.getElementById("app").innerHTML=html;
+  renderApp(html);
   window._pnVersuch=versuchNr;
   window._pnBestanden=null;
   document.getElementById("pn-offen").classList.add("active");
@@ -1095,7 +1095,7 @@ function renderEditPruefung(sid,idx){
       <button class="btn-full danger" style="margin-top:6px" onclick="deletePruefung('${sid}',${idx})"><i class="ti ti-trash"></i> Prüfung löschen</button>
     </div>
   </div>`;
-  document.getElementById("app").innerHTML=html;
+  renderApp(html);
   window._peVersuch=p.versuch;window._peBestanden=p.bestanden;
   setTimeout(initPTR,50);
 }
@@ -1158,7 +1158,7 @@ function buildKalender(){
     const d=document.getElementById("ipad-detail");
     if(d){d.innerHTML=`<div style="display:flex;flex-direction:column;height:100%;overflow:hidden">${html}</div>`;renderCalGrid();renderCalDetail();return;}
   }
-  document.getElementById("app").innerHTML=html;
+  renderApp(html);
   renderCalGrid();renderCalDetail();
 }
 function renderCalGrid(){
@@ -1431,7 +1431,7 @@ function renderStatistik(){
     }
   }
   html+=`</div></div>`;
-  document.getElementById("app").innerHTML=html;
+  renderApp(html);
   setTimeout(initPTR,50);
 }
 
@@ -1474,7 +1474,7 @@ function renderEditDashTermin(date,idx){
       <button class="btn-full danger" style="margin-top:6px" onclick="deleteEditDashTermin()"><i class="ti ti-trash"></i> Termin löschen</button>
     </div>
   </div>`;
-  document.getElementById("app").innerHTML=html;
+  renderApp(html);
   setTimeout(initPTR,50);
 }
 
@@ -1770,7 +1770,7 @@ function renderApp(html){
     const d=document.getElementById("ipad-detail");
     if(d){d.innerHTML=`<div style="display:flex;flex-direction:column;height:100%;overflow:hidden">${html}</div>`;return;}
   }
-  document.getElementById("app").innerHTML=html;
+  renderApp(html);
 }
 
 // ── SUPABASE SYNC ────────────────────────────────────────────────────────────
