@@ -1324,6 +1324,13 @@ function renderNeuKalTermin(date){
             <button class="pill" id="ktyp-nacht" onclick="setKTyp('nacht')" style="font-size:13px;padding:7px 12px">Nachtfahrt</button>
             <button class="pill" id="ktyp-auffrisch" onclick="setKTyp('auffrisch')" style="font-size:13px;padding:7px 12px">Auffrischung</button>
           </div>
+        </div>
+        <div class="card-row" id="kal-prufort-row" style="display:none">
+          <span class="card-label"><i class="ti ti-map-pin"></i>Prüfort</span>
+          <select id="k-prufort">
+            ${PRUFORTE.map(p=>`<option value="${p}">${p}</option>`).join("")}
+          </select>
+        </div>
         <div class="card-row">
           <span class="card-label"><i class="ti ti-hourglass"></i>Minuten</span>
           <div style="display:flex;align-items:center;gap:10px;justify-content:flex-end;flex:1">
@@ -1357,6 +1364,8 @@ function setKTyp(typ){
   else if(typ==="nacht")window._kalMin=135;
   else if(typ==="auffrisch")window._kalMin=80;
   const el=document.getElementById("kal-min-disp");if(el)el.textContent=window._kalMin+" min";
+  const pf=document.getElementById("kal-prufort-row");
+  if(pf)pf.style.display=typ==="pruef"?"":"none";
   kalUpdateEnd();
 }
 
@@ -1413,8 +1422,21 @@ function saveKalTermin(date){
   const autoN=ktyp2==='pruef'?'Prüfung':ktyp2==='auffrisch'?'Auffrischung':ktyp2==='ueberland'?'Überlandfahrt':ktyp2==='autobahn'?'Autobahnfahrt':ktyp2==='nacht'?'Nachtfahrt':'';
   termine[date].push({sid,uhr,min,notiz:notizVal||autoN});
   termine[date].sort((a,b)=>a.uhr.localeCompare(b.uhr));
+  // If Prüfung: add to student's Prüfungen list
+  if((window._kalTyp||"normal")==="pruef"&&!sid.startsWith("__auffrisch__")){
+    const ps=getS(sid);
+    if(ps){
+      if(!ps.pruefungen)ps.pruefungen=[];
+      const prufort=document.getElementById("k-prufort")?document.getElementById("k-prufort").value:ps.prufort;
+      const versuch=(ps.pruefungen.length+1);
+      const exists=ps.pruefungen.find(p=>p.datum===date&&p.uhr===uhr);
+      if(!exists){
+        ps.pruefungen.push({datum:date,uhr,versuch,bestanden:null,prufort});
+        ps.pruefungen.sort((a,b)=>a.datum.localeCompare(b.datum));
+      }
+    }
+  }
   saveAll();
-  // Go back to day view immediately
   selDate=date;
   if(IS_IPAD){
     renderIPadKalender();
