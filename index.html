@@ -2158,13 +2158,24 @@ if(IS_IPAD){
 }
 
 (async()=>{
-  const synced = await syncFromCloud();
-  saveAll();
-  syncFahrstundenToKalender();
-  if(IS_IPAD){
-    renderIPadLayout();
-  } else {
-    renderDashboard();
+  try{
+    await syncFromCloud();
+  }catch(e){console.error("syncFromCloud error:",e);}
+  try{
+    saveAll();
+  }catch(e){console.error("saveAll error:",e);}
+  try{
+    syncFahrstundenToKalender();
+  }catch(e){console.error("syncFahrstunden error:",e);}
+  try{
+    if(IS_IPAD){
+      renderIPadLayout();
+    } else {
+      renderDashboard();
+    }
+  }catch(e){
+    console.error("render error:",e);
+    document.getElementById("app").innerHTML=`<div style="padding:20px;color:red">Fehler: ${e.message}</div>`;
   }
 })();
 </script>
