@@ -315,7 +315,7 @@ function renderDashboard(){
   const allePruef=[];
   schueler.forEach(s=>{
     (s.pruefungen||[]).forEach((p,pi)=>{
-      if((p.bestanden===null||p.bestanden===undefined)&&p.datum>=td)
+      if(p.datum>=td)
         allePruef.push({sid:s.id,datum:p.datum,versuch:p.versuch,pi,bestanden:p.bestanden,typ:"offen"});
     });
   });
@@ -2036,7 +2036,7 @@ function renderIPadDashboard(){
   const anzT=(termine[anzeigeDatum]||[]).sort((a,b)=>a.uhr.localeCompare(b.uhr));
   const allePruef=[];
   schueler.forEach(s=>{
-    (s.pruefungen||[]).forEach((p,pi)=>{if((p.bestanden===null||p.bestanden===undefined)&&p.datum>=td)allePruef.push({sid:s.id,datum:p.datum,versuch:p.versuch,pi,bestanden:p.bestanden,typ:"offen"});});
+    (s.pruefungen||[]).forEach((p,pi)=>{if(p.datum>=td)allePruef.push({sid:s.id,datum:p.datum,versuch:p.versuch,pi,bestanden:p.bestanden,typ:"offen"});});
   });
   allePruef.sort((a,b)=>a.datum.localeCompare(b.datum));
 
