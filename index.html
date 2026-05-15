@@ -1431,8 +1431,11 @@ function saveKalTermin(date){
       if(!ps.pruefungen)ps.pruefungen=[];
       const prufort=document.getElementById("k-prufort")?document.getElementById("k-prufort").value:ps.prufort;
       const versuch=(ps.pruefungen.length+1);
-      const exists=ps.pruefungen.find(p=>p.datum===date&&p.uhr===uhr);
-      if(!exists){
+      // Always update/add pruefung for this date+uhr
+      const existIdx=ps.pruefungen.findIndex(p=>p.datum===date&&p.uhr===uhr);
+      if(existIdx>=0){
+        ps.pruefungen[existIdx].prufort=prufort;
+      } else {
         ps.pruefungen.push({datum:date,uhr,versuch,bestanden:null,prufort});
         ps.pruefungen.sort((a,b)=>a.datum.localeCompare(b.datum));
       }
