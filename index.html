@@ -314,10 +314,6 @@ function renderDashboard(){
   const heuteTermine=(termine[td]||[]).sort((a,b)=>a.uhr.localeCompare(b.uhr));
   const allePruef=[];
   schueler.forEach(s=>{
-    if(s.prueftermin&&s.prueftermin>=td){
-      const exists=(s.pruefungen||[]).find(p=>p.datum===s.prueftermin);
-      if(!exists)allePruef.push({sid:s.id,datum:s.prueftermin,versuch:null,pi:-1,typ:"geplant"});
-    }
     (s.pruefungen||[]).forEach((p,pi)=>{
       if(p.bestanden===null||p.bestanden===undefined)
         allePruef.push({sid:s.id,datum:p.datum,versuch:p.versuch,pi,typ:"offen"});
@@ -375,7 +371,7 @@ function renderDashboard(){
       const s2=getS(ep.sid);if(!s2)return;
       const fd=fmtDate(ep.datum);
       const vergangen=ep.datum<td;
-      const s2pz=s2.pruefzeit&&ep.typ==="geplant"?s2.pruefzeit+" Uhr · ":"";      const sub=ep.typ==="geplant"?`${s2pz}Klasse ${s2.klasse} · ${s2.prufort}`:`${ep.versuch}. Prüfung · Ergebnis ausstehend`;
+      const sub=`${ep.versuch}. Prüfung · ${fmtDate(ep.datum).day}. ${fmtDate(ep.datum).mon} · Ergebnis ausstehend`;
       html+=`<div class="list-item" style="margin-bottom:6px" onclick="showPruefResult('${ep.sid}','${ep.datum}',${ep.pi},'${ep.typ}')">
         <span class="status-dot" style="background:${vergangen?"var(--accent)":"#378ADD"}"></span>
         <div class="item-info"><div class="item-name">${s2.vorname} ${s2.nachname}</div><div class="item-sub">${sub}</div></div>
@@ -590,12 +586,6 @@ function renderSchueler(sid){
       `<div class="empty-hint" style="padding:10px 0">Noch keine Fahrstunden</div>`}
       </div>
 
-      <div><div class="sec-label">Prüftermin</div>
-      ${s.prueftermin
-        ?`<div class="pruef-card" style="cursor:pointer" onclick="showPruefResult('${s.id}','${s.prueftermin}',-1,'geplant')"><i class="ti ti-calendar-event" style="font-size:24px;color:var(--accent)"></i><div style="flex:1"><div style="font-size:15px;font-weight:600;color:white">${fmtDate(s.prueftermin).day}. ${fmtDate(s.prueftermin).mon} ${fmtDate(s.prueftermin).year}</div><div style="font-size:12px;color:rgba(255,255,255,.75);margin-top:2px">${s.pruefzeit?s.pruefzeit+" Uhr · ":""}${s.prufort} · Klasse ${s.klasse}</div></div><i class="ti ti-chevron-right" style="color:rgba(255,255,255,.5);font-size:16px"></i></div>`
-        :`<div class="card"><div class="info-row"><span class="info-lbl"><i class="ti ti-calendar-x"></i>Prüftermin</span><span class="info-val" style="color:var(--tx3)">Noch nicht vergeben</span></div></div>`}
-      </div>
-
       <div><div class="sec-row"><div class="sec-label" style="margin:0">Prüfungen</div>
         <button class="fab-btn" onclick="renderNeuPruefungInline('${s.id}')"><i class="ti ti-plus"></i></button>
       </div>
@@ -720,14 +710,7 @@ function renderNeuSchueler(fromSid){
             ${PRUFORTE.map(p=>`<option value="${p}" ${s&&s.prufort===p?"selected":""}>${p}</option>`).join("")}
           </select>
         </div>
-        <div class="card-row"><span class="card-label"><i class="ti ti-calendar-event"></i>Prüftermin</span>
-          <div style="display:flex;gap:4px;justify-content:flex-end;flex:1">
-            <input type="number" id="n-pt-tag" min="1" max="31" placeholder="TT" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" value="${s&&s.prueftermin?parseInt(s.prueftermin.split('-')[2]):''}"/>
-            <input type="number" id="n-pt-mon" min="1" max="12" placeholder="MM" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" value="${s&&s.prueftermin?parseInt(s.prueftermin.split('-')[1]):''}"/>
-            <input type="number" id="n-pt-jahr" min="2026" max="2030" placeholder="JJJJ" style="width:64px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" value="${s&&s.prueftermin?s.prueftermin.split('-')[0]:''}"/>
-          </div>
-        </div>
-        <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Prüfzeit</span><input type="time" id="n-pt-uhr" value="${s&&s.pruefzeit?s.pruefzeit:'08:00'}"/></div>
+
         <div class="card-row"><span class="card-label"><i class="ti ti-book"></i>Theorie</span>
           <label class="toggle-wrap"><input type="checkbox" id="n-th" ${s&&s.theorie?"checked":""}/><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
         </div>
@@ -758,19 +741,16 @@ function saveSchueler(editSid){
   const kl=document.getElementById("n-kl").value;
   if(!vn||!nn){if(!vn)document.getElementById("n-vn").classList.add("err-border");if(!nn)document.getElementById("n-nn").classList.add("err-border");setTimeout(()=>document.querySelectorAll(".err-border").forEach(e=>e.classList.remove("err-border")),1500);return;}
   const pf=document.getElementById("n-pf").value;
-  const ptTag=document.getElementById('n-pt-tag').value;
-  const ptMon=document.getElementById('n-pt-mon').value;
-  const ptJahr=document.getElementById('n-pt-jahr').value;
-  const pt=(ptTag&&ptMon&&ptJahr)?ptJahr+'-'+String(ptMon).padStart(2,'0')+'-'+String(ptTag).padStart(2,'0'):'';
+  const pt='';
   const th=document.getElementById("n-th").checked;
   const sp=document.getElementById("n-sp").value.trim();
   const bg=document.getElementById("n-bg").value;
   if(editSid){
     const s=getS(editSid);
-    s.vorname=vn;s.nachname=nn;s.spitz=sp;s.geschlecht=window._geschlecht||'m';s.tel=document.getElementById('n-tel').value.trim();s.beginn=bg;s.klasse=kl;s.prufort=pf;s.prueftermin=pt;s.pruefzeit=document.getElementById('n-pt-uhr').value;s.theorie=th;s.farbe=window._selFarbe;
+    s.vorname=vn;s.nachname=nn;s.spitz=sp;s.geschlecht=window._geschlecht||'m';s.tel=document.getElementById('n-tel').value.trim();s.beginn=bg;s.klasse=kl;s.prufort=pf;s.prueftermin=pt;s.theorie=th;s.farbe=window._selFarbe;
     saveAll();syncFahrstundenToKalender();renderSchueler(editSid);
   }else{
-    const tel2=document.getElementById('n-tel').value.trim();const ptuhr=document.getElementById('n-pt-uhr').value;const ns={id:"s"+Date.now(),vorname:vn,nachname:nn,spitz:sp,geschlecht:window._geschlecht||'m',tel:tel2,farbe:window._selFarbe,klasse:kl,beginn:bg,prufort:pf,prueftermin:pt,pruefzeit:ptuhr,theorie:th,sonder:[false,false,false],notiz:"",fahrstunden:[],pruefungen:[],gfa:{laengs:0,rechts:0,umkehr:0,rueckwaerts:0,stopp_mit:0,stopp_ohne:0,stadtautobahn:0,strassenbahn:0},foto:null};
+    const tel2=document.getElementById('n-tel').value.trim();const ptuhr='';const ns={id:"s"+Date.now(),vorname:vn,nachname:nn,spitz:sp,geschlecht:window._geschlecht||'m',tel:tel2,farbe:window._selFarbe,klasse:kl,beginn:bg,prufort:pf,prueftermin:pt,pruefzeit:ptuhr,theorie:th,sonder:[false,false,false],notiz:"",fahrstunden:[],pruefungen:[],gfa:{laengs:0,rechts:0,umkehr:0,rueckwaerts:0,stopp_mit:0,stopp_ohne:0,stadtautobahn:0,strassenbahn:0},foto:null};
     schueler.push(ns);saveAll();
     document.getElementById("toast-neu-msg").textContent=vn+" "+nn+" wurde angelegt";
     document.getElementById("toast-neu").classList.add("show");
@@ -1940,7 +1920,6 @@ function renderIPadDashboard(){
   const anzT=(termine[anzeigeDatum]||[]).sort((a,b)=>a.uhr.localeCompare(b.uhr));
   const allePruef=[];
   schueler.forEach(s=>{
-    if(s.prueftermin&&s.prueftermin>=td){const ex=(s.pruefungen||[]).find(p=>p.datum===s.prueftermin);if(!ex)allePruef.push({sid:s.id,datum:s.prueftermin,versuch:null,pi:-1,typ:"geplant"});}
     (s.pruefungen||[]).forEach((p,pi)=>{if(p.bestanden===null||p.bestanden===undefined)allePruef.push({sid:s.id,datum:p.datum,versuch:p.versuch,pi,typ:"offen"});});
   });
   allePruef.sort((a,b)=>a.datum.localeCompare(b.datum));
