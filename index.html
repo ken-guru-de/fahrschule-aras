@@ -409,9 +409,8 @@ function renderListe(q="",sortMode="heute"){
   }
 
   const filtered=[...basis].sort((a,b)=>{
-    if(sortMode==="termin"){
-      return nextTerminDateTime(a).localeCompare(nextTerminDateTime(b));
-    }
+    if(sortMode==="termin") return nextTerminDateTime(a).localeCompare(nextTerminDateTime(b));
+    if(sortMode==="alpha") return a.nachname.localeCompare(b.nachname,"de");
     const aH=heuteIds.has(a.id)?0:1;
     const bH=heuteIds.has(b.id)?0:1;
     return aH-bH;
@@ -420,13 +419,13 @@ function renderListe(q="",sortMode="heute"){
     <div class="topbar">
       <button class="btn-icon" onclick="renderDashboard()"><i class="ti ti-arrow-left"></i></button>
       <span class="topbar-title">Schüler</span>
-      <button class="btn-icon" onclick="renderListe('','${sortMode==='heute'?'termin':'heute'}')" aria-label="Sortierung" title="${sortMode==='heute'?'Nach Termin sortieren':'Heute zuerst'}"><i class="ti ti-sort-ascending"></i></button>
+      <button class="btn-icon" onclick="renderListe('','${sortMode==='heute'?'termin':sortMode==='termin'?'alpha':'heute'}')" aria-label="Sortierung" title="${sortMode==='heute'?'Nach Termin':sortMode==='termin'?'Alphabetisch':'Heute zuerst'}"><i class="ti ti-sort-ascending"></i></button>
       <button class="btn-icon" onclick="renderNeuSchueler()"><i class="ti ti-user-plus"></i></button>
     </div>
     <div class="scroll">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-        <span style="font-size:12px;color:var(--tx3)">${sortMode==="termin"?"↑ Nächster Termin":"↑ Heute zuerst"}</span>
-        <button onclick="renderListe('${q}','${sortMode==='heute'?'termin':'heute'}')" style="font-size:12px;color:var(--accent);background:none;border:none;cursor:pointer;font-family:inherit;padding:0">Ändern</button>
+        <span style="font-size:12px;color:var(--tx3)">${sortMode==="termin"?"↑ Nächster Termin":sortMode==="alpha"?"↑ A–Z":"↑ Heute zuerst"}</span>
+        <button onclick="renderListe('${q}','${sortMode==='heute'?'termin':sortMode==='termin'?'alpha':'heute'}')" style="font-size:12px;color:var(--accent);background:none;border:none;cursor:pointer;font-family:inherit;padding:0">Ändern</button>
       </div>
       <div class="search-wrap">
         <i class="ti ti-search search-icon"></i>
