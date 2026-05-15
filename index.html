@@ -1327,9 +1327,9 @@ function renderNeuKalTermin(date){
         <div class="card-row">
           <span class="card-label"><i class="ti ti-hourglass"></i>Minuten</span>
           <div style="display:flex;align-items:center;gap:10px;justify-content:flex-end;flex:1">
-            <button class="cir-btn" onclick="changeKalMin(-10);kalUpdateEnd()">−</button>
+            <button class="cir-btn" onclick="changeKalMin(-5);kalUpdateEnd()">−</button>
             <span id="kal-min-disp" style="font-size:16px;font-weight:500;min-width:52px;text-align:center">80 min</span>
-            <button class="cir-btn" onclick="changeKalMin(10);kalUpdateEnd()">+</button>
+            <button class="cir-btn" onclick="changeKalMin(5);kalUpdateEnd()">+</button>
           </div>
         </div>
       </div></div>
@@ -1345,7 +1345,7 @@ function renderNeuKalTermin(date){
   renderApp(html);
   setTimeout(initPTR,50);
 }
-function changeKalMin(d){window._kalMin=Math.max(10,Math.min(300,window._kalMin+d));const el=document.getElementById("kal-min-disp");if(el)el.textContent=window._kalMin+" min";}
+function changeKalMin(d){window._kalMin=Math.max(5,Math.min(300,window._kalMin+d));const el=document.getElementById("kal-min-disp");if(el)el.textContent=window._kalMin+" min";}
 
 function setKTyp(typ){
   window._kalTyp=typ;
@@ -1510,9 +1510,9 @@ function renderEditDashTermin(date,idx){
         <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Uhrzeit</span><input type="time" step="300" id="et-uhr" value="${t.uhr}"/></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-hourglass"></i>Minuten</span>
           <div style="display:flex;align-items:center;gap:10px;justify-content:flex-end;flex:1">
-            <button class="cir-btn" onclick="changeETMin(-10)">−</button>
+            <button class="cir-btn" onclick="changeETMin(-5)">−</button>
             <span id="et-min-disp" style="font-size:16px;font-weight:500;min-width:52px;text-align:center">${t.min} min</span>
-            <button class="cir-btn" onclick="changeETMin(10)">+</button>
+            <button class="cir-btn" onclick="changeETMin(5)">+</button>
           </div>
         </div>
         <div class="card-row" style="align-items:flex-start;padding-top:12px"><span class="card-label" style="padding-top:2px"><i class="ti ti-notes"></i>Notiz</span><textarea id="et-notiz" style="flex:1;border:none;background:transparent;font-size:15px;color:var(--tx);font-family:inherit;outline:none;text-align:left;resize:none;height:60px" placeholder="Optional…">${t.notiz||""}</textarea></div>
@@ -1660,9 +1660,9 @@ function renderEditKalTermin(date,idx){
         </div>
         <div class="card-row"><span class="card-label"><i class="ti ti-hourglass"></i>Minuten</span>
           <div style="display:flex;align-items:center;gap:10px;justify-content:flex-end;flex:1">
-            <button class="cir-btn" onclick="changeETMin(-10);ektUpdateEnd()">−</button>
+            <button class="cir-btn" onclick="changeETMin(-5);ektUpdateEnd()">−</button>
             <span id="et-min-disp" style="font-size:16px;font-weight:500;min-width:52px;text-align:center">${t.min} min</span>
-            <button class="cir-btn" onclick="changeETMin(10);ektUpdateEnd()">+</button>
+            <button class="cir-btn" onclick="changeETMin(5);ektUpdateEnd()">+</button>
           </div>
         </div>
         <div class="card-row" style="align-items:flex-start;padding-top:12px"><span class="card-label" style="padding-top:2px"><i class="ti ti-notes"></i>Notiz</span>
