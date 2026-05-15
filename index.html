@@ -369,7 +369,7 @@ function renderDashboard(){
   html+=`</div>`;
 
   if(allePruef.length){
-    html+=`<div><div class="sec-label">Prüfungen</div><div style="max-height:420px;overflow-y:auto;-webkit-overflow-scrolling:touch">`;
+    html+=`<div><div class="sec-label">Prüfungen</div>`;
     allePruef.forEach(ep=>{
       const s2=getS(ep.sid);if(!s2)return;
       const fd=fmtDate(ep.datum);
@@ -383,7 +383,7 @@ function renderDashboard(){
         <span style="font-size:13px;color:var(--tx2);font-weight:500">${fd.day}. ${fd.mon}${vergangen&&ep.typ==="offen"?" ⚠️":""}</span>
       </div>`;
     });
-    html+=`</div></div>`;
+    html+=`</div>`;
   }
 
   html+=`<div style="display:flex;flex-direction:column;gap:8px">
