@@ -470,8 +470,10 @@ function renderListe(q="",sortMode="heute"){
   renderApp(html);
   initSwipe();
   if(q){
-    const si=document.getElementById("search-input");
-    if(si){si.focus();si.setSelectionRange(si.value.length,si.value.length);}
+    setTimeout(()=>{
+      const si=document.getElementById("search-input");
+      if(si){si.focus();si.setSelectionRange(si.value.length,si.value.length);}
+    },50);
   }
   setTimeout(initPTR,50);
 }
@@ -1947,6 +1949,12 @@ function renderIPadSidebar(q="", sortMode="heute"){
     </div>
   </div>`;
   ipadSidebar(html);
+  if(q){
+    setTimeout(()=>{
+      const si=document.querySelector("#ipad-sidebar input[type=search]");
+      if(si){si.focus();si.setSelectionRange(si.value.length,si.value.length);}
+    },50);
+  }
 }
 
 
