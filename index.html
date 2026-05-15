@@ -176,8 +176,11 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:-apple-sy
 
 /* ── IPAD OPTIMIERUNG ────────────────────────────────────────────────────────*/
 @media (min-width: 768px) {
-  .app { max-width: 680px; margin: 0 auto; }
   body { background: var(--bg2); }
+  .app { display: flex; flex-direction: row; height: 100vh; max-width: 100%; }
+  #ipad-sidebar { width: 320px; flex-shrink: 0; border-right: 0.5px solid var(--br); display: flex; flex-direction: column; height: 100vh; background: var(--bg); }
+  #ipad-detail { flex: 1; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+  .screen { display: flex !important; flex-direction: column; height: 100vh; }
 
   .topbar { padding: calc(var(--safe-top) + 14px) 28px 14px; }
   .topbar-title { font-size: 22px; }
@@ -254,6 +257,10 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:-apple-sy
 </head>
 <body>
 <div class="app" id="app"></div>
+<div id="ipad-app" style="display:none;flex-direction:row;height:100vh;width:100%">
+  <div id="ipad-sidebar" style="width:320px;flex-shrink:0;border-right:.5px solid var(--br);display:flex;flex-direction:column;height:100vh;background:var(--bg);overflow:hidden"></div>
+  <div id="ipad-detail" style="flex:1;display:flex;flex-direction:column;height:100vh;overflow:hidden;background:var(--bg)"></div>
+</div>
 <script>
 const FARBEN=[{key:"blue",bg:"#B5D4F4",tx:"#0C447C"},{key:"teal",bg:"#9FE1CB",tx:"#085041"},{key:"purple",bg:"#CECBF6",tx:"#3C3489"},{key:"coral",bg:"#F5C4B3",tx:"#712B13"},{key:"green",bg:"#C0DD97",tx:"#27500A"},{key:"amber",bg:"#FAC775",tx:"#633806"}];
 const KLASSEN=["B","BA","B197","B17"];
@@ -1790,13 +1797,227 @@ function saveAll(){
   syncToCloud();
 }
 
+// ── IPAD LAYOUT ──────────────────────────────────────────────────────────────
+function ipadSidebar(html){ if(IS_IPAD){ document.getElementById("ipad-sidebar").innerHTML=html; } }
+function ipadDetail(html){ if(IS_IPAD){ document.getElementById("ipad-detail").innerHTML=html; } }
+
+function renderIPadLayout(){
+  // Sidebar: Schülerliste
+  renderIPadSidebar();
+  // Detail: Dashboard
+  renderIPadDashboard();
+}
+
+function renderIPadSidebar(q="", sortMode="heute"){
+  const td=todayStr();
+  const heuteIds=new Set((termine[td]||[]).map(t=>t.sid));
+  const basis=q?schueler.filter(s=>(s.vorname+" "+s.nachname+" "+(s.spitz||"")).toLowerCase().includes(q.toLowerCase())):schueler;
+  function nextTerminDateTime(s){
+    const all=Object.entries(termine).filter(([d])=>d>=td).flatMap(([d,ts])=>ts.filter(t=>t.sid===s.id).map(t=>d+"T"+(t.uhr||"00:00")));
+    return all.sort()[0]||"9999";
+  }
+  const filtered=[...basis].sort((a,b)=>{
+    if(sortMode==="termin") return nextTerminDateTime(a).localeCompare(nextTerminDateTime(b));
+    const aH=heuteIds.has(a.id)?0:1, bH=heuteIds.has(b.id)?0:1;
+    return aH-bH;
+  });
+
+  let html=`<div style="display:flex;flex-direction:column;height:100%">
+    <div style="background:var(--accent-dark);padding:calc(var(--safe-top)+10px) 16px 12px;display:flex;align-items:center;gap:8px;flex-shrink:0">
+      <span style="font-size:17px;font-weight:600;color:white;flex:1"><i class="ti ti-users" style="margin-right:6px"></i>Schüler</span>
+      <button class="btn-icon" onclick="renderIPadNeuSchueler()" title="Neuer Schüler"><i class="ti ti-user-plus"></i></button>
+    </div>
+    <div style="padding:10px 12px;flex-shrink:0;position:relative">
+      <i class="ti ti-search" style="position:absolute;left:22px;top:50%;transform:translateY(-50%);color:var(--tx3);font-size:16px;pointer-events:none"></i>
+      <input type="search" placeholder="Suchen…" value="${q}" oninput="renderIPadSidebar(this.value,'${sortMode}')"
+        style="width:100%;height:38px;padding:0 10px 0 34px;border:.5px solid var(--br2);border-radius:var(--r-lg);background:var(--bg2);color:var(--tx);font-size:14px;font-family:inherit;outline:none"/>
+    </div>
+    <div style="flex:1;overflow-y:auto;padding:0 8px 12px">`;
+
+  filtered.forEach(s=>{
+    const bestanden=(s.pruefungen||[]).some(p=>p.bestanden===true);
+    const hatHeute=heuteIds.has(s.id);
+    html+=`<div onclick="renderIPadSchueler('${s.id}')" style="display:flex;align-items:center;gap:10px;padding:10px 10px;border-radius:var(--r-lg);cursor:pointer;margin-bottom:3px;${bestanden?"border-left:3px solid #639922;":""}" onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background=''" id="sidebar-${s.id}">
+      ${s.foto?`<div style="width:38px;height:38px;border-radius:50%;overflow:hidden;flex-shrink:0"><img src="${s.foto}" style="width:100%;height:100%;object-fit:cover"/></div>`:`<div class="avatar av-${s.farbe}" style="width:38px;height:38px;font-size:13px">${initials(s)}</div>`}
+      <div style="flex:1;min-width:0">
+        <div style="font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.geschlecht==="w"?"👧":"👦"} ${s.vorname} ${s.nachname}</div>
+        <div style="font-size:11px;color:var(--tx2);margin-top:1px">${hatHeute?"📅 Heute · ":""}Kl. ${s.klasse}</div>
+      </div>
+      <span style="font-size:11px;font-weight:500;padding:3px 8px;border-radius:20px;background:${bestanden?"#EAF3DE":hatHeute?"rgba(255,107,43,.12)":"var(--bg2)"};color:${bestanden?"#27500A":hatHeute?"var(--accent)":"var(--tx3)"}">${bestanden?"✓":hatHeute?"Heute":s.klasse}</span>
+    </div>`;
+  });
+
+  html+=`</div>
+    <div style="padding:8px;flex-shrink:0;border-top:.5px solid var(--br)">
+      <button onclick="renderIPadDashboard()" style="width:100%;padding:10px;background:var(--bg2);border:.5px solid var(--br);border-radius:var(--r-lg);font-size:13px;color:var(--tx2);cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px"><i class="ti ti-home"></i> Dashboard</button>
+    </div>
+  </div>`;
+  ipadSidebar(html);
+}
+
+function renderIPadDashboard(){
+  const td=todayStr();
+  let anzeigeDatum=td, anzeigeLabel="Heute";
+  const heuteT=(termine[td]||[]).sort((a,b)=>a.uhr.localeCompare(b.uhr));
+  if(!heuteT.length){
+    const alleKeys=Object.keys(termine).filter(d=>d>td).sort();
+    if(alleKeys.length){ anzeigeDatum=alleKeys[0]; const fd2=fmtDate(anzeigeDatum); anzeigeLabel="Nächster Termin · "+fd2.day+". "+fd2.mon; }
+  }
+  const anzT=(termine[anzeigeDatum]||[]).sort((a,b)=>a.uhr.localeCompare(b.uhr));
+  const allePruef=[];
+  schueler.forEach(s=>{
+    if(s.prueftermin&&s.prueftermin>=td){const ex=(s.pruefungen||[]).find(p=>p.datum===s.prueftermin);if(!ex)allePruef.push({sid:s.id,datum:s.prueftermin,versuch:null,pi:-1,typ:"geplant"});}
+    (s.pruefungen||[]).forEach((p,pi)=>{if(p.bestanden===null||p.bestanden===undefined)allePruef.push({sid:s.id,datum:p.datum,versuch:p.versuch,pi,typ:"offen"});});
+  });
+  allePruef.sort((a,b)=>a.datum.localeCompare(b.datum));
+
+  let html=`<div style="display:flex;flex-direction:column;height:100%">
+    <div style="background:var(--accent-dark);padding:calc(var(--safe-top)+10px) 20px 12px;display:flex;align-items:center;gap:8px;flex-shrink:0">
+      <span style="font-size:18px;font-weight:600;color:white;flex:1"><i class="ti ti-steering-wheel" style="font-size:18px;margin-right:6px"></i>Fahrschule</span>
+      <span id="sync-status" style="font-size:11px;color:rgba(255,255,255,0.6);transition:opacity 1s;opacity:0"></span>
+      <button class="btn-icon" onclick="renderIPadKalender()" title="Kalender"><i class="ti ti-calendar"></i></button>
+      <button class="btn-icon" onclick="renderIPadStatistik()" title="Statistik"><i class="ti ti-chart-bar"></i></button>
+    </div>
+    <div style="flex:1;overflow-y:auto;padding:20px 24px;display:flex;flex-direction:column;gap:16px">
+      <div class="stat-grid">
+        <div class="stat-box accent"><div class="stat-lbl">Aktive Schüler</div><div class="stat-num">${schueler.length}</div></div>
+        <div class="stat-box"><div class="stat-lbl">Heute gefahren</div><div class="stat-num">${todayTotalMin()}<span class="stat-unit">min</span></div></div>
+      </div>
+      <div><div class="sec-label">${anzeigeLabel}</div>`;
+
+  if(anzT.length){
+    anzT.forEach((t,ti)=>{
+      const s=getS(t.sid);if(!s)return;
+      const nick=s.spitz?` «${s.spitz}»`:"";
+      const endT=(()=>{const [h,m]=t.uhr.split(":").map(Number);const tot=h*60+m+t.min;return String(Math.floor(tot/60)%24).padStart(2,"0")+":"+String(tot%60).padStart(2,"0");})();
+      html+=`<div class="list-item" style="margin-bottom:6px;cursor:pointer" onclick="renderIPadSchueler('${s.id}')">
+        ${s.foto?`<div class="avatar" style="overflow:hidden"><img src="${s.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/></div>`:`<div class="avatar av-${s.farbe}">${initials(s)}</div>`}
+        <div class="item-info"><div class="item-name">${s.vorname}${nick}</div><div class="item-sub">${t.uhr}–${endT} Uhr · ${t.min} min${t.notiz?" · "+t.notiz:""}</div></div>
+        <span class="badge badge-${s.klasse}">${s.klasse}</span>
+      </div>`;
+    });
+  } else {
+    html+=`<div style="padding:12px 0;font-size:14px;color:var(--tx3)">Keine Termine</div>`;
+  }
+
+  if(allePruef.length){
+    html+=`</div><div><div class="sec-label">Prüfungen</div>`;
+    allePruef.forEach(ep=>{
+      const s2=getS(ep.sid);if(!s2)return;
+      const fd=fmtDate(ep.datum);
+      const vergangen=ep.datum<td;
+      const s2pz=s2.pruefzeit&&ep.typ==="geplant"?s2.pruefzeit+" Uhr · ":"";
+      const sub=ep.typ==="geplant"?`${s2pz}Klasse ${s2.klasse} · ${s2.prufort}`:`${ep.versuch}. Prüfung · Ergebnis ausstehend`;
+      html+=`<div class="list-item" style="margin-bottom:6px;cursor:pointer" onclick="showPruefResult('${ep.sid}','${ep.datum}',${ep.pi},'${ep.typ}');renderIPadDashboard()">
+        <span class="status-dot" style="background:${vergangen?"var(--accent)":"#378ADD"}"></span>
+        <div class="item-info"><div class="item-name">${s2.vorname} ${s2.nachname}</div><div class="item-sub">${sub}</div></div>
+        <span style="font-size:13px;color:var(--tx2);font-weight:500">${fd.day}. ${fd.mon}${vergangen?" ⚠️":""}</span>
+      </div>`;
+    });
+  }
+
+  html+=`</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <button class="btn-full" onclick="renderIPadKalender()"><i class="ti ti-calendar"></i> Kalender</button>
+        <button class="btn-full" onclick="renderIPadStatistik()"><i class="ti ti-chart-bar"></i> Statistik</button>
+      </div>
+      <button class="btn-full gruen" onclick="exportDaten()"><i class="ti ti-download"></i> Daten sichern</button>
+      <button class="btn-full" style="background:#E6F1FB;border-color:#85B7EB;color:#0C447C" onclick="document.getElementById('import-input-ipad').click()"><i class="ti ti-upload"></i> Daten wiederherstellen</button>
+      <input type="file" id="import-input-ipad" accept=".json" style="display:none" onchange="importDaten(this)"/>
+    </div>
+  </div>`;
+  ipadDetail(html);
+}
+
+function renderIPadSchueler(sid){
+  renderIPadSidebar(); // refresh sidebar
+  // Show student detail in right panel
+  const s=getS(sid);if(!s)return;
+  // reuse existing renderSchueler but target ipad-detail
+  const nsi=nextSonder(s);
+  const totalEinh=(s.fahrstunden||[]).reduce((a,f)=>a+(f.typ==="normal"?f.einh:0),0);
+  // Build same HTML as renderSchueler but adapted for ipad detail
+  let html=`<div style="display:flex;flex-direction:column;height:100%">
+    <div style="background:var(--accent-dark);padding:calc(var(--safe-top)+10px) 20px 12px;display:flex;align-items:center;gap:8px;flex-shrink:0">
+      <button class="btn-icon" onclick="renderIPadDashboard()"><i class="ti ti-home"></i></button>
+      <span style="font-size:18px;font-weight:600;color:white;flex:1">${s.vorname} ${s.nachname}</span>
+      <button class="btn-icon" onclick="renderEditSchuelerIPad('${sid}')"><i class="ti ti-edit"></i></button>
+    </div>
+    <div style="flex:1;overflow-y:auto;padding:20px 24px;display:flex;flex-direction:column;gap:14px">`;
+
+  // Reuse same content as mobile renderSchueler
+  const tmp = document.createElement("div");
+  document.getElementById("app").innerHTML = `<div id="tmp-render"></div>`;
+  // Actually just call renderSchueler and copy - better approach: duplicate the HTML generation
+  // For simplicity, inject into ipad-detail directly using renderSchueler logic
+
+  // Close and use existing renderSchueler adapted
+  html += `<p style="color:var(--tx2);font-size:14px">Lade Schülerdetails…</p></div></div>`;
+  ipadDetail(html);
+  
+  // Use a trick: temporarily render to app, then move to ipad-detail
+  setTimeout(()=>{
+    renderSchueler(sid);
+    const scr=document.querySelector(".screen.active");
+    if(scr){
+      const inner=scr.innerHTML;
+      document.getElementById("app").innerHTML="";
+      // Rebuild ipad sidebar
+      renderIPadSidebar();
+      // Put content in detail
+      const detail=document.getElementById("ipad-detail");
+      if(detail) detail.innerHTML=`<div style="display:flex;flex-direction:column;height:100%;overflow:hidden">${inner}</div>`;
+    }
+  },10);
+}
+
+function renderIPadNeuSchueler(sid){
+  setTimeout(()=>{
+    renderNeuSchueler(sid);
+    const scr=document.querySelector(".screen.active");
+    if(scr){const inner=scr.innerHTML;document.getElementById("app").innerHTML="";renderIPadSidebar();const d=document.getElementById("ipad-detail");if(d)d.innerHTML=`<div style="height:100%;overflow:hidden">${inner}</div>`;}
+  },10);
+}
+
+function renderEditSchuelerIPad(sid){ renderIPadNeuSchueler(sid); }
+
+function renderIPadKalender(){
+  renderIPadSidebar();
+  setTimeout(()=>{
+    renderKalender();
+    const scr=document.querySelector(".screen.active");
+    if(scr){const inner=scr.innerHTML;document.getElementById("app").innerHTML="";renderIPadSidebar();const d=document.getElementById("ipad-detail");if(d)d.innerHTML=`<div style="height:100%;overflow:hidden">${inner}</div>`;}
+  },10);
+}
+
+function renderIPadStatistik(){
+  renderIPadSidebar();
+  setTimeout(()=>{
+    renderStatistik();
+    const scr=document.querySelector(".screen.active");
+    if(scr){const inner=scr.innerHTML;document.getElementById("app").innerHTML="";renderIPadSidebar();const d=document.getElementById("ipad-detail");if(d)d.innerHTML=`<div style="height:100%;overflow:hidden">${inner}</div>`;}
+  },10);
+}
+
 // ── BOOT ──────────────────────────────────────────────────────────────────────
 // Try to load from cloud first, fallback to localStorage
+// iPad detection
+const IS_IPAD = window.innerWidth >= 768;
+
+if(IS_IPAD){
+  document.getElementById("app").style.display="none";
+  document.getElementById("ipad-app").style.display="flex";
+}
+
 (async()=>{
   const synced = await syncFromCloud();
   saveAll();
   syncFahrstundenToKalender();
-  renderDashboard();
+  if(IS_IPAD){
+    renderIPadLayout();
+  } else {
+    renderDashboard();
+  }
 })();
 </script>
 </body>
