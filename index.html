@@ -1232,7 +1232,7 @@ function nextMonth(){
 }
 
 function renderNeuKalTermin(date){
-  window._kalMin=80;
+  window._kalMin=80;window._kalTyp="normal";window._kalSonderKey=null;window._kalPers="schueler";
   const p=date.split("-");
   const lbl=`${parseInt(p[2])}. ${MONATE_K[parseInt(p[1])-1]} ${p[0]}`;
   let html=`<div class="screen active" id="scr-kal-neu">
@@ -1244,10 +1244,19 @@ function renderNeuKalTermin(date){
       <div id="toast-kal" class="toast"><i class="ti ti-circle-check" style="font-size:16px"></i><span id="toast-kal-msg"></span></div>
       <div><div class="sec-label">Termin</div>
       <div class="card">
-        <div class="card-row"><span class="card-label"><i class="ti ti-user"></i>Schüler</span>
+        <div class="card-row" style="flex-direction:column;align-items:stretch;gap:8px;padding:12px 14px">
+          <div style="display:flex;gap:6px">
+            <button class="pill active" id="kpers-schueler" onclick="setKPers('schueler')" style="font-size:13px;padding:7px 14px">Schüler</button>
+            <button class="pill" id="kpers-auffrisch" onclick="setKPers('auffrisch')" style="font-size:13px;padding:7px 14px">Auffrischung</button>
+          </div>
+        </div>
+        <div class="card-row" id="k-schueler-row"><span class="card-label"><i class="ti ti-user"></i>Schüler</span>
           <select id="k-sid"><option value="">Auswählen…</option>
           ${schueler.map(s=>`<option value="${s.id}">${s.vorname} ${s.nachname}${s.spitz?" «"+s.spitz+"»":""}</option>`).join("")}
           </select>
+        </div>
+        <div class="card-row" id="k-auffrisch-row" style="display:none"><span class="card-label"><i class="ti ti-user-check"></i>Name</span>
+          <input type="text" id="k-auffrisch-name" placeholder="Vor- und Nachname" style="text-align:right"/>
         </div>
         <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Startzeit</span><input type="time" id="k-uhr" value="09:00" oninput="kalUpdateEnd()"/></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-clock-check"></i>Endzeit</span><span id="k-endzeit" style="flex:1;text-align:right;font-size:15px;font-weight:500;color:var(--accent)">10:20</span></div>
@@ -1316,10 +1325,27 @@ function kalUpdateEnd(){
   const em=total%60;
   endEl.textContent=String(eh).padStart(2,"0")+":"+String(em).padStart(2,"0")+" Uhr";
 }
+function setKPers(typ){
+  window._kalPers=typ;
+  document.getElementById("kpers-schueler").classList.toggle("active",typ==="schueler");
+  document.getElementById("kpers-auffrisch").classList.toggle("active",typ==="auffrisch");
+  document.getElementById("k-schueler-row").style.display=typ==="schueler"?"":"none";
+  document.getElementById("k-auffrisch-row").style.display=typ==="auffrisch"?"":"none";
+}
+
 function saveKalTermin(date){
-  const sid=document.getElementById("k-sid").value;
   const uhr=document.getElementById("k-uhr").value;
-  if(!sid||!uhr){if(!sid){document.getElementById("k-sid").classList.add("err-border");setTimeout(()=>document.getElementById("k-sid").classList.remove("err-border"),1500);}return;}
+  const isAuffrisch=window._kalPers==="auffrisch";
+  let sid="__auffrisch__";
+  if(!isAuffrisch){
+    sid=document.getElementById("k-sid").value;
+    if(!sid||!uhr){if(!sid){document.getElementById("k-sid").classList.add("err-border");setTimeout(()=>document.getElementById("k-sid").classList.remove("err-border"),1500);}return;}
+  } else {
+    const name=document.getElementById("k-auffrisch-name").value.trim();
+    if(!name||!uhr){if(!name)document.getElementById("k-auffrisch-name").classList.add("err-border");setTimeout(()=>document.getElementById("k-auffrisch-name").classList.remove("err-border"),1500);if(!uhr)return;return;}
+    sid="__auffrisch__:"+name;
+  }
+  if(!uhr)return;
   const min=window._kalMin||80;
   if(!termine[date])termine[date]=[];
   const knotiz=document.getElementById('k-notiz');const notizVal=knotiz?knotiz.value.trim():'';
@@ -1489,8 +1515,10 @@ function renderTagAnsicht(date){
     const sorted=[...t].sort((a,b)=>a.uhr.localeCompare(b.uhr));
     let totalMin=0;
     sorted.forEach((e,i)=>{
-      const s=getS(e.sid);if(!s)return;
-      const nick=s.spitz?` «${s.spitz}»`:"";
+      const isAuffrisch2=e.sid&&e.sid.startsWith("__auffrisch__");
+      const auffrischName=isAuffrisch2?e.sid.replace("__auffrisch__:",""):"";
+      const s=isAuffrisch2?null:getS(e.sid);if(!s&&!isAuffrisch2)return;
+      const nick=s&&s.spitz?` «${s.spitz}»`:"";
       const endMin=(()=>{const [h,m]=e.uhr.split(":").map(Number);const tot=h*60+m+e.min;return String(Math.floor(tot/60)%24).padStart(2,"0")+":"+String(tot%60).padStart(2,"0");})();
       const isSonder=e.min===225||e.min===220||e.min===135;
       const isPruef=e.min===100;
@@ -1504,9 +1532,9 @@ function renderTagAnsicht(date){
           </div>
           <div style="width:3px;border-radius:2px;background:${dotCol};align-self:stretch;flex-shrink:0"></div>
           <div style="flex:1">
-            <div style="font-size:15px;font-weight:500">${s.vorname}${nick} ${s.nachname}</div>
-            <div style="font-size:12px;color:var(--tx2);margin-top:2px">${e.min} min · Kl. ${s.klasse}${e.notiz?" · "+e.notiz:""}</div>
-            <div style="margin-top:4px"><span class="badge badge-${s.klasse}">${s.klasse}</span></div>
+            <div style="font-size:15px;font-weight:500">${isAuffrisch2?"🔄 "+auffrischName:s.vorname+nick+" "+s.nachname}</div>
+            <div style="font-size:12px;color:var(--tx2);margin-top:2px">${e.min} min${isAuffrisch2?" · Auffrischung":s?" · Kl. "+s.klasse:""}${e.notiz?" · "+e.notiz:""}</div>
+            ${!isAuffrisch2?`<div style="margin-top:4px"><span class="badge badge-${s.klasse}">${s.klasse}</span></div>`:""}
           </div>
           <i class="ti ti-chevron-right" style="color:var(--tx3);font-size:16px"></i>
         </div>
