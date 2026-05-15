@@ -1292,7 +1292,7 @@ function renderNeuKalTermin(date){
       <button class="btn-full" onclick="saveKalTermin('${date}')"><i class="ti ti-circle-check"></i> Termin speichern</button>
     </div>
   </div>`;
-  document.getElementById("app").innerHTML=html;
+  renderApp(html);
   setTimeout(initPTR,50);
 }
 function changeKalMin(d){window._kalMin=Math.max(10,Math.min(300,window._kalMin+d));const el=document.getElementById("kal-min-disp");if(el)el.textContent=window._kalMin+" min";}
@@ -1560,7 +1560,7 @@ function renderTagAnsicht(date){
   html+=`<button class="btn-full" style="margin-top:8px" onclick="renderNeuKalTermin('${date}')"><i class="ti ti-plus"></i> Termin hinzufügen</button>
     </div>
   </div>`;
-  document.getElementById("app").innerHTML=html;
+  renderApp(html);
   setTimeout(initPTR,50);
 }
 
@@ -1615,7 +1615,7 @@ function renderEditKalTermin(date,idx){
       <button class="btn-full danger" style="margin-top:6px" onclick="deleteEktTermin('${date}',${idx})"><i class="ti ti-trash"></i> Termin löschen</button>
     </div>
   </div>`;
-  document.getElementById("app").innerHTML=html;
+  renderApp(html);
   window._etMin=t.min;
   setTimeout(()=>{ektUpdateEnd();initPTR();},50);
 }
@@ -1758,6 +1758,15 @@ function syncFahrstundenToKalender(){
     }
   });
   save("fs_termine",termine);
+}
+
+// ── RENDER HELPER ────────────────────────────────────────────────────────────
+function renderApp(html){
+  if(typeof IS_IPAD!=="undefined"&&IS_IPAD){
+    const d=document.getElementById("ipad-detail");
+    if(d){d.innerHTML=`<div style="display:flex;flex-direction:column;height:100%;overflow:hidden">${html}</div>`;return;}
+  }
+  document.getElementById("app").innerHTML=html;
 }
 
 // ── SUPABASE SYNC ────────────────────────────────────────────────────────────
