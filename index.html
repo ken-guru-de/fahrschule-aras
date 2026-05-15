@@ -472,8 +472,13 @@ function renderListe(q="",sortMode="heute"){
   if(q){
     setTimeout(()=>{
       const si=document.getElementById("search-input");
-      if(si){si.focus();si.setSelectionRange(si.value.length,si.value.length);}
-    },50);
+      if(si){
+        si.focus();
+        si.setSelectionRange(si.value.length,si.value.length);
+        // iOS needs this trick to keep keyboard open
+        si.click();
+      }
+    },10);
   }
   setTimeout(initPTR,50);
 }
