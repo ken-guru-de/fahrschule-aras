@@ -249,6 +249,7 @@ function renderDashboard(){
   let html=`<div class="screen active" id="scr-dash">
     <div class="topbar">
       <span class="topbar-title"><i class="ti ti-steering-wheel" style="font-size:19px;vertical-align:-2px;margin-right:6px"></i>Fahrschule</span>
+      <span id="sync-status" style="font-size:11px;color:rgba(255,255,255,0.6);transition:opacity 1s;opacity:0"></span>
       <button class="btn-icon" onclick="renderNeuSchueler()" aria-label="Schüler anlegen"><i class="ti ti-user-plus"></i></button>
       <button class="btn-icon" onclick="renderStatistik()" aria-label="Statistik"><i class="ti ti-chart-bar"></i></button>
       <button class="btn-icon" onclick="renderListe()" aria-label="Schülerliste"><i class="ti ti-users"></i></button>
@@ -1637,10 +1638,89 @@ function syncFahrstundenToKalender(){
   save("fs_termine",termine);
 }
 
+// ── SUPABASE SYNC ────────────────────────────────────────────────────────────
+const SB_URL = "https://afgkdhbvyigqyckyxeyl.supabase.co";
+const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmZ2tkaGJ2eWlncXlja3l4ZXlsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4MTE2MzEsImV4cCI6MjA5NDM4NzYzMX0.mVtq4bZUHN_cL6O8IfqEnxBJAlc21s0hIt_EoglHJvQ";
+
+async function sbFetch(path, method="GET", body=null){
+  const opts = {
+    method,
+    headers: {
+      "apikey": SB_KEY,
+      "Authorization": "Bearer " + SB_KEY,
+      "Content-Type": "application/json",
+      "Prefer": method==="POST"?"resolution=merge-duplicates":""
+    }
+  };
+  if(body) opts.body = JSON.stringify(body);
+  const res = await fetch(SB_URL + path, opts);
+  if(!res.ok) return null;
+  try{ return await res.json(); }catch{return null;}
+}
+
+async function syncToCloud(){
+  try{
+    await sbFetch("/rest/v1/schueler", "POST", [{id:"main", data:JSON.stringify(schueler), updated_at: new Date().toISOString()}]);
+    await sbFetch("/rest/v1/termine", "POST", [{id:"main", data:JSON.stringify(termine), updated_at: new Date().toISOString()}]);
+    showSyncStatus("✓ Gespeichert");
+  }catch(e){
+    showSyncStatus("⚠ Offline");
+  }
+}
+
+async function syncFromCloud(){
+  try{
+    const [sr, tr] = await Promise.all([
+      sbFetch("/rest/v1/schueler?id=eq.main"),
+      sbFetch("/rest/v1/termine?id=eq.main")
+    ]);
+    if(sr&&sr[0]&&sr[0].data){
+      const cloud = JSON.parse(sr[0].data);
+      schueler = cloud;
+      save("fs_schueler", schueler);
+    }
+    if(tr&&tr[0]&&tr[0].data){
+      const cloud = JSON.parse(tr[0].data);
+      termine = cloud;
+      save("fs_termine", termine);
+    }
+    showSyncStatus("✓ Synchronisiert");
+    return true;
+  }catch(e){
+    showSyncStatus("⚠ Offline");
+    return false;
+  }
+}
+
+function showSyncStatus(msg){
+  const el = document.getElementById("sync-status");
+  if(!el) return;
+  el.textContent = msg;
+  el.style.opacity = "1";
+  setTimeout(()=>{el.style.opacity="0";}, 2500);
+}
+
+// Override saveAll to also sync to cloud
+const _origSaveAll = saveAll;
+function saveAll(){
+  const ids=new Set(schueler.map(s=>s.id));
+  Object.keys(termine).forEach(d=>{
+    termine[d]=termine[d].filter(t=>ids.has(t.sid));
+    if(!termine[d].length)delete termine[d];
+  });
+  save("fs_schueler",schueler);
+  save("fs_termine",termine);
+  syncToCloud();
+}
+
 // ── BOOT ──────────────────────────────────────────────────────────────────────
-saveAll(); // cleanup orphaned termine on startup
-syncFahrstundenToKalender();
-renderDashboard();
+// Try to load from cloud first, fallback to localStorage
+(async()=>{
+  const synced = await syncFromCloud();
+  saveAll();
+  syncFahrstundenToKalender();
+  renderDashboard();
+})();
 </script>
 </body>
 </html>
