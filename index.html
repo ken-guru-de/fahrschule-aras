@@ -1154,6 +1154,10 @@ function buildKalender(){
     <div class="cal-scroll"><div class="cal-grid" id="cal-grid"></div>
     <div id="cal-detail" style="padding:10px 16px 20px"></div></div>
   </div>`;
+  if(typeof IS_IPAD!=="undefined"&&IS_IPAD){
+    const d=document.getElementById("ipad-detail");
+    if(d){d.innerHTML=`<div style="display:flex;flex-direction:column;height:100%;overflow:hidden">${html}</div>`;renderCalGrid();renderCalDetail();return;}
+  }
   document.getElementById("app").innerHTML=html;
   renderCalGrid();renderCalDetail();
 }
@@ -1845,7 +1849,16 @@ function saveAll(){
 }
 
 // ── IPAD LAYOUT ──────────────────────────────────────────────────────────────
-function ipadSidebar(html){ if(IS_IPAD){ document.getElementById("ipad-sidebar").innerHTML=html; } }
+function ipadSidebar(html){
+  if(IS_IPAD){
+    const sb=document.getElementById("ipad-sidebar");
+    sb.innerHTML=html;
+    // Re-add resize handle
+    let h=document.getElementById("ipad-resize-handle");
+    if(!h){h=document.createElement("div");h.id="ipad-resize-handle";sb.appendChild(h);}
+    initSidebarResize();
+  }
+}
 function ipadDetail(html){ if(IS_IPAD){ document.getElementById("ipad-detail").innerHTML=html; } }
 
 function renderIPadLayout(){
