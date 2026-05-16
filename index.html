@@ -1810,7 +1810,7 @@ function deleteEktTermin(date,idx){
   termine[date].splice(idx,1);
   if(!termine[date].length)delete termine[date];
   saveAll();
-  renderTagAnsicht(date);
+  setTimeout(()=>renderTagAnsicht(date),50);
 }
 
 // ── PULL TO REFRESH ───────────────────────────────────────────────────────────
