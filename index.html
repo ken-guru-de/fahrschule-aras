@@ -763,6 +763,18 @@ function renderNeuSchueler(fromSid){
         </div>
       </div></div>
 
+      <div class="sec-label">Sonderfahrten</div>
+      <div class="card">
+        ${SONDER.map(sf=>`<div class="card-row">
+          <span class="card-label">${sf.label}</span>
+          <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end;flex:1">
+            <input type="number" id="sf-${sf.key}" min="0" max="${sf.min}" onfocus="this.select()"
+              style="width:64px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px"
+              value="${s&&s.sonder&&s.sonder[sf.key]?s.sonder[sf.key]:0}"/>
+            <span style="font-size:13px;color:var(--tx3)">/ ${sf.min} min</span>
+          </div>
+        </div>`).join("")}
+      </div>
       <button class="btn-full" onclick="saveSchueler('${s?s.id:""}')">${s?"Änderungen speichern":"Schüler speichern"}</button>
       ${s?`<button class="btn-full danger" style="margin-top:6px" onclick="deleteSchueler('${s.id}')"><i class="ti ti-trash"></i> Schüler löschen</button>`:""}
     </div>
@@ -795,6 +807,7 @@ function saveSchueler(editSid){
   if(editSid){
     const s=getS(editSid);
     s.vorname=vn;s.nachname=nn;s.spitz=sp;s.geschlecht=window._geschlecht||'m';s.tel=document.getElementById('n-tel').value.trim();s.beginn=bg;s.klasse=kl;s.prufort=pf;s.prueftermin=pt;s.theorie=th;s.farbe=window._selFarbe;
+    if(!s.sonder)s.sonder={};SONDER.forEach(sf=>{const el=document.getElementById('sf-'+sf.key);if(el)s.sonder[sf.key]=parseInt(el.value)||0;});
     saveAll();syncFahrstundenToKalender();renderSchueler(editSid);
   }else{
     const tel2=document.getElementById('n-tel').value.trim();const ptuhr='';const ns={id:"s"+Date.now(),vorname:vn,nachname:nn,spitz:sp,geschlecht:window._geschlecht||'m',tel:tel2,farbe:window._selFarbe,klasse:kl,beginn:bg,prufort:pf,prueftermin:pt,pruefzeit:ptuhr,theorie:th,sonder:[false,false,false],notiz:"",fahrstunden:[],pruefungen:[],gfa:{laengs:0,rechts:0,umkehr:0,rueckwaerts:0,stopp_mit:0,stopp_ohne:0,stadtautobahn:0,strassenbahn:0},foto:null};
@@ -1967,6 +1980,7 @@ function saveAll(){
     termine[d]=termine[d].filter(t=>t.sid&&(ids.has(t.sid)||t.sid.startsWith("__auffrisch__")));
     if(!termine[d].length)delete termine[d];
   });
+  syncKalenderToFahrstunden();
   save("fs_schueler",schueler);
   save("fs_termine",termine);
   syncToCloud();
@@ -2457,6 +2471,35 @@ function getKW(date){
   return Math.ceil((((d-yearStart)/86400000)+1)/7);
 }
 
+function syncKalenderToFahrstunden(){
+  schueler.forEach(s=>{
+    if(!s.fahrstunden)s.fahrstunden=[];
+    // Go through all termine for this student
+    Object.entries(termine).forEach(([datum,ts])=>{
+      ts.filter(t=>t.sid===s.id).forEach(t=>{
+        // Skip Prüfungen (min===100) - those are in pruefungen
+        if(t.min===100)return;
+        // Check if already in fahrstunden
+        const exists=s.fahrstunden.find(f=>f.datum===datum&&f.uhr===t.uhr);
+        if(!exists){
+          const typMap={80:"normal",225:"ueberland",220:"autobahn",135:"nacht"};
+          const typ=typMap[t.min]||"normal";
+          s.fahrstunden.push({
+            datum,
+            uhr:t.uhr,
+            min:t.min,
+            typ,
+            einh:1,
+            notiz:t.notiz||""
+          });
+        }
+      });
+    });
+    // Sort by date desc
+    s.fahrstunden.sort((a,b)=>b.datum.localeCompare(a.datum)||(b.uhr||"").localeCompare(a.uhr||""));
+  });
+}
+
 function renderDashSchueler(sid){
   const s=getS(sid);if(!s)return;
   const td=todayStr();
@@ -2602,6 +2645,7 @@ function toggleNotizDash(sid,ni){
   }catch(e){console.error("saveAll error:",e);}
   try{
     syncFahrstundenToKalender();
+    syncKalenderToFahrstunden();
   }catch(e){console.error("syncFahrstunden error:",e);}
   try{
     if(IS_IPAD){
