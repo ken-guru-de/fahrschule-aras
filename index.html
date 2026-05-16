@@ -1323,7 +1323,7 @@ function renderNeuKalTermin(date){
           <button onclick="toggleKalAlleSchueler()" style="background:none;border:none;cursor:pointer;color:var(--accent);font-size:13px;font-family:inherit;padding:0;text-align:left" id="k-alle-btn">+ Auch bestandene Schüler anzeigen</button>
         </div>
         <div class="card-row" id="k-auffrisch-row" style="display:none"><span class="card-label"><i class="ti ti-user-check"></i>Name</span>
-          <input type="text" id="k-auffrisch-name" placeholder="Vor- und Nachname" style="text-align:right"/>
+          <input type="text" id="k-auffrisch-name" placeholder="Name eingeben" style="flex:1;text-align:left;border:none;background:transparent;font-size:15px;color:var(--tx);outline:none"/>
         </div>
         <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Startzeit</span><input type="time" step="300" id="k-uhr" value="09:00" oninput="kalUpdateEnd()"/></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-clock-check"></i>Endzeit</span><span id="k-endzeit" style="flex:1;text-align:right;font-size:15px;font-weight:500;color:var(--accent)">10:20</span></div>
@@ -1466,11 +1466,7 @@ function saveKalTermin(date){
   }
   saveAll();
   selDate=date;
-  if(IS_IPAD){
-    renderIPadKalender();
-  } else {
-    renderTagAnsicht(date);
-  }
+  setTimeout(()=>renderTagAnsicht(date),50);
 }
 
 // ── STATISTIK ─────────────────────────────────────────────────────────────────
