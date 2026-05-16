@@ -1273,13 +1273,13 @@ function renderCalDetail(){
     html+=`<div class="termin-item" style="margin-bottom:6px">
       <div class="t-avatar av-${s.farbe}">${initials(s)}</div>
       <div class="t-info"><div class="t-name">${s.vorname}${nick} ${s.nachname}</div><div class="t-sub">${e.uhr}–${(()=>{const [h,m]=e.uhr.split(":").map(Number);const t=h*60+m+e.min;return String(Math.floor(t/60)%24).padStart(2,"0")+":"+String(t%60).padStart(2,"0");})()}Uhr · ${e.min} min · Kl. ${s.klasse}${e.notiz?" · "+e.notiz:""}</div></div>
-      <button class="t-del" onclick="delKalTermin('${selDate}',${i})"><i class="ti ti-trash"></i></button>
+      <button class="t-del" onclick="delKalTermin('${date}',${i})"><i class="ti ti-trash"></i></button>
     </div>`;
   });
   html+=`<button class="btn-full" style="margin-top:6px" onclick="renderNeuKalTermin('${selDate}')"><i class="ti ti-plus"></i> Termin hinzufügen</button>`;
   el.innerHTML=html;
 }
-function delKalTermin(key,i){if(!termine[key])return;const t=termine[key][i];const s=getS(t.sid);const name=s?s.vorname+" "+s.nachname:"Termin";if(!window.confirm(name+" · "+t.uhr+" Uhr wirklich löschen?"))return;termine[key].splice(i,1);if(!termine[key].length)delete termine[key];saveAll();renderTagAnsicht(key);}
+function delKalTermin(key,i){if(!termine[key])return;const t=termine[key][i];const s=getS(t.sid);const name=s?s.vorname+" "+s.nachname:"Termin";if(!window.confirm(name+" · "+t.uhr+" Uhr wirklich löschen?"))return;termine[key].splice(i,1);if(!termine[key].length)delete termine[key];saveAll();setTimeout(()=>renderTagAnsicht(key),50);}
 function prevMonth(){
   curMonth--;if(curMonth<1){curMonth=12;curYear--;}
   selDate=null;
