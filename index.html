@@ -1616,9 +1616,9 @@ function renderTagAnsicht(date){
   let html=`<div class="screen active" id="scr-tag">
     <div class="topbar">
       <button class="btn-icon" onclick="buildKalender()"><i class="ti ti-calendar"></i></button>
-      <button class="btn-icon" onclick="(d=>{d.setDate(d.getDate()-1);const nd=toKey(d.getFullYear(),d.getMonth()+1,d.getDate());selDate=nd;renderTagAnsicht(nd);})(new Date('${date}'))" style="font-size:24px;color:#4A90D9"><i class="ti ti-chevron-left"></i></button>
+      <button class="btn-icon" onclick="(d=>{do{d.setDate(d.getDate()-1);}while(d.getDay()===0||d.getDay()===6);const nd=toKey(d.getFullYear(),d.getMonth()+1,d.getDate());selDate=nd;renderTagAnsicht(nd);})(new Date('${date}'))" style="font-size:24px;color:#4A90D9"><i class="ti ti-chevron-left"></i></button>
       <span class="topbar-title">${dow}, ${fd.day}. ${fd.mon} <span style="font-size:13px;opacity:0.7">${fd.year}</span></span>
-      <button class="btn-icon" onclick="(d=>{d.setDate(d.getDate()+1);const nd=toKey(d.getFullYear(),d.getMonth()+1,d.getDate());selDate=nd;renderTagAnsicht(nd);})(new Date('${date}'))" style="font-size:24px;color:#4A90D9"><i class="ti ti-chevron-right"></i></button>
+      <button class="btn-icon" onclick="(d=>{do{d.setDate(d.getDate()+1);}while(d.getDay()===0||d.getDay()===6);const nd=toKey(d.getFullYear(),d.getMonth()+1,d.getDate());selDate=nd;renderTagAnsicht(nd);})(new Date('${date}'))" style="font-size:24px;color:#4A90D9"><i class="ti ti-chevron-right"></i></button>
       <button class="btn-icon" onclick="renderNeuKalTermin('${date}')"><i class="ti ti-plus"></i></button>
     </div>
     <div class="scroll">`;
