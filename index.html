@@ -1980,7 +1980,6 @@ function saveAll(){
     termine[d]=termine[d].filter(t=>t.sid&&(ids.has(t.sid)||t.sid.startsWith("__auffrisch__")));
     if(!termine[d].length)delete termine[d];
   });
-  syncKalenderToFahrstunden();
   save("fs_schueler",schueler);
   save("fs_termine",termine);
   syncToCloud();
