@@ -2457,6 +2457,74 @@ function getKW(date){
   return Math.ceil((((d-yearStart)/86400000)+1)/7);
 }
 
+function renderDashSchueler(sid){
+  const s=getS(sid);if(!s)return;
+  const td=todayStr();
+  const gefahren=Object.entries(termine).filter(([d])=>d<td).flatMap(([d,ts])=>ts.filter(t=>t.sid===sid));
+  const geplant=Object.entries(termine).filter(([d])=>d>=td).flatMap(([d,ts])=>ts.filter(t=>t.sid===sid));
+  const gefahrenMin=gefahren.reduce((a,t)=>a+(t.min||0),0);
+  const geplantMin=geplant.reduce((a,t)=>a+(t.min||0),0);
+  const naechstePruef=(s.pruefungen||[]).find(p=>p.datum>=td&&!p.bestanden);
+  const nsi=nextSonder(s);
+
+  // Sonderfahrten progress
+  const sonderHTML=SONDER.map(sf=>{
+    const done=(s.sonder||{})[sf.key]||0;
+    const pct=Math.min(100,Math.round((done/sf.min)*100));
+    return`<div style="margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:3px">
+        <span>${sf.label}</span><span style="color:var(--tx2)">${done}/${sf.min} min</span>
+      </div>
+      <div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${pct}%"></div></div>
+    </div>`;
+  }).join('');
+
+  // GFA progress
+  const gfaCount=GFA.filter(g=>(s.gfa||{})[g.key]>0).length;
+
+  let html=`<div class="screen active">
+    <div class="topbar">
+      <button class="btn-icon" onclick="renderDashboard()"><i class="ti ti-arrow-left"></i></button>
+      <span class="topbar-title">${s.vorname} ${s.nachname}</span>
+      <button class="btn-icon" onclick="renderSchueler('${sid}')"><i class="ti ti-pencil"></i></button>
+    </div>
+    <div class="scroll">
+      <div class="stat-grid">
+        <div class="stat-box"><div class="stat-lbl">Klasse</div><div class="stat-num" style="font-size:24px">${s.klasse}</div></div>
+        <div class="stat-box"><div class="stat-lbl">Beginn</div><div class="stat-num" style="font-size:16px">${fmtDate(s.beginn).day}. ${fmtDate(s.beginn).mon} ${fmtDate(s.beginn).year}</div></div>
+      </div>
+      <div class="stat-grid">
+        <div class="stat-box accent"><div class="stat-lbl">Gefahren</div><div class="stat-num">${gefahrenMin}<span class="stat-unit">min</span></div><div style="font-size:11px;color:rgba(255,255,255,.7);margin-top:2px">${gefahren.length} Termine</div></div>
+        <div class="stat-box"><div class="stat-lbl">Geplant</div><div class="stat-num">${geplantMin}<span class="stat-unit">min</span></div><div style="font-size:11px;color:var(--tx3);margin-top:2px">${geplant.length} Termine</div></div>
+      </div>
+
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-row"><span class="card-label"><i class="ti ti-book"></i>Theorie</span>
+          <span class="info-val">${s.theorie?"✓ Bestanden":"Ausstehend"}</span></div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-calendar-event"></i>Nächste Prüfung</span>
+          <span class="info-val">${naechstePruef?fmtDate(naechstePruef.datum).day+". "+fmtDate(naechstePruef.datum).mon+" "+fmtDate(naechstePruef.datum).year+" · "+naechstePruef.uhr+" Uhr":"–"}</span></div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-map-pin"></i>Prüfort</span>
+          <span class="info-val">${naechstePruef&&naechstePruef.prufort?naechstePruef.prufort:s.prufort||"–"}</span></div>
+      </div>
+
+      <div><div class="sec-label">Sonderfahrten</div>
+      <div class="card">${sonderHTML}</div></div>
+
+      <div><div class="sec-label">Grundfahraufgaben <span style="color:var(--tx3);font-weight:400">${gfaCount}/${GFA.length}</span></div>
+      <div class="card">
+        ${GFA.map(g=>`<div class="card-row"><span class="card-label">${g.icon} ${g.label}</span>
+          <span style="font-weight:600;color:${((s.gfa||{})[g.key]||0)>0?'var(--accent)':'var(--tx3)'}">${(s.gfa||{})[g.key]||0}×</span></div>`).join("")}
+      </div></div>
+
+      ${(s.notizen||[]).length?`<div><div class="sec-label">Notizen</div><div class="card">
+        ${s.notizen.map(n=>`<div class="card-row"><span style="flex:1;font-size:14px;${n.done?'text-decoration:line-through;color:var(--tx3)':''}">${n.text}</span></div>`).join("")}
+      </div></div>`:""}
+    </div>
+  </div>`;
+  renderApp(html);
+  setTimeout(initPTR,50);
+}
+
 (async()=>{
   try{
     await syncFromCloud();
