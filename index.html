@@ -1466,7 +1466,7 @@ function saveKalTermin(date){
   }
   saveAll();
   selDate=date;
-  setTimeout(()=>renderTagAnsicht(date),50);
+  setTimeout(()=>{try{renderTagAnsicht(date);}catch(e){document.getElementById("app").innerHTML=`<div style="padding:20px;color:red">Nav Fehler: ${e.message}</div>`;}},150);
 }
 
 // ── STATISTIK ─────────────────────────────────────────────────────────────────
