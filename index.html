@@ -285,17 +285,11 @@ const MONATE_K=["Jan","Feb","Mär","Apr","Mai","Jun","Jul","Aug","Sep","Okt","No
 const START_DATE=new Date(2026,3,15);
 
 function load(k,def){try{const v=localStorage.getItem(k);return v?JSON.parse(v):def;}catch(e){return def;}}
-function save(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+function save(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true;}catch(e){console.error("save error",k,e);return false;}}
 // saveAll defined below with cloud sync
 
-let schueler=load("fs_schueler",[
-  {id:"s1",vorname:"Lena",nachname:"Müller",spitz:"Leni",farbe:"blue",klasse:"B",beginn:"2025-01-03",prufort:"DEKRA Pankow",theorie:true,sonder:[true,true,false],prueftermin:"2026-06-22",tel:"",notiz:"Sehr motiviert.",fahrstunden:[{datum:"2026-04-22",einh:1,typ:"normal",sonder:null}],pruefungen:[],gfa:{laengs:3,rechts:2,umkehr:1,rueckwaerts:0,stopp_mit:2,stopp_ohne:1},foto:null},
-  {id:"s2",vorname:"Tom",nachname:"Fischer",spitz:"",farbe:"purple",klasse:"B197",beginn:"2026-03-15",prufort:"DEKRA Ferdi",theorie:false,sonder:[false,false,false],prueftermin:"",tel:"",notiz:"",fahrstunden:[],pruefungen:[],gfa:{laengs:0,rechts:0,umkehr:0,rueckwaerts:0,stopp_mit:0,stopp_ohne:0,stadtautobahn:0,strassenbahn:0},foto:null},
-  {id:"s3",vorname:"Sara",nachname:"Wagner",spitz:"",farbe:"coral",klasse:"BA",beginn:"2024-11-10",prufort:"TÜV Hornbach",theorie:true,sonder:[true,true,true],prueftermin:"2026-06-08",tel:"",notiz:"",fahrstunden:[],pruefungen:[],gfa:{laengs:4,rechts:3,umkehr:2,rueckwaerts:2,stopp_mit:1,stopp_ohne:2},foto:null},
-  {id:"s4",vorname:"Max",nachname:"Becker",spitz:"Maxi",farbe:"teal",klasse:"B",beginn:"2026-02-20",prufort:"DEKRA Pankow",theorie:true,sonder:[true,false,false],prueftermin:"",tel:"",notiz:"",fahrstunden:[],pruefungen:[],gfa:{laengs:1,rechts:0,umkehr:0,rueckwaerts:0,stopp_mit:0,stopp_ohne:0},foto:null},
-  {id:"s5",vorname:"Julia",nachname:"Schäfer",spitz:"",farbe:"green",klasse:"B17",beginn:"2026-04-05",prufort:"DEKRA Ferdi",theorie:false,sonder:[false,false,false],prueftermin:"",tel:"",notiz:"",fahrstunden:[],pruefungen:[],gfa:{laengs:0,rechts:0,umkehr:0,rueckwaerts:0,stopp_mit:0,stopp_ohne:0,stadtautobahn:0,strassenbahn:0},foto:null}
-]);
-let termine=load("fs_termine",{"2026-05-14":[{sid:"s3",uhr:"08:00",min:60}],"2026-05-16":[{sid:"s1",uhr:"09:00",min:80},{sid:"s4",uhr:"11:20",min:80}]});
+let schueler=load("fs_schueler",[]);;
+let termine=load("fs_termine",{});
 
 function toKey(y,m,d){return y+"-"+String(m).padStart(2,"0")+"-"+String(d).padStart(2,"0");}
 function todayStr(){const t=new Date();return toKey(t.getFullYear(),t.getMonth()+1,t.getDate());}
@@ -1907,7 +1901,14 @@ function renderApp(html){
 // ── SYNC (localStorage only) ──────────────────────────────────────────────────
 async function syncFromCloud(){ return true; }
 async function syncToCloud(){}
-function showSyncStatus(msg){}
+function showSyncStatus(msg){
+  let el=document.getElementById("sync-status");
+  if(!el){el=document.getElementById("sync-status-2");}
+  if(!el)return;
+  el.textContent=msg;
+  el.style.opacity="1";
+  setTimeout(()=>{el.style.opacity="0";},2000);
+}
 
 // Override saveAll to also sync to cloud
 function saveAll(){
@@ -1916,9 +1917,9 @@ function saveAll(){
     termine[d]=termine[d].filter(t=>t.sid&&(ids.has(t.sid)||t.sid.startsWith("__auffrisch__")));
     if(!termine[d].length)delete termine[d];
   });
-  save("fs_schueler",schueler);
-  save("fs_termine",termine);
-  syncToCloud();
+  const ok1=save("fs_schueler",schueler);
+  const ok2=save("fs_termine",termine);
+  showSyncStatus("✓ Gespeichert");
 }
 
 // ── IPAD LAYOUT ──────────────────────────────────────────────────────────────
@@ -2666,22 +2667,11 @@ function toggleNotizDash(sid,ni){
 
 (async()=>{
   try{
-    await syncFromCloud();
-  }catch(e){console.error("syncFromCloud error:",e);}
-  try{
-    saveAll();
-  }catch(e){console.error("saveAll error:",e);}
-  try{
     syncFahrstundenToKalender();
     syncKalenderToFahrstunden();
-    save("fs_schueler",schueler);
-  }catch(e){console.error("syncFahrstunden error:",e);}
+  }catch(e){console.error("sync error:",e);}
   try{
-    if(IS_IPAD){
-      renderIPadLayout();
-    } else {
-      renderDashboard();
-    }
+    renderDashboard();
   }catch(e){
     console.error("render error:",e);
     document.getElementById("app").innerHTML=`<div style="padding:20px;color:red">Fehler: ${e.message}</div>`;
