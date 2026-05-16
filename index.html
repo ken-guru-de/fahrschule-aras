@@ -1286,7 +1286,7 @@ function nextMonth(){
 }
 
 function renderNeuKalTermin(date){
-  window._kalMin=80;window._kalTyp="normal";window._kalSonderKey=null;window._kalPers="schueler";
+  window._kalMin=80;window._kalTyp="normal";window._kalSonderKey=null;window._kalPers="schueler";window._kalAlleSchueler=false;
   const p=date.split("-");
   const lbl=`${parseInt(p[2])}. ${MONATE_K[parseInt(p[1])-1]} ${p[0]}`;
   let html=`<div class="screen active" id="scr-kal-neu">
@@ -1306,8 +1306,14 @@ function renderNeuKalTermin(date){
         </div>
         <div class="card-row" id="k-schueler-row"><span class="card-label"><i class="ti ti-user"></i>Schüler</span>
           <select id="k-sid"><option value="">Auswählen…</option>
-          ${schueler.filter(s=>!(s.pruefungen||[]).some(p=>p.bestanden===true)).map(s=>`<option value="${s.id}">${s.vorname} ${s.nachname}${s.spitz?" «"+s.spitz+"»":""}</option>`).join("")}
+          ${(window._kalAlleSchueler?schueler:schueler.filter(s=>!(s.pruefungen||[]).some(p=>p.bestanden===true))).map(s=>`<option value="${s.id}">${s.vorname} ${s.nachname}${s.spitz?" «"+s.spitz+"»":""}</option>`).join("")}
           </select>
+        </div>
+        <div class="card-row" id="k-schueler-row2" style="padding:8px 16px">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--tx2)">
+            <input type="checkbox" onchange="toggleKalAlleSchueler(this.checked)"/>
+            Auch bestandene Schüler anzeigen
+          </label>
         </div>
         <div class="card-row" id="k-auffrisch-row" style="display:none"><span class="card-label"><i class="ti ti-user-check"></i>Name</span>
           <input type="text" id="k-auffrisch-name" placeholder="Vor- und Nachname" style="text-align:right"/>
@@ -1386,6 +1392,14 @@ function kalUpdateEnd(){
   const em=total%60;
   endEl.textContent=String(eh).padStart(2,"0")+":"+String(em).padStart(2,"0")+" Uhr";
 }
+function toggleKalAlleSchueler(checked){
+  window._kalAlleSchueler=checked;
+  const sel=document.getElementById("k-sid");
+  if(!sel)return;
+  const list=checked?schueler:schueler.filter(s=>!(s.pruefungen||[]).some(p=>p.bestanden===true));
+  sel.innerHTML='<option value="">Auswählen…</option>'+list.map(s=>'<option value="'+s.id+'">'+s.vorname+' '+s.nachname+(s.spitz?' «'+s.spitz+'»':'')+'</option>').join('');
+}
+
 function setKPers(typ){
   window._kalPers=typ;
   document.getElementById("kpers-schueler").classList.toggle("active",typ==="schueler");
