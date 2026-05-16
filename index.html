@@ -765,15 +765,11 @@ function renderNeuSchueler(fromSid){
 
       <div class="sec-label">Sonderfahrten</div>
       <div class="card">
-        ${SONDER.map(sf=>`<div class="card-row">
-          <span class="card-label">${sf.label}</span>
-          <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end;flex:1">
-            <input type="number" id="sf-${sf.key}" min="0" max="${sf.min}" onfocus="this.select()"
-              style="width:64px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px"
-              value="${s&&s.sonder&&s.sonder[sf.key]?s.sonder[sf.key]:0}"/>
-            <span style="font-size:13px;color:var(--tx3)">/ ${sf.min} min</span>
-          </div>
-        </div>`).join("")}
+        ${SONDER.map(sf=>{const done=s&&s.sonder&&!Array.isArray(s.sonder)?s.sonder[sf.key]||0:0;const ok=done>=sf.min;return`<div class="card-row" style="cursor:pointer" onclick="toggleSonderEdit('${sf.key}',${sf.min})">
+          <i class="ti ${ok?'ti-checkbox':'ti-square'}" id="sf-icon-${sf.key}" style="font-size:20px;color:${ok?'var(--accent)':'var(--tx3)'};margin-right:10px;flex-shrink:0"></i>
+          <span style="flex:1;font-size:14px;${ok?'text-decoration:line-through;color:var(--tx3)':''}" id="sf-label-${sf.key}">${sf.label}</span>
+          <input type="hidden" id="sf-${sf.key}" value="${ok?sf.min:0}"/>
+        </div>`;}).join("")}
       </div>
       <button class="btn-full" onclick="saveSchueler('${s?s.id:""}')">${s?"Änderungen speichern":"Schüler speichern"}</button>
       ${s?`<button class="btn-full danger" style="margin-top:6px" onclick="deleteSchueler('${s.id}')"><i class="ti ti-trash"></i> Schüler löschen</button>`:""}
@@ -808,7 +804,7 @@ function saveSchueler(editSid){
   if(editSid){
     const s=getS(editSid);
     s.vorname=vn;s.nachname=nn;s.spitz=sp;s.geschlecht=window._geschlecht||'m';s.tel=document.getElementById('n-tel').value.trim();s.beginn=bg;s.klasse=kl;s.prufort=pf;s.prueftermin=pt;s.theorie=th;s.farbe=window._selFarbe;
-    if(!s.sonder)s.sonder={};SONDER.forEach(sf=>{const el=document.getElementById('sf-'+sf.key);if(el)s.sonder[sf.key]=parseInt(el.value)||0;});
+    if(!s.sonder||Array.isArray(s.sonder))s.sonder={};SONDER.forEach(sf=>{const el=document.getElementById('sf-'+sf.key);if(el)s.sonder[sf.key]=parseInt(el.value)||0;});
     saveAll();syncFahrstundenToKalender();renderDashSchueler(editSid);
   }else{
     const tel2=document.getElementById('n-tel').value.trim();const ptuhr='';const ns={id:"s"+Date.now(),vorname:vn,nachname:nn,spitz:sp,geschlecht:window._geschlecht||'m',tel:tel2,farbe:window._selFarbe,klasse:kl,beginn:bg,prufort:pf,prueftermin:pt,pruefzeit:ptuhr,theorie:th,sonder:[false,false,false],notiz:"",fahrstunden:[],pruefungen:[],gfa:{laengs:0,rechts:0,umkehr:0,rueckwaerts:0,stopp_mit:0,stopp_ohne:0,stadtautobahn:0,strassenbahn:0},foto:null};
@@ -1448,7 +1444,9 @@ function saveKalTermin(date){
   const knotiz=document.getElementById('k-notiz');const notizVal=knotiz?knotiz.value.trim():'';
   const ksf2=window._kalSonderKey;const ktyp2=window._kalTyp||'normal';
   const autoN=ktyp2==='pruef'?'Prüfung':ktyp2==='auffrisch'?'Auffrischung':ktyp2==='ueberland'?'Überlandfahrt':ktyp2==='autobahn'?'Autobahnfahrt':ktyp2==='nacht'?'Nachtfahrt':'';
-  termine[date].push({sid,uhr,min,notiz:notizVal||autoN});
+  // Store typ in termin for reliable sync
+  const kalTypStr=ktyp2;
+  termine[date].push({sid,uhr,min,notiz:notizVal||autoN,typ:kalTypStr||ktyp2||''});
   termine[date].sort((a,b)=>a.uhr.localeCompare(b.uhr));
   // If Prüfung: add to student's Prüfungen list
   if((window._kalTyp||"normal")==="pruef"&&!sid.startsWith("__auffrisch__")){
@@ -2482,13 +2480,15 @@ function syncKalenderToFahrstunden(){
     Object.entries(termine).forEach(([datum,ts])=>{
       ts.filter(t=>t.sid===s.id).forEach(t=>{
         if(t.min===100)return; // Skip Prüfungen
-        // Detect type by notiz, min range, or both
+        // Detect type: use stored typ field first, then notiz, then min
+        if(t.min===100)return; // Prüfung - skip
         const notiz=(t.notiz||"").toLowerCase();
-        let typ="normal";
-        if(notiz.includes("überlandfahrt")||notiz.includes("ueberlandfahrt")||notiz.includes("überland")||(t.min>=200&&t.min<=260&&!notiz.includes("autobahn")))typ="ueberland";
-        else if(notiz.includes("autobahnfahrt")||notiz.includes("autobahn")||(t.min>=200&&t.min<=260&&notiz.includes("autobahn")))typ="autobahn";
-        else if(notiz.includes("nachtfahrt")||notiz.includes("nacht")||(t.min>=100&&t.min<=160))typ="nacht";
-        else if(t.min===100)return; // Prüfung - skip
+        let typ=t.typ||"normal";
+        if(typ==="normal"||typ===""){
+          if(notiz.includes("überlandfahrt")||notiz.includes("überland"))typ="ueberland";
+          else if(notiz.includes("autobahnfahrt")||notiz.includes("autobahn"))typ="autobahn";
+          else if(notiz.includes("nachtfahrt")||notiz.includes("nacht"))typ="nacht";
+        }
         // Update sonder totals
         if(typ==="ueberland")s.sonder.ueberland=(s.sonder.ueberland||0)+t.min;
         if(typ==="autobahn")s.sonder.autobahn=(s.sonder.autobahn||0)+t.min;
@@ -2599,6 +2599,17 @@ function renderDashSchueler(sid){
   </div>`;
   renderApp(html);
   setTimeout(initPTR,50);
+}
+
+function toggleSonderEdit(key,min){
+  const inp=document.getElementById("sf-"+key);
+  const icon=document.getElementById("sf-icon-"+key);
+  const label=document.getElementById("sf-label-"+key);
+  if(!inp)return;
+  const isDone=parseInt(inp.value)>=min;
+  inp.value=isDone?0:min;
+  if(icon){icon.className="ti "+(isDone?"ti-square":"ti-checkbox");icon.style.color=isDone?"var(--tx3)":"var(--accent)";}
+  if(label){label.style.textDecoration=isDone?"none":"line-through";label.style.color=isDone?"var(--tx)":"var(--tx3)";}
 }
 
 function toggleSonderDash(sid,key,min){
