@@ -2264,9 +2264,12 @@ function renderAbrechnung(tab="woche",weekOffset=0){
       </div>
       <div class="stat-grid">
         <div class="stat-box"><div class="stat-lbl">KW ${kwActual}</div><div class="stat-num">${wocheMin}<span class="stat-unit">min</span></div><div style="font-size:12px;color:var(--tx3);margin-top:2px">${toStd(wocheMin)}</div></div>
-        <div class="stat-box"><div class="stat-lbl">${selMonatName}</div><div class="stat-num">${selMonatMin}<span class="stat-unit">min</span></div><div style="font-size:12px;color:var(--tx3);margin-top:2px">${toStd(selMonatMin)}</div></div>
+        <div class="stat-box" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center"><div class="stat-lbl">KW ${kwActual} Verdienst</div><div style="font-size:22px;font-weight:700;color:#E24B4A;margin-top:4px">${toEuro(wocheMin)}</div></div>
       </div>
-      <div class="stat-box" style="text-align:center"><div class="stat-lbl">${selMonatName} Verdienst</div><div style="font-size:28px;font-weight:700;color:#E24B4A;margin-top:4px">${toEuro(selMonatMin)}</div></div>
+      <div class="stat-grid">
+        <div class="stat-box"><div class="stat-lbl">${selMonatName}</div><div class="stat-num">${selMonatMin}<span class="stat-unit">min</span></div><div style="font-size:12px;color:var(--tx3);margin-top:2px">${toStd(selMonatMin)}</div></div>
+        <div class="stat-box" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center"><div class="stat-lbl">${selMonatName} Verdienst</div><div style="font-size:22px;font-weight:700;color:#E24B4A;margin-top:4px">${toEuro(selMonatMin)}</div></div>
+      </div>
     `;
   } else if(tab==="woche7"){
     const last7=[];
@@ -2365,14 +2368,14 @@ function renderAbrechnung(tab="woche",weekOffset=0){
     syncKalenderToFahrstunden();
   }catch(e){console.error("sync error:",e);}
   try{
-    if(schueler.length===0&&Object.keys(termine).length===0){
+    if(!localStorage.getItem("fs_schueler")&&schueler.length===0){
       document.getElementById("app").innerHTML=`
         <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;padding:32px;text-align:center;gap:20px">
           <i class="ti ti-steering-wheel" style="font-size:64px;color:var(--accent)"></i>
           <div style="font-size:22px;font-weight:700">Fahrschule</div>
-          <div style="font-size:15px;color:var(--tx2)">Keine Daten gefunden.<br>Bitte Sicherung wiederherstellen.</div>
-          <button onclick="document.getElementById('import-input-boot').click()" style="background:var(--accent);color:white;border:none;border-radius:12px;padding:14px 28px;font-size:17px;cursor:pointer;font-family:inherit"><i class="ti ti-upload"></i> Daten wiederherstellen</button>
-          <input type="file" id="import-input-boot" accept=".json" style="display:none" onchange="importDaten(this)"/>
+          <div style="font-size:15px;color:var(--tx2)">Keine Daten gefunden.</div>
+          <div style="font-size:13px;color:var(--tx3)">Öffne die Sicherungs-JSON in der Dateien-App,<br>wähle alles aus, kopiere den Text<br>und tippe dann auf den Button:</div>
+          <button onclick="importDatenPaste()" style="background:var(--accent);color:white;border:none;border-radius:12px;padding:14px 28px;font-size:17px;cursor:pointer;font-family:inherit;width:100%"><i class="ti ti-clipboard"></i> JSON einfügen</button>
           <button onclick="renderDashboard()" style="background:none;border:none;color:var(--tx3);font-size:14px;cursor:pointer;font-family:inherit">Leer starten</button>
         </div>`;
     } else {
