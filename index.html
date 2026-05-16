@@ -2310,7 +2310,7 @@ function renderAbrechnung(tab="woche",weekOffset=0){
   // Daily breakdown for current week
   const wochentageNamen=["Mo","Di","Mi","Do","Fr","Sa","So"];
   const weekDays=[];
-  for(let i=0;i<7;i++){
+  for(let i=0;i<5;i++){
     const d2=new Date(baseDate);
     d2.setDate(d2.getDate()-dayOfWeek+i);
     const ds=toKey(d2.getFullYear(),d2.getMonth()+1,d2.getDate());
