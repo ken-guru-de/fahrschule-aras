@@ -2257,7 +2257,7 @@ function getAbrechnungSatz(){
   return parseFloat(localStorage.getItem("fs_satz")||"25");
 }
 
-function renderAbrechnung(tab="woche"){
+function renderAbrechnung(tab="woche",weekOffset=0){
   const satz=getAbrechnungSatz();
   const td=todayStr();
   const now=new Date();
@@ -2272,13 +2272,18 @@ function renderAbrechnung(tab="woche"){
   const monatStr=td.substring(0,7);
   const monatName=["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"][now.getMonth()];
 
-  // Week
-  const dayOfWeek=(now.getDay()+6)%7;
+  // Week (with offset)
+  const baseDate=new Date(now);
+  baseDate.setDate(baseDate.getDate()+weekOffset*7);
+  const dayOfWeek=(baseDate.getDay()+6)%7;
+  const baseDateStr=toKey(baseDate.getFullYear(),baseDate.getMonth()+1,baseDate.getDate());
   const wocheMin=Object.entries(termine).reduce((sum,[d,ts])=>{
-    const diff=Math.round((new Date(d)-new Date(td))/86400000);
+    const diff=Math.round((new Date(d)-new Date(baseDateStr))/86400000);
     if(diff>=-dayOfWeek&&diff<=6-dayOfWeek)return sum+ts.reduce((a,e)=>a+(e.min||0),0);
     return sum;
   },0);
+  const kwDate=new Date(baseDate);
+  const kwActual=getKW(kwDate);
 
   // All months with data
   const allMonths={};
@@ -2306,7 +2311,7 @@ function renderAbrechnung(tab="woche"){
   const wochentageNamen=["Mo","Di","Mi","Do","Fr","Sa","So"];
   const weekDays=[];
   for(let i=0;i<7;i++){
-    const d2=new Date(now);
+    const d2=new Date(baseDate);
     d2.setDate(d2.getDate()-dayOfWeek+i);
     const ds=toKey(d2.getFullYear(),d2.getMonth()+1,d2.getDate());
     const min=(termine[ds]||[]).reduce((a,e)=>a+(e.min||0),0);
@@ -2342,6 +2347,11 @@ function renderAbrechnung(tab="woche"){
       </div>`;
   } else if(tab==="woche"){
     content2=`
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding:0 4px">
+        <button onclick="renderAbrechnung('woche',${weekOffset-1})" style="background:none;border:none;cursor:pointer;color:var(--accent);font-size:24px;padding:4px 12px"><i class="ti ti-chevron-left"></i></button>
+        <span style="font-size:15px;font-weight:600;color:var(--tx)">KW ${kwActual}${weekOffset===0?' (aktuell)':weekOffset<0?' ('+Math.abs(weekOffset)+' KW zurück)':' ('+weekOffset+' KW vor)'}</span>
+        <button onclick="renderAbrechnung('woche',${weekOffset+1})" style="background:none;border:none;cursor:pointer;color:${weekOffset<0?'var(--accent)':'var(--tx3)'};font-size:24px;padding:4px 12px"><i class="ti ti-chevron-right"></i></button>
+      </div>
       <div class="stat-grid">
         <div class="stat-box accent"><div class="stat-lbl">Heute</div><div class="stat-num">${tagMin}<span class="stat-unit">min</span></div></div>
         <div class="stat-box accent"><div class="stat-lbl">Heute</div><div class="stat-num" style="font-size:18px">${toEuro(tagMin)}</div></div>
@@ -2356,7 +2366,7 @@ function renderAbrechnung(tab="woche"){
         </div>`).join('')}
       </div>
       <div class="stat-grid">
-        <div class="stat-box"><div class="stat-lbl">KW ${kw}</div><div class="stat-num">${wocheMin}<span class="stat-unit">min</span></div><div style="font-size:12px;color:var(--tx3);margin-top:2px">${toStd(wocheMin)} · ${toEuro(wocheMin)}</div></div>
+        <div class="stat-box"><div class="stat-lbl">KW ${kwActual}</div><div class="stat-num">${wocheMin}<span class="stat-unit">min</span></div><div style="font-size:12px;color:var(--tx3);margin-top:2px">${toStd(wocheMin)} · ${toEuro(wocheMin)}</div></div>
         <div class="stat-box"><div class="stat-lbl">${monatName}</div><div class="stat-num">${monatMin}<span class="stat-unit">min</span></div><div style="font-size:12px;color:var(--tx3);margin-top:2px">${toStd(monatMin)}</div></div>
       </div>
       <div class="stat-box" style="text-align:center"><div class="stat-lbl">${monatName} Verdienst</div><div style="font-size:28px;font-weight:700;color:#E24B4A;margin-top:4px">${toEuro(monatMin)}</div></div>
