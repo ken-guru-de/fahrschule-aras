@@ -1635,7 +1635,7 @@ function renderTagAnsicht(date){
       const s=isAuffrisch2?null:getS(e.sid);if(!s&&!isAuffrisch2)return;
       const nick=s&&s.spitz?` «${s.spitz}»`:"";
       const endMin=(()=>{const [h,m]=e.uhr.split(":").map(Number);const tot=h*60+m+e.min;return String(Math.floor(tot/60)%24).padStart(2,"0")+":"+String(tot%60).padStart(2,"0");})();
-      const isSonder=e.min===225||e.min===220||e.min===135;
+      const notizL=(e.notiz||'').toLowerCase();const isSonder=e.typ==='ueberland'||e.typ==='autobahn'||e.typ==='nacht'||notizL.includes('überland')||notizL.includes('autobahn')||notizL.includes('nachtfahrt')||e.min===225||e.min===220||e.min===135;
       const isPruef=e.min===100;
       const dotCol=isPruef?"#E24B4A":isSonder?"#378ADD":"#639922";
       totalMin+=e.min;
@@ -1648,7 +1648,7 @@ function renderTagAnsicht(date){
           <div style="width:3px;border-radius:2px;background:${dotCol};align-self:stretch;flex-shrink:0"></div>
           <div style="flex:1">
             <div style="font-size:15px;font-weight:500">${isAuffrisch2?"🔄 "+auffrischName:s.vorname+nick+" "+s.nachname}</div>
-            <div style="font-size:12px;color:var(--tx2);margin-top:2px">${e.min} min${isAuffrisch2?" · Auffrischung":s?" · Kl. "+s.klasse:""}${e.notiz?" · "+e.notiz:""}</div>
+            <div style="font-size:12px;color:var(--tx2);margin-top:2px">${e.min} min${isAuffrisch2?" · Auffrischung":s?" · Kl. "+s.klasse:""}${e.notiz?" · "+e.notiz:""}${isPruef&&s&&s.prufort?" · "+s.prufort:""}</div>
             ${!isAuffrisch2?`<div style="margin-top:4px"><span class="badge badge-${s.klasse}">${s.klasse}</span></div>`:""}
           </div>
           <i class="ti ti-chevron-right" style="color:var(--tx3);font-size:16px"></i>
