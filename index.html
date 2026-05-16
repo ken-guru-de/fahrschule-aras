@@ -1999,14 +1999,18 @@ function renderDashSchueler(sid){
         </div>
         <div id="notiz-dash-body" style="display:none">
           <div class="card" style="margin-top:4px">
-            ${(s.notizen||[]).map((n,ni)=>`<div class="card-row" style="gap:8px">
-              <i class="ti ${n.done?'ti-checkbox':'ti-square'}" onclick="toggleNotizDash('${sid}',${ni})" style="font-size:18px;color:${n.done?'var(--accent)':'var(--tx3)'};flex-shrink:0;cursor:pointer"></i>
-              <span style="flex:1;font-size:14px;${n.done?'text-decoration:line-through;color:var(--tx3)':''}">${n.text}</span>
-              <i class="ti ti-trash" onclick="deleteNotizDash('${sid}',${ni})" style="font-size:16px;color:var(--tx3);cursor:pointer;padding:4px"></i>
+            ${(s.notizen||[]).map((n,ni)=>`<div class="card-row" style="gap:8px;align-items:flex-start;padding:8px 12px">
+              <span style="color:#E24B4A;font-size:18px;line-height:1.4;flex-shrink:0">●</span>
+              <span style="flex:1;font-size:14px;${n.done?'text-decoration:line-through;color:var(--tx3)':''};cursor:pointer" onclick="toggleNotizDash('${sid}',${ni})">${n.text}</span>
+              <i class="ti ti-trash" onclick="deleteNotizDash('${sid}',${ni})" style="font-size:15px;color:var(--tx3);cursor:pointer;padding:4px;flex-shrink:0"></i>
             </div>`).join("")}
-            <div class="card-row" style="gap:8px;padding-top:8px;border-top:.5px solid var(--br2)">
-              <input id="notiz-dash-input-${sid}" type="text" placeholder="Neue Notiz…" style="flex:1;border:none;background:transparent;font-size:14px;color:var(--tx);outline:none" onkeydown="if(event.key==='Enter')addNotizDash('${sid}')"/>
-              <button onclick="addNotizDash('${sid}')" style="background:var(--accent);border:none;border-radius:20px;color:white;font-size:13px;padding:4px 12px;cursor:pointer">+</button>
+            <div style="padding:8px 12px;border-top:.5px solid var(--br2)">
+              <textarea id="notiz-dash-input-${sid}" placeholder="Neue Notiz…"
+                style="width:100%;min-height:60px;border:none;background:transparent;font-size:14px;color:var(--tx);outline:none;resize:vertical;font-family:inherit;line-height:1.5"
+                onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();addNotizDash('${sid}');}"></textarea>
+              <div style="display:flex;justify-content:flex-end;margin-top:4px">
+                <button onclick="addNotizDash('${sid}')" style="background:var(--accent);border:none;border-radius:20px;color:white;font-size:13px;padding:6px 16px;cursor:pointer">+ Hinzufügen</button>
+              </div>
             </div>
           </div>
         </div>
@@ -2108,7 +2112,11 @@ function addNotizDash(sid){
   const inp=document.getElementById("notiz-dash-input-"+sid);
   if(!inp||!inp.value.trim())return;
   if(!s.notizen)s.notizen=[];
-  s.notizen.push({text:inp.value.trim(),done:false});
+  // Split by newlines for multiple entries
+  inp.value.trim().split("\n").filter(t=>t.trim()).forEach(t=>{
+    s.notizen.push({text:t.trim(),done:false});
+  });
+  inp.value="";
   saveAll();
   renderDashSchueler(sid);
   setTimeout(()=>{
