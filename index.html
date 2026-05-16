@@ -1467,7 +1467,7 @@ function saveKalTermin(date){
   }
   saveAll();
   selDate=date;
-  setTimeout(()=>renderTagAnsicht(date),150);
+  setTimeout(()=>{alert("Navigiere zu: "+date);renderTagAnsicht(date);},150);
   }catch(e){document.getElementById("app").innerHTML=`<div style="padding:20px;color:red">Speichern Fehler: ${e.message}</div>`;}
 }
 
