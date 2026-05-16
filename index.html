@@ -360,7 +360,7 @@ function renderDashboard(){
     anzeigeTermine.forEach((t,ti)=>{
       const s=getS(t.sid);if(!s)return;
       const nick=s.spitz?` «${s.spitz}»`:"";
-      html+=`<div class="list-item" style="margin-bottom:6px" onclick="renderEditDashTermin('${anzeigeDatum}',${ti})">
+      html+=`<div class="list-item" style="margin-bottom:6px" onclick="renderDashSchueler('${s.id}')">
         ${s.foto?`<div class="avatar" style="overflow:hidden;flex-shrink:0"><img src="${s.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/></div>`:`<div class="avatar av-${s.farbe}">${initials(s)}</div>`}
         <div class="item-info"><div class="item-name">${s.vorname}${nick} ${s.nachname}</div><div class="item-sub">${t.uhr}–${(()=>{const [h,m]=t.uhr.split(":").map(Number);const tot=h*60+m+t.min;return String(Math.floor(tot/60)%24).padStart(2,"0")+":"+String(tot%60).padStart(2,"0");})()}Uhr · ${t.min} min${t.notiz?" · "+t.notiz:""}</div></div>
         <span class="badge badge-${s.klasse}">${s.klasse}</span>
