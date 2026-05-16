@@ -2561,9 +2561,10 @@ function renderDashSchueler(sid){
         <div class="stat-box"><div class="stat-lbl">Beginn</div><div class="stat-num" style="font-size:16px">${fmtDate(s.beginn).day}. ${fmtDate(s.beginn).mon} ${fmtDate(s.beginn).year}</div></div>
       </div>
       <div class="stat-grid">
-        <div class="stat-box accent"><div class="stat-lbl">Fahrstunden</div><div class="stat-num">${fahrstundenGesamt}<span class="stat-unit">×</span></div><div style="font-size:11px;color:rgba(255,255,255,.7);margin-top:2px">${fahrstundenMin} min</div></div>
-        <div class="stat-box"><div class="stat-lbl">Geplant</div><div class="stat-num">${geplant.length}<span class="stat-unit">×</span></div><div style="font-size:11px;color:var(--tx3);margin-top:2px">${geplantMin} min</div></div>
+        <div class="stat-box accent" onclick="toggleFahrstundenDash('${sid}','past')" style="cursor:pointer"><div class="stat-lbl">Fahrstunden</div><div class="stat-num">${fahrstundenGesamt}<span class="stat-unit">×</span></div><div style="font-size:11px;color:rgba(255,255,255,.7);margin-top:2px">${fahrstundenMin} min</div></div>
+        <div class="stat-box" onclick="toggleFahrstundenDash('${sid}','future')" style="cursor:pointer"><div class="stat-lbl">Geplant</div><div class="stat-num">${geplant.length}<span class="stat-unit">×</span></div><div style="font-size:11px;color:var(--tx3);margin-top:2px">${geplantMin} min</div></div>
       </div>
+      <div id="fs-list-${sid}" style="display:none"></div>
 
       <div class="card" style="margin-bottom:12px">
         <div class="card-row"><span class="card-label"><i class="ti ti-book"></i>Theorie</span>
@@ -2616,6 +2617,49 @@ function toggleSonderEdit(key,min){
   inp.value=isDone?0:min;
   if(icon){icon.className="ti "+(isDone?"ti-square":"ti-checkbox");icon.style.color=isDone?"var(--tx3)":"var(--accent)";}
   if(label){label.style.textDecoration=isDone?"none":"line-through";label.style.color=isDone?"var(--tx)":"var(--tx3)";}
+}
+
+function toggleFahrstundenDash(sid,type){
+  const s=getS(sid);if(!s)return;
+  const td=todayStr();
+  const el=document.getElementById("fs-list-"+sid);
+  if(!el)return;
+  // If already showing this type, hide it
+  if(el.dataset.showing===type&&el.style.display!=="none"){el.style.display="none";el.dataset.showing="";return;}
+  el.dataset.showing=type;
+  el.style.display="block";
+  const wochentage=["So","Mo","Di","Mi","Do","Fr","Sa"];
+  let entries=[];
+  if(type==="past"){
+    // Use fahrstunden array
+    entries=(s.fahrstunden||[]).filter(f=>f.datum<td).map(f=>{
+      const d=new Date(f.datum);
+      const dow=wochentage[d.getDay()];
+      const fd=fmtDate(f.datum);
+      return`<div class="card-row" style="font-size:13px">
+        <span style="color:var(--tx3);min-width:28px">${dow}</span>
+        <span style="flex:1">${fd.day}. ${fd.mon} ${fd.year}${f.uhr?" · "+f.uhr+" Uhr":""}</span>
+        <span style="color:var(--tx2)">${f.min||80} min</span>
+      </div>`;
+    });
+  } else {
+    // Use future termine
+    entries=Object.entries(termine).filter(([d])=>d>=td).flatMap(([d,ts])=>
+      ts.filter(t=>t.sid===sid).map(t=>{
+        const dObj=new Date(d);
+        const dow=wochentage[dObj.getDay()];
+        const fd=fmtDate(d);
+        return`<div class="card-row" style="font-size:13px">
+          <span style="color:var(--tx3);min-width:28px">${dow}</span>
+          <span style="flex:1">${fd.day}. ${fd.mon} ${fd.year} · ${t.uhr} Uhr</span>
+          <span style="color:var(--tx2)">${t.min} min${t.notiz?" · "+t.notiz:""}</span>
+        </div>`;
+      })
+    ).sort();
+  }
+  el.innerHTML=entries.length
+    ?`<div class="card" style="margin-bottom:8px">${entries.join("")}</div>`
+    :`<div style="padding:8px 0;font-size:13px;color:var(--tx3)">${type==="past"?"Noch keine Fahrstunden":"Keine geplanten Termine"}</div>`;
 }
 
 function toggleSonderDash(sid,key,min){
