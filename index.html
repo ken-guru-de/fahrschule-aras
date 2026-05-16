@@ -2642,10 +2642,10 @@ function toggleFahrstundenDash(sid,type){
           const dObj=new Date(d);
           const dow=wochentage[dObj.getDay()];
           const fd=fmtDate(d);
-          return`<div class="card-row" style="font-size:13px">
+          return`<div class="card-row" style="font-size:13px;cursor:pointer" onclick="renderTagAnsicht('${d}')">
             <span style="color:var(--tx3);min-width:28px">${dow}</span>
             <span style="flex:1">${fd.day}. ${fd.mon} ${fd.year} · ${t.uhr} Uhr</span>
-            <span style="color:var(--tx2)">${t.min} min${t.notiz?" · "+t.notiz:""}</span>
+            <span style="color:var(--accent)">${t.min} min${t.notiz?" · "+t.notiz:""} <i class="ti ti-chevron-right" style="font-size:12px"></i></span>
           </div>`;
         })
       );
