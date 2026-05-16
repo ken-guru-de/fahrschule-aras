@@ -2251,6 +2251,7 @@ function renderAbrechnung(tab="woche",weekOffset=0){
     const last7=[];
     for(let i=6;i>=0;i--){
       const d2=new Date(now);d2.setDate(d2.getDate()-i);
+      if(d2.getDay()===0||d2.getDay()===6)continue; // skip Sa+So
       const ds=toKey(d2.getFullYear(),d2.getMonth()+1,d2.getDate());
       const min=(termine[ds]||[]).reduce((a,e)=>a+(e.min||0),0);
       last7.push({name:wochentageNamen[d2.getDay()===0?6:d2.getDay()-1],ds,min,isToday:ds===td});
