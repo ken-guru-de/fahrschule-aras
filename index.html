@@ -55,7 +55,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:-apple-sy
 .list-item{background:var(--bg);border:.5px solid var(--br);border-radius:var(--r-lg);padding:14px 16px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;}
 .list-item:active{background:var(--bg2);}
 .avatar{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600;flex-shrink:0;}
-.av-blue{background:#B5D4F4;color:#0C447C;}
+.av-blue{background:rgba(255,107,43,.2);color:#FF6B2B;}
 .av-teal{background:#9FE1CB;color:#085041;}
 .av-purple{background:#CECBF6;color:#3C3489;}
 .av-coral{background:#F5C4B3;color:#712B13;}
@@ -67,10 +67,10 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:-apple-sy
 .badge{font-size:12px;font-weight:500;padding:4px 10px;border-radius:20px;flex-shrink:0;}
 .badge-B{background:var(--accent-dark);color:white;}
 .badge-BA{background:var(--accent);color:white;}
-.badge-B197{background:#3C3489;color:white;}
+.badge-B197{background:var(--accent-dark);color:white;}
 .badge-B17{background:#27500A;color:white;}
 .status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.dot-blue{background:#378ADD;}
+.dot-blue{background:var(--accent);}
 .search-wrap{position:relative;}
 .search-wrap input{width:100%;height:44px;padding:0 12px 0 38px;border:.5px solid var(--br2);border-radius:var(--r-lg);background:var(--bg2);color:var(--tx);font-size:16px;font-family:inherit;outline:none;}
 .search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--tx3);font-size:18px;pointer-events:none;}
@@ -144,7 +144,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:-apple-sy
 .cal-day.today .day-num{color:white;}
 .dot-row{display:flex;gap:2px;flex-wrap:wrap;justify-content:center;}
 .cdot{width:6px;height:6px;border-radius:50%;}
-.cdot-r{background:#E24B4A;}.cdot-g{background:#639922;}.cdot-b{background:#378ADD;}
+.cdot-r{background:#E24B4A;}.cdot-g{background:#639922;}.cdot-b{background:var(--accent);}
 .spacer-day{min-height:58px;}
 .termin-item{background:var(--bg);border:.5px solid var(--br);border-radius:var(--r-lg);padding:9px 12px;display:flex;align-items:center;gap:10px;}
 .t-avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0;}
@@ -265,7 +265,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:-apple-sy
   <div id="ipad-detail" style="flex:1;display:flex;flex-direction:column;height:100vh;overflow:hidden;background:var(--bg)"></div>
 </div>
 <script>
-const FARBEN=[{key:"blue",bg:"#B5D4F4",tx:"#0C447C"},{key:"teal",bg:"#9FE1CB",tx:"#085041"},{key:"purple",bg:"#CECBF6",tx:"#3C3489"},{key:"coral",bg:"#F5C4B3",tx:"#712B13"},{key:"green",bg:"#C0DD97",tx:"#27500A"},{key:"amber",bg:"#FAC775",tx:"#633806"}];
+const FARBEN=[{key:"blue",bg:"rgba(255,107,43,.2)",tx:"#FF6B2B"},{key:"teal",bg:"#9FE1CB",tx:"#085041"},{key:"purple",bg:"#CECBF6",tx:"#3C3489"},{key:"coral",bg:"#F5C4B3",tx:"#712B13"},{key:"green",bg:"#C0DD97",tx:"#27500A"},{key:"amber",bg:"#FAC775",tx:"#633806"}];
 const KLASSEN=["B","BA","B197","B17"];
 const PRUFORTE=["DEKRA Pankow","DEKRA Ferdi","TÜV Hornbach"];
 const GRUNDFAHRAUFGABEN=[
@@ -374,7 +374,7 @@ function renderDashboard(){
       const s2=getS(ep.sid);if(!s2)return;
       const fd=fmtDate(ep.datum);
       const vergangen=ep.datum<td;
-      const dotCol=ep.bestanden===true?"#639922":ep.bestanden===false?"#E24B4A":vergangen?"var(--accent)":"#378ADD";
+      const dotCol=ep.bestanden===true?"#639922":ep.bestanden===false?"#E24B4A":vergangen?"var(--accent)":"var(--accent)";
       const ergebnis=ep.bestanden===true?"✓ Bestanden":ep.bestanden===false?"✗ Nicht bestanden":"Ergebnis ausstehend";
       const sub=`${ep.versuch}. Prüfung · ${ergebnis}`;
       html+=`<div class="list-item" style="margin-bottom:6px" onclick="showPruefResult('${ep.sid}','${ep.datum}',${ep.pi},'${ep.typ}')">
@@ -388,7 +388,7 @@ function renderDashboard(){
 
   html+=`<div style="display:flex;flex-direction:column;gap:8px">
     <button class="btn-full" onclick="exportDaten()" style="background:#EAF3DE;border-color:#97C459;color:#27500A;font-size:15px"><i class="ti ti-download"></i> Daten sichern</button>
-    <button class="btn-full" onclick="document.getElementById(\'import-input\').click()" style="background:#E6F1FB;border-color:#85B7EB;color:#0C447C;font-size:15px"><i class="ti ti-upload"></i> Daten wiederherstellen</button>
+    <button class="btn-full" onclick="document.getElementById(\'import-input\').click()" style="background:rgba(255,107,43,.1);border-color:var(--accent);color:#FF6B2B;font-size:15px"><i class="ti ti-upload"></i> Daten wiederherstellen</button>
     <input type="file" id="import-input" accept=".json" style="display:none" onchange="importDaten(this)"/>
   </div></div></div>`;
   renderApp(html);
@@ -396,7 +396,7 @@ function renderDashboard(){
 }
 
 // ── SCHÜLERLISTE ──────────────────────────────────────────────────────────────
-function renderListe(q="",sortMode="heute"){
+function renderListe(q="",sortMode="termin"){
   const td=todayStr();
   const heuteIds=new Set((termine[td]||[]).map(t=>t.sid));
   const basis=q?schueler.filter(s=>(s.vorname+" "+s.nachname+" "+(s.spitz||"")).toLowerCase().includes(q.toLowerCase())):schueler;
@@ -409,23 +409,20 @@ function renderListe(q="",sortMode="heute"){
   }
 
   const filtered=[...basis].sort((a,b)=>{
-    if(sortMode==="termin") return nextTerminDateTime(a).localeCompare(nextTerminDateTime(b));
     if(sortMode==="alpha") return a.nachname.localeCompare(b.nachname,"de");
-    const aH=heuteIds.has(a.id)?0:1;
-    const bH=heuteIds.has(b.id)?0:1;
-    return aH-bH;
+    return nextTerminDateTime(a).localeCompare(nextTerminDateTime(b));
   });
   let html=`<div class="screen active" id="scr-liste">
     <div class="topbar">
       <button class="btn-icon" onclick="renderDashboard()"><i class="ti ti-arrow-left"></i></button>
       <span class="topbar-title">Schüler</span>
-      <button class="btn-icon" onclick="renderListe('','${sortMode==='heute'?'termin':sortMode==='termin'?'alpha':'heute'}')" aria-label="Sortierung" title="${sortMode==='heute'?'Nach Termin':sortMode==='termin'?'Alphabetisch':'Heute zuerst'}"><i class="ti ti-sort-ascending"></i></button>
+      <button class="btn-icon" onclick="renderListe('','${sortMode==='termin'?'alpha':'termin'}')" aria-label="Sortierung" title="${sortMode==='termin'?'Alphabetisch':'Nächster Termin'}"><i class="ti ti-sort-ascending"></i></button>
       <button class="btn-icon" onclick="renderNeuSchueler()"><i class="ti ti-user-plus"></i></button>
     </div>
     <div class="scroll">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-        <span style="font-size:12px;color:var(--tx3)">${sortMode==="termin"?"↑ Nächster Termin":sortMode==="alpha"?"↑ A–Z":"↑ Heute zuerst"}</span>
-        <button onclick="renderListe('${q}','${sortMode==='heute'?'termin':sortMode==='termin'?'alpha':'heute'}')" style="font-size:12px;color:var(--accent);background:none;border:none;cursor:pointer;font-family:inherit;padding:0">Ändern</button>
+        <span style="font-size:12px;color:var(--tx3)">${sortMode==="alpha"?"↑ A–Z":"↑ Nächster Termin"}</span>
+        <button onclick="renderListe('${q}','${sortMode==='termin'?'alpha':'termin'}')" style="font-size:12px;color:var(--accent);background:none;border:none;cursor:pointer;font-family:inherit;padding:0">Ändern</button>
       </div>
       <div class="search-wrap">
         <i class="ti ti-search search-icon"></i>
@@ -444,7 +441,7 @@ function renderListe(q="",sortMode="heute"){
         <div class="swipe-item list-item" id="swipe-${s.id}" onclick="handleTap('${s.id}')" style="${bestanden?"border-left:3px solid #639922;":""}">
           ${s.foto?`<div class="avatar" style="overflow:hidden;flex-shrink:0"><img src="${s.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/></div>`:`<div class="avatar av-${s.farbe}">${initials(s)}</div>`}
           <div class="item-info">
-            <div class="item-name">${s.geschlecht==="w"?"👧":"👦"} ${s.vorname} ${s.nachname}${s.spitz?` <span style="color:var(--tx3);font-size:12px">«${s.spitz}»</span>`:""}</div>
+            <div class="item-name">${s.vorname} ${s.nachname}${s.spitz?` <span style="color:var(--tx3);font-size:12px">«${s.spitz}»</span>`:""}</div>
             ${bestanden?`<div style="margin-top:3px"><span style="font-size:11px;color:#27500A;background:#EAF3DE;padding:2px 8px;border-radius:20px">✓ Bestanden</span></div>`:""}
             <div class="item-sub">${sortMode==="termin"?
             (()=>{const ndt=nextTerminDateTime(s);if(ndt==="9999")return"Kein Termin geplant";const nd=ndt.split("T")[0];const t=(termine[nd]||[]).find(t=>t.sid===s.id);return fmtDate(nd).day+". "+fmtDate(nd).mon+" "+fmtDate(nd).year+(t?" · "+t.uhr+" Uhr":"");})()
@@ -462,7 +459,7 @@ function renderListe(q="",sortMode="heute"){
             }</div>
           </div>
           <span class="badge badge-${s.klasse}">${s.klasse}</span>
-          <span class="status-dot ${dot}" style="${dot==="dot-amber"?"background:var(--accent)":dot==="dot-green"?"background:#639922":"background:#378ADD"}"></span>
+          <span class="status-dot ${dot}" style="${dot==="dot-amber"?"background:var(--accent)":dot==="dot-green"?"background:#639922":"background:var(--accent)"}"></span>
         </div>
       </div>`;
     });
@@ -507,13 +504,13 @@ function filterListeOnly(q, sortMode){
         <div class="swipe-item list-item" id="swipe-${s.id}" onclick="handleTap('${s.id}')" style="${bestanden?"border-left:3px solid #639922;":""}">
           ${s.foto?`<div class="avatar" style="overflow:hidden;flex-shrink:0"><img src="${s.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/></div>`:`<div class="avatar av-${s.farbe}">${initials(s)}</div>`}
           <div class="item-info">
-            <div class="item-name">${s.geschlecht==="w"?"👧":"👦"} ${s.vorname} ${s.nachname}${s.spitz?` <span style="color:var(--tx3);font-size:12px">«${s.spitz}»</span>`:""}</div>
+            <div class="item-name">${s.vorname} ${s.nachname}${s.spitz?` <span style="color:var(--tx3);font-size:12px">«${s.spitz}»</span>`:""}</div>
             ${bestanden?`<div style="margin-top:3px"><span style="font-size:11px;color:#27500A;background:#EAF3DE;padding:2px 8px;border-radius:20px">✓ Bestanden</span></div>`:""}
             <div class="item-sub">${sortMode==="termin"?(()=>{const ndt=nextTerminDateTime(s);if(ndt==="9999")return"Kein Termin geplant";const nd=ndt.split("T")[0];const t=(termine[nd]||[]).find(t=>t.sid===s.id);return fmtDate(nd).day+". "+fmtDate(nd).mon+" "+fmtDate(nd).year+(t?" · "+t.uhr+" Uhr":"");})():"Beginn "+fmtDate(s.beginn).day+". "+fmtDate(s.beginn).mon+" "+fmtDate(s.beginn).year}</div>
             <div style="font-size:12px;color:var(--tx3);margin-top:2px;white-space:nowrap">${(()=>{const td2=todayStr();const gefahren=Object.entries(termine).filter(([d])=>d<=td2).flatMap(([d,ts])=>ts.filter(t=>t.sid===s.id)).length;const offen=Object.entries(termine).filter(([d])=>d>td2).flatMap(([d,ts])=>ts.filter(t=>t.sid===s.id)).length;return gefahren+" gefahren · "+offen+" geplant";})()}</div>
           </div>
           <span class="badge badge-${s.klasse}">${s.klasse}</span>
-          <span class="status-dot" style="background:${bestanden?"#639922":heuteIds.has(s.id)?"var(--accent)":"#378ADD"}"></span>
+          <span class="status-dot" style="background:${bestanden?"#639922":heuteIds.has(s.id)?"var(--accent)":"var(--accent)"}"></span>
         </div>
       </div>`;
     });
@@ -623,7 +620,7 @@ function renderSchueler(sid){
           </div>
           <span style="font-size:11px;font-weight:500;padding:3px 8px;border-radius:20px;${
             zukunft?"background:rgba(255,107,43,.12);color:var(--accent)":
-            heute?"background:#E6F1FB;color:#0C447C":
+            heute?"background:rgba(255,107,43,.1);color:#FF6B2B":
             "background:#EAF3DE;color:#27500A"
           }">${zukunft?"Geplant":heute?"Heute":"✓"}</span>
           <button class="btn-icon dark" style="font-size:17px;min-width:32px;min-height:32px" onclick="renderEditFahrstunde('${s.id}',${origIdx})"><i class="ti ti-edit"></i></button>
@@ -839,9 +836,9 @@ function renderNeuFahrstunde(sid){
           </div>
         </div>
         <div class="card-row"><span class="card-label"><i class="ti ti-calendar"></i>Datum</span><div style="display:flex;gap:4px;justify-content:flex-end;flex:1">
-            <input type="number" id="f-dat-tag" min="1" max="31" placeholder="TT" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" value="${todayStr()?parseInt((todayStr()).split('-')[2]):''}"/>
-            <input type="number" id="f-dat-mon" min="1" max="12" placeholder="MM" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" value="${todayStr()?parseInt((todayStr()).split('-')[1]):''}"/>
-            <input type="number" id="f-dat-jahr" min="2024" max="2030" placeholder="JJJJ" style="width:64px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" value="${todayStr()?(todayStr()).split('-')[0]:''}"/>
+            <input type="number" id="f-dat-tag" min="1" max="31" placeholder="TT" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" onfocus="this.select()" value="${todayStr()?parseInt((todayStr()).split('-')[2]):''}"/>
+            <input type="number" id="f-dat-mon" min="1" max="12" placeholder="MM" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" onfocus="this.select()" value="${todayStr()?parseInt((todayStr()).split('-')[1]):''}"/>
+            <input type="number" id="f-dat-jahr" min="2024" max="2030" placeholder="JJJJ" style="width:64px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" onfocus="this.select()" value="${todayStr()?(todayStr()).split('-')[0]:''}"/>
           </div></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Uhrzeit</span><input type="time" step="300" id="f-uhr" value="09:00"/></div>
         <div class="card-row" id="einh-row2">
@@ -971,9 +968,9 @@ function renderEditFahrstunde(sid, idx){
           </div>
         </div>
         <div class="card-row"><span class="card-label"><i class="ti ti-calendar"></i>Datum</span><div style="display:flex;gap:4px;justify-content:flex-end;flex:1">
-            <input type="number" id="ef-dat-tag" min="1" max="31" placeholder="TT" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" value="${f.datum?parseInt((f.datum).split('-')[2]):''}"/>
-            <input type="number" id="ef-dat-mon" min="1" max="12" placeholder="MM" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" value="${f.datum?parseInt((f.datum).split('-')[1]):''}"/>
-            <input type="number" id="ef-dat-jahr" min="2024" max="2030" placeholder="JJJJ" style="width:64px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" value="${f.datum?(f.datum).split('-')[0]:''}"/>
+            <input type="number" id="ef-dat-tag" min="1" max="31" placeholder="TT" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" onfocus="this.select()" value="${f.datum?parseInt((f.datum).split('-')[2]):''}"/>
+            <input type="number" id="ef-dat-mon" min="1" max="12" placeholder="MM" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" onfocus="this.select()" value="${f.datum?parseInt((f.datum).split('-')[1]):''}"/>
+            <input type="number" id="ef-dat-jahr" min="2024" max="2030" placeholder="JJJJ" style="width:64px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" onfocus="this.select()" value="${f.datum?(f.datum).split('-')[0]:''}"/>
           </div></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Uhrzeit</span><input type="time" step="300" id="ef-uhr" value="${f.uhr||'09:00'}"/></div>
         <div class="card-row" id="eeinh-row">
@@ -1060,9 +1057,9 @@ function renderNeuPruefungInline(sid){
       <div><div class="sec-label">Prüfungstermin</div>
       <div class="card">
         <div class="card-row"><span class="card-label"><i class="ti ti-calendar"></i>Datum</span><div style="display:flex;gap:4px;justify-content:flex-end;flex:1">
-            <input type="number" id="pn-datum-tag" min="1" max="31" placeholder="TT" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" value="${todayStr()?parseInt((todayStr()).split('-')[2]):''}"/>
-            <input type="number" id="pn-datum-mon" min="1" max="12" placeholder="MM" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" value="${todayStr()?parseInt((todayStr()).split('-')[1]):''}"/>
-            <input type="number" id="pn-datum-jahr" min="2024" max="2030" placeholder="JJJJ" style="width:64px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" value="${todayStr()?(todayStr()).split('-')[0]:''}"/>
+            <input type="number" id="pn-datum-tag" min="1" max="31" placeholder="TT" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" onfocus="this.select()" value="${todayStr()?parseInt((todayStr()).split('-')[2]):''}"/>
+            <input type="number" id="pn-datum-mon" min="1" max="12" placeholder="MM" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" onfocus="this.select()" value="${todayStr()?parseInt((todayStr()).split('-')[1]):''}"/>
+            <input type="number" id="pn-datum-jahr" min="2024" max="2030" placeholder="JJJJ" style="width:64px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" onfocus="this.select()" value="${todayStr()?(todayStr()).split('-')[0]:''}"/>
           </div></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Uhrzeit</span><input type="time" step="300" id="pn-uhr" value="08:00"/></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-list-numbers"></i>Prüfung Nr.</span>
@@ -1121,9 +1118,9 @@ function renderEditPruefung(sid,idx){
       <div><div class="sec-label">Prüfungsergebnis</div>
       <div class="card">
         <div class="card-row"><span class="card-label"><i class="ti ti-calendar"></i>Datum</span><div style="display:flex;gap:4px;justify-content:flex-end;flex:1">
-            <input type="number" id="pe-datum-tag" min="1" max="31" placeholder="TT" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" value="${p.datum?parseInt((p.datum).split('-')[2]):''}"/>
-            <input type="number" id="pe-datum-mon" min="1" max="12" placeholder="MM" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" value="${p.datum?parseInt((p.datum).split('-')[1]):''}"/>
-            <input type="number" id="pe-datum-jahr" min="2024" max="2030" placeholder="JJJJ" style="width:64px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" value="${p.datum?(p.datum).split('-')[0]:''}"/>
+            <input type="number" id="pe-datum-tag" min="1" max="31" placeholder="TT" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" onfocus="this.select()" value="${p.datum?parseInt((p.datum).split('-')[2]):''}"/>
+            <input type="number" id="pe-datum-mon" min="1" max="12" placeholder="MM" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" onfocus="this.select()" value="${p.datum?parseInt((p.datum).split('-')[1]):''}"/>
+            <input type="number" id="pe-datum-jahr" min="2024" max="2030" placeholder="JJJJ" style="width:64px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" onfocus="this.select()" value="${p.datum?(p.datum).split('-')[0]:''}"/>
           </div></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Uhrzeit</span><input type="time" step="300" id="pe-uhr" value="${p.uhr||'08:00'}"/></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-list-numbers"></i>Prüfung Nr.</span>
@@ -1199,7 +1196,7 @@ function buildKalender(){
       <div class="wd" style="color:#E24B4A">Mo</div>
       <div class="wd" style="color:#BA7517">Di</div>
       <div class="wd" style="color:#639922">Mi</div>
-      <div class="wd" style="color:#185FA5">Do</div>
+      <div class="wd" style="color:var(--accent)">Do</div>
       <div class="wd" style="color:#3C3489">Fr</div>
     </div>
     <div class="cal-scroll"><div class="cal-grid" id="cal-grid"></div>
@@ -1611,7 +1608,7 @@ function renderTagAnsicht(date){
       const endMin=(()=>{const [h,m]=e.uhr.split(":").map(Number);const tot=h*60+m+e.min;return String(Math.floor(tot/60)%24).padStart(2,"0")+":"+String(tot%60).padStart(2,"0");})();
       const isSonder=e.min===225||e.min===220||e.min===135;
       const isPruef=e.min===100;
-      const dotCol=isPruef?"#E24B4A":isSonder?"#378ADD":"#639922";
+      const dotCol=isPruef?"#E24B4A":isSonder?"var(--accent)":"#639922";
       totalMin+=e.min;
       html+=`<div class="card" style="margin-bottom:8px;cursor:pointer" onclick="renderEditKalTermin('${date}',${t.indexOf(e)})">
         <div class="card-row" style="gap:14px">
@@ -1667,9 +1664,9 @@ function renderEditKalTermin(date,idx){
         </div>
         <div class="card-row"><span class="card-label"><i class="ti ti-calendar"></i>Datum</span>
           <div style="display:flex;gap:4px;justify-content:flex-end;flex:1">
-            <input type="number" id="ekt-dat-tag" min="1" max="31" placeholder="TT" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" value="${parseInt(date.split('-')[2])}"/>
-            <input type="number" id="ekt-dat-mon" min="1" max="12" placeholder="MM" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" value="${parseInt(date.split('-')[1])}"/>
-            <input type="number" id="ekt-dat-jahr" min="2024" max="2030" placeholder="JJJJ" style="width:64px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" value="${date.split('-')[0]}"/>
+            <input type="number" id="ekt-dat-tag" min="1" max="31" placeholder="TT" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" onfocus="this.select()" value="${parseInt(date.split('-')[2])}"/>
+            <input type="number" id="ekt-dat-mon" min="1" max="12" placeholder="MM" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" onfocus="this.select()" value="${parseInt(date.split('-')[1])}"/>
+            <input type="number" id="ekt-dat-jahr" min="2024" max="2030" placeholder="JJJJ" style="width:64px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" onfocus="this.select()" value="${date.split('-')[0]}"/>
           </div>
         </div>
         <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Startzeit</span><input type="time" step="300" id="ekt-uhr" value="${t.uhr}" oninput="ektUpdateEnd()"/></div>
@@ -2019,7 +2016,7 @@ function renderIPadSidebar(q="", sortMode="heute"){
       html+=`<div onclick="renderIPadSchueler('${s.id}')" style="display:flex;align-items:center;gap:12px;padding:11px 10px;border-radius:var(--r-lg);cursor:pointer;margin-bottom:4px;${bestanden?"border-left:3px solid #639922;padding-left:7px":""}" onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background=''">
         ${s.foto?`<div style="width:44px;height:44px;border-radius:50%;overflow:hidden;flex-shrink:0"><img src="${s.foto}" style="width:100%;height:100%;object-fit:cover"/></div>`:`<div class="avatar av-${s.farbe}" style="width:44px;height:44px;font-size:15px;flex-shrink:0">${initials(s)}</div>`}
         <div style="flex:1;min-width:0">
-          <div style="font-size:17px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.geschlecht==="w"?"👧":"👦"} ${s.vorname} ${s.nachname}${s.spitz?` <span style="color:var(--tx3);font-size:13px">«${s.spitz}»</span>`:""}</div>
+          <div style="font-size:17px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.vorname} ${s.nachname}${s.spitz?` <span style="color:var(--tx3);font-size:13px">«${s.spitz}»</span>`:""}</div>
           <div style="font-size:13px;color:var(--tx2);margin-top:2px">${hatHeute?"📅 Heute":nextInfo?nextInfo:"Kl. "+s.klasse}</div>
         </div>
         <span style="font-size:13px;font-weight:500;padding:4px 10px;border-radius:20px;flex-shrink:0;background:${bestanden?"#EAF3DE":hatHeute?"rgba(255,107,43,.12)":"var(--bg2)"};color:${bestanden?"#27500A":hatHeute?"var(--accent)":"var(--tx3)"}">${bestanden?"✓":s.klasse}</span>
@@ -2095,7 +2092,7 @@ function renderIPadDashboard(){
       const s2pz=s2.pruefzeit&&ep.typ==="geplant"?s2.pruefzeit+" Uhr · ":"";
       const sub=ep.typ==="geplant"?`${s2pz}Klasse ${s2.klasse} · ${s2.prufort}`:`${ep.versuch}. Prüfung · Ergebnis ausstehend`;
       html+=`<div class="list-item" style="margin-bottom:6px;cursor:pointer" onclick="showPruefResult('${ep.sid}','${ep.datum}',${ep.pi},'${ep.typ}');renderIPadDashboard()">
-        <span class="status-dot" style="background:${vergangen?"var(--accent)":"#378ADD"}"></span>
+        <span class="status-dot" style="background:${vergangen?"var(--accent)":"var(--accent)"}"></span>
         <div class="item-info"><div class="item-name">${s2.vorname} ${s2.nachname}</div><div class="item-sub">${sub}</div></div>
         <span style="font-size:13px;color:var(--tx2);font-weight:500">${fd.day}. ${fd.mon}${vergangen?" ⚠️":""}</span>
       </div>`;
@@ -2108,7 +2105,7 @@ function renderIPadDashboard(){
         <button class="btn-full" onclick="renderIPadStatistik()"><i class="ti ti-chart-bar"></i> Statistik</button>
       </div>
       <button class="btn-full gruen" onclick="exportDaten()"><i class="ti ti-download"></i> Daten sichern</button>
-      <button class="btn-full" style="background:#E6F1FB;border-color:#85B7EB;color:#0C447C" onclick="document.getElementById('import-input-ipad').click()"><i class="ti ti-upload"></i> Daten wiederherstellen</button>
+      <button class="btn-full" style="background:rgba(255,107,43,.1);border-color:var(--accent);color:#FF6B2B" onclick="document.getElementById('import-input-ipad').click()"><i class="ti ti-upload"></i> Daten wiederherstellen</button>
       <input type="file" id="import-input-ipad" accept=".json" style="display:none" onchange="importDaten(this)"/>
     </div>
   </div>`;
