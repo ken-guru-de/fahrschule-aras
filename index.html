@@ -2636,7 +2636,7 @@ function toggleFahrstundenDash(sid,type){
     // Use future termine
     const futureEntries=Object.entries(termine)
       .filter(([d])=>d>=td)
-      .sort(([a],[b])=>a.localeCompare(b))
+      .sort(([a],[b])=>b.localeCompare(a))
       .flatMap(([d,ts])=>
         ts.filter(t=>t.sid===sid).sort((a,b)=>a.uhr.localeCompare(b.uhr)).map(t=>{
           const dObj=new Date(d);
