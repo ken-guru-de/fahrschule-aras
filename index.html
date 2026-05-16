@@ -1855,6 +1855,23 @@ function exportDaten(){
   URL.revokeObjectURL(url);
 }
 
+function importDatenPaste(){
+  const text=prompt("Bitte den JSON-Inhalt der Sicherungsdatei hier einfügen:");
+  if(!text)return;
+  try{
+    const data=JSON.parse(text);
+    if(!data.schueler||!data.termine){alert("Ungültige Daten.");return;}
+    if(!confirm("Alle aktuellen Daten werden ersetzt. Fortfahren?"))return;
+    schueler=data.schueler;
+    termine=data.termine;
+    saveAll();
+    renderDashboard();
+    alert("Daten erfolgreich wiederhergestellt.");
+  }catch(err){
+    alert("Fehler beim Einlesen. Bitte vollständigen JSON-Inhalt einfügen.");
+  }
+}
+
 function importDaten(input){
   const file = input.files[0]; if(!file) return;
   const reader = new FileReader();
@@ -1868,6 +1885,7 @@ function importDaten(input){
       schueler = data.schueler;
       termine = data.termine;
       saveAll();
+      syncKalenderToFahrstunden();
       renderDashboard();
       alert("Daten erfolgreich wiederhergestellt.");
     } catch(err) {
@@ -2347,7 +2365,19 @@ function renderAbrechnung(tab="woche",weekOffset=0){
     syncKalenderToFahrstunden();
   }catch(e){console.error("sync error:",e);}
   try{
-    renderDashboard();
+    if(schueler.length===0&&Object.keys(termine).length===0){
+      document.getElementById("app").innerHTML=`
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;padding:32px;text-align:center;gap:20px">
+          <i class="ti ti-steering-wheel" style="font-size:64px;color:var(--accent)"></i>
+          <div style="font-size:22px;font-weight:700">Fahrschule</div>
+          <div style="font-size:15px;color:var(--tx2)">Keine Daten gefunden.<br>Bitte Sicherung wiederherstellen.</div>
+          <button onclick="document.getElementById('import-input-boot').click()" style="background:var(--accent);color:white;border:none;border-radius:12px;padding:14px 28px;font-size:17px;cursor:pointer;font-family:inherit"><i class="ti ti-upload"></i> Daten wiederherstellen</button>
+          <input type="file" id="import-input-boot" accept=".json" style="display:none" onchange="importDaten(this)"/>
+          <button onclick="renderDashboard()" style="background:none;border:none;color:var(--tx3);font-size:14px;cursor:pointer;font-family:inherit">Leer starten</button>
+        </div>`;
+    } else {
+      renderDashboard();
+    }
   }catch(e){
     console.error("render error:",e);
     document.getElementById("app").innerHTML=`<div style="padding:20px;color:red">Fehler: ${e.message}</div>`;
