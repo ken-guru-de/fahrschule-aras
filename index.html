@@ -2481,8 +2481,13 @@ function syncKalenderToFahrstunden(){
     Object.entries(termine).forEach(([datum,ts])=>{
       ts.filter(t=>t.sid===s.id).forEach(t=>{
         if(t.min===100)return; // Skip Prüfungen
-        const typMap={80:"normal",225:"ueberland",220:"autobahn",135:"nacht"};
-        const typ=typMap[t.min]||"normal";
+        // Detect type by notiz, min range, or both
+        const notiz=(t.notiz||"").toLowerCase();
+        let typ="normal";
+        if(notiz.includes("überlandfahrt")||notiz.includes("ueberlandfahrt")||notiz.includes("überland")||(t.min>=200&&t.min<=260&&!notiz.includes("autobahn")))typ="ueberland";
+        else if(notiz.includes("autobahnfahrt")||notiz.includes("autobahn")||(t.min>=200&&t.min<=260&&notiz.includes("autobahn")))typ="autobahn";
+        else if(notiz.includes("nachtfahrt")||notiz.includes("nacht")||(t.min>=100&&t.min<=160))typ="nacht";
+        else if(t.min===100)return; // Prüfung - skip
         // Update sonder totals
         if(typ==="ueberland")s.sonder.ueberland=(s.sonder.ueberland||0)+t.min;
         if(typ==="autobahn")s.sonder.autobahn=(s.sonder.autobahn||0)+t.min;
@@ -2522,12 +2527,11 @@ function renderDashSchueler(sid){
   const sonderObj=(s.sonder&&!Array.isArray(s.sonder))?s.sonder:{ueberland:0,autobahn:0,nacht:0};
   const sonderHTML=SONDER.map(sf=>{
     const done=sonderObj[sf.key]||0;
-    const pct=Math.min(100,Math.round((done/sf.min)*100));
-    return`<div style="margin-bottom:8px">
-      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:3px">
-        <span>${sf.label}</span><span style="color:var(--tx2)">${done}/${sf.min} min</span>
-      </div>
-      <div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${pct}%"></div></div>
+    const ok=done>=sf.min;
+    return`<div class="card-row">
+      <i class="ti ${ok?'ti-checkbox':'ti-square'}" style="font-size:18px;color:${ok?'var(--accent)':'var(--tx3)'};margin-right:10px;flex-shrink:0"></i>
+      <span style="flex:1;font-size:14px;${ok?'text-decoration:line-through;color:var(--tx3)':''}">${sf.label}</span>
+      <span style="font-size:13px;color:var(--tx3)">${done}/${sf.min} min</span>
     </div>`;
   }).join('');
 
