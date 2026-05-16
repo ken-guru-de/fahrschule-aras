@@ -724,7 +724,7 @@ function renderNeuSchueler(fromSid){
   const s=fromSid?getS(fromSid):null;
   let selFarbe=s?s.farbe:"blue";
   const title=s?"Schüler bearbeiten":"Neuer Schüler";
-  const back=s?`renderSchueler('${s.id}')`:"renderListe()";
+  const back=s?`renderDashSchueler('${s.id}')`:"renderDashboard()";
   let html=`<div class="screen active" id="scr-neu">
     <div class="topbar">
       <button class="btn-icon" onclick="${back}"><i class="ti ti-arrow-left"></i></button>
