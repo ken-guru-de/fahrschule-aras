@@ -1801,8 +1801,10 @@ function saveEktTermin(date,idx){
 }
 
 function deleteEktTermin(date,idx){
+  alert("deleteEktTermin: "+date+", idx:"+idx+", exists:"+(!!termine[date]));
   if(!termine[date])return;
   const t=termine[date][idx];
+  if(!t){alert("Termin nicht gefunden bei idx "+idx);return;}
   const s=getS(t.sid);
   const name=(s?s.vorname+" "+s.nachname:"Termin")+" · "+t.uhr+" Uhr";
   if(!window.confirm(name+" wirklich löschen?"))return;
@@ -1810,7 +1812,7 @@ function deleteEktTermin(date,idx){
   if(!termine[date].length)delete termine[date];
   saveAll();
   selDate=date;
-  setTimeout(()=>{alert("Lösche, gehe zu: "+date);renderTagAnsicht(date);},100);
+  setTimeout(()=>renderTagAnsicht(date),100);
 }
 
 // ── PULL TO REFRESH ───────────────────────────────────────────────────────────
