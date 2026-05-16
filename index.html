@@ -287,6 +287,17 @@ const START_DATE=new Date(2026,3,15);
 function load(k,def){try{const v=localStorage.getItem(k);return v?JSON.parse(v):def;}catch(e){return def;}}
 function save(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true;}catch(e){console.error("save error",k,e);return false;}}
 // saveAll defined below with cloud sync
+function saveAll(){
+  const ids=new Set(schueler.map(s=>s.id));
+  Object.keys(termine).forEach(d=>{
+    termine[d]=termine[d].filter(t=>t.sid&&(ids.has(t.sid)||t.sid.startsWith("__auffrisch__")));
+    if(!termine[d].length)delete termine[d];
+  });
+  save("fs_schueler",schueler);
+  save("fs_termine",termine);
+  showSyncStatus("✓ Gespeichert");
+}
+
 
 let schueler=load("fs_schueler",[]);;
 let termine=load("fs_termine",{});
