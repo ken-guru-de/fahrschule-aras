@@ -1856,20 +1856,31 @@ function exportDaten(){
 }
 
 function importDatenPaste(){
-  const text=prompt("Bitte den JSON-Inhalt der Sicherungsdatei hier einfügen:");
-  if(!text)return;
+  document.getElementById("app").innerHTML=`
+    <div style="display:flex;flex-direction:column;height:100vh;padding:24px;gap:16px;box-sizing:border-box">
+      <div style="font-size:20px;font-weight:700;color:var(--accent)">JSON einfügen</div>
+      <div style="font-size:14px;color:var(--tx2)">Kopiere den Inhalt der Sicherungsdatei und füge ihn unten ein:</div>
+      <textarea id="paste-area" style="flex:1;border:1px solid var(--br2);border-radius:12px;padding:12px;font-size:13px;color:var(--tx);background:var(--bg2);outline:none;resize:none;-webkit-user-select:text;user-select:text" placeholder="JSON hier einfügen…"></textarea>
+      <button onclick="importDatenFromTextarea()" style="background:var(--accent);color:white;border:none;border-radius:12px;padding:16px;font-size:17px;cursor:pointer;font-family:inherit">✓ Wiederherstellen</button>
+      <button onclick="renderDashboard()" style="background:none;border:none;color:var(--tx3);font-size:14px;cursor:pointer;font-family:inherit">Abbrechen</button>
+    </div>`;
+  setTimeout(()=>{const ta=document.getElementById("paste-area");if(ta)ta.focus();},200);
+}
+function importDatenFromTextarea(){
+  const ta=document.getElementById("paste-area");
+  if(!ta||!ta.value.trim()){alert("Bitte JSON einfügen.");return;}
   try{
-    const data=JSON.parse(text);
+    const data=JSON.parse(ta.value.trim());
     if(!data.schueler||!data.termine){alert("Ungültige Daten.");return;}
-    if(!confirm("Alle aktuellen Daten werden ersetzt. Fortfahren?"))return;
     schueler=data.schueler;
     termine=data.termine;
     saveAll();
+    syncKalenderToFahrstunden();
     renderDashboard();
-    alert("Daten erfolgreich wiederhergestellt.");
   }catch(err){
-    alert("Fehler beim Einlesen. Bitte vollständigen JSON-Inhalt einfügen.");
+    alert("Fehler: "+err.message);
   }
+}
 }
 
 function importDaten(input){
