@@ -1467,8 +1467,8 @@ function saveKalTermin(date){
   }
   saveAll();
   selDate=date;
-  setTimeout(()=>{alert("Navigiere zu: "+date);renderTagAnsicht(date);},150);
-  }catch(e){document.getElementById("app").innerHTML=`<div style="padding:20px;color:red">Speichern Fehler: ${e.message}</div>`;}
+  renderTagAnsicht(date);
+  }catch(e){document.getElementById("app").innerHTML=`<div style="padding:20px;color:red">Fehler: ${e.message}</div>`;}
 }
 
 // ── STATISTIK ─────────────────────────────────────────────────────────────────
@@ -1801,18 +1801,17 @@ function saveEktTermin(date,idx){
 }
 
 function deleteEktTermin(date,idx){
-  alert("deleteEktTermin: "+date+", idx:"+idx+", exists:"+(!!termine[date]));
-  if(!termine[date])return;
+  if(!termine[date]||!termine[date][idx])return;
   const t=termine[date][idx];
-  if(!t){alert("Termin nicht gefunden bei idx "+idx);return;}
   const s=getS(t.sid);
   const name=(s?s.vorname+" "+s.nachname:"Termin")+" · "+t.uhr+" Uhr";
   if(!window.confirm(name+" wirklich löschen?"))return;
   termine[date].splice(idx,1);
   if(!termine[date].length)delete termine[date];
-  saveAll();
-  selDate=date;
-  setTimeout(()=>renderTagAnsicht(date),100);
+  save("fs_termine",termine);
+  save("fs_schueler",schueler);
+  showSyncStatus("✓ Gespeichert");
+  renderTagAnsicht(date);
 }
 
 // ── PULL TO REFRESH ───────────────────────────────────────────────────────────
