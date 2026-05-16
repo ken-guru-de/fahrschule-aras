@@ -2504,7 +2504,7 @@ function renderDashSchueler(sid){
         <div class="card-row"><span class="card-label"><i class="ti ti-book"></i>Theorie</span>
           <span class="info-val">${s.theorie?"✓ Bestanden":"Ausstehend"}</span></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-calendar-event"></i>Prüfung</span>
-          <span class="info-val">${naechstePruef?fmtDate(naechstePruef.datum).day+". "+fmtDate(naechstePruef.datum).mon+" "+fmtDate(naechstePruef.datum).year+" · "+naechstePruef.uhr+" Uhr":"–"}</span></div>
+          <span class="info-val">${naechstePruef?fmtDate(naechstePruef.datum).day+". "+fmtDate(naechstePruef.datum).mon+" "+fmtDate(naechstePruef.datum).year+(naechstePruef.uhr?" · "+naechstePruef.uhr+" Uhr":""):"–"}</span></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-map-pin"></i>Prüfort</span>
           <span class="info-val">${naechstePruef&&naechstePruef.prufort?naechstePruef.prufort:s.prufort||"–"}</span></div>
       </div>
