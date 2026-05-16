@@ -1396,7 +1396,10 @@ function toggleKalAlleSchueler(checked){
   window._kalAlleSchueler=checked;
   const sel=document.getElementById("k-sid");
   if(!sel)return;
-  const list=checked?schueler:schueler.filter(s=>!(s.pruefungen||[]).some(p=>p.bestanden===true));
+  const list=checked?[...schueler]:schueler.filter(s=>{
+    const hat=(s.pruefungen||[]).some(p=>p.bestanden===true||p.bestanden==="true");
+    return !hat;
+  });
   sel.innerHTML='<option value="">Auswählen…</option>'+list.map(s=>'<option value="'+s.id+'">'+s.vorname+' '+s.nachname+(s.spitz?' «'+s.spitz+'»':'')+'</option>').join('');
 }
 
