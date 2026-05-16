@@ -2524,10 +2524,15 @@ function renderDashSchueler(sid){
         </div>
         <div id="notiz-dash-body" style="display:none">
           <div class="card" style="margin-top:4px">
-            ${(s.notizen||[]).length?(s.notizen.map((n,ni)=>`<div class="card-row" onclick="toggleNotizDash('${sid}',${ni})" style="cursor:pointer">
-              <i class="ti ${n.done?'ti-checkbox':'ti-square'}" style="font-size:18px;color:${n.done?'var(--accent)':'var(--tx3)'};margin-right:10px;flex-shrink:0"></i>
+            ${(s.notizen||[]).map((n,ni)=>`<div class="card-row" style="gap:8px">
+              <i class="ti ${n.done?'ti-checkbox':'ti-square'}" onclick="toggleNotizDash('${sid}',${ni})" style="font-size:18px;color:${n.done?'var(--accent)':'var(--tx3)'};flex-shrink:0;cursor:pointer"></i>
               <span style="flex:1;font-size:14px;${n.done?'text-decoration:line-through;color:var(--tx3)':''}">${n.text}</span>
-            </div>`).join("")):'<div style="padding:10px;font-size:13px;color:var(--tx3)">Keine Notizen</div>'}
+              <i class="ti ti-trash" onclick="deleteNotizDash('${sid}',${ni})" style="font-size:16px;color:var(--tx3);cursor:pointer;padding:4px"></i>
+            </div>`).join("")}
+            <div class="card-row" style="gap:8px;padding-top:8px;border-top:.5px solid var(--br2)">
+              <input id="notiz-dash-input-${sid}" type="text" placeholder="Neue Notiz…" style="flex:1;border:none;background:transparent;font-size:14px;color:var(--tx);outline:none" onkeydown="if(event.key==='Enter')addNotizDash('${sid}')"/>
+              <button onclick="addNotizDash('${sid}')" style="background:var(--accent);border:none;border-radius:20px;color:white;font-size:13px;padding:4px 12px;cursor:pointer">+</button>
+            </div>
           </div>
         </div>
       </div>
@@ -2544,6 +2549,31 @@ function changeGFADash(sid,key,delta){
   const el=document.getElementById("gfa-"+sid+"-"+key+"-d");
   if(el)el.textContent=s.gfa[key];
   saveAll();
+}
+
+function addNotizDash(sid){
+  const s=getS(sid);if(!s)return;
+  const inp=document.getElementById("notiz-dash-input-"+sid);
+  if(!inp||!inp.value.trim())return;
+  if(!s.notizen)s.notizen=[];
+  s.notizen.push({text:inp.value.trim(),done:false});
+  saveAll();
+  renderDashSchueler(sid);
+  setTimeout(()=>{
+    const body=document.getElementById("notiz-dash-body");
+    if(body)body.style.display="block";
+  },50);
+}
+
+function deleteNotizDash(sid,ni){
+  const s=getS(sid);if(!s)return;
+  s.notizen.splice(ni,1);
+  saveAll();
+  renderDashSchueler(sid);
+  setTimeout(()=>{
+    const body=document.getElementById("notiz-dash-body");
+    if(body)body.style.display="block";
+  },50);
 }
 
 function toggleNotizDash(sid,ni){
