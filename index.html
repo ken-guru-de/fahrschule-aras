@@ -287,6 +287,13 @@ const START_DATE=new Date(2026,3,15);
 function load(k,def){try{const v=localStorage.getItem(k);return v?JSON.parse(v):def;}catch(e){return def;}}
 function save(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true;}catch(e){console.error("save error",k,e);return false;}}
 // saveAll defined below with cloud sync
+function showSyncStatus(msg){
+  const el=document.getElementById("sync-status");
+  if(!el)return;
+  el.textContent=msg;el.style.opacity="1";
+  setTimeout(()=>{el.style.opacity="0";},2000);
+}
+
 function saveAll(){
   const ids=new Set(schueler.map(s=>s.id));
   Object.keys(termine).forEach(d=>{
@@ -1808,9 +1815,7 @@ function deleteEktTermin(date,idx){
   if(!window.confirm(name+" wirklich löschen?"))return;
   termine[date].splice(idx,1);
   if(!termine[date].length)delete termine[date];
-  save("fs_termine",termine);
-  save("fs_schueler",schueler);
-  showSyncStatus("✓ Gespeichert");
+  saveAll();
   renderTagAnsicht(date);
 }
 
