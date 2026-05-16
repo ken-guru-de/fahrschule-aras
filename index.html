@@ -2286,6 +2286,7 @@ function renderAbrechnung(tab="woche"){
   function tabBtn(t,label){return`<button onclick="renderAbrechnung('${t}')" style="flex:1;padding:8px 4px;border:none;border-bottom:2px solid ${tab===t?'white':'transparent'};background:transparent;color:${tab===t?'white':'rgba(255,255,255,0.6)'};font-size:13px;font-weight:${tab===t?'600':'400'};cursor:pointer;font-family:inherit">${label}</button>`;}
 
   let content2='';
+  const monatMin=getMin(monatStr);
   if(tab==="woche"){
     content2=`
       <div class="stat-grid">
@@ -2295,6 +2296,10 @@ function renderAbrechnung(tab="woche"){
       <div class="stat-grid">
         <div class="stat-box"><div class="stat-lbl">KW ${kw} gesamt</div><div class="stat-num" style="font-size:20px">${toStd(wocheMin)}</div></div>
         <div class="stat-box"><div class="stat-lbl">KW ${kw} Verdienst</div><div class="stat-num" style="font-size:20px">${toEuro(wocheMin)}</div></div>
+      </div>
+      <div class="stat-grid">
+        <div class="stat-box"><div class="stat-lbl">${monatName} gesamt</div><div class="stat-num" style="font-size:20px">${toStd(monatMin)}</div></div>
+        <div class="stat-box"><div class="stat-lbl">${monatName} Verdienst</div><div class="stat-num" style="font-size:20px">${toEuro(monatMin)}</div></div>
       </div>`;
   } else if(tab==="monat"){
     content2=`<div class="stat-card">`;
