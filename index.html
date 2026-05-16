@@ -2466,7 +2466,16 @@ function renderDashSchueler(sid){
   const geplantMin=geplant.reduce((a,t)=>a+(t.min||0),0);
   const fahrstundenGesamt=(s.fahrstunden||[]).length;
   const fahrstundenMin=(s.fahrstunden||[]).reduce((a,f)=>a+(f.min||80),0);
-  const naechstePruef=(s.pruefungen||[]).find(p=>p.datum>=td&&!p.bestanden);
+  const naechstePruef=(()=>{
+    const p=(s.pruefungen||[]).find(p=>p.datum>=td&&!p.bestanden);
+    if(!p)return null;
+    // If uhr missing, try to get from Kalender
+    if(!p.uhr){
+      const kt=(termine[p.datum]||[]).find(t=>t.sid===sid&&t.min===100);
+      if(kt)p.uhr=kt.uhr;
+    }
+    return p;
+  })();
   const nsi=nextSonder(s);
 
   // Sonderfahrten progress
