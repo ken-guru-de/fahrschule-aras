@@ -381,7 +381,7 @@ function renderDashboard(){
       const dotCol=ep.bestanden===true?"#639922":ep.bestanden===false?"#E24B4A":vergangen?"var(--accent)":"var(--accent)";
       const ergebnis=ep.bestanden===true?"✓ Bestanden":ep.bestanden===false?"✗ Nicht bestanden":"Ergebnis ausstehend";
       const sub=`${ep.versuch}. Prüfung · ${ergebnis}`;
-      html+=`<div class="list-item" style="margin-bottom:6px" onclick="showPruefResult('${ep.sid}','${ep.datum}',${ep.pi},'${ep.typ}')">
+      html+=`<div class="list-item" style="margin-bottom:6px" onclick="renderDashSchueler('${ep.sid}')">
         <span class="status-dot" style="background:${dotCol}"></span>
         <div class="item-info"><div class="item-name">${s2.vorname} ${s2.nachname}</div><div class="item-sub">${sub}</div></div>
         <span style="font-size:13px;color:var(--tx2);font-weight:500">${fd.day}. ${fd.mon}${vergangen&&ep.typ==="offen"?" ⚠️":""}</span>
@@ -549,7 +549,7 @@ function initSwipe(){
 function handleTap(sid){
   const el=document.getElementById("swipe-"+sid);
   if(el&&el.classList.contains("swiped")){el.style.transition="transform .2s ease";el.style.transform="translateX(0)";el.classList.remove("swiped");return;}
-  renderSchueler(sid);
+  renderDashSchueler(sid);
 }
 function confirmDelete(sid){
   const s=getS(sid);if(!s)return;
