@@ -725,7 +725,7 @@ function renderNeuSchueler(fromSid){
 
       <div class="sec-label">Sonderfahrten</div>
       <div class="card">
-        ${SONDER.map(sf=>{const done=s&&s.sonder&&!Array.isArray(s.sonder)?s.sonder[sf.key]||0:0;const ok=done>=sf.min;return`<div class="card-row" style="cursor:pointer" onclick="toggleSonderEdit('${sf.key}',${sf.min})">
+        ${SONDER.map(sf=>{const done=s&&s.sonder&&!Array.isArray(s.sonder)?s.sonder[sf.key]||0:0;const ok=done>=sf.min;return`<div class="card-row" style="cursor:pointer" onclick="toggleSonderSchueler('${s.id}','${sf.key}',${sf.min})">
           <i class="ti ${ok?'ti-checkbox':'ti-square'}" id="sf-icon-${sf.key}" style="font-size:20px;color:${ok?'var(--accent)':'var(--tx3)'};margin-right:10px;flex-shrink:0"></i>
           <span style="flex:1;font-size:14px;${ok?'text-decoration:line-through;color:var(--tx3)':''}" id="sf-label-${sf.key}">${sf.label}</span>
           <input type="hidden" id="sf-${sf.key}" value="${ok?sf.min:0}"/>
@@ -2000,6 +2000,14 @@ function renderDashSchueler(sid){
     initPTR();
 
   },50);
+}
+
+function toggleSonderSchueler(sid,key,min){
+  const s=getS(sid);if(!s)return;
+  if(!s.sonder||Array.isArray(s.sonder))s.sonder={ueberland:0,autobahn:0,nacht:0};
+  s.sonder[key]=(s.sonder[key]||0)>=min?0:min;
+  saveAll();
+  renderNeuSchueler(sid);
 }
 
 function toggleSonderEdit(key,min){
