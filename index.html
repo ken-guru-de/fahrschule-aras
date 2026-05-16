@@ -304,7 +304,7 @@ function getS(id){return schueler.find(s=>s.id===id);}
 function fmtDate(d){const p=d.split("-");return{day:parseInt(p[2]),mon:MONATE_K[parseInt(p[1])-1],year:p[0]};}
 function isWeekday(y,m,d){const dw=new Date(y,m-1,d).getDay();return dw>=1&&dw<=5;}
 function isBefore(y,m,d){return new Date(y,m-1,d)<START_DATE;}
-function nextSonder(s){return s.sonder.findIndex(x=>!x);}
+function nextSonder(s){if(Array.isArray(s.sonder))return s.sonder.findIndex(x=>!x);const so=s.sonder||{};if(!so.ueberland||so.ueberland<225)return 0;if(!so.autobahn||so.autobahn<220)return 1;if(!so.nacht||so.nacht<135)return 2;return -1;}
 function todayTotalMin(){const td=todayStr();return(termine[td]||[]).reduce((a,e)=>a+(e.min||0),0);}
 function todayMinCheck(){}
 function farbStyle(farbe){const f=FARBEN.find(x=>x.key===farbe)||FARBEN[0];return`background:${f.bg};color:${f.tx}`;}
@@ -2516,11 +2516,10 @@ function renderDashSchueler(sid){
     }
     return p;
   })();
-  const nsi=nextSonder(s);
-
-  // Sonderfahrten progress
+  // Sonderfahrten progress - handle both array and object format
+  const sonderObj=(s.sonder&&!Array.isArray(s.sonder))?s.sonder:{ueberland:0,autobahn:0,nacht:0};
   const sonderHTML=SONDER.map(sf=>{
-    const done=(s.sonder||{})[sf.key]||0;
+    const done=sonderObj[sf.key]||0;
     const pct=Math.min(100,Math.round((done/sf.min)*100));
     return`<div style="margin-bottom:8px">
       <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:3px">
