@@ -645,7 +645,7 @@ function renderSchueler(sid){
       </div>
 
       <div><div class="sec-row"><div class="sec-label" style="margin:0">Prüfungen</div>
-        <button class="fab-btn" onclick="renderNeuPruefungInline('${s.id}')"><i class="ti ti-plus"></i></button>
+
       </div>
       ${(s.pruefungen&&s.pruefungen.length)?s.pruefungen.map((p,pi)=>{
         const fd=fmtDate(p.datum);
