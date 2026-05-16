@@ -327,11 +327,13 @@ function renderDashboard(){
         <div style="font-size:18px;font-weight:600;color:white"><i class="ti ti-steering-wheel" style="font-size:19px;vertical-align:-2px;margin-right:6px"></i>Fahrschule <span style="font-size:11px;opacity:0.5;font-weight:400">v1.8</span></div>
         <div id="sync-status" style="font-size:11px;color:rgba(255,255,255,0.55);transition:opacity 1s;opacity:0;margin-top:1px"></div>
       </div>
-      <button class="btn-icon" onclick="renderKalender()" aria-label="Kalender"><i class="ti ti-calendar"></i></button>
-      <button class="btn-icon" onclick="renderListe()" aria-label="Schülerliste"><i class="ti ti-users"></i></button>
-      <button class="btn-icon" onclick="renderStatistik()" aria-label="Statistik"><i class="ti ti-chart-bar"></i></button>
-      <button class="btn-icon" onclick="renderNeuSchueler()" aria-label="Neuer Schüler"><i class="ti ti-user-plus"></i></button>
-      <button class="btn-icon" onclick="renderAbrechnung()" aria-label="Kasse"><i class="ti ti-receipt"></i></button>
+      <div style="display:flex;justify-content:space-between;flex:1;margin-left:8px">
+        <button class="btn-icon" onclick="renderKalender()" aria-label="Kalender" style="font-size:20px;min-width:36px;min-height:36px"><i class="ti ti-calendar"></i></button>
+        <button class="btn-icon" onclick="renderListe()" aria-label="Schülerliste" style="font-size:20px;min-width:36px;min-height:36px"><i class="ti ti-users"></i></button>
+        <button class="btn-icon" onclick="renderStatistik()" aria-label="Statistik" style="font-size:20px;min-width:36px;min-height:36px"><i class="ti ti-chart-bar"></i></button>
+        <button class="btn-icon" onclick="renderNeuSchueler()" aria-label="Neuer Schüler" style="font-size:20px;min-width:36px;min-height:36px"><i class="ti ti-user-plus"></i></button>
+        <button class="btn-icon" onclick="renderAbrechnung()" aria-label="Kasse" style="font-size:20px;min-width:36px;min-height:36px"><i class="ti ti-receipt"></i></button>
+      </div>
     </div>
     <div class="scroll">
       <div class="stat-grid">
@@ -2240,59 +2242,106 @@ function getAbrechnungSatz(){
   return parseFloat(localStorage.getItem("fs_satz")||"25");
 }
 
-function renderAbrechnung(){
+function renderAbrechnung(tab="woche"){
   const satz=getAbrechnungSatz();
   const td=todayStr();
   const now=new Date();
 
-  // Today
-  const tagMin=(termine[td]||[]).reduce((a,e)=>a+(e.min||0),0);
+  function toEuro(min){return((min/60)*satz).toFixed(2).replace('.',',')+" €";}
+  function toStd(min){const h=Math.floor(min/60);const m=min%60;return h+"h "+String(m).padStart(2,"0");}
+  function getMin(prefix){return Object.entries(termine).reduce((sum,[d,ts])=>{if(d.startsWith(prefix))return sum+ts.reduce((a,e)=>a+(e.min||0),0);return sum;},0);}
 
-  // This week (Mon-Sun)
-  const dayOfWeek=(now.getDay()+6)%7; // 0=Mon
+  const tagMin=getMin(td);
+  const kw=getKW(now);
+  const jahrStr=td.substring(0,4);
+  const monatStr=td.substring(0,7);
+  const monatName=["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"][now.getMonth()];
+
+  // Week
+  const dayOfWeek=(now.getDay()+6)%7;
   const wocheMin=Object.entries(termine).reduce((sum,[d,ts])=>{
     const diff=Math.round((new Date(d)-new Date(td))/86400000);
     if(diff>=-dayOfWeek&&diff<=6-dayOfWeek)return sum+ts.reduce((a,e)=>a+(e.min||0),0);
     return sum;
   },0);
 
-  // This month
-  const monatStr=td.substring(0,7);
-  const monatMin=Object.entries(termine).reduce((sum,[d,ts])=>{
-    if(d.startsWith(monatStr))return sum+ts.reduce((a,e)=>a+(e.min||0),0);
-    return sum;
-  },0);
-
-  function toEuro(min){return((min/60)*satz).toFixed(2).replace('.',',')+" €";}
-  function toStd(min){const h=Math.floor(min/60);const m=min%60;return h+"h "+String(m).padStart(2,"0")+"min";}
-
-  const monatName=["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"][now.getMonth()];
-  const kw=getKW(now);
-
-  // Year
-  const jahrStr=td.substring(0,4);
-  const jahrMin=Object.entries(termine).reduce((sum,[d,ts])=>{
-    if(d.startsWith(jahrStr))return sum+ts.reduce((a,e)=>a+(e.min||0),0);
-    return sum;
-  },0);
-
-  // Per month breakdown for year
-  const monatBreakdown=Array.from({length:12},(_,mi)=>{
-    const ms=jahrStr+"-"+String(mi+1).padStart(2,"0");
-    const min=Object.entries(termine).reduce((sum,[d,ts])=>{
-      if(d.startsWith(ms))return sum+ts.reduce((a,e)=>a+(e.min||0),0);
-      return sum;
-    },0);
-    return{name:["Jan","Feb","Mär","Apr","Mai","Jun","Jul","Aug","Sep","Okt","Nov","Dez"][mi],min};
+  // All months with data
+  const allMonths={};
+  Object.entries(termine).forEach(([d,ts])=>{
+    const m=d.substring(0,7);
+    if(!allMonths[m])allMonths[m]=0;
+    allMonths[m]+=ts.reduce((a,e)=>a+(e.min||0),0);
   });
+  const sortedMonths=Object.entries(allMonths).sort((a,b)=>b[0].localeCompare(a[0]));
+
+  // All years
+  const allYears={};
+  Object.entries(termine).forEach(([d,ts])=>{
+    const y=d.substring(0,4);
+    if(!allYears[y])allYears[y]=0;
+    allYears[y]+=ts.reduce((a,e)=>a+(e.min||0),0);
+  });
+  const sortedYears=Object.entries(allYears).sort((a,b)=>b[0].localeCompare(a[0]));
+
+  function tabBtn(t,label){return`<button onclick="renderAbrechnung('${t}')" style="flex:1;padding:8px 4px;border:none;border-bottom:2px solid ${tab===t?'white':'transparent'};background:transparent;color:${tab===t?'white':'rgba(255,255,255,0.6)'};font-size:13px;font-weight:${tab===t?'600':'400'};cursor:pointer;font-family:inherit">${label}</button>`;}
+
+  let content2='';
+  if(tab==="woche"){
+    content2=`
+      <div class="stat-grid">
+        <div class="stat-box accent"><div class="stat-lbl">Heute</div><div class="stat-num">${tagMin}<span class="stat-unit">min</span></div></div>
+        <div class="stat-box accent"><div class="stat-lbl">Heute</div><div class="stat-num" style="font-size:18px">${toEuro(tagMin)}</div></div>
+      </div>
+      <div class="stat-grid">
+        <div class="stat-box"><div class="stat-lbl">KW ${kw} gesamt</div><div class="stat-num" style="font-size:20px">${toStd(wocheMin)}</div></div>
+        <div class="stat-box"><div class="stat-lbl">KW ${kw} Verdienst</div><div class="stat-num" style="font-size:20px">${toEuro(wocheMin)}</div></div>
+      </div>`;
+  } else if(tab==="monat"){
+    content2=`<div class="stat-card">`;
+    sortedMonths.forEach(([m,min])=>{
+      const [y,mo]=m.split("-");
+      const mName=["Jan","Feb","Mär","Apr","Mai","Jun","Jul","Aug","Sep","Okt","Nov","Dez"][parseInt(mo)-1];
+      const maxMin=sortedMonths[0][1]||1;
+      const isCurrent=m===monatStr;
+      content2+=`<div style="margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+          <span style="font-size:14px;font-weight:${isCurrent?'600':'400'};color:${isCurrent?'var(--accent)':'var(--tx)'}">${mName} ${y}</span>
+          <span style="font-size:14px;color:var(--tx2)">${toStd(min)} · ${toEuro(min)}</span>
+        </div>
+        <div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${Math.round((min/maxMin)*100)}%"></div></div>
+      </div>`;
+    });
+    content2+=`</div>`;
+  } else if(tab==="jahr"){
+    content2=`<div class="stat-card">`;
+    sortedYears.forEach(([y,min])=>{
+      const maxMin=sortedYears[0][1]||1;
+      const isCurrent=y===jahrStr;
+      content2+=`<div style="margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+          <span style="font-size:14px;font-weight:${isCurrent?'600':'400'};color:${isCurrent?'var(--accent)':'var(--tx)'}">${y}</span>
+          <span style="font-size:14px;color:var(--tx2)">${toStd(min)} · ${toEuro(min)}</span>
+        </div>
+        <div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${Math.round((min/maxMin)*100)}%"></div></div>
+      </div>`;
+    });
+    content2+=`</div>`;
+  }
 
   let html=`<div class="screen active" id="scr-abrech">
-    <div class="topbar">
-      <button class="btn-icon" onclick="renderDashboard()"><i class="ti ti-arrow-left"></i></button>
-      <span class="topbar-title"><i class="ti ti-receipt" style="font-size:18px;margin-right:6px"></i>Abrechnung</span>
+    <div class="topbar" style="flex-direction:column;align-items:stretch;padding-bottom:0">
+      <div style="display:flex;align-items:center;gap:8px;padding-bottom:8px">
+        <button class="btn-icon" onclick="renderDashboard()"><i class="ti ti-arrow-left"></i></button>
+        <span class="topbar-title"><i class="ti ti-receipt" style="font-size:18px;margin-right:6px"></i>Abrechnung</span>
+      </div>
+      <div style="display:flex">
+        ${tabBtn("woche","Woche")}
+        ${tabBtn("monat","Monate")}
+        ${tabBtn("jahr","Jahre")}
+      </div>
     </div>
     <div class="scroll">
-
+      ${content2}
       <div><div class="sec-label">Einstellungen</div>
       <div class="card">
         <div class="card-row">
@@ -2305,39 +2354,6 @@ function renderAbrechnung(){
           </div>
         </div>
       </div></div>
-
-      <div><div class="sec-label">Heute</div>
-      <div class="stat-grid">
-        <div class="stat-box accent"><div class="stat-lbl">Minuten</div><div class="stat-num">${tagMin}<span class="stat-unit">min</span></div></div>
-        <div class="stat-box accent"><div class="stat-lbl">Verdienst</div><div class="stat-num" style="font-size:20px">${toEuro(tagMin)}</div></div>
-      </div></div>
-
-      <div><div class="sec-label">KW ${kw}</div>
-      <div class="stat-grid">
-        <div class="stat-box"><div class="stat-lbl">Zeit</div><div class="stat-num" style="font-size:20px">${toStd(wocheMin)}</div></div>
-        <div class="stat-box"><div class="stat-lbl">Verdienst</div><div class="stat-num" style="font-size:20px">${toEuro(wocheMin)}</div></div>
-      </div></div>
-
-      <div><div class="sec-label">${monatName}</div>
-      <div class="stat-grid">
-        <div class="stat-box"><div class="stat-lbl">Zeit</div><div class="stat-num" style="font-size:20px">${toStd(monatMin)}</div></div>
-        <div class="stat-box"><div class="stat-lbl">Verdienst</div><div class="stat-num" style="font-size:20px">${toEuro(monatMin)}</div></div>
-      </div></div>
-
-      <div><div class="sec-label">Jahr ${jahrStr}</div>
-      <div class="stat-grid">
-        <div class="stat-box"><div class="stat-lbl">Zeit</div><div class="stat-num" style="font-size:20px">${toStd(jahrMin)}</div></div>
-        <div class="stat-box"><div class="stat-lbl">Verdienst</div><div class="stat-num" style="font-size:20px">${toEuro(jahrMin)}</div></div>
-      </div>
-      <div class="stat-card" style="margin-top:8px">
-        ${monatBreakdown.filter(m=>m.min>0).map(m=>`
-          <div class="stat-bar-wrap">
-            <span class="stat-bar-label" style="min-width:32px">${m.name}</span>
-            <div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${jahrMin?Math.round((m.min/jahrMin)*100):0}%"></div></div>
-            <span class="stat-bar-val">${toEuro(m.min)}</span>
-          </div>`).join("")}
-      </div></div>
-
     </div>
   </div>`;
   renderApp(html);
