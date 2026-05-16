@@ -2498,6 +2498,7 @@ function syncKalenderToFahrstunden(){
 }
 
 function renderDashSchueler(sid){
+  syncKalenderToFahrstunden();
   const s=getS(sid);if(!s)return;
   const td=todayStr();
   const gefahren=Object.entries(termine).filter(([d])=>d<td).flatMap(([d,ts])=>ts.filter(t=>t.sid===sid));
@@ -2536,7 +2537,7 @@ function renderDashSchueler(sid){
     <div class="topbar">
       <button class="btn-icon" onclick="renderDashboard()"><i class="ti ti-arrow-left"></i></button>
       <span class="topbar-title">${s.vorname} ${s.nachname}</span>
-      <button class="btn-icon" onclick="renderSchueler('${sid}')"><i class="ti ti-pencil"></i></button>
+      <button class="btn-icon" onclick="renderNeuSchueler('${sid}')"><i class="ti ti-pencil"></i></button>
     </div>
     <div class="scroll">
       <div class="stat-grid">
