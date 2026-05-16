@@ -737,12 +737,7 @@ function renderNeuSchueler(fromSid){
         <div class="card-row"><span class="card-label"><i class="ti ti-user"></i>Vorname</span><input type="text" id="n-vn" value="${s?s.vorname:""}" placeholder="Pflichtfeld"/></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-user"></i>Nachname</span><input type="text" id="n-nn" value="${s?s.nachname:""}" placeholder="Pflichtfeld"/></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-mood-smile"></i>Spitzname</span><input type="text" id="n-sp" value="${s?s.spitz:""}" placeholder="Optional"/></div>
-        <div class="card-row"><span class="card-label"><i class="ti ti-user-circle"></i>Geschlecht</span>
-          <div style="display:flex;gap:6px;justify-content:flex-end;flex:1">
-            <button class="pill ${!s||s.geschlecht!=='w'?'active':''}" id="g-m" onclick="setGeschlecht('m')" style="font-size:14px;padding:6px 14px">👦 Junge</button>
-            <button class="pill ${s&&s.geschlecht==='w'?'active':''}" id="g-w" onclick="setGeschlecht('w')" style="font-size:14px;padding:6px 14px">👧 Mädchen</button>
-          </div>
-        </div>
+
       </div></div>
       <div><div class="sec-label">Ausbildung</div>
       <div class="card">
@@ -2481,7 +2476,18 @@ function syncKalenderToFahrstunden(){
       ts.filter(t=>t.sid===s.id).forEach(t=>{
         if(t.min===100)return; // Skip Prüfungen
         // Detect type: use stored typ field first, then notiz, then min
-        if(t.min===100)return; // Prüfung - skip
+        // Sync Prüfung to s.pruefungen
+        if(t.min===100){
+          if(!s.pruefungen)s.pruefungen=[];
+          const existIdx=s.pruefungen.findIndex(p=>p.datum===datum);
+          if(existIdx<0){
+            s.pruefungen.push({datum,uhr:t.uhr,versuch:s.pruefungen.length+1,bestanden:null,prufort:s.prufort||""});
+            s.pruefungen.sort((a,b)=>a.datum.localeCompare(b.datum));
+          } else if(!s.pruefungen[existIdx].uhr&&t.uhr){
+            s.pruefungen[existIdx].uhr=t.uhr;
+          }
+          return;
+        }
         const notiz=(t.notiz||"").toLowerCase();
         let typ=t.typ||"normal";
         if(typ==="normal"||typ===""){
