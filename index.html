@@ -2643,6 +2643,7 @@ function toggleNotizDash(sid,ni){
   try{
     syncFahrstundenToKalender();
     syncKalenderToFahrstunden();
+    save("fs_schueler",schueler);
   }catch(e){console.error("syncFahrstunden error:",e);}
   try{
     if(IS_IPAD){
