@@ -326,7 +326,6 @@ function renderDashboard(){
     <div class="topbar">
       <div style="flex:1">
         <div style="font-size:18px;font-weight:600;color:white"><i class="ti ti-steering-wheel" style="font-size:19px;vertical-align:-2px;margin-right:6px"></i>Fahrschule <span style="font-size:11px;opacity:0.5;font-weight:400">v1.8</span></div>
-        <div id="sync-status" style="font-size:11px;color:rgba(255,255,255,0.55);transition:opacity 1s;opacity:0;margin-top:1px"></div>
       </div>
       <div style="display:flex;justify-content:space-between;flex:1;margin-left:8px">
         <button class="btn-icon" onclick="renderKalender()" aria-label="Kalender" style="font-size:20px;min-width:36px;min-height:36px"><i class="ti ti-calendar"></i></button>
@@ -1905,67 +1904,10 @@ function renderApp(html){
   document.getElementById("app").innerHTML=html;
 }
 
-// ── SUPABASE SYNC ────────────────────────────────────────────────────────────
-const SB_URL = "https://afgkdhbvyigqyckyxeyl.supabase.co";
-const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmZ2tkaGJ2eWlncXlja3l4ZXlsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4MTE2MzEsImV4cCI6MjA5NDM4NzYzMX0.mVtq4bZUHN_cL6O8IfqEnxBJAlc21s0hIt_EoglHJvQ";
-
-async function sbFetch(path, method="GET", body=null){
-  const opts = {
-    method,
-    headers: {
-      "apikey": SB_KEY,
-      "Authorization": "Bearer " + SB_KEY,
-      "Content-Type": "application/json",
-      "Prefer": method==="POST"?"resolution=merge-duplicates":""
-    }
-  };
-  if(body) opts.body = JSON.stringify(body);
-  const res = await fetch(SB_URL + path, opts);
-  if(!res.ok) return null;
-  try{ return await res.json(); }catch{return null;}
-}
-
-async function syncToCloud(){
-  try{
-    await sbFetch("/rest/v1/schueler", "POST", [{id:"main", data:JSON.stringify(schueler), updated_at: new Date().toISOString()}]);
-    await sbFetch("/rest/v1/termine", "POST", [{id:"main", data:JSON.stringify(termine), updated_at: new Date().toISOString()}]);
-    showSyncStatus("✓ Gespeichert");
-  }catch(e){
-    showSyncStatus("⚠ Offline");
-  }
-}
-
-async function syncFromCloud(){
-  try{
-    const [sr, tr] = await Promise.all([
-      sbFetch("/rest/v1/schueler?id=eq.main"),
-      sbFetch("/rest/v1/termine?id=eq.main")
-    ]);
-    if(sr&&sr[0]&&sr[0].data){
-      const cloud = JSON.parse(sr[0].data);
-      schueler = cloud;
-      save("fs_schueler", schueler);
-    }
-    if(tr&&tr[0]&&tr[0].data){
-      const cloud = JSON.parse(tr[0].data);
-      termine = cloud;
-      save("fs_termine", termine);
-    }
-    showSyncStatus("✓ Synchronisiert");
-    return true;
-  }catch(e){
-    showSyncStatus("⚠ Offline");
-    return false;
-  }
-}
-
-function showSyncStatus(msg){
-  const el = document.getElementById("sync-status");
-  if(!el) return;
-  el.textContent = msg;
-  el.style.opacity = "1";
-  setTimeout(()=>{el.style.opacity="0";}, 2500);
-}
+// ── SYNC (localStorage only) ──────────────────────────────────────────────────
+async function syncFromCloud(){ return true; }
+async function syncToCloud(){}
+function showSyncStatus(msg){}
 
 // Override saveAll to also sync to cloud
 function saveAll(){
@@ -2082,7 +2024,6 @@ function renderIPadDashboard(){
   let html=`<div style="display:flex;flex-direction:column;height:100%">
     <div style="background:var(--accent-dark);padding:calc(var(--safe-top)+14px) 20px 14px;min-height:64px;display:flex;align-items:center;gap:8px;flex-shrink:0">
       <span style="font-size:20px;font-weight:600;color:white;flex:1"><i class="ti ti-steering-wheel" style="font-size:20px;margin-right:6px"></i>Fahrschule <span style="font-size:11px;opacity:0.5;font-weight:400">v1.8</span></span>
-      <span id="sync-status" style="font-size:11px;color:rgba(255,255,255,0.6);transition:opacity 1s;opacity:0"></span>
       <button class="btn-icon" onclick="renderIPadKalender()" title="Kalender"><i class="ti ti-calendar"></i></button>
       <button class="btn-icon" onclick="renderIPadStatistik()" title="Statistik"><i class="ti ti-chart-bar"></i></button>
     </div>
@@ -2344,7 +2285,7 @@ function renderAbrechnung(tab="woche",weekOffset=0){
         <div class="stat-box"><div class="stat-lbl">7 Tage Verdienst</div><div class="stat-num" style="font-size:20px">${toEuro(sum7)}</div></div>
       </div>
       <div class="stat-card">
-        ${last7.map(d=>`<div style="margin-bottom:10px">
+        ${last7.map(d=>`<div style="margin-bottom:10px;cursor:pointer" onclick="renderTagAnsicht('${d.ds}')">
           <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">
             <span style="font-size:14px;font-weight:${d.isToday?'600':'400'};color:${d.isToday?'var(--accent)':'var(--tx)'}">${d.name} ${parseInt(d.ds.split('-')[2])}.</span>
             <span style="font-size:13px;color:var(--tx2)">${d.min?d.min+' min · '+toEuro(d.min):'–'}</span>
@@ -2364,7 +2305,7 @@ function renderAbrechnung(tab="woche",weekOffset=0){
         <div class="stat-box accent"><div class="stat-lbl">Heute</div><div class="stat-num" style="font-size:18px">${toEuro(tagMin)}</div></div>
       </div>
       <div class="stat-card">
-        ${weekDays.map(d=>`<div style="margin-bottom:10px">
+        ${weekDays.map(d=>`<div style="margin-bottom:10px;cursor:pointer" onclick="renderTagAnsicht('${d.ds}')">
           <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">
             <span style="font-size:14px;font-weight:${d.isToday?'600':'400'};color:${d.isToday?'var(--accent)':'var(--tx)'}">${d.name} ${parseInt(d.ds.split('-')[2])}.</span>
             <span style="font-size:13px;color:var(--tx2)">${d.min?d.min+' min · '+toEuro(d.min):'–'}</span>
@@ -2386,9 +2327,9 @@ function renderAbrechnung(tab="woche",weekOffset=0){
         const mName=["Jan","Feb","Mär","Apr","Mai","Jun","Jul","Aug","Sep","Okt","Nov","Dez"][parseInt(mo)-1];
         const maxMin=sortedMonths2[0][1]||1;
         const isCurrent=m===monatStr;
-        return`<div style="margin-bottom:14px">
+        return`<div style="margin-bottom:14px;cursor:pointer" onclick="selMonth='${m}';renderKalender()">
           <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px">
-            <span style="font-size:14px;font-weight:${isCurrent?'600':'400'};color:${isCurrent?'var(--accent)':'var(--tx)'}">${mName} ${y}</span>
+            <span style="font-size:14px;font-weight:${isCurrent?'600':'400'};color:${isCurrent?'var(--accent)':'var(--tx)'}">${mName} ${y} <i class="ti ti-chevron-right" style="font-size:11px;color:var(--tx3)"></i></span>
             <div style="text-align:right">
               <span style="font-size:20px;font-weight:700;color:var(--tx)">${min}<span style="font-size:12px;font-weight:400;color:var(--tx2)"> min</span></span>
               <span style="font-size:12px;color:var(--tx3);margin-left:6px">${toStd(min)} · ${toEuro(min)}</span>
