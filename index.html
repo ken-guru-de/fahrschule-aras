@@ -1202,15 +1202,14 @@ function buildKalender(){
       <div class="wd" style="color:var(--accent)">Do</div>
       <div class="wd" style="color:#3C3489">Fr</div>
     </div>
-    <div class="cal-scroll"><div class="cal-grid" id="cal-grid"></div>
-    <div id="cal-detail" style="padding:10px 16px 20px"></div></div>
+    <div class="cal-scroll"><div class="cal-grid" id="cal-grid"></div></div>
   </div>`;
   if(typeof IS_IPAD!=="undefined"&&IS_IPAD){
     const d=document.getElementById("ipad-detail");
-    if(d){d.innerHTML=`<div style="display:flex;flex-direction:column;height:100%;overflow:hidden">${html}</div>`;renderCalGrid();renderCalDetail();return;}
+    if(d){d.innerHTML=`<div style="display:flex;flex-direction:column;height:100%;overflow:hidden">${html}</div>`;renderCalGrid();return;}
   }
   renderApp(html);
-  renderCalGrid();renderCalDetail();
+  renderCalGrid();
 }
 function renderCalGrid(){
   const grid=document.getElementById("cal-grid");if(!grid)return;
@@ -1270,20 +1269,20 @@ function renderCalDetail(){
   html+=`<button class="btn-full" style="margin-top:6px" onclick="renderNeuKalTermin('${selDate}')"><i class="ti ti-plus"></i> Termin hinzufügen</button>`;
   el.innerHTML=html;
 }
-function delKalTermin(key,i){if(!termine[key])return;const t=termine[key][i];const s=getS(t.sid);const name=s?s.vorname+" "+s.nachname:"Termin";if(!confirm(name+" · "+t.uhr+" Uhr wirklich löschen?"))return;termine[key].splice(i,1);if(!termine[key].length)delete termine[key];saveAll();renderCalGrid();renderCalDetail();}
+function delKalTermin(key,i){if(!termine[key])return;const t=termine[key][i];const s=getS(t.sid);const name=s?s.vorname+" "+s.nachname:"Termin";if(!confirm(name+" · "+t.uhr+" Uhr wirklich löschen?"))return;termine[key].splice(i,1);if(!termine[key].length)delete termine[key];saveAll();renderCalGrid();}
 function prevMonth(){
   curMonth--;if(curMonth<1){curMonth=12;curYear--;}
   selDate=null;
   const ml=document.getElementById("cal-month-label");
   if(ml)ml.textContent=MONATE[curMonth-1]+" "+curYear;
-  renderCalGrid();renderCalDetail();
+  renderCalGrid();
 }
 function nextMonth(){
   curMonth++;if(curMonth>12){curMonth=1;curYear++;}
   selDate=null;
   const ml=document.getElementById("cal-month-label");
   if(ml)ml.textContent=MONATE[curMonth-1]+" "+curYear;
-  renderCalGrid();renderCalDetail();
+  renderCalGrid();
 }
 
 function renderNeuKalTermin(date){
