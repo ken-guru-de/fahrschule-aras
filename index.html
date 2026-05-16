@@ -2514,17 +2514,36 @@ function renderDashSchueler(sid){
 
       <div><div class="sec-label">Grundfahraufgaben <span style="color:var(--tx3);font-weight:400">${gfaCount}/${GRUNDFAHRAUFGABEN.length}</span></div>
       <div class="card">
-        ${GRUNDFAHRAUFGABEN.map(g=>`<div class="card-row"><span class="card-label"><i class="ti ${g.icon}"></i> ${g.label}</span>
-          <span style="font-weight:600;color:${((s.gfa||{})[g.key]||0)>0?'var(--accent)':'var(--tx3)'}">${(s.gfa||{})[g.key]||0}×</span></div>`).join("")}
+        ${GRUNDFAHRAUFGABEN.map(g=>{const cnt=(s.gfa||{})[g.key]||0;return`<div class="gfa-row"><span class="gfa-label"><i class="ti ${g.icon}" style="font-size:16px;margin-right:8px;color:var(--tx3)"></i>${g.label}</span><div class="gfa-controls"><button class="gfa-btn" onclick="changeGFADash('${sid}','${g.key}',-1)">−</button><span class="gfa-count" id="gfa-${sid}-${g.key}-d">${cnt}</span><button class="gfa-btn" onclick="changeGFADash('${sid}','${g.key}',1)">+</button></div></div>`;}).join("")}
       </div></div>
 
       ${(s.notizen||[]).length?`<div><div class="sec-label">Notizen</div><div class="card">
-        ${s.notizen.map(n=>`<div class="card-row"><span style="flex:1;font-size:14px;${n.done?'text-decoration:line-through;color:var(--tx3)':''}">${n.text}</span></div>`).join("")}
+        ${s.notizen.map((n,ni)=>`<div class="card-row" onclick="toggleNotizDash('${sid}',${ni})" style="cursor:pointer">
+          <i class="ti ${n.done?'ti-checkbox':'ti-square'}" style="font-size:18px;color:${n.done?'var(--accent)':'var(--tx3)'};margin-right:10px;flex-shrink:0"></i>
+          <span style="flex:1;font-size:14px;${n.done?'text-decoration:line-through;color:var(--tx3)':''}">${n.text}</span>
+        </div>`).join("")}
       </div></div>`:""}
     </div>
   </div>`;
   renderApp(html);
   setTimeout(initPTR,50);
+}
+
+function changeGFADash(sid,key,delta){
+  const s=getS(sid);if(!s)return;
+  if(!s.gfa)s.gfa={};
+  s.gfa[key]=Math.max(0,(s.gfa[key]||0)+delta);
+  const el=document.getElementById("gfa-"+sid+"-"+key+"-d");
+  if(el)el.textContent=s.gfa[key];
+  saveAll();
+}
+
+function toggleNotizDash(sid,ni){
+  const s=getS(sid);if(!s)return;
+  if(!s.notizen||!s.notizen[ni])return;
+  s.notizen[ni].done=!s.notizen[ni].done;
+  saveAll();
+  renderDashSchueler(sid);
 }
 
 (async()=>{
