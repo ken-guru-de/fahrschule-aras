@@ -2466,17 +2466,10 @@ function getKW(date){
 
 function syncKalenderToFahrstunden(){
   schueler.forEach(s=>{
-    if(!s.fahrstunden)s.fahrstunden=[];
-    if(!s.sonder||Array.isArray(s.sonder))s.sonder={ueberland:0,autobahn:0,nacht:0};
-    // Reset sonder from kalender (only if not manually set higher)
-    const prevSonder={...s.sonder};
+    s.fahrstunden=[];
     s.sonder={ueberland:0,autobahn:0,nacht:0};
-    // Go through all termine for this student
     Object.entries(termine).forEach(([datum,ts])=>{
       ts.filter(t=>t.sid===s.id).forEach(t=>{
-        if(t.min===100)return; // Skip Prüfungen
-        // Detect type: use stored typ field first, then notiz, then min
-        // Sync Prüfung to s.pruefungen
         if(t.min===100){
           if(!s.pruefungen)s.pruefungen=[];
           const existIdx=s.pruefungen.findIndex(p=>p.datum===datum);
@@ -2495,25 +2488,15 @@ function syncKalenderToFahrstunden(){
           else if(notiz.includes("autobahnfahrt")||notiz.includes("autobahn"))typ="autobahn";
           else if(notiz.includes("nachtfahrt")||notiz.includes("nacht"))typ="nacht";
         }
-        // Update sonder totals
         if(typ==="ueberland")s.sonder.ueberland=(s.sonder.ueberland||0)+t.min;
         if(typ==="autobahn")s.sonder.autobahn=(s.sonder.autobahn||0)+t.min;
         if(typ==="nacht")s.sonder.nacht=(s.sonder.nacht||0)+t.min;
-        // Add to fahrstunden if not exists
-        const exists=s.fahrstunden.find(f=>f.datum===datum&&(f.uhr||"")===(t.uhr||""));
-        if(!exists){
-          s.fahrstunden.push({datum,uhr:t.uhr,min:t.min,typ,einh:1,notiz:t.notiz||""});
-        }
+        s.fahrstunden.push({datum,uhr:t.uhr,min:t.min,typ,einh:1,notiz:t.notiz||""});
       });
     });
     s.fahrstunden.sort((a,b)=>b.datum.localeCompare(a.datum)||(b.uhr||"").localeCompare(a.uhr||""));
-    // Keep higher value (manual vs kalender)
-    ['ueberland','autobahn','nacht'].forEach(k=>{
-      if((prevSonder[k]||0)>(s.sonder[k]||0))s.sonder[k]=prevSonder[k];
-    });
   });
 }
-
 function renderDashSchueler(sid){
   syncKalenderToFahrstunden();
   const s=getS(sid);if(!s)return;
