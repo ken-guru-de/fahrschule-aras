@@ -1802,10 +1802,12 @@ function deleteEktTermin(date,idx){
   if(!termine[date])return;
   const t=termine[date][idx];
   const s=getS(t.sid);
-  if(!confirm((s?s.vorname+" "+s.nachname:"Termin")+" · "+t.uhr+" Uhr wirklich löschen?"))return;
+  const name=(s?s.vorname+" "+s.nachname:"Termin")+" · "+t.uhr+" Uhr";
+  if(!window.confirm(name+" wirklich löschen?"))return;
   termine[date].splice(idx,1);
   if(!termine[date].length)delete termine[date];
-  saveAll();renderTagAnsicht(date);
+  saveAll();
+  renderTagAnsicht(date);
 }
 
 // ── PULL TO REFRESH ───────────────────────────────────────────────────────────
@@ -2009,16 +2011,19 @@ function renderDashSchueler(sid){
   renderApp(html);
   setTimeout(()=>{
     initPTR();
-    // Swipe on topbar to navigate days
+    // Swipe to navigate days - attach to topbar
     const topbar=document.querySelector("#scr-tag .topbar");
-    const swipeEl=topbar||document.getElementById("scr-tag");
-    if(!swipeEl)return;
-    let sx=0,sy=0;
-    swipeEl.addEventListener("touchstart",e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});
-    swipeEl.addEventListener("touchend",e=>{
+    if(!topbar)return;
+    // Make topbar bigger for easier swiping
+    topbar.style.cursor="grab";
+    let sx=0,sy=0,moved=false;
+    topbar.addEventListener("touchstart",e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY;moved=false;},{passive:true});
+    topbar.addEventListener("touchmove",e=>{moved=true;},{passive:true});
+    topbar.addEventListener("touchend",e=>{
+      if(!moved)return;
       const dx=e.changedTouches[0].clientX-sx;
       const dy=e.changedTouches[0].clientY-sy;
-      if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.2){
+      if(Math.abs(dx)>40&&Math.abs(dx)>Math.abs(dy)){
         const d=new Date(date);
         d.setDate(d.getDate()+(dx<0?1:-1));
         const nd=toKey(d.getFullYear(),d.getMonth()+1,d.getDate());
