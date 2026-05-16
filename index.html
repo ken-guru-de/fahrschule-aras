@@ -2475,7 +2475,8 @@ function syncKalenderToFahrstunden(){
   schueler.forEach(s=>{
     if(!s.fahrstunden)s.fahrstunden=[];
     if(!s.sonder||Array.isArray(s.sonder))s.sonder={ueberland:0,autobahn:0,nacht:0};
-    // Reset sonder from kalender
+    // Reset sonder from kalender (only if not manually set higher)
+    const prevSonder={...s.sonder};
     s.sonder={ueberland:0,autobahn:0,nacht:0};
     // Go through all termine for this student
     Object.entries(termine).forEach(([datum,ts])=>{
@@ -2500,6 +2501,10 @@ function syncKalenderToFahrstunden(){
       });
     });
     s.fahrstunden.sort((a,b)=>b.datum.localeCompare(a.datum)||(b.uhr||"").localeCompare(a.uhr||""));
+    // Keep higher value (manual vs kalender)
+    ['ueberland','autobahn','nacht'].forEach(k=>{
+      if((prevSonder[k]||0)>(s.sonder[k]||0))s.sonder[k]=prevSonder[k];
+    });
   });
 }
 
@@ -2528,10 +2533,10 @@ function renderDashSchueler(sid){
   const sonderHTML=SONDER.map(sf=>{
     const done=sonderObj[sf.key]||0;
     const ok=done>=sf.min;
-    return`<div class="card-row">
+    return`<div class="card-row" onclick="toggleSonderDash('${sid}','${sf.key}',${sf.min})" style="cursor:pointer">
       <i class="ti ${ok?'ti-checkbox':'ti-square'}" style="font-size:18px;color:${ok?'var(--accent)':'var(--tx3)'};margin-right:10px;flex-shrink:0"></i>
       <span style="flex:1;font-size:14px;${ok?'text-decoration:line-through;color:var(--tx3)':''}">${sf.label}</span>
-      <span style="font-size:13px;color:var(--tx3)">${done}/${sf.min} min</span>
+      <span style="font-size:13px;color:var(--tx3)">${done?done+'/'+sf.min+' min':'Antippen zum Abhaken'}</span>
     </div>`;
   }).join('');
 
@@ -2594,6 +2599,15 @@ function renderDashSchueler(sid){
   </div>`;
   renderApp(html);
   setTimeout(initPTR,50);
+}
+
+function toggleSonderDash(sid,key,min){
+  const s=getS(sid);if(!s)return;
+  if(!s.sonder||Array.isArray(s.sonder))s.sonder={ueberland:0,autobahn:0,nacht:0};
+  // Toggle: if already done set to 0, else set to min
+  s.sonder[key]=(s.sonder[key]||0)>=min?0:min;
+  saveAll();
+  renderDashSchueler(sid);
 }
 
 function changeGFADash(sid,key,delta){
