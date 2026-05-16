@@ -2227,7 +2227,7 @@ function renderAbrechnung(tab="woche",weekOffset=0){
   const baseDateStr=toKey(baseDate.getFullYear(),baseDate.getMonth()+1,baseDate.getDate());
   const wocheMin=Object.entries(termine).reduce((sum,[d,ts])=>{
     const diff=Math.round((new Date(d)-new Date(baseDateStr))/86400000);
-    if(diff>=-dayOfWeek&&diff<=6-dayOfWeek)return sum+ts.reduce((a,e)=>a+(e.min||0),0);
+    if(diff>=-dayOfWeek&&diff<=4-dayOfWeek)return sum+ts.reduce((a,e)=>a+(e.min||0),0);
     return sum;
   },0);
   const kwDate=new Date(baseDate);
@@ -2529,7 +2529,23 @@ function renderDashSchueler(sid){
     </div>
   </div>`;
   renderApp(html);
-  setTimeout(initPTR,50);
+  setTimeout(()=>{
+    initPTR();
+    const scr=document.getElementById("scr-tag");
+    if(!scr)return;
+    let sx=0,sy=0;
+    scr.addEventListener("touchstart",e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});
+    scr.addEventListener("touchend",e=>{
+      const dx=e.changedTouches[0].clientX-sx;
+      const dy=e.changedTouches[0].clientY-sy;
+      if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5){
+        const d=new Date(date);
+        d.setDate(d.getDate()+(dx<0?1:-1));
+        const nd=toKey(d.getFullYear(),d.getMonth()+1,d.getDate());
+        selDate=nd;renderTagAnsicht(nd);
+      }
+    },{passive:true});
+  },50);
 }
 
 function toggleSonderEdit(key,min){
