@@ -2279,7 +2279,7 @@ function renderAbrechnung(tab="woche",weekOffset=0){
         const mName=["Jan","Feb","Mär","Apr","Mai","Jun","Jul","Aug","Sep","Okt","Nov","Dez"][parseInt(mo)-1];
         const maxMin=sortedMonths[0][1]||1;
         const isCurrent=m===monatStr;
-        return`<div style="margin-bottom:14px;cursor:pointer" onclick="selMonth='${m}';renderKalender()">
+        return`<div style="margin-bottom:14px;cursor:pointer" onclick="selMonth='${m}';curYear=parseInt('${m}'.split('-')[0]);curMonth=parseInt('${m}'.split('-')[1]);renderKalender()">
           <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px">
             <span style="font-size:14px;font-weight:${isCurrent?'600':'400'};color:${isCurrent?'var(--accent)':'var(--tx)'}">${mName} ${y}</span>
             <div style="text-align:right">
