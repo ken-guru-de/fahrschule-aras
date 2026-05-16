@@ -2370,13 +2370,24 @@ function renderAbrechnung(tab="woche",weekOffset=0){
   try{
     if(!localStorage.getItem("fs_schueler")&&schueler.length===0){
       document.getElementById("app").innerHTML=`
-        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;padding:32px;text-align:center;gap:20px">
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:32px;text-align:center;gap:16px">
           <i class="ti ti-steering-wheel" style="font-size:64px;color:var(--accent)"></i>
           <div style="font-size:22px;font-weight:700">Fahrschule</div>
-          <div style="font-size:15px;color:var(--tx2)">Keine Daten gefunden.</div>
-          <div style="font-size:13px;color:var(--tx3)">Öffne die Sicherungs-JSON in der Dateien-App,<br>wähle alles aus, kopiere den Text<br>und tippe dann auf den Button:</div>
-          <button onclick="importDatenPaste()" style="background:var(--accent);color:white;border:none;border-radius:12px;padding:14px 28px;font-size:17px;cursor:pointer;font-family:inherit;width:100%"><i class="ti ti-clipboard"></i> JSON einfügen</button>
-          <button onclick="renderDashboard()" style="background:none;border:none;color:var(--tx3);font-size:14px;cursor:pointer;font-family:inherit">Leer starten</button>
+          <div style="font-size:14px;color:var(--tx2);line-height:1.5">Keine Daten gefunden.<br><br>
+            <strong>So geht's:</strong><br>
+            1. Öffne die JSON-Sicherung in der Dateien-App<br>
+            2. Tippe lange → Alles auswählen → Kopieren<br>
+            3. Komm zurück und tippe auf den Button:
+          </div>
+          <button onclick="importDatenPaste()" style="background:var(--accent);color:white;border:none;border-radius:12px;padding:16px 28px;font-size:18px;cursor:pointer;font-family:inherit;width:100%;margin-top:8px">
+            <i class="ti ti-clipboard"></i> JSON hier einfügen
+          </button>
+          <div style="font-size:12px;color:var(--tx3)">oder</div>
+          <button onclick="document.getElementById('import-input-boot').click()" style="background:none;border:1px solid var(--br);border-radius:12px;padding:12px 20px;font-size:15px;cursor:pointer;font-family:inherit;color:var(--tx);width:100%">
+            <i class="ti ti-upload"></i> Datei auswählen
+          </button>
+          <input type="file" id="import-input-boot" accept=".json" style="display:none" onchange="importDaten(this)"/>
+          <button onclick="renderDashboard()" style="background:none;border:none;color:var(--tx3);font-size:13px;cursor:pointer;font-family:inherit;margin-top:4px">Leer starten</button>
         </div>`;
     } else {
       renderDashboard();
