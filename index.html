@@ -265,6 +265,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:-apple-sy
   <div id="ipad-detail" style="flex:1;display:flex;flex-direction:column;height:100vh;overflow:hidden;background:var(--bg)"></div>
 </div>
 <script>
+const IS_IPAD=false;
 const FARBEN=[{key:"blue",bg:"rgba(255,107,43,.2)",tx:"#FF6B2B"},{key:"teal",bg:"#9FE1CB",tx:"#085041"},{key:"purple",bg:"#CECBF6",tx:"#3C3489"},{key:"coral",bg:"#F5C4B3",tx:"#712B13"},{key:"green",bg:"#C0DD97",tx:"#27500A"},{key:"amber",bg:"#FAC775",tx:"#633806"}];
 const KLASSEN=["B","BA","B197","B17"];
 const PRUFORTE=["DEKRA Pankow","DEKRA Ferdi","TÜV Hornbach"];
@@ -2297,57 +2298,104 @@ function renderAbrechnung(tab="woche"){
   });
   const sortedYears=Object.entries(allYears).sort((a,b)=>b[0].localeCompare(a[0]));
 
-  function tabBtn(t,label){return`<button onclick="renderAbrechnung('${t}')" style="flex:1;padding:8px 4px;border:none;border-bottom:2px solid ${tab===t?'white':'transparent'};background:transparent;color:${tab===t?'white':'rgba(255,255,255,0.6)'};font-size:13px;font-weight:${tab===t?'600':'400'};cursor:pointer;font-family:inherit">${label}</button>`;}
+  function tabBtn(t,label){const active=(tab===t)||(tab==="woche"&&t==="woche"&&!["woche7","monat","jahr"].includes(tab))||(tab==="woche7"&&t==="woche7");return`<button onclick="renderAbrechnung('${t}')" style="flex:1;padding:8px 4px;border:none;border-bottom:2px solid ${active?'white':'transparent'};background:transparent;color:${active?'white':'rgba(255,255,255,0.6)'};font-size:13px;font-weight:${active?'600':'400'};cursor:pointer;font-family:inherit">${label}</button>`;}
 
   let content2='';
   const monatMin=getMin(monatStr);
-  if(tab==="woche"){
+  // Daily breakdown for current week
+  const wochentageNamen=["Mo","Di","Mi","Do","Fr","Sa","So"];
+  const weekDays=[];
+  for(let i=0;i<7;i++){
+    const d2=new Date(now);
+    d2.setDate(d2.getDate()-dayOfWeek+i);
+    const ds=toKey(d2.getFullYear(),d2.getMonth()+1,d2.getDate());
+    const min=(termine[ds]||[]).reduce((a,e)=>a+(e.min||0),0);
+    weekDays.push({name:wochentageNamen[i],ds,min,isToday:ds===td});
+  }
+  const maxDayMin=Math.max(...weekDays.map(x=>x.min),1);
+
+  if(tab==="woche7"){
+    // Last 7 days
+    const last7=[];
+    for(let i=6;i>=0;i--){
+      const d2=new Date(now);
+      d2.setDate(d2.getDate()-i);
+      const ds=toKey(d2.getFullYear(),d2.getMonth()+1,d2.getDate());
+      const min=(termine[ds]||[]).reduce((a,e)=>a+(e.min||0),0);
+      last7.push({name:["So","Mo","Di","Mi","Do","Fr","Sa"][d2.getDay()],ds,min,isToday:ds===td});
+    }
+    const max7=Math.max(...last7.map(x=>x.min),1);
+    const sum7=last7.reduce((a,x)=>a+x.min,0);
+    content2=`
+      <div class="stat-grid">
+        <div class="stat-box"><div class="stat-lbl">7 Tage</div><div class="stat-num">${sum7}<span class="stat-unit">min</span></div><div style="font-size:12px;color:var(--tx3);margin-top:2px">${toStd(sum7)}</div></div>
+        <div class="stat-box"><div class="stat-lbl">7 Tage Verdienst</div><div class="stat-num" style="font-size:20px">${toEuro(sum7)}</div></div>
+      </div>
+      <div class="stat-card">
+        ${last7.map(d=>`<div style="margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">
+            <span style="font-size:14px;font-weight:${d.isToday?'600':'400'};color:${d.isToday?'var(--accent)':'var(--tx)'}">${d.name} ${parseInt(d.ds.split('-')[2])}.</span>
+            <span style="font-size:13px;color:var(--tx2)">${d.min?d.min+' min · '+toEuro(d.min):'–'}</span>
+          </div>
+          ${d.min?`<div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${Math.round((d.min/max7)*100)}%"></div></div>`:''}
+        </div>`).join('')}
+      </div>`;
+  } else if(tab==="woche"){
     content2=`
       <div class="stat-grid">
         <div class="stat-box accent"><div class="stat-lbl">Heute</div><div class="stat-num">${tagMin}<span class="stat-unit">min</span></div></div>
         <div class="stat-box accent"><div class="stat-lbl">Heute</div><div class="stat-num" style="font-size:18px">${toEuro(tagMin)}</div></div>
       </div>
-      <div class="stat-grid">
-        <div class="stat-box"><div class="stat-lbl">KW ${kw}</div><div class="stat-num">${wocheMin}<span class="stat-unit">min</span></div><div style="font-size:12px;color:var(--tx3);margin-top:2px">${toStd(wocheMin)}</div></div>
-        <div class="stat-box"><div class="stat-lbl">KW ${kw} Verdienst</div><div class="stat-num" style="font-size:20px">${toEuro(wocheMin)}</div></div>
+      <div class="stat-card">
+        ${weekDays.map(d=>`<div style="margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">
+            <span style="font-size:14px;font-weight:${d.isToday?'600':'400'};color:${d.isToday?'var(--accent)':'var(--tx)'}">${d.name} ${parseInt(d.ds.split('-')[2])}.</span>
+            <span style="font-size:13px;color:var(--tx2)">${d.min?d.min+' min · '+toEuro(d.min):'–'}</span>
+          </div>
+          ${d.min?`<div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${Math.round((d.min/maxDayMin)*100)}%"></div></div>`:''}
+        </div>`).join('')}
       </div>
       <div class="stat-grid">
+        <div class="stat-box"><div class="stat-lbl">KW ${kw}</div><div class="stat-num">${wocheMin}<span class="stat-unit">min</span></div><div style="font-size:12px;color:var(--tx3);margin-top:2px">${toStd(wocheMin)} · ${toEuro(wocheMin)}</div></div>
         <div class="stat-box"><div class="stat-lbl">${monatName}</div><div class="stat-num">${monatMin}<span class="stat-unit">min</span></div><div style="font-size:12px;color:var(--tx3);margin-top:2px">${toStd(monatMin)}</div></div>
-        <div class="stat-box" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center"><div class="stat-lbl">${monatName} Verdienst</div><div style="font-size:26px;font-weight:700;color:#E24B4A;margin-top:4px">${toEuro(monatMin)}</div></div>
-      </div>`;
+      </div>
+      <div class="stat-box" style="text-align:center"><div class="stat-lbl">${monatName} Verdienst</div><div style="font-size:28px;font-weight:700;color:#E24B4A;margin-top:4px">${toEuro(monatMin)}</div></div>
+    `;
   } else if(tab==="monat"){
-    content2=`<div class="stat-card">`;
-    sortedMonths.forEach(([m,min])=>{
-      const [y,mo]=m.split("-");
-      const mName=["Jan","Feb","Mär","Apr","Mai","Jun","Jul","Aug","Sep","Okt","Nov","Dez"][parseInt(mo)-1];
-      const maxMin=sortedMonths[0][1]||1;
-      const isCurrent=m===monatStr;
-      content2+=`<div style="margin-bottom:14px">
-        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px">
-          <span style="font-size:14px;font-weight:${isCurrent?'600':'400'};color:${isCurrent?'var(--accent)':'var(--tx)'}">${mName} ${y}</span>
-          <div style="text-align:right">
-            <span style="font-size:20px;font-weight:700;color:var(--tx)">${min}<span style="font-size:12px;font-weight:400;color:var(--tx2)"> min</span></span>
-            <span style="font-size:12px;color:var(--tx3);margin-left:6px">${toStd(min)} · ${toEuro(min)}</span>
+    const sortedMonths2=Object.entries(allMonths).sort((a,b)=>b[0].localeCompare(a[0]));
+    content2=`<div class="stat-card">
+      ${sortedMonths2.map(([m,min])=>{
+        const [y,mo]=m.split("-");
+        const mName=["Jan","Feb","Mär","Apr","Mai","Jun","Jul","Aug","Sep","Okt","Nov","Dez"][parseInt(mo)-1];
+        const maxMin=sortedMonths2[0][1]||1;
+        const isCurrent=m===monatStr;
+        return`<div style="margin-bottom:14px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px">
+            <span style="font-size:14px;font-weight:${isCurrent?'600':'400'};color:${isCurrent?'var(--accent)':'var(--tx)'}">${mName} ${y}</span>
+            <div style="text-align:right">
+              <span style="font-size:20px;font-weight:700;color:var(--tx)">${min}<span style="font-size:12px;font-weight:400;color:var(--tx2)"> min</span></span>
+              <span style="font-size:12px;color:var(--tx3);margin-left:6px">${toStd(min)} · ${toEuro(min)}</span>
+            </div>
           </div>
-        </div>
-        <div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${Math.round((min/maxMin)*100)}%"></div></div>
-      </div>`;
-    });
-    content2+=`</div>`;
+          <div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${Math.round((min/maxMin)*100)}%"></div></div>
+        </div>`;
+      }).join('')}
+    </div>`;
   } else if(tab==="jahr"){
-    content2=`<div class="stat-card">`;
-    sortedYears.forEach(([y,min])=>{
-      const maxMin=sortedYears[0][1]||1;
-      const isCurrent=y===jahrStr;
-      content2+=`<div style="margin-bottom:12px">
-        <div style="display:flex;justify-content:space-between;margin-bottom:4px">
-          <span style="font-size:14px;font-weight:${isCurrent?'600':'400'};color:${isCurrent?'var(--accent)':'var(--tx)'}">${y}</span>
-          <span style="font-size:14px;color:var(--tx2)">${toStd(min)} · ${toEuro(min)}</span>
-        </div>
-        <div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${Math.round((min/maxMin)*100)}%"></div></div>
-      </div>`;
-    });
-    content2+=`</div>`;
+    const sortedYears2=Object.entries(allYears).sort((a,b)=>b[0].localeCompare(a[0]));
+    content2=`<div class="stat-card">
+      ${sortedYears2.map(([y,min])=>{
+        const maxMin=sortedYears2[0][1]||1;
+        const isCurrent=y===jahrStr;
+        return`<div style="margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">
+            <span style="font-size:14px;font-weight:${isCurrent?'600':'400'};color:${isCurrent?'var(--accent)':'var(--tx)'}">${y}</span>
+            <span style="font-size:14px;color:var(--tx2)">${toStd(min)} · ${toEuro(min)}</span>
+          </div>
+          <div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${Math.round((min/maxMin)*100)}%"></div></div>
+        </div>`;
+      }).join('')}
+    </div>`;
   }
 
   let html=`<div class="screen active" id="scr-abrech">
@@ -2357,9 +2405,10 @@ function renderAbrechnung(tab="woche"){
         <span class="topbar-title"><i class="ti ti-receipt" style="font-size:18px;margin-right:6px"></i>Abrechnung</span>
       </div>
       <div style="display:flex">
-        ${tabBtn("woche","Woche")}
-        ${tabBtn("monat","Monate")}
-        ${tabBtn("jahr","Jahre")}
+        ${tabBtn("woche","Aktuell")}
+        ${tabBtn("woche7","Woche")}
+        ${tabBtn("monat","Monat")}
+        ${tabBtn("jahr","Jahr")}
       </div>
     </div>
     <div class="scroll">
@@ -2396,40 +2445,6 @@ function getKW(date){
   d.setUTCDate(d.getUTCDate()+4-dayNum);
   const yearStart=new Date(Date.UTC(d.getUTCFullYear(),0,1));
   return Math.ceil((((d-yearStart)/86400000)+1)/7);
-}
-
-// ── BOOT ──────────────────────────────────────────────────────────────────────
-// Try to load from cloud first, fallback to localStorage
-// Sidebar resize
-function initSidebarResize(){
-  const handle=document.getElementById("ipad-resize-handle");
-  const sidebar=document.getElementById("ipad-sidebar");
-  if(!handle||!sidebar)return;
-  let startX=0,startW=0;
-  handle.addEventListener("pointerdown",e=>{
-    startX=e.clientX;startW=sidebar.offsetWidth;
-    handle.setPointerCapture(e.pointerId);
-    document.body.style.userSelect="none";
-    e.preventDefault();
-  });
-  handle.addEventListener("pointermove",e=>{
-    if(e.buttons===0)return;
-    const w=Math.max(200,Math.min(520,startW+e.clientX-startX));
-    sidebar.style.width=w+"px";
-  });
-  handle.addEventListener("pointerup",()=>{
-    document.body.style.userSelect="";
-  });
-  handle.style.cursor="col-resize";
-}
-
-// iPad detection
-const IS_IPAD = window.innerWidth >= 768;
-
-if(IS_IPAD){
-  document.getElementById("app").style.display="none";
-  document.getElementById("ipad-app").style.display="flex";
-  setTimeout(initSidebarResize, 100);
 }
 
 (async()=>{
