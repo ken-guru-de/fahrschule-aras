@@ -2294,11 +2294,11 @@ function renderAbrechnung(tab="woche"){
         <div class="stat-box accent"><div class="stat-lbl">Heute</div><div class="stat-num" style="font-size:18px">${toEuro(tagMin)}</div></div>
       </div>
       <div class="stat-grid">
-        <div class="stat-box"><div class="stat-lbl">KW ${kw}</div><div class="stat-num" style="font-size:20px">${toStd(wocheMin)}<span class="stat-unit" style="font-size:12px"> · ${wocheMin} min</span></div></div>
+        <div class="stat-box"><div class="stat-lbl">KW ${kw}</div><div class="stat-num">${wocheMin}<span class="stat-unit">min</span></div><div style="font-size:12px;color:var(--tx3);margin-top:2px">${toStd(wocheMin)}</div></div>
         <div class="stat-box"><div class="stat-lbl">KW ${kw} Verdienst</div><div class="stat-num" style="font-size:20px">${toEuro(wocheMin)}</div></div>
       </div>
       <div class="stat-grid">
-        <div class="stat-box"><div class="stat-lbl">${monatName}</div><div class="stat-num" style="font-size:20px">${toStd(monatMin)}<span class="stat-unit" style="font-size:12px"> · ${monatMin} min</span></div></div>
+        <div class="stat-box"><div class="stat-lbl">${monatName}</div><div class="stat-num">${monatMin}<span class="stat-unit">min</span></div><div style="font-size:12px;color:var(--tx3);margin-top:2px">${toStd(monatMin)}</div></div>
         <div class="stat-box"><div class="stat-lbl">${monatName} Verdienst</div><div class="stat-num" style="font-size:20px">${toEuro(monatMin)}</div></div>
       </div>`;
   } else if(tab==="monat"){
@@ -2308,10 +2308,13 @@ function renderAbrechnung(tab="woche"){
       const mName=["Jan","Feb","Mär","Apr","Mai","Jun","Jul","Aug","Sep","Okt","Nov","Dez"][parseInt(mo)-1];
       const maxMin=sortedMonths[0][1]||1;
       const isCurrent=m===monatStr;
-      content2+=`<div style="margin-bottom:12px">
-        <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+      content2+=`<div style="margin-bottom:14px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px">
           <span style="font-size:14px;font-weight:${isCurrent?'600':'400'};color:${isCurrent?'var(--accent)':'var(--tx)'}">${mName} ${y}</span>
-          <span style="font-size:14px;color:var(--tx2)">${toStd(min)} · ${toEuro(min)}</span>
+          <div style="text-align:right">
+            <span style="font-size:20px;font-weight:700;color:var(--tx)">${min}<span style="font-size:12px;font-weight:400;color:var(--tx2)"> min</span></span>
+            <span style="font-size:12px;color:var(--tx3);margin-left:6px">${toStd(min)} · ${toEuro(min)}</span>
+          </div>
         </div>
         <div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${Math.round((min/maxMin)*100)}%"></div></div>
       </div>`;
