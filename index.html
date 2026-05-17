@@ -2233,6 +2233,17 @@ function renderAbrechnung(tab="woche",weekOffset=0){
   const selMonatMin=getMin(selMonatStr);
   const monatMin=getMin(monatStr);
 
+  // Next working day with termine if today is empty
+  let nextDayMin=0;let tagLabel="Heute";
+  if(tagMin===0){
+    const nextKeys=Object.keys(termine).filter(d=>d>td).sort();
+    if(nextKeys.length){
+      const nd=nextKeys[0];
+      nextDayMin=(termine[nd]||[]).reduce((a,e)=>a+(e.min||0),0);
+      const fnd=fmtDate(nd);
+      tagLabel=fnd.day+". "+fnd.mon;
+    }
+  }
   const wochentageNamen=["Mo","Di","Mi","Do","Fr","Sa","So"];
   const weekDays=[];
   for(let i=0;i<5;i++){
@@ -2271,8 +2282,8 @@ function renderAbrechnung(tab="woche",weekOffset=0){
         <button onclick="renderAbrechnung('woche',${weekOffset+1})" style="background:none;border:none;cursor:pointer;color:${weekOffset<0?'var(--accent)':'var(--tx3)'};font-size:24px;padding:4px 12px"><i class="ti ti-chevron-right"></i></button>
       </div>
       <div class="stat-grid">
-        <div class="stat-box accent"><div class="stat-lbl">Heute</div><div class="stat-num">${tagMin}<span class="stat-unit">min</span></div></div>
-        <div class="stat-box accent"><div class="stat-lbl">Heute</div><div class="stat-num" style="font-size:18px">${toEuro(tagMin)}</div></div>
+        <div class="stat-box accent"><div class="stat-lbl">${tagMin===0&&tagLabel!=="Heute"?tagLabel:"Heute"}</div><div class="stat-num">${tagMin===0?nextDayMin:tagMin}<span class="stat-unit">min</span></div></div>
+        <div class="stat-box accent"><div class="stat-lbl">${tagMin===0&&tagLabel!=="Heute"?tagLabel:"Heute"}</div><div class="stat-num" style="font-size:18px">${toEuro(tagMin===0?nextDayMin:tagMin)}</div></div>
       </div>
       <div class="stat-card">
         ${weekDays.map(d=>`<div style="margin-bottom:10px;cursor:pointer" onclick="renderTagAnsicht('${d.ds}')">
