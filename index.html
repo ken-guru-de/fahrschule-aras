@@ -27,7 +27,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:-apple-sy
 .screen.active{display:flex;}
 .topbar{display:flex;align-items:center;gap:8px;padding:calc(var(--safe-top) + 10px) 20px 12px;border-bottom:none;background:var(--accent-dark);flex-shrink:0;min-height:52px;}
 .topbar-title{font-size:18px;font-weight:600;flex:1;color:white;}
-.btn-icon{background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.85);font-size:22px;display:flex;align-items:center;padding:8px;border-radius:10px;min-width:44px;min-height:44px;justify-content:center;}
+.btn-icon{background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.9);font-size:28px;display:flex;align-items:center;padding:6px;border-radius:10px;min-width:44px;min-height:44px;justify-content:center;}
 .btn-icon:active{background:rgba(255,255,255,0.15);}
 .btn-icon.dark{color:var(--tx2);}
 .btn-icon.dark:active{background:var(--bg2);}
@@ -1912,6 +1912,7 @@ function renderApp(html){
 function syncKalenderToFahrstunden(){
   schueler.forEach(s=>{
     s.fahrstunden=[];
+    const prevSonder={...(s.sonder&&!Array.isArray(s.sonder)?s.sonder:{ueberland:0,autobahn:0,nacht:0})};
     s.sonder={ueberland:0,autobahn:0,nacht:0};
     Object.entries(termine).forEach(([datum,ts])=>{
       ts.filter(t=>t.sid===s.id).forEach(t=>{
@@ -1940,6 +1941,10 @@ function syncKalenderToFahrstunden(){
       });
     });
     s.fahrstunden.sort((a,b)=>b.datum.localeCompare(a.datum)||(b.uhr||"").localeCompare(a.uhr||""));
+    // Keep higher manual values
+    ['ueberland','autobahn','nacht'].forEach(k=>{
+      if((prevSonder[k]||0)>(s.sonder[k]||0))s.sonder[k]=prevSonder[k];
+    });
   });
 }
 function renderDashSchueler(sid){
