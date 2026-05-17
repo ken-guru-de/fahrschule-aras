@@ -698,6 +698,13 @@ function renderNeuSchueler(fromSid){
     <div class="scroll">
       <div id="toast-neu" class="toast"><i class="ti ti-circle-check" style="font-size:16px"></i><span id="toast-neu-msg"></span></div>
       <div><div class="sec-label">Name</div>
+      <div class="card" style="margin-bottom:12px;padding:16px;display:flex;align-items:center;gap:16px">
+        ${s?(`<div onclick="triggerFotoUpload('${s.id}')" style="cursor:pointer;flex-shrink:0">
+          ${s.foto?`<div class="foto-circle" style="width:64px;height:64px"><img src="${s.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/><div class="foto-overlay"><i class="ti ti-camera"></i></div></div>`
+          :`<div class="foto-initials av-${s.farbe}" style="width:64px;height:64px;font-size:20px;display:flex;align-items:center;justify-content:center;border-radius:50%">${initials(s)}<div class="foto-overlay"><i class="ti ti-camera"></i></div></div>`}
+          <input type="file" id="foto-input-${s.id}" accept="image/*" style="display:none" onchange="saveFoto('${s.id}',this)"/>
+        </div><div style="font-size:13px;color:var(--tx3)">Foto antippen</div>`):""}
+      </div>
       <div class="card">
         <div class="card-row"><span class="card-label"><i class="ti ti-user"></i>Vorname</span><input type="text" id="n-vn" value="${s?s.vorname:""}" placeholder="Pflichtfeld"/></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-user"></i>Nachname</span><input type="text" id="n-nn" value="${s?s.nachname:""}" placeholder="Pflichtfeld"/></div>
