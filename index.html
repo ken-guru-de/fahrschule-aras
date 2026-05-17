@@ -2443,7 +2443,7 @@ function exportMonatPDF(monatStr){
   <td class="total">${toStd(total)}</td>
   <td class="total" style="color:#E24B4A">${toEuro(total)}</td></tr>
   </table>
-  <br><button onclick="window.print()" style="background:#FF6B2B;color:white;border:none;padding:10px 20px;border-radius:8px;font-size:15px;cursor:pointer">Drucken / Als PDF speichern</button>
+  <br><div style="display:flex;gap:10px;margin-top:8px"><button onclick="window.print()" style="background:#FF6B2B;color:white;border:none;padding:10px 20px;border-radius:8px;font-size:15px;cursor:pointer">🖨️ Drucken / Als PDF speichern</button><button onclick="window.close()" style="background:#eee;color:#333;border:none;padding:10px 20px;border-radius:8px;font-size:15px;cursor:pointer">✕ Schließen</button></div>
   </body></html>`;
   
   const w=window.open('','_blank');
