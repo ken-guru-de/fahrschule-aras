@@ -2418,21 +2418,21 @@ function exportMonatPDF(monatStr){
     const min=(termine[ds]||[]).reduce((a,t)=>a+(t.min||0),0);
     total+=min;
     rows+=`<tr style="background:${min?'#fff':'#f9f9f9'}">
-      <td style="padding:11px 14px;border-bottom:1px solid #eee;color:#666">${wochentage[dow]}</td>
-      <td style="padding:11px 14px;border-bottom:1px solid #eee;font-weight:600">${d}. ${monatName}</td>
-      <td style="padding:11px 14px;border-bottom:1px solid #eee;text-align:right">${min?min+' min':'-'}</td>
-      <td style="padding:11px 14px;border-bottom:1px solid #eee;text-align:right">${min?toStd(min):'-'}</td>
-      <td style="padding:11px 14px;border-bottom:1px solid #eee;text-align:right;color:${min?'#E24B4A':'#999'}">${min?toEuro(min):'-'}</td>
+      <td style="padding:14px 16px;border-bottom:1px solid #eee;color:#666">${wochentage[dow]}</td>
+      <td style="padding:14px 16px;border-bottom:1px solid #eee;font-weight:600">${d}. ${monatName}</td>
+      <td style="padding:14px 16px;border-bottom:1px solid #eee;text-align:right">${min?min+' min':'-'}</td>
+      <td style="padding:14px 16px;border-bottom:1px solid #eee;text-align:right">${min?toStd(min):'-'}</td>
+      <td style="padding:14px 16px;border-bottom:1px solid #eee;text-align:right;color:${min?'#E24B4A':'#999'}">${min?toEuro(min):'-'}</td>
     </tr>`;
   }
   
   const html=`<!DOCTYPE html><html><head><meta charset="utf-8">
   <title>Abrechnung ${monatName} ${y}</title>
   <style>body{font-family:-apple-system,sans-serif;padding:20px;color:#333}
-  h1{font-size:20px;margin-bottom:4px}h2{font-size:14px;color:#666;font-weight:normal;margin-bottom:20px}
-  table{width:100%;border-collapse:collapse;font-size:17px}th{padding:12px 14px;background:#FF6B2B;color:white;text-align:left;font-size:16px}
-  td{font-size:17px}
-  .total{font-weight:700;font-size:20px;padding:14px;text-align:right;border-top:2px solid #FF6B2B}
+  h1{font-size:26px;margin-bottom:4px}h2{font-size:18px;color:#666;font-weight:normal;margin-bottom:20px}
+  table{width:100%;border-collapse:collapse;font-size:20px}th{padding:14px 16px;background:#FF6B2B;color:white;text-align:left;font-size:19px}
+  td{font-size:20px}
+  .total{font-weight:700;font-size:23px;padding:16px;text-align:right;border-top:2px solid #FF6B2B}
   @media print{button{display:none}}</style></head>
   <body>
   <h1>Fahrschule Aras — Abrechnung ${monatName} ${y}</h1>
