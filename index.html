@@ -427,7 +427,8 @@ function renderDashboard(dashDateOffset=0){
     initPTR();
     const lbl=document.getElementById("ddb-lbl");
     const min=document.getElementById("ddb-min");
-    if(lbl)lbl.textContent=anzeigeLblShort+" geplant";
+    const isPast=anzeigeDatum<td;
+    if(lbl)lbl.textContent=anzeigeLblShort+(isPast?" gefahren":" geplant");
     if(min)min.innerHTML=anzeigeTotalMin+'<span class="stat-unit">min</span>';
   },10);
 }
