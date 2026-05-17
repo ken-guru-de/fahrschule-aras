@@ -2418,11 +2418,11 @@ function exportMonatPDF(monatStr){
     const min=(termine[ds]||[]).reduce((a,t)=>a+(t.min||0),0);
     total+=min;
     rows+=`<tr style="background:${min?'#fff':'#f9f9f9'}">
-      <td style="padding:6px 10px;border-bottom:1px solid #eee;color:#666">${wochentage[dow]}</td>
-      <td style="padding:6px 10px;border-bottom:1px solid #eee;font-weight:600">${d}. ${monatName}</td>
-      <td style="padding:6px 10px;border-bottom:1px solid #eee;text-align:right">${min?min+' min':'-'}</td>
-      <td style="padding:6px 10px;border-bottom:1px solid #eee;text-align:right">${min?toStd(min):'-'}</td>
-      <td style="padding:6px 10px;border-bottom:1px solid #eee;text-align:right;color:${min?'#E24B4A':'#999'}">${min?toEuro(min):'-'}</td>
+      <td style="padding:11px 14px;border-bottom:1px solid #eee;color:#666">${wochentage[dow]}</td>
+      <td style="padding:11px 14px;border-bottom:1px solid #eee;font-weight:600">${d}. ${monatName}</td>
+      <td style="padding:11px 14px;border-bottom:1px solid #eee;text-align:right">${min?min+' min':'-'}</td>
+      <td style="padding:11px 14px;border-bottom:1px solid #eee;text-align:right">${min?toStd(min):'-'}</td>
+      <td style="padding:11px 14px;border-bottom:1px solid #eee;text-align:right;color:${min?'#E24B4A':'#999'}">${min?toEuro(min):'-'}</td>
     </tr>`;
   }
   
@@ -2430,8 +2430,9 @@ function exportMonatPDF(monatStr){
   <title>Abrechnung ${monatName} ${y}</title>
   <style>body{font-family:-apple-system,sans-serif;padding:20px;color:#333}
   h1{font-size:20px;margin-bottom:4px}h2{font-size:14px;color:#666;font-weight:normal;margin-bottom:20px}
-  table{width:100%;border-collapse:collapse}th{padding:8px 10px;background:#FF6B2B;color:white;text-align:left}
-  .total{font-weight:700;font-size:16px;padding:10px;text-align:right;border-top:2px solid #FF6B2B}
+  table{width:100%;border-collapse:collapse;font-size:17px}th{padding:12px 14px;background:#FF6B2B;color:white;text-align:left;font-size:16px}
+  td{font-size:17px}
+  .total{font-weight:700;font-size:20px;padding:14px;text-align:right;border-top:2px solid #FF6B2B}
   @media print{button{display:none}}</style></head>
   <body>
   <h1>Fahrschule Aras — Abrechnung ${monatName} ${y}</h1>
@@ -2443,7 +2444,7 @@ function exportMonatPDF(monatStr){
   <td class="total">${toStd(total)}</td>
   <td class="total" style="color:#E24B4A">${toEuro(total)}</td></tr>
   </table>
-  <br><div style="display:flex;flex-direction:column;gap:12px;margin-top:16px"><button onclick="window.print()" style="background:#FF6B2B;color:white;border:none;padding:40px 16px;border-radius:16px;font-size:22px;font-weight:700;cursor:pointer;width:100%">🖨️ Drucken / Als PDF speichern</button><button onclick="window.close()" style="background:#eee;color:#333;border:none;padding:40px 16px;border-radius:16px;font-size:22px;font-weight:700;cursor:pointer;width:100%">✕ Schließen</button></div>
+  <br><div style="display:flex;flex-direction:column;gap:12px;margin-top:16px"><button onclick="window.print()" style="background:#FF6B2B;color:white;border:none;padding:52px 16px;border-radius:18px;font-size:24px;font-weight:700;cursor:pointer;width:100%">🖨️ Drucken / Als PDF speichern</button><button onclick="window.close()" style="background:#eee;color:#333;border:none;padding:52px 16px;border-radius:18px;font-size:24px;font-weight:700;cursor:pointer;width:100%">✕ Schließen</button></div>
   </body></html>`;
   
   const w=window.open('','_blank');
