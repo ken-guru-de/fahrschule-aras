@@ -2043,9 +2043,16 @@ function renderDashSchueler(sid){
 function toggleSonderSchueler(sid,key,min){
   const s=getS(sid);if(!s)return;
   if(!s.sonder||Array.isArray(s.sonder))s.sonder={ueberland:0,autobahn:0,nacht:0};
-  s.sonder[key]=(s.sonder[key]||0)>=min?0:min;
+  const isDone=(s.sonder[key]||0)>=min;
+  s.sonder[key]=isDone?0:min;
   saveAll();
-  renderNeuSchueler(sid);
+  // Update DOM without re-render
+  const icon=document.getElementById("sf-icon-"+key);
+  const label=document.getElementById("sf-label-"+key);
+  const inp=document.getElementById("sf-"+key);
+  if(icon){icon.className="ti "+(isDone?"ti-square":"ti-checkbox");icon.style.color=isDone?"var(--tx3)":"var(--accent)";}
+  if(label){label.style.textDecoration=isDone?"none":"line-through";label.style.color=isDone?"var(--tx)":"var(--tx3)";}
+  if(inp)inp.value=isDone?0:min;
 }
 
 function toggleSonderEdit(key,min){
