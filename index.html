@@ -322,7 +322,7 @@ function todayMinCheck(){}
 function farbStyle(farbe){const f=FARBEN.find(x=>x.key===farbe)||FARBEN[0];return`background:${f.bg};color:${f.tx}`;}
 
 // ── DASHBOARD ─────────────────────────────────────────────────────────────────
-function renderDashboard(){
+function renderDashboard(dashDateOffset=0){
   const td=todayStr();
   const heuteTermine=(termine[td]||[]).sort((a,b)=>a.uhr.localeCompare(b.uhr));
   const allePruef=[];
@@ -353,20 +353,35 @@ function renderDashboard(){
         <div class="stat-box"><div class="stat-lbl">Heute gefahren</div><div class="stat-num">${todayTotalMin()}<span class="stat-unit">min</span></div></div>
       </div>`;
 
-  // Find next day with termine if today empty
+  // Find display date based on offset
   let anzeigeDatum=td;
   let anzeigeLabel="Heute";
-  if(!heuteTermine.length){
+  if(dashDateOffset===0&&!heuteTermine.length){
     const alleKeys=Object.keys(termine).filter(d=>d>td).sort();
     if(alleKeys.length){
       anzeigeDatum=alleKeys[0];
       const fd2=fmtDate(anzeigeDatum);
       anzeigeLabel="Nächster Termin · "+fd2.day+". "+fd2.mon;
     }
+  } else if(dashDateOffset!==0){
+    // Navigate by working days
+    const allKeys=Object.keys(termine).filter(d=>{const day=new Date(d).getDay();return day>=1&&day<=5;}).sort();
+    const todayIdx=allKeys.findIndex(d=>d>=td);
+    const targetIdx=Math.max(0,Math.min(allKeys.length-1,(todayIdx<0?allKeys.length-1:todayIdx)+dashDateOffset));
+    if(allKeys[targetIdx]){
+      anzeigeDatum=allKeys[targetIdx];
+      const fd2=fmtDate(anzeigeDatum);
+      anzeigeLabel=anzeigeDatum===td?"Heute":fd2.day+". "+fd2.mon+" "+fd2.year;
+    }
   }
   const anzeigeTermine=(termine[anzeigeDatum]||[]).sort((a,b)=>a.uhr.localeCompare(b.uhr));
 
-  html+=`<div><div class="sec-label">${anzeigeLabel}</div>`;
+  html+=`<div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+      <button onclick="renderDashboard(${dashDateOffset-1})" style="background:var(--accent);border:none;border-radius:10px;color:white;font-size:20px;padding:8px 16px;cursor:pointer"><i class="ti ti-chevron-left"></i></button>
+      <span style="font-size:12px;font-weight:600;letter-spacing:.05em;color:var(--tx3);text-transform:uppercase">${anzeigeLabel}</span>
+      <button onclick="renderDashboard(${dashDateOffset+1})" style="background:var(--accent);border:none;border-radius:10px;color:white;font-size:20px;padding:8px 16px;cursor:pointer"><i class="ti ti-chevron-right"></i></button>
+    </div>`;
   if(anzeigeTermine.length){
     anzeigeTermine.forEach((t,ti)=>{
       const s=getS(t.sid);if(!s)return;
@@ -382,7 +397,6 @@ function renderDashboard(){
     html+=`<div style="padding:12px 0;font-size:13px;color:var(--tx3)">Keine Termine geplant</div>`;
   }
   html+=`</div>`;
-
   if(allePruef.length){
     html+=`<div><div class="sec-label">Prüfungen (${allePruef.length})</div>`;
     allePruef.forEach(ep=>{
