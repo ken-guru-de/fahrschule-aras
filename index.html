@@ -349,7 +349,7 @@ function renderDashboard(){
     </div>
     <div class="scroll">
       <div class="stat-grid">
-        <div class="stat-box accent"><div class="stat-lbl">Aktive Schüler</div><div class="stat-num">${schueler.length}</div></div>
+        <div class="stat-box accent"><div class="stat-lbl">Aktive Schüler</div><div class="stat-num">${schueler.filter(s=>!(s.pruefungen||[]).some(p=>p.bestanden===true)).length}</div></div>
         <div class="stat-box"><div class="stat-lbl">Heute gefahren</div><div class="stat-num">${todayTotalMin()}<span class="stat-unit">min</span></div></div>
       </div>`;
 
