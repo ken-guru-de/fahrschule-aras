@@ -350,7 +350,7 @@ function renderDashboard(dashDateOffset=0){
     <div class="scroll">
       <div class="stat-grid">
         <div class="stat-box accent"><div class="stat-lbl">Aktive Schüler</div><div class="stat-num">${schueler.filter(s=>!(s.pruefungen||[]).some(p=>p.bestanden===true)).length}</div></div>
-        <div class="stat-box"><div class="stat-lbl">Heute geplant</div><div class="stat-num">${(termine[td]||[]).reduce((a,t)=>a+(t.min||0),0)}<span class="stat-unit">min</span></div></div>
+        <div class="stat-box"><div class="stat-lbl" id="ddb-lbl">Heute geplant</div><div class="stat-num" id="ddb-min">0<span class="stat-unit">min</span></div></div>
       </div>`;
 
   // Find display date based on offset
@@ -375,6 +375,8 @@ function renderDashboard(dashDateOffset=0){
     }
   }
   const anzeigeTermine=(termine[anzeigeDatum]||[]).sort((a,b)=>a.uhr.localeCompare(b.uhr));
+  const anzeigeTotalMin=anzeigeTermine.reduce((a,t)=>a+(t.min||0),0);
+  const anzeigeLblShort=anzeigeDatum===td?"Heute":fmtDate(anzeigeDatum).day+". "+fmtDate(anzeigeDatum).mon;
 
   html+=`<div>
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
@@ -421,7 +423,13 @@ function renderDashboard(dashDateOffset=0){
     <input type="file" id="import-input" accept=".json" style="display:none" onchange="importDaten(this)"/>
   </div></div></div>`;
   renderApp(html);
-  setTimeout(initPTR,50);
+  setTimeout(()=>{
+    initPTR();
+    const lbl=document.getElementById("ddb-lbl");
+    const min=document.getElementById("ddb-min");
+    if(lbl)lbl.textContent=anzeigeLblShort+" geplant";
+    if(min)min.innerHTML=anzeigeTotalMin+'<span class="stat-unit">min</span>';
+  },10);
 }
 
 // ── SCHÜLERLISTE ──────────────────────────────────────────────────────────────
