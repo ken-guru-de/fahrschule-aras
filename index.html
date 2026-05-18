@@ -1991,11 +1991,11 @@ function renderDashSchueler(sid){
     <div class="scroll">
       <div class="stat-grid">
         <div class="stat-box" style="text-align:center;background:rgba(59,130,246,0.18);border:1px solid rgba(59,130,246,0.35);"><div class="stat-lbl" style="color:#3B82F6">Klasse</div><div class="stat-num" style="font-size:28px;color:#1D4ED8">${s.klasse}</div></div>
-        <div class="stat-box"><div class="stat-lbl">Beginn</div><div class="stat-num" style="font-size:16px">${fmtDate(s.beginn).day}. ${fmtDate(s.beginn).mon} ${fmtDate(s.beginn).year}</div></div>
+        <div class="stat-box" style="text-align:center;background:rgba(39,168,67,0.12);border:1px solid rgba(39,168,67,0.3)"><div class="stat-lbl" style="color:#27A843">Beginn</div><div class="stat-num" style="font-size:16px;color:#166534">${fmtDate(s.beginn).day}. ${fmtDate(s.beginn).mon} ${fmtDate(s.beginn).year}</div></div>
       </div>
       <div class="stat-grid">
-        <div class="stat-box accent" onclick="toggleFahrstundenDash('${sid}','past')" style="cursor:pointer;text-align:center"><div class="stat-lbl">Fahrstunden</div><div class="stat-num">${fahrstundenGesamt}<span class="stat-unit">×</span></div><div style="font-size:11px;color:rgba(255,255,255,.7);margin-top:2px">${fahrstundenMin} min</div></div>
-        <div class="stat-box" onclick="toggleFahrstundenDash('${sid}','future')" style="cursor:pointer;text-align:center"><div class="stat-lbl">Geplant</div><div class="stat-num">${geplant.length}<span class="stat-unit">×</span></div><div style="font-size:11px;color:var(--tx3);margin-top:2px">${geplantMin} min</div></div>
+        <div class="stat-box accent" onclick="toggleFahrstundenDash('${sid}','past')" style="cursor:pointer;text-align:center;background:linear-gradient(135deg,rgba(255,120,50,0.9),rgba(210,55,0,0.95));border:1px solid rgba(255,170,100,0.6);box-shadow:0 4px 16px rgba(255,107,43,0.35)"><div class="stat-lbl">Fahrstunden</div><div class="stat-num">${fahrstundenGesamt}<span class="stat-unit">×</span></div><div style="font-size:11px;color:rgba(255,255,255,.7);margin-top:2px">${fahrstundenMin} min</div></div>
+        <div class="stat-box" onclick="toggleFahrstundenDash('${sid}','future')" style="cursor:pointer;text-align:center;background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.3)"><div class="stat-lbl" style="color:#6366F1">Geplant</div><div class="stat-num" style="color:#4338CA">${geplant.length}<span class="stat-unit" style="color:#6366F1">×</span></div><div style="font-size:11px;color:#6366F1;margin-top:2px">${geplantMin} min</div></div>
       </div>
       <div id="fs-list-${sid}" style="display:none"></div>
 
