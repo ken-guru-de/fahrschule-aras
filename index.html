@@ -1959,9 +1959,11 @@ function renderDashSchueler(sid){
   const fahrstundenGesamt=(s.fahrstunden||[]).length;
   const fahrstundenMin=(s.fahrstunden||[]).reduce((a,f)=>a+(f.min||80),0);
   const naechstePruef=(()=>{
-    const p=(s.pruefungen||[]).find(p=>p.datum>=td&&!p.bestanden);
+    // Show upcoming without result, OR most recent past prüfung
+    const sorted=(s.pruefungen||[]).slice().sort((a,b)=>b.datum.localeCompare(a.datum));
+    const upcoming=sorted.find(p=>p.datum>=td&&p.bestanden===null||p.datum>=td&&p.bestanden===undefined);
+    const p=upcoming||sorted[0]||null;
     if(!p)return null;
-    // If uhr missing, try to get from Kalender
     if(!p.uhr){
       const kt=(termine[p.datum]||[]).find(t=>t.sid===sid&&t.min===100);
       if(kt)p.uhr=kt.uhr;
@@ -2014,10 +2016,10 @@ function renderDashSchueler(sid){
         <div class="card-row"><span class="card-label"><i class="ti ti-book"></i>Theorie</span>
           <span class="info-val">${s.theorie?"✓ Bestanden":"Ausstehend"}</span></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-calendar-event"></i>Prüfung</span>
-          <span class="info-val">${naechstePruef?fmtDate(naechstePruef.datum).day+". "+fmtDate(naechstePruef.datum).mon+" "+fmtDate(naechstePruef.datum).year+(naechstePruef.uhr?`<br><span style="font-size:13px;color:var(--tx2)">`+naechstePruef.uhr+" Uhr</span>":""):"–"}</span></div>
+          <span class="info-val">${naechstePruef?(fmtDate(naechstePruef.datum).day+". "+fmtDate(naechstePruef.datum).mon+" "+fmtDate(naechstePruef.datum).year+(naechstePruef.uhr?`<br><span style="font-size:13px;color:var(--tx2)">`+naechstePruef.uhr+" Uhr</span>":"")+  (naechstePruef.bestanden===true?`<br><span style="font-size:13px;font-weight:700;color:#27A843">✓ Bestanden</span>`:naechstePruef.bestanden===false?`<br><span style="font-size:13px;font-weight:700;color:#E24B4A">✗ Nicht bestanden</span>`:"")):"–"}</span></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-map-pin"></i>Prüfort</span>
           <span class="info-val">${naechstePruef&&naechstePruef.prufort?naechstePruef.prufort:s.prufort||"–"}</span></div>
-        ${naechstePruef?`<div class="card-row" style="padding-top:8px;gap:8px">
+        ${naechstePruef&&naechstePruef.bestanden===null||naechstePruef&&naechstePruef.bestanden===undefined?`<div class="card-row" style="padding-top:8px;gap:8px">
           <button onclick="setPruefErgebnis('${sid}','${naechstePruef.datum}',true)" style="flex:1;background:rgba(39,168,67,0.15);border:1.5px solid rgba(39,168,67,0.5);border-radius:10px;color:#166534;font-size:14px;font-weight:600;padding:10px 6px;cursor:pointer;font-family:inherit">✓ Bestanden</button>
           <button onclick="setPruefErgebnis('${sid}','${naechstePruef.datum}',false)" style="flex:1;background:rgba(226,75,74,0.12);border:1.5px solid rgba(226,75,74,0.4);border-radius:10px;color:#A32D2D;font-size:14px;font-weight:600;padding:10px 6px;cursor:pointer;font-family:inherit">✗ Nicht best.</button>
         </div>`:""}
