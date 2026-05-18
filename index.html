@@ -1480,6 +1480,7 @@ function saveKalTermin(date){
 // ── STATISTIK ─────────────────────────────────────────────────────────────────
 function renderStatistik(){
   const alle=schueler.flatMap(s=>(s.pruefungen||[]).filter(p=>p.bestanden!==null&&p.bestanden!==undefined).map(p=>({...p,sid:s.id,name:s.vorname+" "+s.nachname,klasse:s.klasse,prufort:s.prufort})));
+  const alleInklOffen=schueler.flatMap(s=>(s.pruefungen||[]).map(p=>({...p,sid:s.id,name:s.vorname+" "+s.nachname,klasse:s.klasse,prufort:s.prufort})));
   const gesamt=alle.length;
   const bestanden=alle.filter(p=>p.bestanden).length;
   const quote=gesamt?Math.round((bestanden/gesamt)*100):0;
@@ -1489,7 +1490,7 @@ function renderStatistik(){
     const tot=ps.length,best=ps.filter(p=>p.bestanden).length;
     return{ort:o,tot,best,quote:tot?Math.round((best/tot)*100):null};
   }).filter(o=>o.tot>0);
-  const recent=[...alle].sort((a,b)=>{if(b.bestanden!==a.bestanden)return b.bestanden?-1:1;return b.datum.localeCompare(a.datum);}).slice(0,8);
+  const recent=[...alleInklOffen].sort((a,b)=>{const aOffen=a.bestanden===null||a.bestanden===undefined;const bOffen=b.bestanden===null||b.bestanden===undefined;if(aOffen!==bOffen)return aOffen?1:-1;if(b.bestanden!==a.bestanden)return b.bestanden?-1:1;return b.datum.localeCompare(a.datum);}).slice(0,10);
 
   let html=`<div class="screen active" id="scr-stat">
     <div class="topbar">
@@ -1527,7 +1528,10 @@ function renderStatistik(){
       html+=`<div><div class="sec-label">Letzte Prüfungen</div>`;
       recent.forEach(p=>{
         const fd=fmtDate(p.datum);
-        html+=`<div class="pruef-result-item"><div class="pruef-versuch ${p.bestanden?"pruef-best":"pruef-nicht"}">${p.versuch}</div><div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--tx)">${p.name}</div><div style="font-size:11px;color:var(--tx2);margin-top:2px">${p.versuch}. Prüfung · ${fd.day}. ${fd.mon} ${fd.year} · ${p.prufort}</div></div><span style="font-size:12px;font-weight:500;color:${p.bestanden?"#27500A":"#A32D2D"}">${p.bestanden?"✓":"✗"}</span></div>`;
+        const pOffen=p.bestanden===null||p.bestanden===undefined;
+        const badgeClass=pOffen?"":"p.bestanden?'pruef-best':'pruef-nicht'";
+        const badgeCls=pOffen?"":p.bestanden?"pruef-best":"pruef-nicht";
+        html+=`<div class="pruef-result-item"><div class="pruef-versuch ${badgeCls}" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;${pOffen?"background:rgba(99,102,241,0.15);color:#6366F1":""}">${p.versuch}</div><div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--tx)">${p.name}</div><div style="font-size:11px;color:var(--tx2);margin-top:2px">${p.versuch}. Prüfung · ${fd.day}. ${fd.mon} ${fd.year}${p.prufort?" · "+p.prufort:""}</div></div><span style="font-size:12px;font-weight:500;color:${pOffen?"#6366F1":p.bestanden?"#27500A":"#A32D2D"}">${pOffen?"⏳":p.bestanden?"✓":"✗"}</span></div>`;
       });
       html+=`</div>`;
     }
