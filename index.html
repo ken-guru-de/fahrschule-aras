@@ -2263,8 +2263,9 @@ function renderAbrechnung(tab="woche",weekOffset=0){
   const monatStr=td.substring(0,7);
   const monatName=["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"][now.getMonth()];
   const baseDate=new Date(now);
-  baseDate.setDate(baseDate.getDate()+weekOffset*7);
-  const dayOfWeek=(baseDate.getDay()+6)%7;
+  const todayDow=(baseDate.getDay()+6)%7;
+  baseDate.setDate(baseDate.getDate()-todayDow+weekOffset*7);
+  const dayOfWeek=0;
   const baseDateStr=toKey(baseDate.getFullYear(),baseDate.getMonth()+1,baseDate.getDate());
   const wocheMin=Object.entries(termine).reduce((sum,[d,ts])=>{
     const diff=Math.round((new Date(d)-new Date(baseDateStr))/86400000);
