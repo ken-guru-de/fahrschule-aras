@@ -796,7 +796,7 @@ function saveSchueler(editSid){
   if(editSid){
     const s=getS(editSid);
     s.vorname=vn;s.nachname=nn;s.spitz=sp;s.geschlecht=window._geschlecht||'m';s.tel=document.getElementById('n-tel').value.trim();s.beginn=bg;s.klasse=kl;s.prufort=pf;s.prueftermin=pt;s.theorie=th;s.farbe=window._selFarbe;
-    if(!s.sonder||Array.isArray(s.sonder))s.sonder={};SONDER.forEach(sf=>{const el=document.getElementById('sf-'+sf.key);if(el)s.sonder[sf.key]=parseInt(el.value)||0;});
+    if(!s.sonder||Array.isArray(s.sonder))s.sonder={};if(!s.manualSonder)s.manualSonder={};SONDER.forEach(sf=>{const el=document.getElementById('sf-'+sf.key);if(el){s.sonder[sf.key]=parseInt(el.value)||0;s.manualSonder[sf.key]=s.sonder[sf.key];}});
     saveAll();syncFahrstundenToKalender();renderDashSchueler(editSid);
   }else{
     const tel2=document.getElementById('n-tel').value.trim();const ptuhr='';const ns={id:"s"+Date.now(),vorname:vn,nachname:nn,spitz:sp,geschlecht:window._geschlecht||'m',tel:tel2,farbe:window._selFarbe,klasse:kl,beginn:bg,prufort:pf,prueftermin:pt,pruefzeit:ptuhr,theorie:th,sonder:[false,false,false],notiz:"",fahrstunden:[],pruefungen:[],gfa:{laengs:0,rechts:0,umkehr:0,rueckwaerts:0,stopp_mit:0,stopp_ohne:0,stadtautobahn:0,strassenbahn:0},foto:null};
