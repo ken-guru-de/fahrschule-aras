@@ -80,7 +80,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:-apple-sy
 .btn-full.rot{background:#FCEBEB;border-color:#F09595;color:#A32D2D;}
 .btn-full.danger{color:#E24B4A;border-color:#E24B4A;}
 .fab-btn{background:none;border:none;cursor:pointer;color:var(--tx2);font-size:22px;display:flex;align-items:center;padding:4px;}
-.toast{display:none;background:var(--accent-dark);color:white;border:none;border-radius:var(--r-md);padding:10px 14px;font-size:13px;align-items:center;gap:8px;flex-shrink:0;}
+.toast{display:none;background:var(--accent-dark);color:white;border:none;border-radius:var(--r-md);padding:10px 14px;font-size:13px;align-items:center;gap:8px;flex-shrink:0;}.toast.show{display:flex;}
 .toast.show{display:flex;}
 .pill{padding:8px 16px;border-radius:20px;border:.5px solid var(--br2);background:var(--bg2);font-size:15px;color:var(--tx2);cursor:pointer;font-family:inherit;min-height:44px;display:flex;align-items:center;}
 .pill.active{background:var(--accent);color:white;border-color:var(--accent);}
@@ -336,15 +336,13 @@ function renderDashboard(dashDateOffset=0){
 
   let html=`<div class="screen active" id="scr-dash">
     <div class="topbar">
-      <div style="flex:1">
-        <div style="font-size:22px;color:white"><i class="ti ti-steering-wheel" style="font-size:28px;vertical-align:-3px"></i></div>
-      </div>
-      <div style="display:flex;justify-content:space-between;flex:1;margin-left:8px">
-        <button class="btn-icon" onclick="renderKalender()" aria-label="Kalender" style="font-size:20px;min-width:36px;min-height:36px"><i class="ti ti-calendar"></i></button>
-        <button class="btn-icon" onclick="renderListe()" aria-label="Schülerliste" style="font-size:20px;min-width:36px;min-height:36px"><i class="ti ti-users"></i></button>
-        <button class="btn-icon" onclick="renderStatistik()" aria-label="Statistik" style="font-size:20px;min-width:36px;min-height:36px"><i class="ti ti-chart-bar"></i></button>
-        <button class="btn-icon" onclick="renderNeuSchueler()" aria-label="Neuer Schüler" style="font-size:20px;min-width:36px;min-height:36px"><i class="ti ti-user-plus"></i></button>
-        <button class="btn-icon" onclick="renderAbrechnung()" aria-label="Kasse" style="font-size:20px;min-width:36px;min-height:36px"><i class="ti ti-receipt"></i></button>
+      <div style="display:flex;align-items:center;justify-content:space-between;width:100%;gap:2px">
+        <div style="font-size:22px;color:white;flex-shrink:0"><i class="ti ti-steering-wheel" style="font-size:30px;vertical-align:-3px"></i></div>
+        <button class="btn-icon" onclick="renderKalender()"><i class="ti ti-calendar"></i></button>
+        <button class="btn-icon" onclick="renderListe()"><i class="ti ti-users"></i></button>
+        <button class="btn-icon" onclick="renderStatistik()"><i class="ti ti-chart-bar"></i></button>
+        <button class="btn-icon" onclick="renderNeuSchueler()"><i class="ti ti-user-plus"></i></button>
+        <button class="btn-icon" onclick="renderAbrechnung()"><i class="ti ti-receipt"></i></button>
       </div>
     </div>
     <div class="scroll">
@@ -801,9 +799,8 @@ function saveSchueler(editSid){
   }else{
     const tel2=document.getElementById('n-tel').value.trim();const ptuhr='';const ns={id:"s"+Date.now(),vorname:vn,nachname:nn,spitz:sp,geschlecht:window._geschlecht||'m',tel:tel2,farbe:window._selFarbe||"blue",klasse:kl,beginn:bg,prufort:pf,prueftermin:pt,pruefzeit:ptuhr,theorie:th,sonder:[false,false,false],notiz:"",fahrstunden:[],pruefungen:[],gfa:{laengs:0,rechts:0,umkehr:0,rueckwaerts:0,stopp_mit:0,stopp_ohne:0,stadtautobahn:0,strassenbahn:0},foto:null};
     schueler.push(ns);saveAll();
-    document.getElementById("toast-neu-msg").textContent=vn+" "+nn+" wurde angelegt";
-    document.getElementById("toast-neu").classList.add("show");
-    setTimeout(()=>renderSchueler(ns.id),1600);
+    saveAll();
+    renderDashSchueler(ns.id);
   }
 }
 function deleteSchueler(sid){
