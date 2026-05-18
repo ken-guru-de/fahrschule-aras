@@ -1912,6 +1912,7 @@ function syncKalenderToFahrstunden(){
   schueler.forEach(s=>{
     s.fahrstunden=[];
     const prevSonder={...(s.sonder&&!Array.isArray(s.sonder)?s.sonder:{ueberland:0,autobahn:0,nacht:0})};
+    const manualOverride={...(s.manualSonder||{})};
     s.sonder={ueberland:0,autobahn:0,nacht:0};
     Object.entries(termine).forEach(([datum,ts])=>{
       ts.filter(t=>t.sid===s.id).forEach(t=>{
@@ -1940,9 +1941,10 @@ function syncKalenderToFahrstunden(){
       });
     });
     s.fahrstunden.sort((a,b)=>b.datum.localeCompare(a.datum)||(b.uhr||"").localeCompare(a.uhr||""));
-    // Keep higher manual values
+    // Apply manual overrides (explicit user setting takes precedence)
     ['ueberland','autobahn','nacht'].forEach(k=>{
-      if((prevSonder[k]||0)>(s.sonder[k]||0))s.sonder[k]=prevSonder[k];
+      if(k in manualOverride){s.sonder[k]=manualOverride[k];}
+      else if((prevSonder[k]||0)>(s.sonder[k]||0)){s.sonder[k]=prevSonder[k];}
     });
   });
 }
@@ -2130,8 +2132,10 @@ function renderSonderDoku(sid,s){
 function toggleSonderSchueler(sid,key,min){
   const s=getS(sid);if(!s)return;
   if(!s.sonder||Array.isArray(s.sonder))s.sonder={ueberland:0,autobahn:0,nacht:0};
+  if(!s.manualSonder)s.manualSonder={};
   const isDone=(s.sonder[key]||0)>=min;
   s.sonder[key]=isDone?0:min;
+  s.manualSonder[key]=s.sonder[key]; // store explicit override
   saveAll();
   const icon=document.getElementById("sf-icon-"+key);
   const label=document.getElementById("sf-label-"+key);
@@ -2257,12 +2261,12 @@ function renderAbrechnung(tab="woche",weekOffset=0){
         </div>`).join('')}
       </div>
       <div class="stat-grid">
-        <div class="stat-box"><div class="stat-lbl">KW ${kwActual}</div><div class="stat-num">${wocheMin}<span class="stat-unit">min</span></div><div style="font-size:12px;color:var(--tx3);margin-top:2px">${toStd(wocheMin)}</div></div>
-        <div class="stat-box" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center"><div class="stat-lbl">KW ${kwActual} Verdienst</div><div style="font-size:22px;font-weight:700;color:#E24B4A;margin-top:4px">${toEuro(wocheMin)}</div></div>
+        <div class="stat-box" style="text-align:center;box-shadow:0 4px 16px rgba(0,0,0,0.08)"><div class="stat-lbl">KW ${kwActual}</div><div class="stat-num" style="font-size:36px">${wocheMin}<span class="stat-unit">min</span></div><div style="font-size:14px;color:var(--tx3);margin-top:4px">${toStd(wocheMin)}</div></div>
+        <div class="stat-box" style="text-align:center;box-shadow:0 4px 16px rgba(226,75,74,0.15)"><div class="stat-lbl">KW ${kwActual} Verdienst</div><div style="font-size:28px;font-weight:700;color:#E24B4A;margin-top:4px">${toEuro(wocheMin)}</div></div>
       </div>
       <div class="stat-grid">
-        <div class="stat-box"><div class="stat-lbl">${selMonatName}</div><div class="stat-num">${selMonatMin}<span class="stat-unit">min</span></div><div style="font-size:12px;color:var(--tx3);margin-top:2px">${toStd(selMonatMin)}</div></div>
-        <div class="stat-box" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center"><div class="stat-lbl">${selMonatName} Verdienst</div><div style="font-size:22px;font-weight:700;color:#E24B4A;margin-top:4px">${toEuro(selMonatMin)}</div></div>
+        <div class="stat-box" style="text-align:center;box-shadow:0 4px 16px rgba(0,0,0,0.08)"><div class="stat-lbl">${selMonatName}</div><div class="stat-num" style="font-size:36px">${selMonatMin}<span class="stat-unit">min</span></div><div style="font-size:14px;color:var(--tx3);margin-top:4px">${toStd(selMonatMin)}</div></div>
+        <div class="stat-box" style="text-align:center;box-shadow:0 4px 16px rgba(226,75,74,0.15)"><div class="stat-lbl">${selMonatName} Verdienst</div><div style="font-size:28px;font-weight:700;color:#E24B4A;margin-top:4px">${toEuro(selMonatMin)}</div></div>
       </div>`;
   } else if(tab==="woche7"){
     const last7=[];
