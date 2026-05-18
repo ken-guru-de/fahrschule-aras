@@ -2016,27 +2016,62 @@ function renderDashSchueler(sid){
       </div></div>
 
       <div>
-        <div class="sec-row" onclick="document.getElementById('notiz-dash-body').style.display=document.getElementById('notiz-dash-body').style.display==='none'?'block':'none'" style="cursor:pointer">
-          <div class="sec-label" style="margin:0">Notizen <span style="color:var(--tx3);font-weight:400">(${(s.notizen||[]).length})</span></div>
-          <i class="ti ti-chevron-down" style="color:var(--tx3)"></i>
+        <div onclick="toggleNotizBadge('{sid}')" style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:rgba(255,107,43,0.08);border-radius:12px;cursor:pointer;border:1px solid rgba(255,107,43,0.2);margin-bottom:4px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <i class="ti ti-notes" style="font-size:20px;color:var(--accent)"></i>
+            <span style="font-weight:600;color:var(--tx)">Notizen</span>
+            ${(s.notizen&&s.notizen.length)?`<span style="background:var(--accent);color:white;border-radius:10px;padding:1px 8px;font-size:12px">${s.notizen.length}</span>`:''}
+          </div>
+          <i id="notiz-chevron-${sid}" class="ti ti-chevron-down" style="color:var(--tx3);transition:transform .2s"></i>
         </div>
-        <div id="notiz-dash-body" style="display:none">
-          <div class="card" style="margin-top:4px;padding:12px 16px">
+        <div id="notiz-dash-body-${sid}" style="display:none;margin-bottom:8px">
+          <div class="card" style="padding:12px 16px">
             <textarea id="notiz-dash-input-${sid}"
-              style="width:100%;min-height:120px;border:none;background:transparent;font-size:18px;color:var(--tx);outline:none;resize:vertical;font-family:inherit;line-height:1.6"
-              placeholder="Notizen…"
+              style="width:100%;min-height:140px;border:none;background:transparent;font-size:18px;color:var(--tx);outline:none;resize:vertical;font-family:inherit;line-height:1.6;-webkit-user-select:text;user-select:text"
+              placeholder="Notizen hier eingeben…"
               onblur="saveNotizTextDash('${sid}',this.value)"
-            >${(s.notizen||[]).map(n=>n.text).join('\n')}</textarea>
+            >${(s.notizen&&s.notizen.length)?s.notizen.map(n=>n.text).join('\n'):''}</textarea>
           </div>
         </div>
       </div>
-    </div>
-  </div>`;
+
+      </div>`;
   renderApp(html);
   setTimeout(()=>{
     initPTR();
+    const lbl=document.getElementById("ddb-lbl");
+    const min=document.getElementById("ddb-min");
+    if(lbl)lbl.textContent=anzeigeLblShort+" geplant";
+    if(min)min.innerHTML=anzeigeTotalMin+'<span class="stat-unit">min</span>';
+  },10);
+}
 
-  },50);
+function toggleNotizBadge(sid){
+  const body=document.getElementById("notiz-dash-body-"+sid);
+  const chev=document.getElementById("notiz-chevron-"+sid);
+  if(!body)return;
+  const open=body.style.display==='none';
+  body.style.display=open?'block':'none';
+  if(chev)chev.style.transform=open?'rotate(180deg)':'rotate(0deg)';
+  if(open){setTimeout(()=>{const ta=document.getElementById("notiz-dash-input-"+sid);if(ta)ta.focus();},100);}
+}
+
+function saveNotizTextDash(sid,val){
+  const s=getS(sid);if(!s)return;
+  const lines=val.split("\n").map(t=>t.trim()).filter(t=>t);
+  s.notizen=lines.map(t=>({text:t,done:false}));
+  saveAll();
+}
+
+function toggleSonderDash(sid,key,min){
+  const s=getS(sid);if(!s)return;
+  if(!s.sonder||Array.isArray(s.sonder))s.sonder={ueberland:0,autobahn:0,nacht:0};
+  s.sonder[key]=(s.sonder[key]||0)>=min?0:min;
+  saveAll();
+  const icon=document.getElementById("sf-icon-"+key);
+  const label=document.getElementById("sf-label-"+key);
+  if(icon){icon.className="ti "+(s.sonder[key]>=min?"ti-checkbox":"ti-square");icon.style.color=s.sonder[key]>=min?"#27A843":"var(--tx3)";}
+  if(label){label.style.textDecoration=s.sonder[key]>=min?"line-through":"none";label.style.color=s.sonder[key]>=min?"var(--tx3)":"var(--tx)";}
 }
 
 function renderSonderDoku(sid,s){
@@ -2050,10 +2085,8 @@ function renderSonderDoku(sid,s){
   SONDER_TYPEN.forEach(sf=>{
     const sfTermine=Object.entries(termine)
       .filter(([d,ts])=>ts.some(t=>t.sid===sid&&(t.typ===sf.key||notizL(t.notiz).includes(sf.key==='ueberland'?'überland':sf.key==='autobahn'?'autobahn':'nacht'))))
-      .map(([d,ts])=>{
-        const t=ts.find(t=>t.sid===sid&&(t.typ===sf.key||notizL(t.notiz).includes(sf.key==='ueberland'?'überland':sf.key==='autobahn'?'autobahn':'nacht')));
-        return{datum:d,min:t?t.min:0};
-      }).sort((a,b)=>b.datum.localeCompare(a.datum));
+      .map(([d,ts])=>{const t=ts.find(t=>t.sid===sid&&(t.typ===sf.key||notizL(t.notiz).includes(sf.key==='ueberland'?'überland':sf.key==='autobahn'?'autobahn':'nacht')));return{datum:d,min:t?t.min:0};})
+      .sort((a,b)=>b.datum.localeCompare(a.datum));
     const manualMin=(s.sonder&&!Array.isArray(s.sonder)?s.sonder[sf.key]:0)||0;
     const totalMin=sfTermine.reduce((a,t)=>a+t.min,0)||manualMin;
     const done=totalMin>=sf.required;
@@ -2078,11 +2111,10 @@ function toggleSonderSchueler(sid,key,min){
   const isDone=(s.sonder[key]||0)>=min;
   s.sonder[key]=isDone?0:min;
   saveAll();
-  // Update DOM without re-render
   const icon=document.getElementById("sf-icon-"+key);
   const label=document.getElementById("sf-label-"+key);
   const inp=document.getElementById("sf-"+key);
-  if(icon){icon.className="ti "+(isDone?"ti-square":"ti-checkbox");icon.style.color=isDone?"var(--tx3)":"var(--accent)";}
+  if(icon){icon.className="ti "+(isDone?"ti-square":"ti-checkbox");icon.style.color=isDone?"var(--tx3)":"#27A843";}
   if(label){label.style.textDecoration=isDone?"none":"line-through";label.style.color=isDone?"var(--tx)":"var(--tx3)";}
   if(inp)inp.value=isDone?0:min;
 }
@@ -2090,165 +2122,61 @@ function toggleSonderSchueler(sid,key,min){
 function toggleSonderEdit(key,min){
   const inp=document.getElementById("sf-"+key);
   const icon=document.getElementById("sf-icon-"+key);
-  const label=document.getElementById("sf-label-"+key);
   if(!inp)return;
-  const isDone=parseInt(inp.value)>=min;
-  inp.value=isDone?0:min;
-  if(icon){icon.className="ti "+(isDone?"ti-square":"ti-checkbox");icon.style.color=isDone?"var(--tx3)":"var(--accent)";}
-  if(label){label.style.textDecoration=isDone?"none":"line-through";label.style.color=isDone?"var(--tx)":"var(--tx3)";}
+  const cur=parseInt(inp.value)||0;
+  const next=cur>=min?0:min;
+  inp.value=next;
+  if(icon){icon.className="ti "+(next>=min?"ti-checkbox":"ti-square");icon.style.color=next>=min?"var(--accent)":"var(--tx3)";}
+}
+
+function changeGFADash(sid,key,d){
+  const s=getS(sid);if(!s)return;
+  if(!s.gfa)s.gfa={};
+  s.gfa[key]=Math.max(0,(s.gfa[key]||0)+d);
+  saveAll();
+  const el=document.getElementById("gfa-"+sid+"-"+key);
+  if(el)el.textContent=s.gfa[key];
 }
 
 function toggleFahrstundenDash(sid,type){
-  const s=getS(sid);if(!s)return;
-  const td=todayStr();
-  const el=document.getElementById("fs-list-"+sid);
+  const el=document.getElementById("fahr-list-"+sid);
   if(!el)return;
-  // If already showing this type, hide it
-  if(el.dataset.showing===type&&el.style.display!=="none"){el.style.display="none";el.dataset.showing="";return;}
+  const showing=el.dataset.showing===type;
+  if(showing){el.style.display="none";el.dataset.showing="";return;}
   el.dataset.showing=type;
   el.style.display="block";
-  const wochentage=["So","Mo","Di","Mi","Do","Fr","Sa"];
-  let entries=[];
+  const s=getS(sid);if(!s)return;
+  const td=todayStr();
+  let entries;
   if(type==="past"){
-    // Use fahrstunden array
-    // Deduplicate by datum+uhr
-    const seen=new Set();
-    entries=(s.fahrstunden||[]).filter(f=>{
-      if(f.datum>=td)return false;
-      const key=f.datum+"_"+(f.uhr||"");
-      if(seen.has(key))return false;
-      seen.add(key);return true;
-    }).map(f=>{
-      const d=new Date(f.datum);
-      const dow=wochentage[d.getDay()];
-      const fd=fmtDate(f.datum);
-      return`<div class="card-row" style="font-size:13px">
-        <span style="color:var(--tx3);min-width:28px">${dow}</span>
-        <span style="flex:1">${fd.day}. ${fd.mon} ${fd.year}${f.uhr?" · "+f.uhr+" Uhr":""}</span>
-        <span style="color:var(--tx2)">${f.min||80} min</span>
-      </div>`;
-    });
+    entries=Object.entries(termine).filter(([d])=>d<td).flatMap(([d,ts])=>ts.filter(t=>t.sid===sid).map(t=>({datum:d,...t}))).sort((a,b)=>b.datum.localeCompare(a.datum));
   } else {
-    // Use future termine
-    const futureEntries=Object.entries(termine)
-      .filter(([d])=>d>=td)
-      .sort(([a],[b])=>b.localeCompare(a))
-      .flatMap(([d,ts])=>
-        ts.filter(t=>t.sid===sid).sort((a,b)=>a.uhr.localeCompare(b.uhr)).map(t=>{
-          const dObj=new Date(d);
-          const dow=wochentage[dObj.getDay()];
-          const fd=fmtDate(d);
-          return`<div class="card-row" style="font-size:13px;cursor:pointer" onclick="renderTagAnsicht('${d}')">
-            <span style="color:var(--tx3);min-width:28px">${dow}</span>
-            <span style="flex:1">${fd.day}. ${fd.mon} ${fd.year} · ${t.uhr} Uhr</span>
-            <span style="color:var(--accent)">${t.min} min${t.notiz?" · "+t.notiz:""} <i class="ti ti-chevron-right" style="font-size:12px"></i></span>
-          </div>`;
-        })
-      );
-    entries=futureEntries;
+    entries=Object.entries(termine).filter(([d])=>d>=td).flatMap(([d,ts])=>ts.filter(t=>t.sid===sid).map(t=>({datum:d,...t}))).sort((a,b)=>a.datum.localeCompare(b.datum));
   }
-  el.innerHTML=entries.length
-    ?`<div class="card" style="margin-bottom:8px">${entries.join("")}</div>`
-    :`<div style="padding:8px 0;font-size:13px;color:var(--tx3)">${type==="past"?"Noch keine Fahrstunden":"Keine geplanten Termine"}</div>`;
+  const wt=["So","Mo","Di","Mi","Do","Fr","Sa"];
+  el.innerHTML=entries.length?entries.map(e=>{
+    const fd=fmtDate(e.datum);
+    const dow=wt[new Date(e.datum).getDay()];
+    return`<div style="display:flex;justify-content:space-between;padding:6px 12px;border-bottom:.5px solid var(--br2);font-size:13px">
+      <span style="color:var(--tx2)">${dow} ${fd.day}. ${fd.mon}</span>
+      <span>${e.uhr||""} · ${e.min} min</span>
+    </div>`;
+  }).join(""):`<div style="padding:10px 12px;font-size:13px;color:var(--tx3)">Keine Einträge</div>`;
 }
 
-function toggleSonderDash(sid,key,min){
-  const s=getS(sid);if(!s)return;
-  if(!s.sonder||Array.isArray(s.sonder))s.sonder={ueberland:0,autobahn:0,nacht:0};
-  // Toggle: if already done set to 0, else set to min
-  s.sonder[key]=(s.sonder[key]||0)>=min?0:min;
-  saveAll();
-  renderDashSchueler(sid);
-}
-
-function changeGFADash(sid,key,delta){
-  const s=getS(sid);if(!s)return;
-  if(!s.gfa)s.gfa={};
-  s.gfa[key]=Math.max(0,(s.gfa[key]||0)+delta);
-  const el=document.getElementById("gfa-"+sid+"-"+key+"-d");
-  if(el)el.textContent=s.gfa[key];
-  saveAll();
-}
-
-function addNotizDash(sid){
-  const s=getS(sid);if(!s)return;
-  const inp=document.getElementById("notiz-dash-input-"+sid);
-  if(!inp||!inp.value.trim())return;
-  if(!s.notizen)s.notizen=[];
-  // Split by newlines for multiple entries
-  inp.value.trim().split("\n").filter(t=>t.trim()).forEach(t=>{
-    s.notizen.push({text:t.trim(),done:false});
-  });
-  inp.value="";
-  saveAll();
-  renderDashSchueler(sid);
-  setTimeout(()=>{
-    const body=document.getElementById("notiz-dash-body");
-    if(body)body.style.display="block";
-  },50);
-}
-
-function deleteNotizDash(sid,ni){
-  const s=getS(sid);if(!s)return;
-  s.notizen.splice(ni,1);
-  saveAll();
-  renderDashSchueler(sid);
-  setTimeout(()=>{
-    const body=document.getElementById("notiz-dash-body");
-    if(body)body.style.display="block";
-  },50);
-}
-
-function saveNotizTextDash(sid,val){
-  const s=getS(sid);if(!s)return;
-  const lines=val.split("\n").map(t=>t.trim()).filter(t=>t);
-  s.notizen=lines.map(t=>({text:t,done:false}));
-  saveAll();
-}
-
-function toggleNotizDash(sid,ni){
-  const s=getS(sid);if(!s)return;
-  if(!s.notizen||!s.notizen[ni])return;
-  s.notizen[ni].done=!s.notizen[ni].done;
-  saveAll();
-  renderDashSchueler(sid);
-}
-
-function getAbrechnungSatz(){
-  return parseFloat(localStorage.getItem("fs_satz")||"25");
-}
-
-function saveSatz(val){
-  const v=parseFloat(val);
-  if(!isNaN(v)&&v>0){
-    localStorage.setItem("fs_satz",String(v));
-    renderAbrechnung();
-  }
-}
-
-function getKW(date){
-  const d=new Date(Date.UTC(date.getFullYear(),date.getMonth(),date.getDate()));
-  const dayNum=d.getUTCDay()||7;
-  d.setUTCDate(d.getUTCDate()+4-dayNum);
-  const yearStart=new Date(Date.UTC(d.getUTCFullYear(),0,1));
-  return Math.ceil((((d-yearStart)/86400000)+1)/7);
-}
-
+// ── STATISTIK ─────────────────────────────────────────────────────────────────
 function renderAbrechnung(tab="woche",weekOffset=0){
   const satz=getAbrechnungSatz();
   const td=todayStr();
   const now=new Date();
-
   function toEuro(min){return((min/60)*satz).toFixed(2).replace('.',',')+" €";}
   function toStd(min){const h=Math.floor(min/60);const m=min%60;return h+"h "+String(m).padStart(2,"0");}
   function getMin(prefix){return Object.entries(termine).reduce((sum,[d,ts])=>{if(d.startsWith(prefix))return sum+ts.reduce((a,e)=>a+(e.min||0),0);return sum;},0);}
-
   const tagMin=getMin(td);
   const kw=getKW(now);
   const jahrStr=td.substring(0,4);
   const monatStr=td.substring(0,7);
   const monatName=["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"][now.getMonth()];
-
   const baseDate=new Date(now);
   baseDate.setDate(baseDate.getDate()+weekOffset*7);
   const dayOfWeek=(baseDate.getDay()+6)%7;
@@ -2259,24 +2187,16 @@ function renderAbrechnung(tab="woche",weekOffset=0){
     return sum;
   },0);
   const kwActual=getKW(baseDate);
-  // Monat based on selected week's baseDate
   const selMonatStr=toKey(baseDate.getFullYear(),baseDate.getMonth()+1,1).substring(0,7);
   const selMonatName=["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"][baseDate.getMonth()];
   const selMonatMin=getMin(selMonatStr);
   const monatMin=getMin(monatStr);
-
-  // Next working day with termine if today is empty
+  const wochentageNamen=["Mo","Di","Mi","Do","Fr","Sa","So"];
   let nextDayMin=0;let tagLabel="Heute";
   if(tagMin===0){
     const nextKeys=Object.keys(termine).filter(d=>d>td).sort();
-    if(nextKeys.length){
-      const nd=nextKeys[0];
-      nextDayMin=(termine[nd]||[]).reduce((a,e)=>a+(e.min||0),0);
-      const fnd=fmtDate(nd);
-      tagLabel=fnd.day+". "+fnd.mon;
-    }
+    if(nextKeys.length){const nd=nextKeys[0];nextDayMin=(termine[nd]||[]).reduce((a,e)=>a+(e.min||0),0);const fnd=fmtDate(nd);tagLabel=fnd.day+". "+fnd.mon;}
   }
-  const wochentageNamen=["Mo","Di","Mi","Do","Fr","Sa","So"];
   const weekDays=[];
   for(let i=0;i<5;i++){
     const d2=new Date(baseDate);
@@ -2286,25 +2206,13 @@ function renderAbrechnung(tab="woche",weekOffset=0){
     weekDays.push({name:wochentageNamen[i],ds,min,isToday:ds===td});
   }
   const maxDayMin=Math.max(...weekDays.map(x=>x.min),1);
-
   const allMonths={};
-  Object.entries(termine).forEach(([d,ts])=>{
-    const m=d.substring(0,7);
-    if(!allMonths[m])allMonths[m]=0;
-    allMonths[m]+=ts.reduce((a,e)=>a+(e.min||0),0);
-  });
+  Object.entries(termine).forEach(([d,ts])=>{const m=d.substring(0,7);if(!allMonths[m])allMonths[m]=0;allMonths[m]+=ts.reduce((a,e)=>a+(e.min||0),0);});
   const sortedMonths=Object.entries(allMonths).sort((a,b)=>b[0].localeCompare(a[0]));
-
   const allYears={};
-  Object.entries(termine).forEach(([d,ts])=>{
-    const y=d.substring(0,4);
-    if(!allYears[y])allYears[y]=0;
-    allYears[y]+=ts.reduce((a,e)=>a+(e.min||0),0);
-  });
+  Object.entries(termine).forEach(([d,ts])=>{const y=d.substring(0,4);if(!allYears[y])allYears[y]=0;allYears[y]+=ts.reduce((a,e)=>a+(e.min||0),0);});
   const sortedYears=Object.entries(allYears).sort((a,b)=>b[0].localeCompare(a[0]));
-
   function tabBtn(t,label){const active=tab===t;return`<button onclick="renderAbrechnung('${t}')" style="flex:1;padding:8px 4px;border:none;border-bottom:2px solid ${active?'white':'transparent'};background:transparent;color:${active?'white':'rgba(255,255,255,0.6)'};font-size:13px;font-weight:${active?'600':'400'};cursor:pointer;font-family:inherit">${label}</button>`;}
-
   let content2='';
   if(tab==="woche"){
     content2=`
@@ -2333,23 +2241,16 @@ function renderAbrechnung(tab="woche",weekOffset=0){
       <div class="stat-grid">
         <div class="stat-box"><div class="stat-lbl">${selMonatName}</div><div class="stat-num">${selMonatMin}<span class="stat-unit">min</span></div><div style="font-size:12px;color:var(--tx3);margin-top:2px">${toStd(selMonatMin)}</div></div>
         <div class="stat-box" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center"><div class="stat-lbl">${selMonatName} Verdienst</div><div style="font-size:22px;font-weight:700;color:#E24B4A;margin-top:4px">${toEuro(selMonatMin)}</div></div>
-      </div>
-    `;
+      </div>`;
   } else if(tab==="woche7"){
     const last7=[];
-    for(let i=6;i>=0;i--){
-      const d2=new Date(now);d2.setDate(d2.getDate()-i);
-      if(d2.getDay()===0||d2.getDay()===6)continue; // skip Sa+So
-      const ds=toKey(d2.getFullYear(),d2.getMonth()+1,d2.getDate());
-      const min=(termine[ds]||[]).reduce((a,e)=>a+(e.min||0),0);
-      last7.push({name:wochentageNamen[d2.getDay()===0?6:d2.getDay()-1],ds,min,isToday:ds===td});
-    }
+    for(let i=6;i>=0;i--){const d2=new Date(now);d2.setDate(d2.getDate()-i);if(d2.getDay()===0||d2.getDay()===6)continue;const ds=toKey(d2.getFullYear(),d2.getMonth()+1,d2.getDate());const min=(termine[ds]||[]).reduce((a,e)=>a+(e.min||0),0);last7.push({name:wochentageNamen[d2.getDay()===0?6:d2.getDay()-1],ds,min,isToday:ds===td});}
     const max7=Math.max(...last7.map(x=>x.min),1);
     const sum7=last7.reduce((a,x)=>a+x.min,0);
     content2=`
       <div class="stat-grid">
-        <div class="stat-box"><div class="stat-lbl">7 Tage</div><div class="stat-num">${sum7}<span class="stat-unit">min</span></div><div style="font-size:12px;color:var(--tx3);margin-top:2px">${toStd(sum7)}</div></div>
-        <div class="stat-box"><div class="stat-lbl">7 Tage Verdienst</div><div class="stat-num" style="font-size:20px">${toEuro(sum7)}</div></div>
+        <div class="stat-box"><div class="stat-lbl">Woche</div><div class="stat-num">${sum7}<span class="stat-unit">min</span></div><div style="font-size:12px;color:var(--tx3);margin-top:2px">${toStd(sum7)}</div></div>
+        <div class="stat-box" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center"><div class="stat-lbl">Woche Verdienst</div><div style="font-size:22px;font-weight:700;color:#E24B4A;margin-top:4px">${toEuro(sum7)}</div></div>
       </div>
       <div class="stat-card">
         ${last7.map(d=>`<div style="margin-bottom:10px;cursor:pointer" onclick="renderTagAnsicht('${d.ds}')">
@@ -2361,7 +2262,6 @@ function renderAbrechnung(tab="woche",weekOffset=0){
         </div>`).join('')}
       </div>`;
   } else if(tab==="monat"){
-    // PDF Export function
     content2=`<button onclick="exportMonatPDF('${monatStr}')" style="width:100%;background:rgba(10,40,120,0.25);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(100,150,255,0.4);border-radius:12px;color:#3B82F6;font-size:15px;padding:12px;cursor:pointer;font-family:inherit;margin-bottom:12px"><i class="ti ti-file-type-pdf"></i> Monatsabrechnung drucken / PDF</button>
     <div class="stat-card">
       ${sortedMonths.map(([m,min])=>{
@@ -2396,7 +2296,6 @@ function renderAbrechnung(tab="woche",weekOffset=0){
       }).join('')}
     </div>`;
   }
-
   let html=`<div class="screen active" id="scr-abrech">
     <div class="topbar" style="flex-direction:column;align-items:stretch;padding-bottom:0">
       <div style="display:flex;align-items:center;gap:8px;padding-bottom:8px">
@@ -2430,23 +2329,24 @@ function renderAbrechnung(tab="woche",weekOffset=0){
   setTimeout(initPTR,50);
 }
 
+function getAbrechnungSatz(){return parseFloat(localStorage.getItem("fs_satz")||"25");}
+function saveSatz(val){const v=parseFloat(val);if(!isNaN(v)&&v>0){localStorage.setItem("fs_satz",String(v));renderAbrechnung();}}
+function getKW(date){const d=new Date(Date.UTC(date.getFullYear(),date.getMonth(),date.getDate()));const dayNum=d.getUTCDay()||7;d.setUTCDate(d.getUTCDate()+4-dayNum);const yearStart=new Date(Date.UTC(d.getUTCFullYear(),0,1));return Math.ceil((((d-yearStart)/86400000)+1)/7);}
+
 function exportMonatPDF(monatStr){
   const satz=getAbrechnungSatz();
   const [y,m]=monatStr.split('-');
   const monatName=["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"][parseInt(m)-1];
   const dim=new Date(parseInt(y),parseInt(m),0).getDate();
-  
   function toEuro(min){return((min/60)*satz).toFixed(2).replace('.',',')+" €";}
   function toStd(min){const h=Math.floor(min/60);const mm=min%60;return h+"h "+String(mm).padStart(2,"0")+"min";}
-  
   const wochentage=["So","Mo","Di","Mi","Do","Fr","Sa"];
-  let rows='';
-  let total=0;
+  let rows='';let total=0;
   for(let d=1;d<=dim;d++){
     const ds=toKey(parseInt(y),parseInt(m),d);
     const date=new Date(parseInt(y),parseInt(m)-1,d);
     const dow=date.getDay();
-    if(dow===0||dow===6)continue; // skip weekends
+    if(dow===0||dow===6)continue;
     const min=(termine[ds]||[]).reduce((a,t)=>a+(t.min||0),0);
     total+=min;
     rows+=`<tr style="background:${min?'#fff':'#f9f9f9'}">
@@ -2457,7 +2357,6 @@ function exportMonatPDF(monatStr){
       <td style="padding:14px 16px;border-bottom:1px solid #eee;text-align:right;color:${min?'#E24B4A':'#999'}">${min?toEuro(min):'-'}</td>
     </tr>`;
   }
-  
   const html=`<!DOCTYPE html><html><head><meta charset="utf-8">
   <title>Abrechnung ${monatName} ${y}</title>
   <style>body{font-family:-apple-system,sans-serif;padding:20px;color:#333}
@@ -2478,7 +2377,6 @@ function exportMonatPDF(monatStr){
   </table>
   <br><div style="display:flex;flex-direction:column;gap:12px;margin-top:16px"><button onclick="window.print()" style="background:#FF6B2B;color:white;border:none;padding:52px 16px;border-radius:18px;font-size:24px;font-weight:700;cursor:pointer;width:100%">🖨️ Drucken / Als PDF speichern</button><button onclick="window.close()" style="background:#eee;color:#333;border:none;padding:52px 16px;border-radius:18px;font-size:24px;font-weight:700;cursor:pointer;width:100%">✕ Schließen</button></div>
   </body></html>`;
-  
   const w=window.open('','_blank');
   w.document.write(html);
   w.document.close();
@@ -2495,12 +2393,12 @@ function exportMonatPDF(monatStr){
           <i class="ti ti-steering-wheel" style="font-size:64px;color:var(--accent)"></i>
           <div style="font-size:22px;font-weight:700">Fahrschule</div>
           <div style="font-size:14px;color:var(--tx2);line-height:1.5">Keine Daten gefunden.<br><br>
-            <strong>So geht's:</strong><br>
+            <strong>So geht es:</strong><br>
             1. Öffne die JSON-Sicherung in der Dateien-App<br>
             2. Tippe lange → Alles auswählen → Kopieren<br>
             3. Komm zurück und tippe auf den Button:
           </div>
-          <button onclick="importDatenPaste()" style="background:var(--accent);color:white;border:none;border-radius:12px;padding:16px 28px;font-size:18px;cursor:pointer;font-family:inherit;width:100%;margin-top:8px">
+          <button onclick="importDatenPaste()" style="background:var(--accent);color:white;border:none;border-radius:12px;padding:16px 28px;font-size:17px;cursor:pointer;font-family:inherit;width:100%;margin-top:8px">
             <i class="ti ti-clipboard"></i> JSON hier einfügen
           </button>
           <div style="font-size:12px;color:var(--tx3)">oder</div>
