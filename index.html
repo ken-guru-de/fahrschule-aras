@@ -1953,7 +1953,15 @@ function renderDashSchueler(sid){
   const s=getS(sid);if(!s)return;
   const td=todayStr();
   const gefahren=Object.entries(termine).filter(([d])=>d<td).flatMap(([d,ts])=>ts.filter(t=>t.sid===sid));
-  const geplant=Object.entries(termine).filter(([d])=>d>=td).flatMap(([d,ts])=>ts.filter(t=>t.sid===sid));
+  const geplant=Object.entries(termine).filter(([d])=>d>=td).flatMap(([d,ts])=>ts.filter(t=>{
+    if(t.sid!==sid)return false;
+    // Exclude pruefung if already passed
+    if(t.min===100||t.typ==="pruef"){
+      const pruef=(s.pruefungen||[]).find(p=>p.datum===d&&p.bestanden===true);
+      if(pruef)return false;
+    }
+    return true;
+  }));
   const gefahrenMin=gefahren.reduce((a,t)=>a+(t.min||0),0);
   const geplantMin=geplant.reduce((a,t)=>a+(t.min||0),0);
   const fahrstundenGesamt=(s.fahrstunden||[]).length;
