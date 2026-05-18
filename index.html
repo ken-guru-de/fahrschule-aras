@@ -1251,7 +1251,7 @@ function renderCalGrid(){
     const t=termine[key];
     if(t&&t.length){
       const dr=document.createElement("div");dr.className="dot-row";
-      t.slice(0,4).forEach(e=>{
+      t.slice(0,6).forEach(e=>{
         let cls="cdot-g";
         if(e.min===100)cls="cdot-r";
         else if(e.typ==="ueberland"||e.typ==="autobahn"||e.typ==="nacht"||e.min===225||e.min===220||e.min===135)cls="cdot-b";
