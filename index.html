@@ -2207,9 +2207,10 @@ function toggleFahrstundenDash(sid,type){
   el.innerHTML=entries.length?entries.map(e=>{
     const fd=fmtDate(e.datum);
     const dow=wt[new Date(e.datum).getDay()];
-    return`<div style="display:flex;justify-content:space-between;padding:6px 12px;border-bottom:.5px solid var(--br2);font-size:13px">
-      <span style="color:var(--tx2)">${dow} ${fd.day}. ${fd.mon}</span>
-      <span>${e.uhr||""} · ${e.min} min</span>
+    const isPruef=e.min===100||e.typ==="pruef";
+    return`<div style="display:flex;justify-content:space-between;padding:8px 12px;border-bottom:.5px solid var(--br2);font-size:13px;${isPruef?'background:rgba(226,75,74,0.06)':''}">
+      <span style="color:${isPruef?'#E24B4A':'var(--tx2)'};">${dow} ${fd.day}. ${fd.mon}${isPruef?' 🎯':''}</span>
+      <span style="color:${isPruef?'#E24B4A':'var(--tx)'};font-weight:${isPruef?'600':'400'}">${e.uhr||""} · ${e.min} min</span>
     </div>`;
   }).join(""):`<div style="padding:10px 12px;font-size:13px;color:var(--tx3)">Keine Einträge</div>`;
 }
