@@ -2234,7 +2234,7 @@ function toggleFahrstundenDash(sid,type){
       const aP=a.min===100||a.typ==="pruef"?0:1;
       const bP=b.min===100||b.typ==="pruef"?0:1;
       if(aP!==bP)return aP-bP;
-      return a.datum.localeCompare(b.datum)||(a.uhr||"").localeCompare(b.uhr||"");
+      return b.datum.localeCompare(a.datum)||(b.uhr||"").localeCompare(a.uhr||"");
     });
   }
   const wt=["So","Mo","Di","Mi","Do","Fr","Sa"];
