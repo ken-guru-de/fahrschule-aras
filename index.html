@@ -759,7 +759,7 @@ function renderNeuSchueler(fromSid){
       <div class="sec-label">Sonderfahrten</div>
       <div class="card">
         ${SONDER.map(sf=>{const done=s&&s.sonder&&!Array.isArray(s.sonder)?s.sonder[sf.key]||0:0;const ok=done>=sf.min;return`<div class="card-row" style="cursor:pointer" onclick="toggleSonderSchueler('${s.id}','${sf.key}',${sf.min})">
-          <i class="ti ${ok?'ti-checkbox':'ti-square'}" id="sf-icon-${sf.key}" style="font-size:20px;color:${ok?'var(--accent)':'var(--tx3)'};margin-right:10px;flex-shrink:0"></i>
+          <i class="ti ${ok?'ti-checkbox':'ti-square'}" id="sf-icon-${sf.key}" style="font-size:${ok?'26px':'20px'};color:${ok?'#27A843':'var(--tx3)'};margin-right:10px;flex-shrink:0"></i>
           <span style="flex:1;font-size:14px;${ok?'text-decoration:line-through;color:var(--tx3)':''}" id="sf-label-${sf.key}">${sf.label}</span>
           <input type="hidden" id="sf-${sf.key}" value="${ok?sf.min:0}"/>
         </div>`;}).join("")}
@@ -1990,7 +1990,7 @@ function renderDashSchueler(sid){
     </div>
     <div class="scroll">
       <div class="stat-grid">
-        <div class="stat-box"><div class="stat-lbl">Klasse</div><div class="stat-num" style="font-size:24px">${s.klasse}</div></div>
+        <div class="stat-box" style="text-align:center;background:rgba(59,130,246,0.18);border:1px solid rgba(59,130,246,0.35);"><div class="stat-lbl" style="color:#3B82F6">Klasse</div><div class="stat-num" style="font-size:28px;color:#1D4ED8">${s.klasse}</div></div>
         <div class="stat-box"><div class="stat-lbl">Beginn</div><div class="stat-num" style="font-size:16px">${fmtDate(s.beginn).day}. ${fmtDate(s.beginn).mon} ${fmtDate(s.beginn).year}</div></div>
       </div>
       <div class="stat-grid">
