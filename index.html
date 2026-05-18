@@ -2017,6 +2017,10 @@ function renderDashSchueler(sid){
           <span class="info-val">${naechstePruef?fmtDate(naechstePruef.datum).day+". "+fmtDate(naechstePruef.datum).mon+" "+fmtDate(naechstePruef.datum).year+(naechstePruef.uhr?`<br><span style="font-size:13px;color:var(--tx2)">`+naechstePruef.uhr+" Uhr</span>":""):"–"}</span></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-map-pin"></i>Prüfort</span>
           <span class="info-val">${naechstePruef&&naechstePruef.prufort?naechstePruef.prufort:s.prufort||"–"}</span></div>
+        ${naechstePruef?`<div class="card-row" style="padding-top:8px;gap:8px">
+          <button onclick="setPruefErgebnis('${sid}','${naechstePruef.datum}',true)" style="flex:1;background:rgba(39,168,67,0.15);border:1.5px solid rgba(39,168,67,0.5);border-radius:10px;color:#166534;font-size:14px;font-weight:600;padding:10px 6px;cursor:pointer;font-family:inherit">✓ Bestanden</button>
+          <button onclick="setPruefErgebnis('${sid}','${naechstePruef.datum}',false)" style="flex:1;background:rgba(226,75,74,0.12);border:1.5px solid rgba(226,75,74,0.4);border-radius:10px;color:#A32D2D;font-size:14px;font-weight:600;padding:10px 6px;cursor:pointer;font-family:inherit">✗ Nicht best.</button>
+        </div>`:""}
       </div>
 
       
@@ -2054,6 +2058,20 @@ function renderDashSchueler(sid){
     if(lbl)lbl.textContent=anzeigeLblShort+" geplant";
     if(min)min.innerHTML=anzeigeTotalMin+'<span class="stat-unit">min</span>';
   },10);
+}
+
+function setPruefErgebnis(sid,datum,bestanden){
+  const s=getS(sid);if(!s)return;
+  if(!s.pruefungen)s.pruefungen=[];
+  const p=s.pruefungen.find(p=>p.datum===datum);
+  if(p){
+    p.bestanden=bestanden;
+  } else {
+    s.pruefungen.push({datum,versuch:1,bestanden,prufort:s.prufort||""});
+  }
+  saveAll();
+  syncKalenderToFahrstunden();
+  renderDashSchueler(sid);
 }
 
 function toggleNotizBadge(sid){
