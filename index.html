@@ -337,7 +337,7 @@ function renderDashboard(dashDateOffset=0){
   let html=`<div class="screen active" id="scr-dash">
     <div class="topbar">
       <div style="flex:1">
-        <div style="font-size:18px;font-weight:600;color:white"><i class="ti ti-steering-wheel" style="font-size:19px;vertical-align:-2px;margin-right:6px"></i>Fahrschule <span style="font-size:11px;opacity:0.5;font-weight:400">v1.8</span></div>
+        <div style="font-size:22px;color:white"><i class="ti ti-steering-wheel" style="font-size:28px;vertical-align:-3px"></i></div>
       </div>
       <div style="display:flex;justify-content:space-between;flex:1;margin-left:8px">
         <button class="btn-icon" onclick="renderKalender()" aria-label="Kalender" style="font-size:20px;min-width:36px;min-height:36px"><i class="ti ti-calendar"></i></button>
@@ -2027,7 +2027,7 @@ function renderDashSchueler(sid){
           <span class="info-val">${naechstePruef?(fmtDate(naechstePruef.datum).day+". "+fmtDate(naechstePruef.datum).mon+" "+fmtDate(naechstePruef.datum).year+(naechstePruef.uhr?`<br><span style="font-size:13px;color:var(--tx2)">`+naechstePruef.uhr+" Uhr</span>":"")+  (naechstePruef.bestanden===true?`<br><span style="font-size:13px;font-weight:700;color:#27A843">✓ Bestanden</span>`:naechstePruef.bestanden===false?`<br><span style="font-size:13px;font-weight:700;color:#E24B4A">✗ Nicht bestanden</span>`:"")):"–"}</span></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-map-pin"></i>Prüfort</span>
           <span class="info-val">${naechstePruef&&naechstePruef.prufort?naechstePruef.prufort:s.prufort||"–"}</span></div>
-        ${(()=>{if(!naechstePruef)return "";const hasResult=naechstePruef.bestanden===true||naechstePruef.bestanden===false;if(!hasResult)return `<div class="card-row" style="padding-top:8px;gap:8px"><button onclick="setPruefErgebnis('${sid}','${naechstePruef.datum}',true)" style="flex:1;background:rgba(39,168,67,0.15);border:1.5px solid rgba(39,168,67,0.5);border-radius:10px;color:#166534;font-size:14px;font-weight:600;padding:10px 6px;cursor:pointer;font-family:inherit">✓ Bestanden</button><button onclick="setPruefErgebnis('${sid}','${naechstePruef.datum}',false)" style="flex:1;background:rgba(226,75,74,0.12);border:1.5px solid rgba(226,75,74,0.4);border-radius:10px;color:#A32D2D;font-size:14px;font-weight:600;padding:10px 6px;cursor:pointer;font-family:inherit">✗ Nicht best.</button></div>`;return `<div class="card-row" style="padding-top:6px"><button onclick="setPruefErgebnis('${sid}','${naechstePruef.datum}',null)" style="background:none;border:1px solid var(--br2);border-radius:10px;color:var(--tx3);font-size:13px;padding:7px 14px;cursor:pointer;font-family:inherit">↩ Ergebnis zurücksetzen</button></div>`;})()}
+        ${(()=>{if(!naechstePruef)return "";const hasResult=naechstePruef.bestanden===true||naechstePruef.bestanden===false;if(!hasResult)return `<div class="card-row" style="padding-top:8px;gap:8px"><button onclick="setPruefErgebnis('${sid}','${naechstePruef.datum}',true)" style="flex:1;background:rgba(39,168,67,0.15);border:1.5px solid rgba(39,168,67,0.5);border-radius:10px;color:#166534;font-size:14px;font-weight:600;padding:10px 6px;cursor:pointer;font-family:inherit">✓ Bestanden</button><button onclick="setPruefErgebnis('${sid}','${naechstePruef.datum}',false)" style="flex:1;background:rgba(226,75,74,0.12);border:1.5px solid rgba(226,75,74,0.4);border-radius:10px;color:#A32D2D;font-size:14px;font-weight:600;padding:10px 6px;cursor:pointer;font-family:inherit">✗ Nicht best.</button></div>`;return `<div class="card-row" style="padding-top:6px"><button onclick="resetPruefErgebnis('${sid}','${naechstePruef.datum}')" style="background:none;border:1px solid var(--br2);border-radius:10px;color:var(--tx3);font-size:14px;padding:10px 16px;cursor:pointer;font-family:inherit;width:100%">↩ Ergebnis zurücksetzen</button></div>`;})()}
       </div>
 
       
@@ -2065,6 +2065,14 @@ function renderDashSchueler(sid){
     if(lbl)lbl.textContent=anzeigeLblShort+" geplant";
     if(min)min.innerHTML=anzeigeTotalMin+'<span class="stat-unit">min</span>';
   },10);
+}
+
+function resetPruefErgebnis(sid,datum){
+  const s=getS(sid);if(!s)return;
+  const p=(s.pruefungen||[]).find(p=>p.datum===datum);
+  if(p){p.bestanden=null;}
+  saveAll();
+  renderDashSchueler(sid);
 }
 
 function setPruefErgebnis(sid,datum,bestanden){
