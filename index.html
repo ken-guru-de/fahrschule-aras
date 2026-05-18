@@ -113,7 +113,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:-apple-sy
 .info-val{font-size:15px;font-weight:500;flex:1;text-align:right;}
 .pruef-card{background:var(--accent-dark);border:none;border-radius:var(--r-lg);padding:12px 14px;display:flex;align-items:center;gap:12px;}
 .pruef-result-item{background:var(--bg);border:.5px solid var(--br);border-radius:var(--r-lg);padding:10px 14px;display:flex;align-items:center;gap:12px;margin-bottom:6px;}
-.pruef-versuch{width:32px;height:32px;border-radius:50%;flex-shrink:0;position:relative;}
+.pruef-versuch{width:32px;height:32px;border-radius:50%;flex-shrink:0;}
 .pruef-best{background:#EAF3DE;color:#27500A;}
 .pruef-nicht{background:#FCEBEB;color:#A32D2D;}
 .gfa-row{display:flex;align-items:center;padding:11px 14px;border-bottom:.5px solid var(--br);}
@@ -1531,7 +1531,7 @@ function renderStatistik(){
         const pOffen=p.bestanden===null||p.bestanden===undefined;
         const badgeClass=pOffen?"":"p.bestanden?'pruef-best':'pruef-nicht'";
         const badgeCls=pOffen?"":p.bestanden?"pruef-best":"pruef-nicht";
-        html+=`<div class="pruef-result-item"><div class="pruef-versuch ${badgeCls}" style="${pOffen?"background:rgba(99,102,241,0.15);":""}"><span style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:13px;font-weight:700;line-height:1;">${p.versuch}</span></div><div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--tx)">${p.name}</div><div style="font-size:11px;color:var(--tx2);margin-top:2px">${p.versuch}. Prüfung · ${fd.day}. ${fd.mon} ${fd.year}${p.prufort?" · "+p.prufort:""}</div></div><span style="font-size:12px;font-weight:500;color:${pOffen?"#6366F1":p.bestanden?"#27500A":"#A32D2D"}">${pOffen?"⏳":p.bestanden?"✓":"✗"}</span></div>`;
+        html+=`<div class="pruef-result-item"><div style="width:32px;height:32px;border-radius:50%;flex-shrink:0;display:table;${pOffen?"background:rgba(99,102,241,0.15);color:#6366F1;":p.bestanden?"background:#EAF3DE;color:#27500A;":"background:#FCEBEB;color:#A32D2D;"}"><span style="display:table-cell;vertical-align:middle;text-align:center;font-size:13px;font-weight:700;line-height:1;">${p.versuch}</span></div><div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--tx)">${p.name}</div><div style="font-size:11px;color:var(--tx2);margin-top:2px">${p.versuch}. Prüfung · ${fd.day}. ${fd.mon} ${fd.year}${p.prufort?" · "+p.prufort:""}</div></div><span style="font-size:12px;font-weight:500;color:${pOffen?"#6366F1":p.bestanden?"#27500A":"#A32D2D"}">${pOffen?"⏳":p.bestanden?"✓":"✗"}</span></div>`;
       });
       html+=`</div>`;
     }
