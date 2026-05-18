@@ -753,14 +753,7 @@ function renderNeuSchueler(fromSid){
         </div>
       </div></div>
 
-      <div class="sec-label">Sonderfahrten</div>
-      <div class="card">
-        ${SONDER.map(sf=>{const done=s&&s.sonder&&!Array.isArray(s.sonder)?s.sonder[sf.key]||0:0;const ok=done>=sf.min;return`<div class="card-row" style="cursor:pointer" onclick="toggleSonderSchueler('${s.id}','${sf.key}',${sf.min})">
-          <i class="ti ${ok?'ti-checkbox':'ti-square'}" id="sf-icon-${sf.key}" style="font-size:${ok?'26px':'20px'};color:${ok?'#27A843':'var(--tx3)'};margin-right:10px;flex-shrink:0"></i>
-          <span style="flex:1;font-size:14px;${ok?'text-decoration:line-through;color:var(--tx3)':''}" id="sf-label-${sf.key}">${sf.label}</span>
-          <input type="hidden" id="sf-${sf.key}" value="${ok?sf.min:0}"/>
-        </div>`;}).join("")}
-      </div>
+
       <button class="btn-full" onclick="saveSchueler('${s?s.id:""}')">${s?"Änderungen speichern":"Schüler speichern"}</button>
       ${s?`<button class="btn-full danger" style="margin-top:6px" onclick="deleteSchueler('${s.id}')"><i class="ti ti-trash"></i> Schüler löschen</button>`:""}
     </div>
