@@ -279,7 +279,7 @@ const GRUNDFAHRAUFGABEN=[
   {key:"stadtautobahn",label:"Stadtautobahn",            icon:"ti-road"},
   {key:"strassenbahn",label:"Straßenbahn",               icon:"ti-train"},
 ];
-const SONDER=[{key:"ueberland",label:"Überlandfahrt",icon:"ti-trees",min:225},{key:"autobahn",label:"Autobahnfahrt",icon:"ti-road",min:220},{key:"nacht",label:"Nachtfahrt",icon:"ti-moon",min:135}];
+const SONDER=[{key:"ueberland",label:"Überlandfahrt",icon:"ti-trees",min:270},{key:"autobahn",label:"Autobahnfahrt",icon:"ti-road",min:225},{key:"nacht",label:"Nachtfahrt",icon:"ti-moon",min:135}];
 const MONATE=["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
 const MONATE_K=["Jan","Feb","Mär","Apr","Mai","Jun","Jul","Aug","Sep","Okt","Nov","Dez"];
 const START_DATE=new Date(2026,3,15);
@@ -2027,7 +2027,13 @@ function renderDashSchueler(sid){
           <span class="info-val">${naechstePruef?(fmtDate(naechstePruef.datum).day+". "+fmtDate(naechstePruef.datum).mon+" "+fmtDate(naechstePruef.datum).year+(naechstePruef.uhr?`<br><span style="font-size:13px;color:var(--tx2)">`+naechstePruef.uhr+" Uhr</span>":"")+  (naechstePruef.bestanden===true?`<br><span style="font-size:13px;font-weight:700;color:#27A843">✓ Bestanden</span>`:naechstePruef.bestanden===false?`<br><span style="font-size:13px;font-weight:700;color:#E24B4A">✗ Nicht bestanden</span>`:"")):"–"}</span></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-map-pin"></i>Prüfort</span>
           <span class="info-val">${naechstePruef&&naechstePruef.prufort?naechstePruef.prufort:s.prufort||"–"}</span></div>
-        ${(()=>{if(!naechstePruef)return "";const hasResult=naechstePruef.bestanden===true||naechstePruef.bestanden===false;if(!hasResult)return `<div class="card-row" style="padding-top:8px;gap:8px"><button onclick="setPruefErgebnis('${sid}','${naechstePruef.datum}',true)" style="flex:1;background:rgba(39,168,67,0.15);border:1.5px solid rgba(39,168,67,0.5);border-radius:10px;color:#166534;font-size:14px;font-weight:600;padding:10px 6px;cursor:pointer;font-family:inherit">✓ Bestanden</button><button onclick="setPruefErgebnis('${sid}','${naechstePruef.datum}',false)" style="flex:1;background:rgba(226,75,74,0.12);border:1.5px solid rgba(226,75,74,0.4);border-radius:10px;color:#A32D2D;font-size:14px;font-weight:600;padding:10px 6px;cursor:pointer;font-family:inherit">✗ Nicht best.</button></div>`;return `<div class="card-row" style="padding-top:6px"><button onclick="resetPruefErgebnis('${sid}','${naechstePruef.datum}')" style="background:none;border:1px solid var(--br2);border-radius:10px;color:var(--tx3);font-size:14px;padding:10px 16px;cursor:pointer;font-family:inherit;width:100%">↩ Ergebnis zurücksetzen</button></div>`;})()}
+        ${naechstePruef?`<div style="padding-top:8px;display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;gap:8px">
+            <button onclick="setPruefErgebnis('${sid}','${naechstePruef.datum}',true)" style="flex:1;background:${naechstePruef.bestanden===true?'rgba(39,168,67,0.3)':'rgba(39,168,67,0.12)'};border:1.5px solid rgba(39,168,67,0.5);border-radius:10px;color:#166534;font-size:14px;font-weight:600;padding:10px 6px;cursor:pointer;font-family:inherit">${naechstePruef.bestanden===true?"✓ Bestanden ✓":"✓ Bestanden"}</button>
+            <button onclick="setPruefErgebnis('${sid}','${naechstePruef.datum}',false)" style="flex:1;background:${naechstePruef.bestanden===false?'rgba(226,75,74,0.25)':'rgba(226,75,74,0.1)'};border:1.5px solid rgba(226,75,74,0.4);border-radius:10px;color:#A32D2D;font-size:14px;font-weight:600;padding:10px 6px;cursor:pointer;font-family:inherit">${naechstePruef.bestanden===false?"✗ Nicht best. ✗":"✗ Nicht best."}</button>
+          </div>
+          ${naechstePruef.bestanden===true||naechstePruef.bestanden===false?`<button onclick="resetPruefErgebnis('${sid}','${naechstePruef.datum}')" style="background:none;border:1px solid var(--br2);border-radius:10px;color:var(--tx3);font-size:13px;padding:8px;cursor:pointer;font-family:inherit;width:100%">↩ Ergebnis zurücksetzen</button>`:""}
+        </div>`:""}
       </div>
 
       
@@ -2130,8 +2136,8 @@ function toggleSonderDash(sid,key,min){
 
 function renderSonderDoku(sid,s){
   const SONDER_TYPEN=[
-    {key:'ueberland',label:'Überlandfahrt',required:225},
-    {key:'autobahn',label:'Autobahnfahrt',required:220},
+    {key:'ueberland',label:'Überlandfahrt',required:270},
+    {key:'autobahn',label:'Autobahnfahrt',required:225},
     {key:'nacht',label:'Nachtfahrt',required:135}
   ];
   const notizL=n=>(n||'').toLowerCase();
