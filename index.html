@@ -431,8 +431,10 @@ function renderDashboard(dashDateOffset=0){
     const lbl=document.getElementById("ddb-lbl");
     const min=document.getElementById("ddb-min");
     const isPast=anzeigeDatum<td;
-    if(lbl)lbl.textContent=anzeigeLblShort+(isPast?" gefahren":" geplant");
-    if(min)min.innerHTML=anzeigeTotalMin+'<span class="stat-unit">min</span>';
+    if(lbl){lbl.textContent=anzeigeLblShort+(isPast?" gefahren":" geplant");lbl.style.textAlign="center";}
+    if(min){min.innerHTML=anzeigeTotalMin+'<span class="stat-unit">min</span>';min.style.fontSize="42px";min.style.textAlign="center";}
+    const box=document.getElementById("dash-day-box");
+    if(box)box.style.textAlign="center";
   },10);
 }
 
