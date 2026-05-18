@@ -1643,7 +1643,7 @@ function renderTagAnsicht(date){
       const isPruef=e.min===100;
       const dotCol=isPruef?"#E24B4A":isSonder?"#378ADD":"#639922";
       totalMin+=e.min;
-      html+=`<div class="card" style="margin-bottom:8px;cursor:pointer" onclick="renderEditKalTermin('${date}',${t.indexOf(e)})">
+      html+=`<div class="card" style="margin-bottom:8px;cursor:pointer" onclick="${isAuffrisch2?`renderEditKalTermin('${date}',${t.indexOf(e)})`:`renderDashSchueler('${e.sid}')`}">
         <div class="card-row" style="gap:14px;padding:18px 16px 18px;align-items:flex-start">
           <div style="display:flex;flex-direction:column;align-items:center;gap:2px;min-width:44px">
             <span style="font-size:14px;font-weight:600;color:var(--tx)">${e.uhr}</span>
@@ -2209,7 +2209,7 @@ function changeGFADash(sid,key,d){
   if(!s.gfa)s.gfa={};
   s.gfa[key]=Math.max(0,(s.gfa[key]||0)+d);
   saveAll();
-  const el=document.getElementById("gfa-"+sid+"-"+key);
+  const el=document.getElementById("gfa-"+sid+"-"+key+"-d");
   if(el)el.textContent=s.gfa[key];
 }
 
