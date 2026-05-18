@@ -2201,7 +2201,12 @@ function toggleFahrstundenDash(sid,type){
   if(type==="past"){
     entries=Object.entries(termine).filter(([d])=>d<td).flatMap(([d,ts])=>ts.filter(t=>t.sid===sid).map(t=>({datum:d,...t}))).sort((a,b)=>b.datum.localeCompare(a.datum));
   } else {
-    entries=Object.entries(termine).filter(([d])=>d>=td).flatMap(([d,ts])=>ts.filter(t=>t.sid===sid).map(t=>({datum:d,...t}))).sort((a,b)=>a.datum.localeCompare(b.datum)||(a.uhr||"").localeCompare(b.uhr||""));
+    entries=Object.entries(termine).filter(([d])=>d>=td).flatMap(([d,ts])=>ts.filter(t=>t.sid===sid).map(t=>({datum:d,...t}))).sort((a,b)=>{
+      const aP=a.min===100||a.typ==="pruef"?0:1;
+      const bP=b.min===100||b.typ==="pruef"?0:1;
+      if(aP!==bP)return aP-bP;
+      return a.datum.localeCompare(b.datum)||(a.uhr||"").localeCompare(b.uhr||"");
+    });
   }
   const wt=["So","Mo","Di","Mi","Do","Fr","Sa"];
   el.innerHTML=entries.length?entries.map(e=>{
