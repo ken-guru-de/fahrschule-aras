@@ -2734,12 +2734,29 @@ function exportMonatPDF(monatStr){
 
 (async()=>{
   try{
-    // Einmalige Korrektur: Versuchsnummern chronologisch neu vergeben
+    // Korrektur 1: Versuchsnummern chronologisch neu vergeben
     schueler.forEach(s=>{
       if(s.pruefungen&&s.pruefungen.length>1){
         s.pruefungen.sort((a,b)=>a.datum.localeCompare(b.datum));
         s.pruefungen.forEach((p,i)=>{p.versuch=i+1;});
       }
+    });
+    // Korrektur 2: Prüfungen entfernen die keinen echten pruef-Kalendereintrag haben
+    // und kein Ergebnis (bestanden/nicht bestanden) gesetzt haben — nur "Geister"
+    schueler.forEach(s=>{
+      if(!s.pruefungen||!s.pruefungen.length)return;
+      s.pruefungen=s.pruefungen.filter(p=>{
+        // Prüfung mit gesetztem Ergebnis immer behalten
+        if(p.bestanden===true||p.bestanden===false)return true;
+        // Prüfen ob ein echter pruef-Eintrag im Kalender existiert
+        const kalEintrag=(termine[p.datum]||[]).find(t=>
+          t.sid===s.id&&(t.typ==="pruef"||(t.min===100&&(!t.typ||t.typ===""||t.typ==="normal")))
+        );
+        return !!kalEintrag;
+      });
+      // Versuchsnummern nach dem Filter neu vergeben
+      s.pruefungen.sort((a,b)=>a.datum.localeCompare(b.datum));
+      s.pruefungen.forEach((p,i)=>{p.versuch=i+1;});
     });
     syncKalenderToFahrstunden();
     save("fs_schueler",schueler);
