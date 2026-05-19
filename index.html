@@ -687,7 +687,7 @@ function renderSchueler(sid){
         <div>
           <div style="font-size:18px;font-weight:600">${s.vorname}${s.spitz?` <span style="font-size:14px;color:var(--tx3);font-weight:400">«${s.spitz}»</span>`:""} ${s.nachname}</div>
           <div style="font-size:13px;color:var(--tx2);margin-top:2px">Klasse ${s.klasse} · ${s.prufort}</div>
-          <div style="font-size:11px;color:var(--tx3);margin-top:3px">${s.foto?"Foto antippen — ändern, zuschneiden oder löschen":"Foto antippen — Kamera oder Datei"}</div>
+          <div style="font-size:11px;color:var(--tx3);margin-top:3px">Foto antippen — Kamera oder Datei</div>
         </div>
       </div>
 
@@ -1306,114 +1306,7 @@ function _doDeletePruefung(sid,idx){
 }
 
 // ── FOTO ──────────────────────────────────────────────────────────────────────
-function triggerFotoUpload(sid){
-  const s=getS(sid);
-  if(s&&s.foto){
-    // Foto bereits vorhanden → Optionen anzeigen
-    showModal({title:"Foto",msg:"Was möchtest du tun?",btns:[
-      {label:"📷  Neues Foto aufnehmen / wählen",action:`closeModal();setTimeout(()=>{const inp=document.getElementById('foto-input-${sid}');if(inp)inp.click();},100);`},
-      {label:"✂️  Größe & Ausschnitt anpassen",action:`closeModal();setTimeout(()=>showFotoEditor('${sid}'),100);`},
-      {label:"🗑️  Foto löschen",danger:true,action:`closeModal();deleteFoto('${sid}');`},
-      {label:"Abbrechen",action:"closeModal();"}
-    ]});
-  } else {
-    const inp=document.getElementById("foto-input-"+sid);if(inp)inp.click();
-  }
-}
-function deleteFoto(sid){
-  const s=getS(sid);if(!s)return;
-  s.foto=null;saveAll();renderSchueler(sid);
-  showToast("toast-main","Foto gelöscht");
-}
-function showFotoEditor(sid){
-  const s=getS(sid);if(!s||!s.foto)return;
-  const existing=document.getElementById("fs-modal");if(existing)existing.remove();
-  const div=document.createElement("div");
-  div.id="fs-modal";div.className="modal-overlay";
-  div.style.alignItems="center";
-  div.innerHTML=`
-    <div class="modal-sheet" style="border-radius:20px;max-width:360px;margin:16px">
-      <div class="modal-title" style="margin-bottom:12px">Ausschnitt anpassen</div>
-      <div style="position:relative;width:240px;height:240px;border-radius:50%;overflow:hidden;margin:0 auto 16px;border:3px solid var(--accent);background:#000">
-        <img id="foto-edit-img" src="${s.foto}" style="position:absolute;transform-origin:center center;cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none"/>
-      </div>
-      <div style="margin-bottom:8px">
-        <div style="font-size:12px;color:var(--tx3);margin-bottom:6px;text-align:center">Zoom</div>
-        <input type="range" id="foto-zoom" min="50" max="200" value="100" style="width:100%;accent-color:var(--accent)"/>
-      </div>
-      <div class="modal-btns" style="margin-top:16px">
-        <button onclick="applyFotoEdit('${sid}')" style="width:100%;padding:15px;border-radius:var(--r-md);border:none;background:var(--accent);color:white;font-size:17px;font-weight:600;cursor:pointer;font-family:inherit">Speichern</button>
-        <button onclick="closeModal()" style="width:100%;padding:15px;border-radius:var(--r-md);border:1.5px solid var(--br2);background:var(--bg);color:var(--tx);font-size:17px;font-weight:600;cursor:pointer;font-family:inherit">Abbrechen</button>
-      </div>
-    </div>`;
-  div.addEventListener("click",e=>{if(e.target===div)closeModal();});
-  document.body.appendChild(div);
-  // Setup drag & zoom
-  setTimeout(()=>{
-    const img=document.getElementById("foto-edit-img");
-    const zoom=document.getElementById("foto-zoom");
-    if(!img||!zoom)return;
-    let scale=1,ox=0,oy=0,startX=0,startY=0,dragging=false;
-    function applyTransform(){img.style.transform=`translate(${ox}px,${oy}px) scale(${scale})`;}
-    // Init: center image
-    img.onload=function(){
-      const cw=240,ch=240;
-      const iw=img.naturalWidth,ih=img.naturalHeight;
-      const fit=Math.max(cw/iw,ch/ih);
-      scale=fit;zoom.value=Math.round(fit*100);
-      img.style.width=iw+"px";img.style.height=ih+"px";
-      img.style.left=((cw-iw)/2)+"px";img.style.top=((ch-ih)/2)+"px";
-      applyTransform();
-    };
-    if(img.complete&&img.naturalWidth)img.onload();
-    zoom.addEventListener("input",()=>{scale=zoom.value/100;applyTransform();});
-    // Touch drag
-    img.addEventListener("touchstart",e=>{e.preventDefault();dragging=true;startX=e.touches[0].clientX-ox;startY=e.touches[0].clientY-oy;},{passive:false});
-    img.addEventListener("touchmove",e=>{e.preventDefault();if(!dragging)return;ox=e.touches[0].clientX-startX;oy=e.touches[0].clientY-startY;applyTransform();},{passive:false});
-    img.addEventListener("touchend",()=>{dragging=false;});
-    // Mouse drag
-    img.addEventListener("mousedown",e=>{dragging=true;startX=e.clientX-ox;startY=e.clientY-oy;img.style.cursor="grabbing";});
-    document.addEventListener("mousemove",e=>{if(!dragging)return;ox=e.clientX-startX;oy=e.clientY-startY;applyTransform();});
-    document.addEventListener("mouseup",()=>{dragging=false;img.style.cursor="grab";});
-    window._fotoEditState={sid,scale,ox,oy,img,zoom};
-  },100);
-}
-function applyFotoEdit(sid){
-  const img=document.getElementById("foto-edit-img");
-  const zoom=document.getElementById("foto-zoom");
-  if(!img)return;
-  const scale=parseFloat(zoom?zoom.value/100:1);
-  // Compute transform values from img's current style
-  const match=(img.style.transform||"").match(/translate\(([^,]+)px,([^p]+)px\)\s*scale\(([^)]+)\)/);
-  const ox=match?parseFloat(match[1]):0;
-  const oy=match?parseFloat(match[2]):0;
-  const sc=match?parseFloat(match[3]):scale;
-  const iw=img.naturalWidth,ih=img.naturalHeight;
-  const SIZE=300;
-  const canvas=document.createElement("canvas");
-  canvas.width=SIZE;canvas.height=SIZE;
-  const ctx=canvas.getContext("2d");
-  // Center offset from CSS left/top
-  const imgLeft=(240-iw)/2;
-  const imgTop=(240-ih)/2;
-  // The visible area: we need to map canvas pixels back to source pixels
-  // Container is 240x240, showing circular crop. Canvas output is SIZExSIZE.
-  // Screen position of img top-left relative to container:
-  const screenX=imgLeft+ox;
-  const screenY=imgTop+oy;
-  // Scale factor from container to canvas:
-  const ratio=SIZE/240;
-  // Source coords
-  const srcX=(-screenX/sc)*ratio*(iw/iw); // simplify
-  const srcY=(-screenY/sc)*ratio;
-  const srcW=(SIZE/(sc*ratio));
-  const srcH=srcW;
-  ctx.drawImage(img,
-    -screenX/sc, -screenY/sc, 240/sc, 240/sc,
-    0,0,SIZE,SIZE
-  );
-  const s=getS(sid);if(s){s.foto=canvas.toDataURL("image/jpeg",.85);saveAll();closeModal();renderSchueler(sid);showToast("toast-main","Foto gespeichert");}
-}
+function triggerFotoUpload(sid){const inp=document.getElementById("foto-input-"+sid);if(inp)inp.click();}
 function saveFoto(sid,input){
   const file=input.files[0];if(!file)return;
   const reader=new FileReader();
@@ -1421,14 +1314,11 @@ function saveFoto(sid,input){
     const img=new Image();
     img.onload=function(){
       const canvas=document.createElement("canvas");
-      const MAX=400;let w=img.width,h=img.height;
-      const minSide=Math.min(w,h);
-      // Square crop from center
-      const sx=(w-minSide)/2,sy=(h-minSide)/2;
-      const outSize=Math.min(minSide,MAX);
-      canvas.width=outSize;canvas.height=outSize;
-      canvas.getContext("2d").drawImage(img,sx,sy,minSide,minSide,0,0,outSize,outSize);
-      const s=getS(sid);if(s){s.foto=canvas.toDataURL("image/jpeg",.85);saveAll();renderSchueler(sid);showToast("toast-main","Foto gespeichert ✓");}
+      const MAX=300;let w=img.width,h=img.height;
+      if(w>h){if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}}else{if(h>MAX){w=Math.round(w*MAX/h);h=MAX;}}
+      canvas.width=w;canvas.height=h;
+      canvas.getContext("2d").drawImage(img,0,0,w,h);
+      const s=getS(sid);if(s){s.foto=canvas.toDataURL("image/jpeg",.8);saveAll();renderSchueler(sid);}
     };
     img.src=e.target.result;
   };
@@ -1930,7 +1820,8 @@ function renderTagAnsicht(date){
       const isPruef=e.typ==="pruef"||(e.min===100&&(!e.typ||e.typ==="normal"||e.typ===""));
       const dotCol=isPruef?"#E24B4A":isSonder?"#378ADD":"#639922";
       totalMin+=e.min;
-      html+=`<div class="card" style="margin-bottom:8px;cursor:pointer" onclick="${isAuffrisch2?`renderEditKalTermin('${date}',${t.indexOf(e)})`:`renderDashSchueler('${e.sid}')`}">
+      const realIdx=t.indexOf(e);
+      html+=`<div class="card" style="margin-bottom:8px;cursor:pointer" onclick="showTagTerminActions('${date}',${realIdx})">
         <div class="card-row" style="gap:14px;padding:14px 16px 14px;align-items:flex-start">
           <div style="display:flex;flex-direction:column;align-items:center;gap:2px;min-width:44px">
             <span style="font-size:14px;font-weight:600;color:var(--tx)">${e.uhr}</span>
@@ -2170,7 +2061,40 @@ function _doDelDashTermin(date,idx){
   if(!termine[date].length)delete termine[date];
   saveAll();renderDashboard();
 }
-function initPTR(){
+function showTagTerminActions(date,idx){
+  const t=(termine[date]||[]);const e=t[idx];if(!e)return;
+  const isAuffrisch=e.sid&&e.sid.startsWith("__auffrisch__");
+  const s=isAuffrisch?null:getS(e.sid);
+  const name=isAuffrisch?("🔄 "+e.sid.replace("__auffrisch__:","")):(s?s.vorname+" "+s.nachname:"Termin");
+  const fd=fmtDate(date);
+  const btns=[
+    {label:"✎ Bearbeiten",primary:true,action:`closeModal();renderEditKalTermin('${date}',${idx})`},
+  ];
+  if(!isAuffrisch&&s){
+    btns.push({label:"→ Zur Schülerkarte",action:`closeModal();renderDashSchueler('${e.sid}')`});
+  }
+  btns.push({label:"Termin löschen",danger:true,action:`closeModal();_confirmDelTagTermin('${date}',${idx})`});
+  btns.push({label:"Abbrechen",action:"closeModal()"});
+  showModal({title:name,msg:`${fd.day}. ${fd.mon} ${fd.year} · ${e.uhr} Uhr · ${e.min} min`,btns});
+}
+function _confirmDelTagTermin(date,idx){
+  const t=(termine[date]||[]);const e=t[idx];if(!e)return;
+  const isAuffrisch=e.sid&&e.sid.startsWith("__auffrisch__");
+  const s=isAuffrisch?null:getS(e.sid);
+  const name=isAuffrisch?e.sid.replace("__auffrisch__:",""):(s?s.vorname+" "+s.nachname:"Termin");
+  showModal({title:"Termin löschen",msg:`${name} · ${e.uhr} Uhr — wirklich löschen?`,btns:[
+    {label:"Löschen",danger:true,action:`_doDelTagTermin('${date}',${idx})`},
+    {label:"Abbrechen",action:"closeModal()"},
+  ]});
+}
+function _doDelTagTermin(date,idx){
+  closeModal();
+  if(!termine[date])return;
+  termine[date].splice(idx,1);
+  if(!termine[date].length)delete termine[date];
+  saveAll();
+  renderTagAnsicht(date);
+}
   const scrollEl=document.querySelector(".scroll");if(!scrollEl)return;
   const parent=scrollEl.parentElement;
   let ptrWrap=parent.querySelector(".ptr-wrap");
