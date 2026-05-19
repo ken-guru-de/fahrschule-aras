@@ -690,7 +690,7 @@ function renderSchueler(sid){
         <div>
           <div style="font-size:18px;font-weight:600">${s.vorname}${s.spitz?` <span style="font-size:14px;color:var(--tx3);font-weight:400">«${s.spitz}»</span>`:""} ${s.nachname}</div>
           <div style="font-size:13px;color:var(--tx2);margin-top:2px">Klasse ${s.klasse} · ${s.prufort}</div>
-          <div style="font-size:11px;color:var(--tx3);margin-top:3px">Foto antippen — Kamera oder Datei</div>
+          <div style="font-size:11px;color:var(--tx3);margin-top:3px">${s.foto?"Foto antippen — ändern, zuschneiden oder löschen":"Foto antippen — Kamera oder Datei"}</div>
         </div>
       </div>
 
@@ -1309,7 +1309,86 @@ function _doDeletePruefung(sid,idx){
 }
 
 // ── FOTO ──────────────────────────────────────────────────────────────────────
-function triggerFotoUpload(sid){const inp=document.getElementById("foto-input-"+sid);if(inp)inp.click();}
+function triggerFotoUpload(sid){
+  const s=getS(sid);
+  if(s&&s.foto){
+    showModal({title:"Foto",msg:"Was möchtest du tun?",btns:[
+      {label:"Neues Foto aufnehmen / wählen",action:`closeModal();setTimeout(()=>{const inp=document.getElementById('foto-input-${sid}');if(inp)inp.click();},100);`},
+      {label:"Ausschnitt & Zoom anpassen",action:`closeModal();setTimeout(()=>showFotoEditor('${sid}'),100);`},
+      {label:"Foto löschen",danger:true,action:`closeModal();deleteFoto('${sid}');`},
+      {label:"Abbrechen",action:"closeModal();"}
+    ]});
+  } else {
+    const inp=document.getElementById("foto-input-"+sid);if(inp)inp.click();
+  }
+}
+function deleteFoto(sid){
+  const s=getS(sid);if(!s)return;
+  s.foto=null;saveAll();renderSchueler(sid);
+  showToast("toast-main","Foto gelöscht");
+}
+function showFotoEditor(sid){
+  const s=getS(sid);if(!s||!s.foto)return;
+  const existing=document.getElementById("fs-modal");if(existing)existing.remove();
+  const div=document.createElement("div");
+  div.id="fs-modal";div.className="modal-overlay";div.style.alignItems="center";
+  div.innerHTML=`<div class="modal-sheet" style="border-radius:20px;max-width:360px;margin:16px">
+    <div class="modal-title" style="margin-bottom:12px">Ausschnitt anpassen</div>
+    <div style="position:relative;width:240px;height:240px;border-radius:50%;overflow:hidden;margin:0 auto 16px;border:3px solid var(--accent);background:#000">
+      <img id="foto-edit-img" src="${s.foto}" style="position:absolute;transform-origin:center center;cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none"/>
+    </div>
+    <div style="margin-bottom:8px">
+      <div style="font-size:12px;color:var(--tx3);margin-bottom:6px;text-align:center">Zoom</div>
+      <input type="range" id="foto-zoom" min="50" max="200" value="100" style="width:100%;accent-color:var(--accent)"/>
+    </div>
+    <div class="modal-btns" style="margin-top:16px">
+      <button onclick="applyFotoEdit('${sid}')" style="width:100%;padding:15px;border-radius:var(--r-md);border:none;background:var(--accent);color:white;font-size:17px;font-weight:600;cursor:pointer;font-family:inherit">Speichern</button>
+      <button onclick="closeModal()" style="width:100%;padding:15px;border-radius:var(--r-md);border:1.5px solid var(--br2);background:var(--bg);color:var(--tx);font-size:17px;font-weight:600;cursor:pointer;font-family:inherit">Abbrechen</button>
+    </div>
+  </div>`;
+  div.addEventListener("click",e=>{if(e.target===div)closeModal();});
+  document.body.appendChild(div);
+  setTimeout(()=>{
+    const img=document.getElementById("foto-edit-img");
+    const zoom=document.getElementById("foto-zoom");
+    if(!img||!zoom)return;
+    let ox=0,oy=0,startX=0,startY=0,dragging=false;
+    function applyTransform(){img.style.transform=`translate(${ox}px,${oy}px) scale(${zoom.value/100})`;}
+    img.onload=function(){
+      const iw=img.naturalWidth,ih=img.naturalHeight;
+      const fit=Math.max(240/iw,240/ih);
+      zoom.value=Math.round(fit*100);
+      img.style.width=iw+"px";img.style.height=ih+"px";
+      img.style.left=((240-iw)/2)+"px";img.style.top=((240-ih)/2)+"px";
+      applyTransform();
+    };
+    if(img.complete&&img.naturalWidth)img.onload();
+    zoom.addEventListener("input",applyTransform);
+    img.addEventListener("touchstart",e=>{e.preventDefault();dragging=true;startX=e.touches[0].clientX-ox;startY=e.touches[0].clientY-oy;},{passive:false});
+    img.addEventListener("touchmove",e=>{e.preventDefault();if(!dragging)return;ox=e.touches[0].clientX-startX;oy=e.touches[0].clientY-startY;applyTransform();},{passive:false});
+    img.addEventListener("touchend",()=>{dragging=false;});
+    img.addEventListener("mousedown",e=>{dragging=true;startX=e.clientX-ox;startY=e.clientY-oy;img.style.cursor="grabbing";});
+    document.addEventListener("mousemove",e=>{if(!dragging)return;ox=e.clientX-startX;oy=e.clientY-startY;applyTransform();});
+    document.addEventListener("mouseup",()=>{dragging=false;img.style.cursor="grab";});
+  },100);
+}
+function applyFotoEdit(sid){
+  const img=document.getElementById("foto-edit-img");
+  const zoom=document.getElementById("foto-zoom");
+  if(!img)return;
+  const sc=zoom?zoom.value/100:1;
+  const match=(img.style.transform||"").match(/translate\(([^,]+)px,([^p]+)px\)/);
+  const ox=match?parseFloat(match[1]):0;
+  const oy=match?parseFloat(match[2]):0;
+  const iw=img.naturalWidth,ih=img.naturalHeight;
+  const imgLeft=(240-iw)/2,imgTop=(240-ih)/2;
+  const screenX=imgLeft+ox,screenY=imgTop+oy;
+  const SIZE=300;
+  const canvas=document.createElement("canvas");
+  canvas.width=SIZE;canvas.height=SIZE;
+  canvas.getContext("2d").drawImage(img,-screenX/sc,-screenY/sc,240/sc,240/sc,0,0,SIZE,SIZE);
+  const s=getS(sid);if(s){s.foto=canvas.toDataURL("image/jpeg",.85);saveAll();closeModal();renderSchueler(sid);showToast("toast-main","Foto gespeichert");}
+}
 function saveFoto(sid,input){
   const file=input.files[0];if(!file)return;
   const reader=new FileReader();
@@ -1317,11 +1396,12 @@ function saveFoto(sid,input){
     const img=new Image();
     img.onload=function(){
       const canvas=document.createElement("canvas");
-      const MAX=300;let w=img.width,h=img.height;
-      if(w>h){if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}}else{if(h>MAX){w=Math.round(w*MAX/h);h=MAX;}}
-      canvas.width=w;canvas.height=h;
-      canvas.getContext("2d").drawImage(img,0,0,w,h);
-      const s=getS(sid);if(s){s.foto=canvas.toDataURL("image/jpeg",.8);saveAll();renderSchueler(sid);}
+      const minSide=Math.min(img.width,img.height);
+      const sx=(img.width-minSide)/2,sy=(img.height-minSide)/2;
+      const outSize=Math.min(minSide,400);
+      canvas.width=outSize;canvas.height=outSize;
+      canvas.getContext("2d").drawImage(img,sx,sy,minSide,minSide,0,0,outSize,outSize);
+      const s=getS(sid);if(s){s.foto=canvas.toDataURL("image/jpeg",.85);saveAll();renderSchueler(sid);showToast("toast-main","Foto gespeichert");}
     };
     img.src=e.target.result;
   };
@@ -1658,12 +1738,12 @@ function renderStatistik(){
     </div>
     <div class="scroll">
       <div class="stat-grid">
-        <div class="stat-box accent"><div class="stat-lbl">Bestehensquote</div><div class="stat-num">${quote}<span class="stat-unit">%</span></div></div>
-        <div class="stat-box"><div class="stat-lbl">Prüfungen gesamt</div><div class="stat-num">${gesamt}</div></div>
+        <div class="stat-box accent" style="text-align:center"><div class="stat-lbl">Bestehensquote</div><div class="stat-num">${quote}<span class="stat-unit">%</span></div></div>
+        <div class="stat-box" style="text-align:center"><div class="stat-lbl">Prüfungen gesamt</div><div class="stat-num">${gesamt}</div></div>
       </div>
       <div class="stat-grid">
-        <div class="stat-box"><div class="stat-lbl">Bestanden</div><div class="stat-num" style="color:#27500A">${bestanden}</div></div>
-        <div class="stat-box"><div class="stat-lbl">Nicht bestanden</div><div class="stat-num" style="color:#A32D2D">${gesamt-bestanden}</div></div>
+        <div class="stat-box" style="text-align:center"><div class="stat-lbl">Bestanden</div><div class="stat-num" style="color:#27500A">${bestanden}</div></div>
+        <div class="stat-box" style="text-align:center"><div class="stat-lbl">Nicht bestanden</div><div class="stat-num" style="color:#A32D2D">${gesamt-bestanden}</div></div>
       </div>`;
 
   if(gesamt===0){
@@ -1823,7 +1903,8 @@ function renderTagAnsicht(date){
       const isPruef=e.typ==="pruef"||(e.min===100&&(!e.typ||e.typ==="normal"||e.typ===""));
       const dotCol=isPruef?"#E24B4A":isSonder?"#378ADD":"#639922";
       totalMin+=e.min;
-      html+=`<div class="card" style="margin-bottom:8px;cursor:pointer" onclick="${isAuffrisch2?`renderEditKalTermin('${date}',${t.indexOf(e)})`:`renderDashSchueler('${e.sid}')`}">
+      const realIdx=t.indexOf(e);
+      html+=`<div class="card" style="margin-bottom:8px;cursor:pointer" onclick="showTagTerminActions('${date}',${realIdx})">
         <div class="card-row" style="gap:14px;padding:14px 16px 14px;align-items:flex-start">
           <div style="display:flex;flex-direction:column;align-items:center;gap:2px;min-width:44px">
             <span style="font-size:14px;font-weight:600;color:var(--tx)">${e.uhr}</span>
@@ -2062,6 +2143,35 @@ function _doDelDashTermin(date,idx){
   termine[date].splice(idx,1);
   if(!termine[date].length)delete termine[date];
   saveAll();renderDashboard();
+}
+function showTagTerminActions(date,idx){
+  const t=(termine[date]||[]);const e=t[idx];if(!e)return;
+  const isAuffrisch=e.sid&&e.sid.startsWith("__auffrisch__");
+  const s=isAuffrisch?null:getS(e.sid);
+  const name=isAuffrisch?("Auffrischung: "+e.sid.replace("__auffrisch__:","")):(s?s.vorname+" "+s.nachname:"Termin");
+  const fd=fmtDate(date);
+  const btns=[{label:"Bearbeiten",primary:true,action:`closeModal();renderEditKalTermin('${date}',${idx})`}];
+  if(!isAuffrisch&&s)btns.push({label:"Zur Schülerkarte",action:`closeModal();renderDashSchueler('${e.sid}')`});
+  btns.push({label:"Termin löschen",danger:true,action:`closeModal();_confirmDelTagTermin('${date}',${idx})`});
+  btns.push({label:"Abbrechen",action:"closeModal()"});
+  showModal({title:name,msg:`${fd.day}. ${fd.mon} ${fd.year} · ${e.uhr} Uhr · ${e.min} min`,btns});
+}
+function _confirmDelTagTermin(date,idx){
+  const t=(termine[date]||[]);const e=t[idx];if(!e)return;
+  const isAuffrisch=e.sid&&e.sid.startsWith("__auffrisch__");
+  const s=isAuffrisch?null:getS(e.sid);
+  const name=isAuffrisch?e.sid.replace("__auffrisch__:",""):(s?s.vorname+" "+s.nachname:"Termin");
+  showModal({title:"Termin löschen",msg:`${name} · ${e.uhr} Uhr — wirklich löschen?`,btns:[
+    {label:"Löschen",danger:true,action:`_doDelTagTermin('${date}',${idx})`},
+    {label:"Abbrechen",action:"closeModal()"},
+  ]});
+}
+function _doDelTagTermin(date,idx){
+  closeModal();
+  if(!termine[date])return;
+  termine[date].splice(idx,1);
+  if(!termine[date].length)delete termine[date];
+  saveAll();renderTagAnsicht(date);
 }
 function initPTR(){
   const scrollEl=document.querySelector(".scroll");if(!scrollEl)return;
@@ -2513,157 +2623,102 @@ function toggleFahrstundenDash(sid,type){
 }
 
 // ── STATISTIK ─────────────────────────────────────────────────────────────────
-function renderAbrechnung(tab="woche",weekOffset=0){
+function renderAbrechnung(weekOffset=0){
   const satz=getAbrechnungSatz();
   const td=todayStr();
   const now=new Date();
+  const moK=["Jan","Feb","Mär","Apr","Mai","Jun","Jul","Aug","Sep","Okt","Nov","Dez"];
+  const moLang=["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
   function toEuro(min){return((min/60)*satz).toFixed(2).replace('.',',')+" €";}
   function toStd(min){const h=Math.floor(min/60);const m=min%60;return h+"h "+String(m).padStart(2,"0");}
   function getMin(prefix){return Object.entries(termine).reduce((sum,[d,ts])=>{if(d.startsWith(prefix))return sum+ts.reduce((a,e)=>a+(e.min||0),0);return sum;},0);}
   const tagMin=getMin(td);
-  const kw=getKW(now);
-  const jahrStr=td.substring(0,4);
-  const monatStr=td.substring(0,7);
-  const monatName=["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"][now.getMonth()];
+  const tagName=now.getDate()+". "+moK[now.getMonth()];
   const baseDate=new Date(now.getFullYear(),now.getMonth(),now.getDate());
-  const todayDow=(baseDate.getDay()+6)%7; // 0=Mo,1=Di,...,4=Fr
-  baseDate.setDate(baseDate.getDate()-todayDow); // snap to Monday
-  baseDate.setDate(baseDate.getDate()+weekOffset*7); // apply offset
-  const dayOfWeek=0;
+  const todayDow=(baseDate.getDay()+6)%7;
+  baseDate.setDate(baseDate.getDate()-todayDow+weekOffset*7);
   const baseDateStr=toKey(baseDate.getFullYear(),baseDate.getMonth()+1,baseDate.getDate());
   const wocheMin=Object.entries(termine).reduce((sum,[d,ts])=>{
     const diff=Math.round((new Date(d)-new Date(baseDateStr))/86400000);
-    if(diff>=-dayOfWeek&&diff<=4-dayOfWeek)return sum+ts.reduce((a,e)=>a+(e.min||0),0);
+    if(diff>=0&&diff<=4)return sum+ts.reduce((a,e)=>a+(e.min||0),0);
     return sum;
   },0);
-  const kwActual=getKW(baseDate);
-  const selMonatStr=toKey(baseDate.getFullYear(),baseDate.getMonth()+1,1).substring(0,7);
-  const selMonatName=["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"][baseDate.getMonth()];
-  const selMonatMin=getMin(selMonatStr);
-  const monatMin=getMin(monatStr);
-  const wochentageNamen=["Mo","Di","Mi","Do","Fr","Sa","So"];
-  let nextDayMin=0;let tagLabel="Heute";
-  if(tagMin===0){
-    const nextKeys=Object.keys(termine).filter(d=>d>td).sort();
-    if(nextKeys.length){const nd=nextKeys[0];nextDayMin=(termine[nd]||[]).reduce((a,e)=>a+(e.min||0),0);const fnd=fmtDate(nd);tagLabel=fnd.day+". "+fnd.mon;}
-  }
+  const wkEnd=new Date(baseDate);wkEnd.setDate(wkEnd.getDate()+4);
+  const wkLabel=baseDate.getDate()+". – "+wkEnd.getDate()+". "+moK[wkEnd.getMonth()];
   const weekDays=[];
+  const wtN=["Mo","Di","Mi","Do","Fr"];
   for(let i=0;i<5;i++){
-    const d2=new Date(baseDate);
-    d2.setDate(d2.getDate()-dayOfWeek+i);
+    const d2=new Date(baseDate);d2.setDate(d2.getDate()+i);
     const ds=toKey(d2.getFullYear(),d2.getMonth()+1,d2.getDate());
     const min=(termine[ds]||[]).reduce((a,e)=>a+(e.min||0),0);
-    weekDays.push({name:wochentageNamen[i],ds,min,isToday:ds===td});
+    weekDays.push({name:wtN[i],ds,min,isToday:ds===td});
   }
   const maxDayMin=Math.max(...weekDays.map(x=>x.min),1);
+  const monatStr=td.substring(0,7);
+  const jahrStr=td.substring(0,4);
+  const monatMin=getMin(monatStr);
+  const jahrMin=getMin(jahrStr);
   const allMonths={};
   Object.entries(termine).forEach(([d,ts])=>{const m=d.substring(0,7);if(!allMonths[m])allMonths[m]=0;allMonths[m]+=ts.reduce((a,e)=>a+(e.min||0),0);});
   const sortedMonths=Object.entries(allMonths).sort((a,b)=>b[0].localeCompare(a[0]));
-  const allYears={};
-  Object.entries(termine).forEach(([d,ts])=>{const y=d.substring(0,4);if(!allYears[y])allYears[y]=0;allYears[y]+=ts.reduce((a,e)=>a+(e.min||0),0);});
-  const sortedYears=Object.entries(allYears).sort((a,b)=>b[0].localeCompare(a[0]));
-  function tabBtn(t,label){const active=tab===t;return`<button onclick="renderAbrechnung('${t}')" style="flex:1;padding:8px 4px;border:none;border-bottom:2px solid ${active?'white':'transparent'};background:transparent;color:${active?'white':'rgba(255,255,255,0.6)'};font-size:13px;font-weight:${active?'600':'400'};cursor:pointer;font-family:inherit">${label}</button>`;}
-  let content2='';
-  if(tab==="woche"){
-    content2=`
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding:0 4px">
-        <button onclick="renderAbrechnung('woche',${weekOffset-1})" style="background:none;border:none;cursor:pointer;color:var(--accent);font-size:24px;padding:4px 12px"><i class="ti ti-chevron-left"></i></button>
-        <span style="font-size:15px;font-weight:600;color:var(--tx)">KW ${kwActual}${weekOffset===0?' (aktuell)':weekOffset<0?' ('+Math.abs(weekOffset)+' KW zurück)':' ('+weekOffset+' KW vor)'}</span>
-        <button onclick="renderAbrechnung('woche',${weekOffset+1})" style="background:none;border:none;cursor:pointer;color:${weekOffset<0?'var(--accent)':'var(--tx3)'};font-size:24px;padding:4px 12px"><i class="ti ti-chevron-right"></i></button>
-      </div>
-      <div class="stat-grid">
-        <div class="stat-box accent" style="text-align:center;box-shadow:0 8px 28px rgba(255,107,43,0.4),inset 0 1px 0 rgba(255,200,150,0.5)"><div class="stat-lbl">${tagMin===0&&tagLabel!=="Heute"?tagLabel:"Heute"}</div><div class="stat-num" style="font-size:36px">${tagMin===0?nextDayMin:tagMin}<span class="stat-unit">min</span></div></div>
-        <div class="stat-box accent" style="text-align:center;box-shadow:0 8px 28px rgba(255,107,43,0.4),inset 0 1px 0 rgba(255,200,150,0.5)"><div class="stat-lbl">${tagMin===0&&tagLabel!=="Heute"?tagLabel:"Heute"}</div><div class="stat-num" style="font-size:28px">${toEuro(tagMin===0?nextDayMin:tagMin)}</div></div>
-      </div>
-      <div class="stat-card">
-        ${weekDays.map(d=>`<div style="margin-bottom:10px;cursor:pointer" onclick="renderTagAnsicht('${d.ds}')">
-          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">
-            <span style="font-size:14px;font-weight:${d.isToday?'600':'400'};color:${d.isToday?'var(--accent)':'var(--tx)'}">${d.name} ${parseInt(d.ds.split('-')[2])}.</span>
-            <span style="font-size:13px;color:var(--tx2)">${d.min?d.min+' min · '+toEuro(d.min):'–'}</span>
-          </div>
-          ${d.min?`<div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${Math.round((d.min/maxDayMin)*100)}%"></div></div>`:''}
-        </div>`).join('')}
-      </div>
-      <div class="stat-grid">
-        <div class="stat-box" style="text-align:center;box-shadow:0 4px 16px rgba(0,0,0,0.08)"><div class="stat-lbl">KW ${kwActual}</div><div class="stat-num" style="font-size:36px">${wocheMin}<span class="stat-unit">min</span></div><div style="font-size:14px;color:var(--tx3);margin-top:4px">${toStd(wocheMin)}</div></div>
-        <div class="stat-box" style="text-align:center;box-shadow:0 4px 16px rgba(226,75,74,0.15)"><div class="stat-lbl">KW ${kwActual} Verdienst</div><div style="font-size:28px;font-weight:700;color:#E24B4A;margin-top:4px">${toEuro(wocheMin)}</div></div>
-      </div>
-      <div class="stat-grid">
-        <div class="stat-box" style="text-align:center;box-shadow:0 4px 16px rgba(0,0,0,0.08)"><div class="stat-lbl">${selMonatName}</div><div class="stat-num" style="font-size:36px">${selMonatMin}<span class="stat-unit">min</span></div><div style="font-size:14px;color:var(--tx3);margin-top:4px">${toStd(selMonatMin)}</div></div>
-        <div class="stat-box" style="text-align:center;box-shadow:0 4px 16px rgba(226,75,74,0.15)"><div class="stat-lbl">${selMonatName} Verdienst</div><div style="font-size:28px;font-weight:700;color:#E24B4A;margin-top:4px">${toEuro(selMonatMin)}</div></div>
-      </div>`;
-  } else if(tab==="woche7"){
-    const last7=[];
-    for(let i=6;i>=0;i--){const d2=new Date(now);d2.setDate(d2.getDate()-i);if(d2.getDay()===0||d2.getDay()===6)continue;const ds=toKey(d2.getFullYear(),d2.getMonth()+1,d2.getDate());const min=(termine[ds]||[]).reduce((a,e)=>a+(e.min||0),0);last7.push({name:wochentageNamen[d2.getDay()===0?6:d2.getDay()-1],ds,min,isToday:ds===td});}
-    const max7=Math.max(...last7.map(x=>x.min),1);
-    const sum7=last7.reduce((a,x)=>a+x.min,0);
-    content2=`
-      <div class="stat-grid">
-        <div class="stat-box"><div class="stat-lbl">Woche</div><div class="stat-num">${sum7}<span class="stat-unit">min</span></div><div style="font-size:12px;color:var(--tx3);margin-top:2px">${toStd(sum7)}</div></div>
-        <div class="stat-box" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center"><div class="stat-lbl">Woche Verdienst</div><div style="font-size:22px;font-weight:700;color:#E24B4A;margin-top:4px">${toEuro(sum7)}</div></div>
-      </div>
-      <div class="stat-card">
-        ${last7.map(d=>`<div style="margin-bottom:10px;cursor:pointer" onclick="renderTagAnsicht('${d.ds}')">
-          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">
-            <span style="font-size:14px;font-weight:${d.isToday?'600':'400'};color:${d.isToday?'var(--accent)':'var(--tx)'}">${d.name} ${parseInt(d.ds.split('-')[2])}.</span>
-            <span style="font-size:13px;color:var(--tx2)">${d.min?d.min+' min · '+toEuro(d.min):'–'}</span>
-          </div>
-          ${d.min?`<div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${Math.round((d.min/max7)*100)}%"></div></div>`:''}
-        </div>`).join('')}
-      </div>`;
-  } else if(tab==="monat"){
-    content2=`<button onclick="exportMonatPDF('${monatStr}')" style="width:100%;background:rgba(10,40,120,0.25);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(100,150,255,0.4);border-radius:12px;color:#3B82F6;font-size:15px;padding:12px;cursor:pointer;font-family:inherit;margin-bottom:12px"><i class="ti ti-file-type-pdf"></i> Monatsabrechnung drucken / PDF</button>
-    <div class="stat-card">
-      ${sortedMonths.map(([m,min])=>{
-        const [y,mo]=m.split("-");
-        const mName=["Jan","Feb","Mär","Apr","Mai","Jun","Jul","Aug","Sep","Okt","Nov","Dez"][parseInt(mo)-1];
-        const maxMin=sortedMonths[0][1]||1;
-        const isCurrent=m===monatStr;
-        return`<div style="margin-bottom:18px;cursor:pointer" onclick="(()=>{const p='${m}'.split('-');curYear=parseInt(p[0]);curMonth=parseInt(p[1]);buildKalender();})()">
-          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px">
-            <span style="font-size:15px;font-weight:${isCurrent?'700':'400'};color:${isCurrent?'var(--accent)':'var(--tx)'}">${mName} ${y}</span>
-            <div style="display:flex;align-items:baseline;gap:10px">
-              <span style="font-size:22px;font-weight:700;color:var(--tx);font-variant-numeric:tabular-nums;white-space:nowrap">${min}<span style="font-size:12px;font-weight:400;color:var(--tx2)"> min</span></span>
-              <span style="font-size:12px;color:var(--tx3);white-space:nowrap;min-width:130px;text-align:right;font-variant-numeric:tabular-nums">${toStd(min)}&nbsp;·&nbsp;${toEuro(min)}</span>
-            </div>
-          </div>
-          <div class="stat-bar-bg" style="height:12px;border-radius:6px"><div class="stat-bar-fill" style="width:${Math.round((min/maxMin)*100)}%;height:12px;border-radius:6px"></div></div>
-        </div>`;
-      }).join('')}
-    </div></div>`;
-  } else if(tab==="jahr"){
-    content2=`<div class="stat-card">
-      ${sortedYears.map(([y,min])=>{
-        const maxMin=sortedYears[0][1]||1;
-        const isCurrent=y===jahrStr;
-        return`<div style="margin-bottom:18px">
-          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px">
-            <span style="font-size:15px;font-weight:${isCurrent?'700':'400'};color:${isCurrent?'var(--accent)':'var(--tx)'}">${y}</span>
-            <div style="display:flex;align-items:baseline;gap:10px">
-              <span style="font-size:22px;font-weight:700;color:var(--tx);font-variant-numeric:tabular-nums;white-space:nowrap">${min}<span style="font-size:12px;font-weight:400;color:var(--tx2)"> min</span></span>
-              <span style="font-size:12px;color:var(--tx3);white-space:nowrap;min-width:130px;text-align:right;font-variant-numeric:tabular-nums">${toStd(min)}&nbsp;·&nbsp;${toEuro(min)}</span>
-            </div>
-          </div>
-          <div class="stat-bar-bg" style="height:12px;border-radius:6px"><div class="stat-bar-fill" style="width:${Math.round((min/maxMin)*100)}%;height:12px;border-radius:6px"></div></div>
-        </div>`;
-      }).join('')}
-    </div>`;
-  }
-  let html=`<div class="screen active" id="scr-abrech">
-    <div class="topbar" style="flex-direction:column;align-items:stretch;padding-bottom:0">
-      <div style="display:flex;align-items:center;gap:8px;padding-bottom:8px">
-        <button class="btn-icon" onclick="renderDashboard()"><i class="ti ti-arrow-left"></i></button>
-        <span class="topbar-title"><i class="ti ti-receipt" style="font-size:18px;margin-right:6px"></i>Abrechnung</span>
-      </div>
-      <div style="display:flex">
-        ${tabBtn("woche","Aktuell")}
-        ${tabBtn("woche7","Woche")}
-        ${tabBtn("monat","Monat")}
-        ${tabBtn("jahr","Jahr")}
-      </div>
+  const maxMonthMin=sortedMonths[0]?.[1]||1;
+  const html=`<div class="screen active" id="scr-abrech">
+    <div class="topbar">
+      <button class="btn-icon" onclick="renderDashboard()"><i class="ti ti-arrow-left"></i></button>
+      <span class="topbar-title"><i class="ti ti-receipt" style="font-size:18px;margin-right:6px"></i>Abrechnung</span>
     </div>
     <div class="scroll">
-      ${content2}
+      <div class="stat-grid" style="margin-bottom:10px">
+        <div class="stat-box accent" style="text-align:center">
+          <div class="stat-lbl">Heute · ${tagName}</div>
+          <div class="stat-num" style="font-size:28px">${tagMin}<span class="stat-unit">min</span></div>
+          <div style="font-size:14px;font-weight:600;color:rgba(255,255,255,0.85);margin-top:3px">${toEuro(tagMin)}</div>
+        </div>
+        <div class="stat-box" style="text-align:center">
+          <div class="stat-lbl">Woche</div>
+          <div class="stat-num" style="font-size:28px">${wocheMin}<span class="stat-unit">min</span></div>
+          <div style="font-size:14px;font-weight:600;color:#E24B4A;margin-top:3px">${toEuro(wocheMin)}</div>
+        </div>
+        <div class="stat-box" style="text-align:center">
+          <div class="stat-lbl">${moLang[now.getMonth()]}</div>
+          <div class="stat-num" style="font-size:28px">${monatMin}<span class="stat-unit">min</span></div>
+          <div style="font-size:14px;font-weight:600;color:#E24B4A;margin-top:3px">${toEuro(monatMin)}</div>
+        </div>
+        <div class="stat-box" style="text-align:center">
+          <div class="stat-lbl">${jahrStr}</div>
+          <div class="stat-num" style="font-size:28px">${jahrMin}<span class="stat-unit">min</span></div>
+          <div style="font-size:14px;font-weight:600;color:#E24B4A;margin-top:3px">${toEuro(jahrMin)}</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;padding:0 2px">
+        <button onclick="renderAbrechnung(${weekOffset-1})" style="background:none;border:none;cursor:pointer;color:var(--accent);font-size:22px;padding:4px 10px"><i class="ti ti-chevron-left"></i></button>
+        <span style="font-size:14px;font-weight:600;color:var(--tx)">Mo–Fr · ${wkLabel}${weekOffset===0?" · diese Woche":""}</span>
+        <button onclick="renderAbrechnung(${weekOffset+1})" style="background:none;border:none;cursor:pointer;color:${weekOffset<0?"var(--accent)":"var(--tx3)"};font-size:22px;padding:4px 10px"><i class="ti ti-chevron-right"></i></button>
+      </div>
+      <div class="stat-card" style="margin-bottom:10px">
+        ${weekDays.map(d=>`<div style="margin-bottom:10px;cursor:pointer" onclick="renderTagAnsicht('${d.ds}')">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">
+            <span style="font-size:14px;font-weight:${d.isToday?"700":"400"};color:${d.isToday?"var(--accent)":"var(--tx)"}">${d.name} ${parseInt(d.ds.split("-")[2])}.</span>
+            <span style="font-size:13px;color:var(--tx2)">${d.min?d.min+" min · "+toEuro(d.min):"–"}</span>
+          </div>
+          ${d.min?`<div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${Math.round((d.min/maxDayMin)*100)}%"></div></div>`:""}
+        </div>`).join("")}
+      </div>
+      <div><div class="sec-label">Monatsverlauf</div>
+      <div class="stat-card">
+        ${sortedMonths.map(([m,min])=>{
+          const [y,mo]=m.split("-");
+          const mName=moK[parseInt(mo)-1];
+          const isCurrent=m===monatStr;
+          return`<div style="margin-bottom:14px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px">
+              <span style="font-size:14px;font-weight:${isCurrent?"700":"400"};color:${isCurrent?"var(--accent)":"var(--tx)"}">${mName} ${y}</span>
+              <span style="font-size:13px;color:var(--tx2);font-variant-numeric:tabular-nums">${min} min · ${toEuro(min)}</span>
+            </div>
+            <div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${Math.round((min/maxMonthMin)*100)}%"></div></div>
+          </div>`;
+        }).join("")}
+      </div></div>
       <div><div class="sec-label">Einstellungen</div>
       <div class="card">
         <div class="card-row">
