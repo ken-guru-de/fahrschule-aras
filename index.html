@@ -169,6 +169,15 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:-apple-sy
 .notiz-area{width:100%;min-height:200px;border:none;background:transparent;font-size:20px;line-height:1.7;color:var(--tx);font-family:inherit;outline:none;resize:none;padding:0;}
 .empty-hint{text-align:center;padding:24px 0;font-size:13px;color:var(--tx3);}
 .err-border{outline:2px solid #E24B4A !important;border-radius:4px;}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9000;display:flex;align-items:flex-end;justify-content:center;animation:fadein .15s ease;}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+.modal-sheet{background:var(--bg2);border-radius:20px 20px 0 0;padding:20px 20px calc(var(--safe-bot) + 20px);width:100%;max-width:520px;animation:slideup .2s ease;}
+@keyframes slideup{from{transform:translateY(60px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-title{font-size:17px;font-weight:700;margin-bottom:6px;color:var(--tx);}
+.modal-msg{font-size:15px;color:var(--tx2);margin-bottom:20px;line-height:1.4;}
+.modal-btns{display:flex;flex-direction:column;gap:8px;}
+.modal-input-wrap{margin-bottom:16px;}
+.modal-input-wrap textarea,.modal-input-wrap input[type=text]{width:100%;padding:12px;border:1.5px solid var(--br2);border-radius:var(--r-md);background:var(--bg);color:var(--tx);font-size:16px;font-family:inherit;outline:none;resize:none;-webkit-user-select:text;user-select:text;}
 .foto-circle{width:80px;height:80px;border-radius:50%;overflow:hidden;flex-shrink:0;position:relative;cursor:pointer;}
 .foto-circle img{width:100%;height:100%;object-fit:cover;display:block;}
 .foto-circle .foto-overlay,.foto-initials .foto-overlay{position:absolute;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s;border-radius:50%;}
@@ -277,6 +286,48 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:-apple-sy
 </div>
 <script>
 const IS_IPAD=false;
+
+// ── ZENTRALER APP-STATE ───────────────────────────────────────────────────────
+const AppState={
+  fahrt:{typ:"normal",einh:1},
+  efahrt:{typ:"normal",einh:1},
+  kal:{typ:"normal",min:80,sonderKey:null,pers:"schueler",alleSchueler:false},
+  et:{date:null,idx:null,min:80},
+  pr:{versuch:1},
+  pn:{versuch:1,bestanden:null},
+  selFarbe:"blue",
+  geschlecht:"m",
+};
+
+// ── MODAL-SYSTEM ──────────────────────────────────────────────────────────────
+function showModal({title="",msg="",btns=[],input=null,onOpen=null}){
+  const existing=document.getElementById("fs-modal");
+  if(existing)existing.remove();
+  const inputHtml=input?`<div class="modal-input-wrap">${
+    input.multiline
+      ?`<textarea id="fs-modal-inp" rows="3" placeholder="${input.placeholder||''}">${input.value||''}</textarea>`
+      :`<input type="text" id="fs-modal-inp" placeholder="${input.placeholder||''}" value="${input.value||''}"/>`
+  }</div>`:"";
+  const btnsHtml=btns.map(b=>`<button onclick="${b.action}" style="width:100%;padding:15px;border-radius:var(--r-md);border:${b.danger?'1.5px solid #E24B4A':'1.5px solid var(--br2)'};background:${b.danger?'#fde8e8':b.primary?'var(--accent)':'var(--bg)'};color:${b.danger?'#8b1f1f':b.primary?'white':'var(--tx)'};font-size:17px;font-weight:600;cursor:pointer;font-family:inherit">${b.label}</button>`).join("");
+  const div=document.createElement("div");
+  div.id="fs-modal";
+  div.className="modal-overlay";
+  div.innerHTML=`<div class="modal-sheet"><div class="modal-title">${title}</div><div class="modal-msg">${msg}</div>${inputHtml}<div class="modal-btns">${btnsHtml}</div></div>`;
+  div.addEventListener("click",e=>{if(e.target===div)closeModal();});
+  document.body.appendChild(div);
+  if(onOpen)onOpen();
+  const inp=document.getElementById("fs-modal-inp");
+  if(inp)setTimeout(()=>{inp.focus();inp.select&&inp.select();},80);
+}
+function closeModal(){const m=document.getElementById("fs-modal");if(m)m.remove();}
+function modalInputVal(){const el=document.getElementById("fs-modal-inp");return el?el.value.trim():"";}
+
+// ── TOAST-HELPER ──────────────────────────────────────────────────────────────
+function showToast(id,msg){
+  const el=document.getElementById(id);
+  const msgEl=document.getElementById(id+"-msg");
+  if(el&&msgEl){msgEl.textContent=msg;el.classList.add("show");setTimeout(()=>el.classList.remove("show"),2000);}
+}
 const FARBEN=[{key:"blue",bg:"rgba(255,107,43,.2)",tx:"#FF6B2B"},{key:"teal",bg:"#9FE1CB",tx:"#085041"},{key:"purple",bg:"#CECBF6",tx:"#3C3489"},{key:"coral",bg:"#F5C4B3",tx:"#712B13"},{key:"green",bg:"#C0DD97",tx:"#27500A"},{key:"amber",bg:"#FAC775",tx:"#633806"}];
 const KLASSEN=["B","BA","B197","B17"];
 const PRUFORTE=["DEKRA Pankow","DEKRA Ferdi","TÜV Hornbach"];
@@ -447,30 +498,59 @@ function renderDashboard(dashDateOffset=0){
   },10);
 }
 
+// ── SCHÜLER LISTE HELPER ──────────────────────────────────────────────────────
+function _nextTerminDT(s){
+  const td=todayStr();
+  const nowDT=(()=>{const n=new Date();return n.getFullYear()+"-"+String(n.getMonth()+1).padStart(2,"0")+"-"+String(n.getDate()).padStart(2,"0")+"T"+String(n.getHours()).padStart(2,"0")+":"+String(n.getMinutes()).padStart(2,"0");})();
+  const all=Object.entries(termine)
+    .filter(([d])=>d>=td)
+    .flatMap(([d,ts])=>ts.filter(t=>t.sid===s.id).map(t=>d+"T"+(t.uhr||"00:00")))
+    .filter(dt=>dt>=nowDT);
+  return all.sort()[0]||"9999";
+}
+
+function _schuelerCardHTML(s,heuteIds,sortMode){
+  const td=todayStr();
+  const bestanden=(s.pruefungen||[]).some(p=>p.bestanden===true);
+  const dotColor=bestanden?"#639922":"var(--accent)";
+  const nextDT=_nextTerminDT(s);
+  let subLine;
+  if(sortMode==="termin"){
+    if(nextDT==="9999"){subLine="Kein Termin geplant";}
+    else{const nd=nextDT.split("T")[0];const t=(termine[nd]||[]).find(t=>t.sid===s.id);subLine=fmtDate(nd).day+". "+fmtDate(nd).mon+" "+fmtDate(nd).year+(t?" · "+t.uhr+" Uhr":"");}
+  }else{
+    subLine="Beginn "+fmtDate(s.beginn).day+". "+fmtDate(s.beginn).mon+" "+fmtDate(s.beginn).year;
+  }
+  const gefahren=Object.entries(termine).filter(([d])=>d<=td).flatMap(([d,ts])=>ts.filter(t=>t.sid===s.id)).length;
+  const offen=Object.entries(termine).filter(([d])=>d>td).flatMap(([d,ts])=>ts.filter(t=>t.sid===s.id)).length;
+  const avatarHTML=s.foto
+    ?`<div class="avatar" style="overflow:hidden;flex-shrink:0"><img src="${s.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/></div>`
+    :`<div class="avatar av-${s.farbe}">${initials(s)}</div>`;
+  return`<div class="swipe-wrap" id="wrap-${s.id}">
+    <div class="swipe-del-bg" onclick="confirmDelete('${s.id}')"><i class="ti ti-trash"></i></div>
+    <div class="swipe-item list-item" id="swipe-${s.id}" onclick="handleTap('${s.id}')" style="${bestanden?"border-left:3px solid #639922;":""}">
+      ${avatarHTML}
+      <div class="item-info">
+        <div class="item-name">${s.vorname} ${s.nachname}${s.spitz?` <span style="color:var(--tx3);font-size:12px">«${s.spitz}»</span>`:""}</div>
+        ${bestanden?`<div style="margin-top:3px"><span style="font-size:11px;color:#27500A;background:#EAF3DE;padding:2px 8px;border-radius:20px">✓ Bestanden</span></div>`:""}
+        <div class="item-sub">${subLine}</div>
+        <div style="font-size:12px;color:var(--tx3);margin-top:2px;white-space:nowrap">${gefahren} gefahren · ${offen} geplant</div>
+      </div>
+      <span class="badge badge-${s.klasse}">${s.klasse}</span>
+      <span class="status-dot" style="background:${dotColor}"></span>
+    </div>
+  </div>`;
+}
+
 // ── SCHÜLERLISTE ──────────────────────────────────────────────────────────────
 function renderListe(q="",sortMode="termin"){
   const td=todayStr();
   const heuteIds=new Set((termine[td]||[]).map(t=>t.sid));
   const basis=q?schueler.filter(s=>(s.vorname+" "+s.nachname+" "+(s.spitz||"")).toLowerCase().includes(q.toLowerCase())):schueler;
 
-  function nextTerminDateTime(s){
-    const nowDT=(()=>{const n=new Date();return n.getFullYear()+"-"+String(n.getMonth()+1).padStart(2,"0")+"-"+String(n.getDate()).padStart(2,"0")+"T"+String(n.getHours()).padStart(2,"0")+":"+String(n.getMinutes()).padStart(2,"0");})();
-    const all=Object.entries(termine)
-      .filter(([d])=>d>=td)
-      .flatMap(([d,ts])=>ts.filter(t=>t.sid===s.id).map(t=>d+"T"+(t.uhr||"00:00")))
-      .filter(dt=>dt>=nowDT);
-    return all.sort()[0]||"9999";
-  }
-
-
-
-
-
-
-
   const filtered=[...basis].sort((a,b)=>{
     if(sortMode==="alpha") return a.nachname.localeCompare(b.nachname,"de");
-    return nextTerminDateTime(a).localeCompare(nextTerminDateTime(b));
+    return _nextTerminDT(a).localeCompare(_nextTerminDT(b));
   });
   let html=`<div class="screen active" id="scr-liste">
     <div class="topbar">
@@ -493,49 +573,19 @@ function renderListe(q="",sortMode="termin"){
   if(!filtered.length){
     html+=`<div class="empty-hint"><i class="ti ti-search" style="font-size:28px;display:block;margin:0 auto 8px"></i>Keine Schüler gefunden</div>`;
   }else{
-    filtered.forEach(s=>{
-      const bestanden=(s.pruefungen||[]).some(p=>p.bestanden===true);
-      const dot=bestanden?"dot-green":s.prueftermin?"dot-amber":"dot-blue";
-      html+=`<div class="swipe-wrap" id="wrap-${s.id}">
-        <div class="swipe-del-bg" onclick="confirmDelete('${s.id}')"><i class="ti ti-trash"></i></div>
-        <div class="swipe-item list-item" id="swipe-${s.id}" onclick="handleTap('${s.id}')" style="${bestanden?"border-left:3px solid #639922;":""}">
-          ${s.foto?`<div class="avatar" style="overflow:hidden;flex-shrink:0"><img src="${s.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/></div>`:`<div class="avatar av-${s.farbe}">${initials(s)}</div>`}
-          <div class="item-info">
-            <div class="item-name">${s.vorname} ${s.nachname}${s.spitz?` <span style="color:var(--tx3);font-size:12px">«${s.spitz}»</span>`:""}</div>
-            ${bestanden?`<div style="margin-top:3px"><span style="font-size:11px;color:#27500A;background:#EAF3DE;padding:2px 8px;border-radius:20px">✓ Bestanden</span></div>`:""}
-            <div class="item-sub">${sortMode==="termin"?
-            (()=>{const ndt=nextTerminDateTime(s);if(ndt==="9999")return"Kein Termin geplant";const nd=ndt.split("T")[0];const t=(termine[nd]||[]).find(t=>t.sid===s.id);return fmtDate(nd).day+". "+fmtDate(nd).mon+" "+fmtDate(nd).year+(t?" · "+t.uhr+" Uhr":"");})()
-            :"Beginn "+fmtDate(s.beginn).day+". "+fmtDate(s.beginn).mon+" "+fmtDate(s.beginn).year
-          }</div>
-            <div style="font-size:12px;color:var(--tx3);margin-top:2px;white-space:nowrap">${
-              (()=>{
-                const td2=todayStr();
-                const alleTermine=Object.entries(termine).filter(([d])=>d<=td2).flatMap(([d,ts])=>ts.filter(t=>t.sid===s.id));
-                const geplant=Object.entries(termine).filter(([d])=>d>td2).flatMap(([d,ts])=>ts.filter(t=>t.sid===s.id));
-                const gefahren=alleTermine.length;
-                const offen=geplant.length;
-                return gefahren+" gefahren · "+offen+" geplant";
-              })()
-            }</div>
-          </div>
-          <span class="badge badge-${s.klasse}">${s.klasse}</span>
-          <span class="status-dot ${dot}" style="${dot==="dot-amber"?"background:var(--accent)":dot==="dot-green"?"background:#639922":"background:var(--accent)"}"></span>
-        </div>
-      </div>`;
-    });
+    filtered.forEach(s=>{html+=_schuelerCardHTML(s,heuteIds,sortMode);});
   }
   html+=`</div></div></div>`;
   renderApp(html);
   initSwipe();
-
   setTimeout(initPTR,50);
 }
+
 
 function filterListeOnly(q, sortMode){
   const container=document.getElementById("liste-items");
   if(!container){renderListe(q,sortMode);return;}
 
-  // Update clear button visibility
   const clearBtns=document.querySelectorAll(".search-clear-x");
   clearBtns.forEach(b=>b.style.display=q?"flex":"none");
 
@@ -543,42 +593,16 @@ function filterListeOnly(q, sortMode){
   const heuteIds=new Set((termine[td]||[]).map(t=>t.sid));
   const basis=q?schueler.filter(s=>(s.vorname+" "+s.nachname+" "+(s.spitz||"")).toLowerCase().includes(q.toLowerCase())):schueler;
 
-  function nextTerminDateTime(s){
-    const nowDT=(()=>{const n=new Date();return n.getFullYear()+"-"+String(n.getMonth()+1).padStart(2,"0")+"-"+String(n.getDate()).padStart(2,"0")+"T"+String(n.getHours()).padStart(2,"0")+":"+String(n.getMinutes()).padStart(2,"0");})();
-    const all=Object.entries(termine).filter(([d])=>d>=td).flatMap(([d,ts])=>ts.filter(t=>t.sid===s.id).map(t=>d+"T"+(t.uhr||"00:00"))).filter(dt=>dt>=nowDT);
-    return all.sort()[0]||"9999";
-  }
-
-
-
-
-
   const filtered=[...basis].sort((a,b)=>{
-    if(sortMode==="termin") return nextTerminDateTime(a).localeCompare(nextTerminDateTime(b));
+    if(sortMode==="termin") return _nextTerminDT(a).localeCompare(_nextTerminDT(b));
     return (heuteIds.has(a.id)?0:1)-(heuteIds.has(b.id)?0:1);
   });
 
   let html="";
   if(!filtered.length){
     html=`<div class="empty-hint"><i class="ti ti-search" style="font-size:28px;display:block;margin:0 auto 8px"></i>Keine Schüler gefunden</div>`;
-  } else {
-    filtered.forEach(s=>{
-      const bestanden=(s.pruefungen||[]).some(p=>p.bestanden===true);
-      html+=`<div class="swipe-wrap" id="wrap-${s.id}">
-        <div class="swipe-del-bg" onclick="confirmDelete('${s.id}')"><i class="ti ti-trash"></i></div>
-        <div class="swipe-item list-item" id="swipe-${s.id}" onclick="handleTap('${s.id}')" style="${bestanden?"border-left:3px solid #639922;":""}">
-          ${s.foto?`<div class="avatar" style="overflow:hidden;flex-shrink:0"><img src="${s.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/></div>`:`<div class="avatar av-${s.farbe}">${initials(s)}</div>`}
-          <div class="item-info">
-            <div class="item-name">${s.vorname} ${s.nachname}${s.spitz?` <span style="color:var(--tx3);font-size:12px">«${s.spitz}»</span>`:""}</div>
-            ${bestanden?`<div style="margin-top:3px"><span style="font-size:11px;color:#27500A;background:#EAF3DE;padding:2px 8px;border-radius:20px">✓ Bestanden</span></div>`:""}
-            <div class="item-sub">${sortMode==="termin"?(()=>{const ndt=nextTerminDateTime(s);if(ndt==="9999")return"Kein Termin geplant";const nd=ndt.split("T")[0];const t=(termine[nd]||[]).find(t=>t.sid===s.id);return fmtDate(nd).day+". "+fmtDate(nd).mon+" "+fmtDate(nd).year+(t?" · "+t.uhr+" Uhr":"");})():"Beginn "+fmtDate(s.beginn).day+". "+fmtDate(s.beginn).mon+" "+fmtDate(s.beginn).year}</div>
-            <div style="font-size:12px;color:var(--tx3);margin-top:2px;white-space:nowrap">${(()=>{const td2=todayStr();const gefahren=Object.entries(termine).filter(([d])=>d<=td2).flatMap(([d,ts])=>ts.filter(t=>t.sid===s.id)).length;const offen=Object.entries(termine).filter(([d])=>d>td2).flatMap(([d,ts])=>ts.filter(t=>t.sid===s.id)).length;return gefahren+" gefahren · "+offen+" geplant";})()}</div>
-          </div>
-          <span class="badge badge-${s.klasse}">${s.klasse}</span>
-          <span class="status-dot" style="background:${bestanden?"#639922":heuteIds.has(s.id)?"var(--accent)":"var(--accent)"}"></span>
-        </div>
-      </div>`;
-    });
+  }else{
+    filtered.forEach(s=>{html+=_schuelerCardHTML(s,heuteIds,sortMode);});
   }
   container.innerHTML=html;
   initSwipe();
@@ -614,7 +638,19 @@ function handleTap(sid){
 }
 function confirmDelete(sid){
   const s=getS(sid);if(!s)return;
-  if(confirm(`${s.vorname} ${s.nachname} wirklich löschen?`)){schueler=schueler.filter(x=>x.id!==sid);saveAll();renderListe();}
+  showModal({
+    title:"Schüler löschen",
+    msg:`${s.vorname} ${s.nachname} wirklich löschen? Alle Termine dieses Schülers werden ebenfalls entfernt.`,
+    btns:[
+      {label:"Löschen",danger:true,action:`_doDeleteSchueler('${sid}')`},
+      {label:"Abbrechen",action:"closeModal()"},
+    ]
+  });
+}
+function _doDeleteSchueler(sid){
+  closeModal();
+  schueler=schueler.filter(x=>x.id!==sid);
+  saveAll();renderListe();
 }
 
 // ── SCHÜLER DETAIL ────────────────────────────────────────────────────────────
@@ -697,10 +733,22 @@ function saveNotiz(sid,val){const s=getS(sid);if(!s)return;s.notiz=val;saveAll()
 
 function addNotizItem(sid){
   const s=getS(sid);if(!s)return;
-  const text=prompt("Neue Notiz:");
-  if(!text||!text.trim())return;
+  showModal({
+    title:"Neue Notiz",
+    msg:"",
+    input:{placeholder:"Notiz eingeben…",multiline:false,value:""},
+    btns:[
+      {label:"Hinzufügen",primary:true,action:`_doAddNotiz('${sid}')`},
+      {label:"Abbrechen",action:"closeModal()"},
+    ]
+  });
+}
+function _doAddNotiz(sid){
+  const text=modalInputVal();if(!text)return;
+  closeModal();
+  const s=getS(sid);if(!s)return;
   if(!Array.isArray(s.notiz))s.notiz=s.notiz?[{text:s.notiz,done:false}]:[];
-  s.notiz.push({text:text.trim(),done:false});
+  s.notiz.push({text,done:false});
   saveAll();renderSchueler(sid);
 }
 
@@ -717,9 +765,21 @@ function toggleNotiz(sid,idx,done){
 function editNotizItem(sid,idx){
   const s=getS(sid);if(!s)return;
   if(!Array.isArray(s.notiz))return;
-  const text=prompt("Notiz bearbeiten:",s.notiz[idx].text);
-  if(text===null)return;
-  s.notiz[idx].text=text.trim()||s.notiz[idx].text;
+  showModal({
+    title:"Notiz bearbeiten",
+    msg:"",
+    input:{placeholder:"Notiz…",multiline:false,value:s.notiz[idx].text},
+    btns:[
+      {label:"Speichern",primary:true,action:`_doEditNotiz('${sid}',${idx})`},
+      {label:"Abbrechen",action:"closeModal()"},
+    ]
+  });
+}
+function _doEditNotiz(sid,idx){
+  const text=modalInputVal();
+  closeModal();
+  const s=getS(sid);if(!s)return;
+  if(text)s.notiz[idx].text=text;
   saveAll();renderSchueler(sid);
 }
 
@@ -783,8 +843,8 @@ function renderNeuSchueler(fromSid){
     </div>
   </div>`;
   renderApp(html);
-  window._selFarbe=selFarbe;
-  window._geschlecht=s?s.geschlecht||'m':'m';
+  AppState.selFarbe=selFarbe;
+  AppState.geschlecht=s?s.geschlecht||'m':'m';
   setTimeout(initPTR,50);
 }
 function renderEditSchueler(sid){renderNeuSchueler(sid);}
@@ -792,15 +852,26 @@ function changeKlasse(sid){
   const s=getS(sid);if(!s)return;
   const idx=KLASSEN.indexOf(s.klasse);
   const next=KLASSEN[(idx+1)%KLASSEN.length];
-  if(!confirm("Klasse von "+s.klasse+" auf "+next+" ändern?"))return;
+  showModal({
+    title:"Klasse ändern",
+    msg:`Klasse von ${s.klasse} auf ${next} ändern?`,
+    btns:[
+      {label:"Ändern",primary:true,action:`_doChangeKlasse('${sid}','${next}')`},
+      {label:"Abbrechen",action:"closeModal()"},
+    ]
+  });
+}
+function _doChangeKlasse(sid,next){
+  closeModal();
+  const s=getS(sid);if(!s)return;
   s.klasse=next;saveAll();
   const el=document.getElementById("klasse-box-"+sid);
   if(el)el.textContent=next;
 }
-function renderFarbDots(cid){const el=document.getElementById(cid);if(!el)return;el.innerHTML=FARBEN.map(f=>`<div class="farb-dot ${f.key===window._selFarbe?"sel":""}" style="background:${f.bg}" onclick="window._selFarbe='${f.key}';renderFarbDots('${cid}')"></div>`).join("");}
+function renderFarbDots(cid){const el=document.getElementById(cid);if(!el)return;el.innerHTML=FARBEN.map(f=>`<div class="farb-dot ${f.key===AppState.selFarbe?"sel":""}" style="background:${f.bg}" onclick="AppState.selFarbe='${f.key}';renderFarbDots('${cid}')"></div>`).join("");}
 
 function setGeschlecht(g){
-  window._geschlecht=g;
+  AppState.geschlecht=g;
   const gm=document.getElementById("g-m");
   const gw=document.getElementById("g-w");
   if(gm)gm.classList.toggle("active",g==="m");
@@ -819,11 +890,11 @@ function saveSchueler(editSid){
   const bg=bgEl&&bgEl.value?bgEl.value:(editSid?getS(editSid).beginn:todayStr());
   if(editSid){
     const s=getS(editSid);
-    s.vorname=vn;s.nachname=nn;s.spitz=sp;s.geschlecht=window._geschlecht||'m';s.tel=document.getElementById('n-tel').value.trim();s.beginn=bg;s.klasse=kl;s.prufort=pf;s.prueftermin=pt;s.theorie=th;s.farbe=window._selFarbe;
+    s.vorname=vn;s.nachname=nn;s.spitz=sp;s.geschlecht=AppState.geschlecht||'m';s.tel=document.getElementById('n-tel').value.trim();s.beginn=bg;s.klasse=kl;s.prufort=pf;s.prueftermin=pt;s.theorie=th;s.farbe=AppState.selFarbe;
     
     saveAll();syncFahrstundenToKalender();renderDashSchueler(editSid);
   }else{
-    const tel2=document.getElementById('n-tel').value.trim();const ptuhr='';const ns={id:"s"+Date.now(),vorname:vn,nachname:nn,spitz:sp,geschlecht:window._geschlecht||'m',tel:tel2,farbe:window._selFarbe||"blue",klasse:kl,beginn:bg,prufort:pf,prueftermin:pt,pruefzeit:ptuhr,theorie:th,sonder:[false,false,false],notiz:"",fahrstunden:[],pruefungen:[],gfa:{laengs:0,rechts:0,umkehr:0,rueckwaerts:0,stopp_mit:0,stopp_ohne:0,stadtautobahn:0,strassenbahn:0},foto:null};
+    const tel2=document.getElementById('n-tel').value.trim();const ptuhr='';const ns={id:"s"+Date.now(),vorname:vn,nachname:nn,spitz:sp,geschlecht:AppState.geschlecht||'m',tel:tel2,farbe:AppState.selFarbe||"blue",klasse:kl,beginn:bg,prufort:pf,prueftermin:pt,pruefzeit:ptuhr,theorie:th,sonder:[false,false,false],notiz:"",fahrstunden:[],pruefungen:[],gfa:{laengs:0,rechts:0,umkehr:0,rueckwaerts:0,stopp_mit:0,stopp_ohne:0,stadtautobahn:0,strassenbahn:0},foto:null};
     schueler.push(ns);
     saveAll();
     syncKalenderToFahrstunden();
@@ -832,14 +903,23 @@ function saveSchueler(editSid){
 }
 function deleteSchueler(sid){
   const s=getS(sid);if(!s)return;
-  if(confirm(`${s.vorname} ${s.nachname} wirklich löschen?`)){
-    schueler=schueler.filter(x=>x.id!==sid);
-    Object.keys(termine).forEach(d=>{
-      termine[d]=termine[d].filter(t=>t.sid!==sid);
-      if(!termine[d].length)delete termine[d];
-    });
-    saveAll();renderListe();
-  }
+  showModal({
+    title:"Schüler löschen",
+    msg:`${s.vorname} ${s.nachname} wirklich löschen? Alle zugehörigen Termine werden ebenfalls entfernt.`,
+    btns:[
+      {label:"Löschen",danger:true,action:`_doDeleteSchuelerFull('${sid}')`},
+      {label:"Abbrechen",action:"closeModal()"},
+    ]
+  });
+}
+function _doDeleteSchuelerFull(sid){
+  closeModal();
+  schueler=schueler.filter(x=>x.id!==sid);
+  Object.keys(termine).forEach(d=>{
+    termine[d]=termine[d].filter(t=>t.sid!==sid);
+    if(!termine[d].length)delete termine[d];
+  });
+  saveAll();renderListe();
 }
 
 // ── FAHRSTUNDE ────────────────────────────────────────────────────────────────
@@ -896,17 +976,17 @@ function renderNeuFahrstunde(sid){
 
   html+=`<button class="btn-full" onclick="saveFahrstunde('${sid}')"><i class="ti ti-circle-check"></i> Fahrstunde speichern</button></div></div>`;
   renderApp(html);
-  window._fahrtEinh=1;window._fahrtTyp="normal";
+  AppState.fahrt.einh=1;AppState.fahrt.typ="normal";
   setTimeout(initPTR,50);
 }
-function setTypF(typ){window._fahrtTyp=typ;document.getElementById("typ-normal").classList.toggle("active",typ==="normal");document.getElementById("typ-pruef").classList.toggle("active",typ==="pruef");document.getElementById("einh-row2").style.display=typ==="normal"?"":"none";document.getElementById("pruef-row2").style.display=typ==="pruef"?"":"none";}
-function changeEinh(d){window._fahrtEinh=Math.max(1,Math.min(4,(window._fahrtEinh||1)+d));document.getElementById("einh-disp").textContent=window._fahrtEinh+" × 80 min";}
+function setTypF(typ){AppState.fahrt.typ=typ;document.getElementById("typ-normal").classList.toggle("active",typ==="normal");document.getElementById("typ-pruef").classList.toggle("active",typ==="pruef");document.getElementById("einh-row2").style.display=typ==="normal"?"":"none";document.getElementById("pruef-row2").style.display=typ==="pruef"?"":"none";}
+function changeEinh(d){AppState.fahrt.einh=Math.max(1,Math.min(4,(AppState.fahrt.einh||1)+d));document.getElementById("einh-disp").textContent=AppState.fahrt.einh+" × 80 min";}
 function saveFahrstunde(sid){
   const s=getS(sid);if(!s)return;
   const fTag=document.getElementById('f-dat-tag').value,fMon=document.getElementById('f-dat-mon').value,fJahr=document.getElementById('f-dat-jahr').value;
   const dat=(fTag&&fMon&&fJahr)?fJahr+'-'+String(fMon).padStart(2,'0')+'-'+String(fTag).padStart(2,'0'):'';if(!dat)return;
-  const typ=window._fahrtTyp||"normal";
-  const einh=window._fahrtEinh||1;
+  const typ=AppState.fahrt.typ||"normal";
+  const einh=AppState.fahrt.einh||1;
   const nsi=nextSonder(s);
   let sonderGemacht=null;
   if(nsi!==-1){const sfEl=document.getElementById("sf-"+SONDER[nsi].key);if(sfEl&&sfEl.checked&&!s.sonder[nsi]){s.sonder[nsi]=true;sonderGemacht=SONDER[nsi].label;}}
@@ -962,15 +1042,15 @@ function showPruefResult(sid,datum,pi,typ){
     </div>
   </div>`;
   renderApp(html);
-  window._prVersuch=versuchNr;
+  AppState.pr.versuch=versuchNr;
   setTimeout(initPTR,50);
 }
-function changePRVersuch(d){window._prVersuch=Math.max(1,Math.min(4,(window._prVersuch||1)+d));const el=document.getElementById("pr-versuch-disp");if(el)el.textContent=window._prVersuch+".";}
+function changePRVersuch(d){AppState.pr.versuch=Math.max(1,Math.min(4,(AppState.pr.versuch||1)+d));const el=document.getElementById("pr-versuch-disp");if(el)el.textContent=AppState.pr.versuch+".";}
 function savePruefResult(sid,datum,pi,bestanden){
   const s=getS(sid);if(!s)return;
   if(!s.pruefungen)s.pruefungen=[];
-  if(pi>=0&&s.pruefungen[pi]){s.pruefungen[pi].bestanden=bestanden;s.pruefungen[pi].versuch=window._prVersuch||1;}
-  else{s.pruefungen.push({datum,versuch:window._prVersuch||1,bestanden});s.pruefungen.sort((a,b)=>a.datum.localeCompare(b.datum));}
+  if(pi>=0&&s.pruefungen[pi]){s.pruefungen[pi].bestanden=bestanden;s.pruefungen[pi].versuch=AppState.pr.versuch||1;}
+  else{s.pruefungen.push({datum,versuch:AppState.pr.versuch||1,bestanden});s.pruefungen.sort((a,b)=>a.datum.localeCompare(b.datum));}
   saveAll();renderDashboard();
 }
 
@@ -1018,13 +1098,13 @@ function renderEditFahrstunde(sid, idx){
     </div>
   </div>`;
   renderApp(html);
-  window._efahrtTyp=f.typ||"normal";
-  window._efahrtEinh=f.einh||1;
+  AppState.efahrt.typ=f.typ||"normal";
+  AppState.efahrt.einh=f.einh||1;
   setTimeout(initPTR,50);
 }
 
 function setETypF(typ){
-  window._efahrtTyp=typ;
+  AppState.efahrt.typ=typ;
   document.getElementById("etyp-normal").classList.toggle("active",typ==="normal");
   document.getElementById("etyp-pruef").classList.toggle("active",typ==="pruef");
   document.getElementById("eeinh-row").style.display=typ==="normal"?"":"none";
@@ -1032,9 +1112,9 @@ function setETypF(typ){
 }
 
 function changeEEinh(d){
-  window._efahrtEinh=Math.max(1,Math.min(4,(window._efahrtEinh||1)+d));
+  AppState.efahrt.einh=Math.max(1,Math.min(4,(AppState.efahrt.einh||1)+d));
   const el=document.getElementById("eeinh-disp");
-  if(el)el.textContent=window._efahrtEinh+" × 80 min";
+  if(el)el.textContent=AppState.efahrt.einh+" × 80 min";
 }
 
 function saveEditFahrstunde(sid,idx){
@@ -1043,8 +1123,8 @@ function saveEditFahrstunde(sid,idx){
   const dat=(efTag&&efMon&&efJahr)?efJahr+'-'+String(efMon).padStart(2,'0')+'-'+String(efTag).padStart(2,'0'):'';if(!dat)return;
   const uhr=document.getElementById("ef-uhr")?document.getElementById("ef-uhr").value:"09:00";
   const oldF=s.fahrstunden[idx];
-  const newTyp=window._efahrtTyp||"normal";
-  const newEinh=window._efahrtEinh||1;
+  const newTyp=AppState.efahrt.typ||"normal";
+  const newEinh=AppState.efahrt.einh||1;
   // Remove old kalender entry if exists
   if(oldF.datum&&oldF.uhr&&termine[oldF.datum]){
     termine[oldF.datum]=termine[oldF.datum].filter(t=>!(t.sid===s.id&&t.uhr===oldF.uhr));
@@ -1063,15 +1143,25 @@ function saveEditFahrstunde(sid,idx){
 
 function deleteEditFahrstunde(sid,idx){
   const s=getS(sid);if(!s)return;
-  if(confirm("Fahrstunde wirklich löschen?")){
-    const df=s.fahrstunden[idx];
-    if(df.datum&&df.uhr&&termine[df.datum]){
-      termine[df.datum]=termine[df.datum].filter(t=>!(t.sid===s.id&&t.uhr===df.uhr));
-      if(!termine[df.datum].length)delete termine[df.datum];
-    }
-    s.fahrstunden.splice(idx,1);
-    saveAll();renderSchueler(sid);
+  showModal({
+    title:"Fahrstunde löschen",
+    msg:"Diese Fahrstunde wirklich löschen?",
+    btns:[
+      {label:"Löschen",danger:true,action:`_doDeleteFahrstunde('${sid}',${idx})`},
+      {label:"Abbrechen",action:"closeModal()"},
+    ]
+  });
+}
+function _doDeleteFahrstunde(sid,idx){
+  closeModal();
+  const s=getS(sid);if(!s)return;
+  const df=s.fahrstunden[idx];
+  if(df.datum&&df.uhr&&termine[df.datum]){
+    termine[df.datum]=termine[df.datum].filter(t=>!(t.sid===s.id&&t.uhr===df.uhr));
+    if(!termine[df.datum].length)delete termine[df.datum];
   }
+  s.fahrstunden.splice(idx,1);
+  saveAll();renderSchueler(sid);
 }
 
 // ── PRÜFUNG NEU (inline vom Schüler) ─────────────────────────────────────────
@@ -1111,14 +1201,14 @@ function renderNeuPruefungInline(sid){
     </div>
   </div>`;
   renderApp(html);
-  window._pnVersuch=versuchNr;
-  window._pnBestanden=null;
+  AppState.pn.versuch=versuchNr;
+  AppState.pn.bestanden=null;
   document.getElementById("pn-offen").classList.add("active");
   setTimeout(initPTR,50);
 }
-function changePNVersuch(d){window._pnVersuch=Math.max(1,Math.min(4,(window._pnVersuch||1)+d));const el=document.getElementById("pn-versuch-disp");if(el)el.textContent=window._pnVersuch+".";}
+function changePNVersuch(d){AppState.pn.versuch=Math.max(1,Math.min(4,(AppState.pn.versuch||1)+d));const el=document.getElementById("pn-versuch-disp");if(el)el.textContent=AppState.pn.versuch+".";}
 function setPNResult(val){
-  window._pnBestanden=val;
+  AppState.pn.bestanden=val;
   ["pn-offen","pn-best","pn-nicht"].forEach(id=>document.getElementById(id)&&document.getElementById(id).classList.remove("active"));
   if(val===null)document.getElementById("pn-offen").classList.add("active");
   else if(val===true)document.getElementById("pn-best").classList.add("active");
@@ -1130,7 +1220,7 @@ function saveNeuPruefung(sid){
   const datum=(pnTag&&pnMon&&pnJahr)?pnJahr+'-'+String(pnMon).padStart(2,'0')+'-'+String(pnTag).padStart(2,'0'):'';if(!datum)return;
   if(!s.pruefungen)s.pruefungen=[];
   const pnuhr=document.getElementById("pn-uhr")?document.getElementById("pn-uhr").value:"08:00";
-  s.pruefungen.push({datum,uhr:pnuhr,versuch:window._pnVersuch||1,bestanden:window._pnBestanden});
+  s.pruefungen.push({datum,uhr:pnuhr,versuch:AppState.pn.versuch||1,bestanden:AppState.pn.bestanden});
   s.pruefungen.sort((a,b)=>a.datum.localeCompare(b.datum));
   saveAll();renderSchueler(sid);
 }
@@ -1173,20 +1263,35 @@ function renderEditPruefung(sid,idx){
     </div>
   </div>`;
   renderApp(html);
-  window._peVersuch=p.versuch;window._peBestanden=p.bestanden;
+  AppState.pr.versuch=p.versuch;AppState.pr.bestanden=p.bestanden;
   setTimeout(initPTR,50);
 }
-function changePEVersuch(d){window._peVersuch=Math.max(1,Math.min(4,(window._peVersuch||1)+d));const el=document.getElementById("pe-versuch-disp");if(el)el.textContent=window._peVersuch+".";}
+function changePEVersuch(d){AppState.pr.versuch=Math.max(1,Math.min(4,(AppState.pr.versuch||1)+d));const el=document.getElementById("pe-versuch-disp");if(el)el.textContent=AppState.pr.versuch+".";}
 function setPEResult(val){
-  window._peBestanden=val;
+  AppState.pr.bestanden=val;
   ["pe-offen","pe-best","pe-nicht"].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove("active");});
   if(val===null){const el=document.getElementById("pe-offen");if(el)el.classList.add("active");}
   else if(val===true){const el=document.getElementById("pe-best");if(el)el.classList.add("active");}
   else{const el=document.getElementById("pe-nicht");if(el)el.classList.add("active");}
 }
 function saveEditPruefung(sid,idx){const s=getS(sid);if(!s)return;const peTag=document.getElementById('pe-datum-tag').value,peMon=document.getElementById('pe-datum-mon').value,peJahr=document.getElementById('pe-datum-jahr').value;
-  const datum=(peTag&&peMon&&peJahr)?peJahr+'-'+String(peMon).padStart(2,'0')+'-'+String(peTag).padStart(2,'0'):'';if(!datum)return;s.pruefungen[idx]={datum,versuch:window._peVersuch||1,bestanden:window._peBestanden};s.pruefungen.sort((a,b)=>a.datum.localeCompare(b.datum));saveAll();renderSchueler(sid);}
-function deletePruefung(sid,idx){const s=getS(sid);if(!s)return;if(confirm("Prüfung wirklich löschen?")){s.pruefungen.splice(idx,1);saveAll();renderSchueler(sid);}}
+  const datum=(peTag&&peMon&&peJahr)?peJahr+'-'+String(peMon).padStart(2,'0')+'-'+String(peTag).padStart(2,'0'):'';if(!datum)return;s.pruefungen[idx]={datum,versuch:AppState.pr.versuch||1,bestanden:AppState.pr.bestanden};s.pruefungen.sort((a,b)=>a.datum.localeCompare(b.datum));saveAll();renderSchueler(sid);}
+function deletePruefung(sid,idx){
+  const s=getS(sid);if(!s)return;
+  showModal({
+    title:"Prüfung löschen",
+    msg:"Diese Prüfung wirklich löschen?",
+    btns:[
+      {label:"Löschen",danger:true,action:`_doDeletePruefung('${sid}',${idx})`},
+      {label:"Abbrechen",action:"closeModal()"},
+    ]
+  });
+}
+function _doDeletePruefung(sid,idx){
+  closeModal();
+  const s=getS(sid);if(!s)return;
+  s.pruefungen.splice(idx,1);saveAll();renderSchueler(sid);
+}
 
 // ── FOTO ──────────────────────────────────────────────────────────────────────
 function triggerFotoUpload(sid){const inp=document.getElementById("foto-input-"+sid);if(inp)inp.click();}
@@ -1296,7 +1401,24 @@ function renderCalDetail(){
   html+=`<button class="btn-full" style="margin-top:6px" onclick="renderNeuKalTermin('${selDate}')"><i class="ti ti-plus"></i> Termin hinzufügen</button>`;
   el.innerHTML=html;
 }
-function delKalTermin(key,i){if(!termine[key])return;const t=termine[key][i];const s=getS(t.sid);const name=s?s.vorname+" "+s.nachname:"Termin";if(!window.confirm(name+" · "+t.uhr+" Uhr wirklich löschen?"))return;termine[key].splice(i,1);if(!termine[key].length)delete termine[key];saveAll();setTimeout(()=>renderTagAnsicht(key),50);}
+function delKalTermin(key,i){
+  if(!termine[key])return;
+  const t=termine[key][i];const s=getS(t.sid);const name=s?s.vorname+" "+s.nachname:"Termin";
+  showModal({
+    title:"Termin löschen",
+    msg:`${name} · ${t.uhr} Uhr wirklich löschen?`,
+    btns:[
+      {label:"Löschen",danger:true,action:`_doDelKalTermin('${key}',${i})`},
+      {label:"Abbrechen",action:"closeModal()"},
+    ]
+  });
+}
+function _doDelKalTermin(key,i){
+  closeModal();
+  if(!termine[key])return;
+  termine[key].splice(i,1);if(!termine[key].length)delete termine[key];
+  saveAll();setTimeout(()=>renderTagAnsicht(key),50);
+}
 function prevMonth(){
   curMonth--;if(curMonth<1){curMonth=12;curYear--;}
   selDate=null;
@@ -1313,7 +1435,7 @@ function nextMonth(){
 }
 
 function renderNeuKalTermin(date){
-  window._kalMin=80;window._kalTyp="normal";window._kalSonderKey=null;window._kalPers="schueler";window._kalAlleSchueler=false;
+  AppState.kal.min=80;AppState.kal.typ="normal";AppState.kal.sonderKey=null;AppState.kal.pers="schueler";AppState.kal.alleSchueler=false;
   const p=date.split("-");
   const lbl=`${parseInt(p[2])}. ${MONATE_K[parseInt(p[1])-1]} ${p[0]}`;
   let html=`<div class="screen active" id="scr-kal-neu">
@@ -1333,7 +1455,7 @@ function renderNeuKalTermin(date){
         </div>
         <div class="card-row" id="k-schueler-row"><span class="card-label"><i class="ti ti-user"></i>Schüler</span>
           <select id="k-sid"><option value="">Auswählen…</option>
-          ${(window._kalAlleSchueler?schueler:schueler.filter(s=>!(s.pruefungen||[]).some(p=>p.bestanden===true))).map(s=>`<option value="${s.id}">${s.vorname} ${s.nachname}${s.spitz?" «"+s.spitz+"»":""}</option>`).join("")}
+          ${(AppState.kal.alleSchueler?schueler:schueler.filter(s=>!(s.pruefungen||[]).some(p=>p.bestanden===true))).map(s=>`<option value="${s.id}">${s.vorname} ${s.nachname}${s.spitz?" «"+s.spitz+"»":""}</option>`).join("")}
           </select>
         </div>
         <div class="card-row" style="padding:8px 16px">
@@ -1382,18 +1504,18 @@ function renderNeuKalTermin(date){
   renderApp(html);
   setTimeout(initPTR,50);
 }
-function changeKalMin(d){window._kalMin=Math.max(5,Math.min(300,window._kalMin+d));const el=document.getElementById("kal-min-disp");if(el)el.textContent=window._kalMin+" min";}
+function changeKalMin(d){AppState.kal.min=Math.max(5,Math.min(300,AppState.kal.min+d));const el=document.getElementById("kal-min-disp");if(el)el.textContent=AppState.kal.min+" min";}
 
 function setKTyp(typ){
-  window._kalTyp=typ;
+  AppState.kal.typ=typ;
   ["normal","pruef","ueberland","autobahn","nacht","auffrisch"].forEach(t=>{const el=document.getElementById("ktyp-"+t);if(el)el.classList.toggle("active",t===typ);});
-  if(typ==="normal")window._kalMin=80;
-  else if(typ==="pruef")window._kalMin=100;
-  else if(typ==="ueberland")window._kalMin=225;
-  else if(typ==="autobahn")window._kalMin=220;
-  else if(typ==="nacht")window._kalMin=135;
-  else if(typ==="auffrisch")window._kalMin=80;
-  const el=document.getElementById("kal-min-disp");if(el)el.textContent=window._kalMin+" min";
+  if(typ==="normal")AppState.kal.min=80;
+  else if(typ==="pruef")AppState.kal.min=100;
+  else if(typ==="ueberland")AppState.kal.min=225;
+  else if(typ==="autobahn")AppState.kal.min=220;
+  else if(typ==="nacht")AppState.kal.min=135;
+  else if(typ==="auffrisch")AppState.kal.min=80;
+  const el=document.getElementById("kal-min-disp");if(el)el.textContent=AppState.kal.min+" min";
   const pf=document.getElementById("kal-prufort-row");
   if(pf)pf.style.display=typ==="pruef"?"":"none";
   kalUpdateEnd();
@@ -1401,7 +1523,7 @@ function setKTyp(typ){
 
 function setKSonder(key,min){
   SONDER.forEach(sf=>{const el=document.getElementById("ksf-"+sf.key);if(el)el.classList.toggle("active",sf.key===key);});
-  window._kalMin=min;window._kalSonderKey=key;
+  AppState.kal.min=min;AppState.kal.sonderKey=key;
   const el=document.getElementById("kal-min-disp");if(el)el.textContent=min+" min";
   kalUpdateEnd();
 }
@@ -1411,23 +1533,23 @@ function kalUpdateEnd(){
   const endEl=document.getElementById("k-endzeit");
   if(!uhr||!endEl)return;
   const [h,m]=uhr.value.split(":").map(Number);
-  const total=h*60+m+(window._kalMin||80);
+  const total=h*60+m+(AppState.kal.min||80);
   const eh=Math.floor(total/60)%24;
   const em=total%60;
   endEl.textContent=String(eh).padStart(2,"0")+":"+String(em).padStart(2,"0")+" Uhr";
 }
 function toggleKalAlleSchueler(){
-  window._kalAlleSchueler=!window._kalAlleSchueler;
+  AppState.kal.alleSchueler=!AppState.kal.alleSchueler;
   const sel=document.getElementById("k-sid");
   const btn=document.getElementById("k-alle-btn");
   if(!sel)return;
-  const list=window._kalAlleSchueler?[...schueler]:schueler.filter(s=>!(s.pruefungen||[]).some(p=>p.bestanden===true));
+  const list=AppState.kal.alleSchueler?[...schueler]:schueler.filter(s=>!(s.pruefungen||[]).some(p=>p.bestanden===true));
   sel.innerHTML='<option value="">Auswählen…</option>'+list.map(s=>'<option value="'+s.id+'">'+s.vorname+' '+s.nachname+(s.spitz?' «'+s.spitz+'»':'')+'</option>').join('');
-  if(btn)btn.textContent=window._kalAlleSchueler?'− Nur aktive Schüler anzeigen':'+ Auch bestandene Schüler anzeigen';
+  if(btn)btn.textContent=AppState.kal.alleSchueler?'− Nur aktive Schüler anzeigen':'+ Auch bestandene Schüler anzeigen';
 }
 
 function setKPers(typ){
-  window._kalPers=typ;
+  AppState.kal.pers=typ;
   document.getElementById("kpers-schueler").classList.toggle("active",typ==="schueler");
   document.getElementById("kpers-auffrisch").classList.toggle("active",typ==="auffrisch");
   document.getElementById("k-schueler-row").style.display=typ==="schueler"?"":"none";
@@ -1438,7 +1560,7 @@ function saveKalTermin(date){
   try{
   const uhr=document.getElementById("k-uhr")?document.getElementById("k-uhr").value:"";
   if(!uhr)return;
-  const isAuffrisch=(window._kalPers||"schueler")==="auffrisch";
+  const isAuffrisch=(AppState.kal.pers||"schueler")==="auffrisch";
   let sid;
   if(!isAuffrisch){
     sid=document.getElementById("k-sid")?document.getElementById("k-sid").value:"";
@@ -1456,17 +1578,17 @@ function saveKalTermin(date){
     }
     sid="__auffrisch__:"+name;
   }
-  const min=window._kalMin||80;
+  const min=AppState.kal.min||80;
   if(!termine[date])termine[date]=[];
   const knotiz=document.getElementById('k-notiz');const notizVal=knotiz?knotiz.value.trim():'';
-  const ksf2=window._kalSonderKey;const ktyp2=window._kalTyp||'normal';
+  const ksf2=AppState.kal.sonderKey;const ktyp2=AppState.kal.typ||'normal';
   const autoN=ktyp2==='pruef'?'Prüfung':ktyp2==='auffrisch'?'Auffrischung':ktyp2==='ueberland'?'Überlandfahrt':ktyp2==='autobahn'?'Autobahnfahrt':ktyp2==='nacht'?'Nachtfahrt':'';
   // Store typ in termin for reliable sync
   const kalTypStr=ktyp2;
   termine[date].push({sid,uhr,min,notiz:notizVal||autoN,typ:kalTypStr||ktyp2||''});
   termine[date].sort((a,b)=>a.uhr.localeCompare(b.uhr));
   // If Prüfung: add to student's Prüfungen list
-  if((window._kalTyp||"normal")==="pruef"&&!sid.startsWith("__auffrisch__")){
+  if((AppState.kal.typ||"normal")==="pruef"&&!sid.startsWith("__auffrisch__")){
     const ps=getS(sid);
     if(ps){
       if(!ps.pruefungen)ps.pruefungen=[];
@@ -1557,7 +1679,7 @@ function renderEditDashTermin(date,idx){
   const t=(termine[date]||[])[idx];if(!t)return;
   const s=getS(t.sid);if(!s)return;
   const fd=fmtDate(date);
-  window._etDate=date;window._etIdx=idx;window._etMin=t.min;window._etIsAuffrisch=isAuffrisch3;
+  AppState.et.date=date;AppState.et.idx=idx;AppState.et.min=t.min;AppState.et.isAuffrisch=isAuffrisch3;
   let html=`<div class="screen active" id="scr-edit-termin">
     <div class="topbar">
       <button class="btn-icon" onclick="renderDashboard()"><i class="ti ti-x"></i></button>
@@ -1596,28 +1718,40 @@ function renderEditDashTermin(date,idx){
 }
 
 function changeETMin(d){
-  window._etMin=Math.max(10,Math.min(300,(window._etMin||80)+d));
+  AppState.et.min=Math.max(10,Math.min(300,(AppState.et.min||80)+d));
   const el=document.getElementById("et-min-disp");
-  if(el)el.textContent=window._etMin+" min";
+  if(el)el.textContent=AppState.et.min+" min";
 }
 
 function saveEditDashTermin(){
-  const date=window._etDate;const idx=window._etIdx;
+  const date=AppState.et.date;const idx=AppState.et.idx;
   if(!termine[date]||!termine[date][idx])return;
   termine[date][idx].sid=document.getElementById("et-sid").value;
   termine[date][idx].uhr=document.getElementById("et-uhr").value;
-  termine[date][idx].min=window._etMin||80;
+  termine[date][idx].min=AppState.et.min||80;
   termine[date][idx].notiz=document.getElementById("et-notiz").value.trim();
   termine[date].sort((a,b)=>a.uhr.localeCompare(b.uhr));
   saveAll();renderDashboard();
 }
 
 function deleteEditDashTermin(){
-  const date=window._etDate;const idx=window._etIdx;
+  const date=AppState.et.date;const idx=AppState.et.idx;
   if(!termine[date])return;
   const t=termine[date][idx];const s=getS(t.sid);
   const name=s?s.vorname+" "+s.nachname:"Termin";
-  if(!confirm(name+" · "+t.uhr+" Uhr wirklich löschen?"))return;
+  showModal({
+    title:"Termin löschen",
+    msg:`${name} · ${t.uhr} Uhr wirklich löschen?`,
+    btns:[
+      {label:"Löschen",danger:true,action:"_doDeleteEditDashTermin()"},
+      {label:"Abbrechen",action:"closeModal()"},
+    ]
+  });
+}
+function _doDeleteEditDashTermin(){
+  closeModal();
+  const date=AppState.et.date;const idx=AppState.et.idx;
+  if(!termine[date])return;
   termine[date].splice(idx,1);
   if(!termine[date].length)delete termine[date];
   saveAll();renderDashboard();
@@ -1692,7 +1826,7 @@ function renderEditKalTermin(date,idx){
   const isAuffrisch3=t.sid&&t.sid.startsWith("__auffrisch__");
   const s=isAuffrisch3?null:getS(t.sid);if(!s&&!isAuffrisch3)return;
   const auffrischName3=isAuffrisch3?t.sid.replace("__auffrisch__:",""):"";
-  window._etDate=date;window._etIdx=idx;window._etMin=t.min;
+  AppState.et.date=date;AppState.et.idx=idx;AppState.et.min=t.min;
   const fd=fmtDate(date);
   let html=`<div class="screen active" id="scr-edit-kaltermin">
     <div class="topbar">
@@ -1746,7 +1880,7 @@ function renderEditKalTermin(date,idx){
     </div>
   </div>`;
   renderApp(html);
-  window._etMin=t.min;
+  AppState.et.min=t.min;
   setTimeout(()=>{ektUpdateEnd();initPTR();},50);
 }
 
@@ -1755,7 +1889,7 @@ function ektUpdateEnd(){
   const endEl=document.getElementById("ekt-endzeit");
   if(!uhr||!endEl)return;
   const [h,m]=uhr.value.split(":").map(Number);
-  const total=h*60+m+(window._etMin||80);
+  const total=h*60+m+(AppState.et.min||80);
   const eh=Math.floor(total/60)%24;
   const em=total%60;
   endEl.textContent=String(eh).padStart(2,"0")+":"+String(em).padStart(2,"0")+" Uhr";
@@ -1763,25 +1897,25 @@ function ektUpdateEnd(){
 
 function setEKTyp(typ){
   ["normal","pruef","ueberland","autobahn","nacht","auffrisch"].forEach(t=>{const el=document.getElementById("ektyp-"+t);if(el)el.classList.toggle("active",t===typ);});
-  if(typ==="normal"||typ==="auffrisch")window._etMin=80;
-  else if(typ==="pruef")window._etMin=100;
-  else if(typ==="ueberland")window._etMin=225;
-  else if(typ==="autobahn")window._etMin=220;
-  else if(typ==="nacht")window._etMin=135;
-  const el=document.getElementById("et-min-disp");if(el)el.textContent=window._etMin+" min";
+  if(typ==="normal"||typ==="auffrisch")AppState.et.min=80;
+  else if(typ==="pruef")AppState.et.min=100;
+  else if(typ==="ueberland")AppState.et.min=225;
+  else if(typ==="autobahn")AppState.et.min=220;
+  else if(typ==="nacht")AppState.et.min=135;
+  const el=document.getElementById("et-min-disp");if(el)el.textContent=AppState.et.min+" min";
   ektUpdateEnd();
 }
 
 function setEKSonder(key,min){
   SONDER.forEach(sf=>{const el=document.getElementById("eksf-"+sf.key);if(el)el.classList.toggle("active",sf.key===key);});
-  window._etMin=min;
+  AppState.et.min=min;
   const el=document.getElementById("et-min-disp");if(el)el.textContent=min+" min";
   ektUpdateEnd();
 }
 
 function saveEktTermin(date,idx){
   if(!termine[date]||!termine[date][idx])return;
-  const isAuffrisch3=window._etIsAuffrisch||false;
+  const isAuffrisch3=AppState.et.isAuffrisch||false;
   const ekTag=document.getElementById('ekt-dat-tag').value;
   const ekMon=document.getElementById('ekt-dat-mon').value;
   const ekJahr=document.getElementById('ekt-dat-jahr').value;
@@ -1789,7 +1923,7 @@ function saveEktTermin(date,idx){
   const entry=termine[date][idx];
   if(!isAuffrisch3){const ektSid=document.getElementById('ekt-sid');if(ektSid)entry.sid=ektSid.value;}
   entry.uhr=document.getElementById("ekt-uhr").value;
-  entry.min=window._etMin||80;
+  entry.min=AppState.et.min||80;
   entry.notiz=document.getElementById("ekt-notiz").value.trim();
   // Move to new date if changed
   if(newDate!==date){
@@ -1826,11 +1960,21 @@ function deleteEktTermin(date,idx){
   const t=termine[date][idx];
   const s=getS(t.sid);
   const name=(s?s.vorname+" "+s.nachname:"Termin")+" · "+t.uhr+" Uhr";
-  if(!window.confirm(name+" wirklich löschen?"))return;
+  showModal({
+    title:"Termin löschen",
+    msg:`${name} wirklich löschen?`,
+    btns:[
+      {label:"Löschen",danger:true,action:`_doDeleteEktTermin('${date}',${idx})`},
+      {label:"Abbrechen",action:"closeModal()"},
+    ]
+  });
+}
+function _doDeleteEktTermin(date,idx){
+  closeModal();
+  if(!termine[date])return;
   termine[date].splice(idx,1);
   if(!termine[date].length)delete termine[date];
-  saveAll();
-  renderTagAnsicht(date);
+  saveAll();renderTagAnsicht(date);
 }
 
 // ── PULL TO REFRESH ───────────────────────────────────────────────────────────
@@ -1886,17 +2030,21 @@ function importDatenPaste(){
 }
 function importDatenFromTextarea(){
   const ta=document.getElementById("paste-area");
-  if(!ta||!ta.value.trim()){alert("Bitte JSON einfügen.");return;}
+  if(!ta||!ta.value.trim()){
+    showModal({title:"Fehler",msg:"Bitte JSON einfügen.",btns:[{label:"OK",action:"closeModal()"}]});return;
+  }
   try{
     const data=JSON.parse(ta.value.trim());
-    if(!data.schueler||!data.termine){alert("Ungültige Daten.");return;}
+    if(!data.schueler||!data.termine){
+      showModal({title:"Ungültige Daten",msg:"Die eingefügte Datei enthält keine gültigen Schüler- oder Terminedaten.",btns:[{label:"OK",action:"closeModal()"}]});return;
+    }
     schueler=data.schueler;
     termine=data.termine;
     saveAll();
     syncKalenderToFahrstunden();
     renderDashboard();
   }catch(err){
-    alert("Fehler: "+err.message);
+    showModal({title:"Fehler",msg:"Fehler beim Einlesen: "+err.message,btns:[{label:"OK",action:"closeModal()"}]});
   }
 }
 
@@ -1907,21 +2055,30 @@ function importDaten(input){
     try {
       const data = JSON.parse(e.target.result);
       if(!data.schueler || !data.termine) {
-        alert("Ungültige Backup-Datei."); return;
+        showModal({title:"Ungültige Datei",msg:"Die Datei enthält keine gültigen Backup-Daten.",btns:[{label:"OK",action:"closeModal()"}]});return;
       }
-      if(!confirm("Alle aktuellen Daten werden ersetzt. Fortfahren?")) return;
-      schueler = data.schueler;
-      termine = data.termine;
-      saveAll();
-      syncKalenderToFahrstunden();
-      renderDashboard();
-      alert("Daten erfolgreich wiederhergestellt.");
+      showModal({
+        title:"Daten wiederherstellen",
+        msg:"Alle aktuellen Daten werden durch das Backup ersetzt. Fortfahren?",
+        btns:[
+          {label:"Wiederherstellen",primary:true,action:"_doImportDaten("+JSON.stringify(JSON.stringify(data))+")"},
+          {label:"Abbrechen",action:"closeModal()"},
+        ]
+      });
     } catch(err) {
-      alert("Fehler beim Einlesen der Datei.");
+      showModal({title:"Fehler",msg:"Fehler beim Einlesen der Datei.",btns:[{label:"OK",action:"closeModal()"}]});
     }
   };
   reader.readAsText(file);
   input.value = "";
+}
+function _doImportDaten(jsonStr){
+  closeModal();
+  try{
+    const data=JSON.parse(jsonStr);
+    schueler=data.schueler;termine=data.termine;
+    saveAll();syncKalenderToFahrstunden();renderDashboard();
+  }catch(e){showModal({title:"Fehler",msg:"Daten konnten nicht wiederhergestellt werden.",btns:[{label:"OK",action:"closeModal()"}]});}
 }
 
 // ── SYNC FAHRSTUNDEN → KALENDER ──────────────────────────────────────────────
