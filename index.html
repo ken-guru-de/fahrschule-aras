@@ -1381,7 +1381,7 @@ function renderCalGrid(){
       const dr=document.createElement("div");dr.className="dot-row";
       t.slice(0,6).forEach(e=>{
         let cls="cdot-g";
-        if(e.min===100)cls="cdot-r";
+        if(e.typ==="pruef"||(e.min===100&&(!e.typ||e.typ===""||e.typ==="normal")))cls="cdot-r";
         else if(e.typ==="ueberland"||e.typ==="autobahn"||e.typ==="nacht"||e.min===225||e.min===220||e.min===135)cls="cdot-b";
         const dot=document.createElement("div");
         dot.className="cdot "+cls;
@@ -1817,7 +1817,7 @@ function renderTagAnsicht(date){
       const nick=s&&s.spitz?` «${s.spitz}»`:"";
       const endMin=(()=>{const [h,m]=e.uhr.split(":").map(Number);const tot=h*60+m+e.min;return String(Math.floor(tot/60)%24).padStart(2,"0")+":"+String(tot%60).padStart(2,"0");})();
       const notizL=(e.notiz||'').toLowerCase();const isSonder=e.typ==='ueberland'||e.typ==='autobahn'||e.typ==='nacht'||notizL.includes('überland')||notizL.includes('autobahn')||notizL.includes('nachtfahrt')||e.min===225||e.min===220||e.min===135;
-      const isPruef=e.min===100;
+      const isPruef=e.typ==="pruef"||(e.min===100&&(!e.typ||e.typ==="normal"||e.typ===""));
       const dotCol=isPruef?"#E24B4A":isSonder?"#378ADD":"#639922";
       totalMin+=e.min;
       html+=`<div class="card" style="margin-bottom:8px;cursor:pointer" onclick="${isAuffrisch2?`renderEditKalTermin('${date}',${t.indexOf(e)})`:`renderDashSchueler('${e.sid}')`}">
@@ -2183,7 +2183,7 @@ function syncKalenderToFahrstunden(){
     s.sonder={ueberland:0,autobahn:0,nacht:0};
     Object.entries(termine).forEach(([datum,ts])=>{
       ts.filter(t=>t.sid===s.id).forEach(t=>{
-        if(t.min===100||t.typ==="pruef"){
+        if(t.typ==="pruef"||(t.min===100&&(!t.typ||t.typ==="normal"||t.typ===""))){
           if(!s.pruefungen)s.pruefungen=[];
           // Robust duplicate check: same datum (ignore time differences)
           const existIdx=s.pruefungen.findIndex(p=>p.datum===datum);
@@ -2233,7 +2233,7 @@ function renderDashSchueler(sid){
   const geplant=Object.entries(termine).filter(([d])=>d>=td).flatMap(([d,ts])=>ts.filter(t=>{
     if(t.sid!==sid)return false;
     // Exclude pruefung if already passed
-    if(t.min===100||t.typ==="pruef"){
+    if(t.typ==="pruef"||(t.min===100&&(!t.typ||t.typ==="normal"||t.typ===""))){
       const pruef=(s.pruefungen||[]).find(p=>p.datum===d&&p.bestanden===true);
       if(pruef)return false;
     }
