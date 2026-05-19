@@ -1611,8 +1611,10 @@ function saveKalTermin(date){
       if(existIdx>=0){
         ps.pruefungen[existIdx].prufort=prufort;
       } else {
-        ps.pruefungen.push({datum:date,uhr,versuch,bestanden:null,prufort});
+        ps.pruefungen.push({datum:date,uhr,versuch:0,bestanden:null,prufort});
         ps.pruefungen.sort((a,b)=>a.datum.localeCompare(b.datum));
+        // Assign versuch numbers in chronological order
+        ps.pruefungen.forEach((p,i)=>{if(p.versuch===0)p.versuch=i+1;});
       }
     }
   }
@@ -1971,8 +1973,9 @@ function saveEktTermin(date,idx){
       if(existIdx>=0){
         ps.pruefungen[existIdx].uhr=entry.uhr;
       } else {
-        ps.pruefungen.push({datum:newDate,uhr:entry.uhr,versuch,bestanden:null,prufort:ps.prufort||""});
+        ps.pruefungen.push({datum:newDate,uhr:entry.uhr,versuch:0,bestanden:null,prufort:ps.prufort||""});
         ps.pruefungen.sort((a,b)=>a.datum.localeCompare(b.datum));
+        ps.pruefungen.forEach((p,i)=>{if(p.versuch===0)p.versuch=i+1;});
       }
     }
   }
@@ -2180,14 +2183,16 @@ function syncKalenderToFahrstunden(){
     s.sonder={ueberland:0,autobahn:0,nacht:0};
     Object.entries(termine).forEach(([datum,ts])=>{
       ts.filter(t=>t.sid===s.id).forEach(t=>{
-        if(t.min===100){
+        if(t.min===100||t.typ==="pruef"){
           if(!s.pruefungen)s.pruefungen=[];
+          // Robust duplicate check: same datum (ignore time differences)
           const existIdx=s.pruefungen.findIndex(p=>p.datum===datum);
           if(existIdx<0){
-            s.pruefungen.push({datum,uhr:t.uhr,versuch:s.pruefungen.length+1,bestanden:null,prufort:s.prufort||""});
-            s.pruefungen.sort((a,b)=>a.datum.localeCompare(b.datum));
-          } else if(!s.pruefungen[existIdx].uhr&&t.uhr){
-            s.pruefungen[existIdx].uhr=t.uhr;
+            // Push without versuch yet — we'll renumber after sort
+            s.pruefungen.push({datum,uhr:t.uhr,versuch:0,bestanden:null,prufort:s.prufort||""});
+          } else {
+            // Update uhr if missing
+            if(!s.pruefungen[existIdx].uhr&&t.uhr)s.pruefungen[existIdx].uhr=t.uhr;
           }
           return;
         }
@@ -2205,6 +2210,14 @@ function syncKalenderToFahrstunden(){
       });
     });
     s.fahrstunden.sort((a,b)=>b.datum.localeCompare(a.datum)||(b.uhr||"").localeCompare(a.uhr||""));
+    // Sort pruefungen by date, then assign versuch numbers correctly
+    if(s.pruefungen&&s.pruefungen.length){
+      s.pruefungen.sort((a,b)=>a.datum.localeCompare(b.datum));
+      s.pruefungen.forEach((p,i)=>{
+        // Only reassign if versuch is 0 (new) or was wrong
+        if(p.versuch===0)p.versuch=i+1;
+      });
+    }
     // Apply manual overrides (explicit user setting takes precedence)
     ['ueberland','autobahn','nacht'].forEach(k=>{
       if(k in manualOverride){s.sonder[k]=manualOverride[k];}
@@ -2721,7 +2734,15 @@ function exportMonatPDF(monatStr){
 
 (async()=>{
   try{
+    // Einmalige Korrektur: Versuchsnummern chronologisch neu vergeben
+    schueler.forEach(s=>{
+      if(s.pruefungen&&s.pruefungen.length>1){
+        s.pruefungen.sort((a,b)=>a.datum.localeCompare(b.datum));
+        s.pruefungen.forEach((p,i)=>{p.versuch=i+1;});
+      }
+    });
     syncKalenderToFahrstunden();
+    save("fs_schueler",schueler);
   }catch(e){console.error("sync error:",e);}
   try{
     if(!localStorage.getItem("fs_schueler")&&schueler.length===0){
