@@ -44,7 +44,10 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:-apple-sy
 .scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 16px calc(var(--safe-bot) + 24px);display:flex;flex-direction:column;gap:12px;overscroll-behavior:contain;}
 .sec-label{font-size:11px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;}
 .sec-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
-.card{background:var(--bg2);border-radius:var(--r-lg);box-shadow:var(--shadow-sm);overflow:hidden;}
+.card{background:var(--bg2);border-radius:var(--r-lg);box-shadow:var(--shadow-sm);}
+.card>.card-row:first-child,.card>.info-row:first-child,.card>.gfa-row:first-child,.card>.sonder-btn-row:first-child{border-radius:var(--r-lg) var(--r-lg) 0 0;}
+.card>.card-row:last-child,.card>.info-row:last-child,.card>.gfa-row:last-child,.card>.sonder-btn-row:last-child{border-radius:0 0 var(--r-lg) var(--r-lg);border-bottom:none;}
+.card>.card-row:only-child,.card>.info-row:only-child{border-radius:var(--r-lg);border-bottom:none;}
 @media(prefers-color-scheme:dark){.card{background:var(--bg2);}}
 .card-row{display:flex;align-items:center;gap:10px;padding:13px 16px;border-bottom:1px solid var(--br);min-height:52px;}
 .card-row:last-child{border-bottom:none;}
@@ -1623,7 +1626,16 @@ function renderStatistik(){
     const tot=ps.length,best=ps.filter(p=>p.bestanden).length;
     return{ort:o,tot,best,quote:tot?Math.round((best/tot)*100):null};
   }).filter(o=>o.tot>0);
-  const recent=[...alleInklOffen].sort((a,b)=>{const aOffen=a.bestanden===null||a.bestanden===undefined;const bOffen=b.bestanden===null||b.bestanden===undefined;if(aOffen!==bOffen)return aOffen?1:-1;if(b.bestanden!==a.bestanden)return b.bestanden?-1:1;return b.datum.localeCompare(a.datum);}).slice(0,10);
+  const td2=todayStr();
+  // Upcoming (future, open) first sorted by date asc, then past results sorted by date desc
+  const recent=[...alleInklOffen].sort((a,b)=>{
+    const aUpcoming=a.datum>=td2&&(a.bestanden===null||a.bestanden===undefined);
+    const bUpcoming=b.datum>=td2&&(b.bestanden===null||b.bestanden===undefined);
+    if(aUpcoming&&!bUpcoming)return -1;
+    if(!aUpcoming&&bUpcoming)return 1;
+    if(aUpcoming&&bUpcoming)return a.datum.localeCompare(b.datum); // upcoming: earliest first
+    return b.datum.localeCompare(a.datum); // past: most recent first
+  }).slice(0,15);
 
   let html=`<div class="screen active" id="scr-stat">
     <div class="topbar">
@@ -1658,13 +1670,18 @@ function renderStatistik(){
       html+=`</div></div>`;
     }
     if(recent.length){
-      html+=`<div><div class="sec-label">Letzte Prüfungen</div>`;
+      const upcomingCount=recent.filter(p=>p.datum>=td2&&(p.bestanden===null||p.bestanden===undefined)).length;
+      html+=`<div><div class="sec-label">Prüfungen (${upcomingCount} ausstehend)</div>`;
       recent.forEach(p=>{
         const fd=fmtDate(p.datum);
         const pOffen=p.bestanden===null||p.bestanden===undefined;
-        const badgeClass=pOffen?"":"p.bestanden?'pruef-best':'pruef-nicht'";
-        const badgeCls=pOffen?"":p.bestanden?"pruef-best":"pruef-nicht";
-        html+=`<div class="pruef-result-item"><div style="width:32px;height:32px;border-radius:50%;flex-shrink:0;text-align:center;line-height:32px;font-size:13px;font-weight:700;${pOffen?"background:rgba(99,102,241,0.15);color:#6366F1;":p.bestanden?"background:#EAF3DE;color:#27500A;":"background:#FCEBEB;color:#A32D2D;"}">${p.versuch}</div><div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--tx)">${p.name}</div><div style="font-size:11px;color:var(--tx2);margin-top:2px">${p.versuch}. Prüfung · ${fd.day}. ${fd.mon} ${fd.year}${p.prufort?" · "+p.prufort:""}</div></div><span style="font-size:12px;font-weight:500;color:${pOffen?"#6366F1":p.bestanden?"#27500A":"#A32D2D"}">${pOffen?"⏳":p.bestanden?"✓":"✗"}</span></div>`;
+        const isUpcoming=p.datum>=td2&&pOffen;
+        html+=`<div class="pruef-result-item" onclick="renderDashSchueler('${p.sid}')" style="cursor:pointer;${isUpcoming?"border-left:3px solid var(--accent);":""}">
+          <div style="width:32px;height:32px;border-radius:50%;flex-shrink:0;text-align:center;line-height:32px;font-size:13px;font-weight:700;${pOffen?"background:rgba(255,107,43,0.15);color:var(--accent);":p.bestanden?"background:#EAF3DE;color:#27500A;":"background:#FCEBEB;color:#A32D2D;"}">${p.versuch}</div>
+          <div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--tx)">${p.name}</div>
+          <div style="font-size:11px;color:var(--tx2);margin-top:2px">${p.versuch}. Prüfung · ${fd.day}. ${fd.mon} ${fd.year}${p.prufort?" · "+p.prufort:""}</div></div>
+          <span style="font-size:12px;font-weight:500;color:${pOffen?"var(--accent)":p.bestanden?"#27500A":"#A32D2D"}">${pOffen?"⏳":p.bestanden?"✓":"✗"}</span>
+        </div>`;
       });
       html+=`</div>`;
     }
@@ -1793,7 +1810,7 @@ function renderTagAnsicht(date){
       const dotCol=isPruef?"#E24B4A":isSonder?"#378ADD":"#639922";
       totalMin+=e.min;
       html+=`<div class="card" style="margin-bottom:8px;cursor:pointer" onclick="${isAuffrisch2?`renderEditKalTermin('${date}',${t.indexOf(e)})`:`renderDashSchueler('${e.sid}')`}">
-        <div class="card-row" style="gap:14px;padding:18px 16px 18px;align-items:flex-start">
+        <div class="card-row" style="gap:14px;padding:14px 16px 14px;align-items:flex-start">
           <div style="display:flex;flex-direction:column;align-items:center;gap:2px;min-width:44px">
             <span style="font-size:14px;font-weight:600;color:var(--tx)">${e.uhr}</span>
             <span style="font-size:11px;color:var(--tx3)">–${endMin}</span>
@@ -1802,7 +1819,7 @@ function renderTagAnsicht(date){
           <div style="flex:1">
             <div style="font-size:15px;font-weight:500">${isAuffrisch2?"🔄 "+auffrischName:s.vorname+nick+" "+s.nachname}</div>
             <div style="font-size:12px;color:var(--tx2);margin-top:2px">${e.min} min${isAuffrisch2?" · Auffrischung":s?" · Kl. "+s.klasse:""}${e.notiz?" · "+e.notiz:""}${isPruef&&s&&s.prufort?" · "+s.prufort:""}</div>
-            ${!isAuffrisch2?`<div style="margin-top:4px"><span class="badge badge-${s.klasse}">${s.klasse}</span></div>`:""}
+            ${!isAuffrisch2?`<div style="margin-top:5px;padding-bottom:2px"><span class="badge badge-${s.klasse}">${s.klasse}</span></div>`:""}
           </div>
           <i class="ti ti-chevron-right" style="color:var(--tx3);font-size:16px"></i>
         </div>
