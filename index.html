@@ -2413,6 +2413,10 @@ function renderDashSchueler(sid){
       <div class="card" style="margin-bottom:12px">
         <div class="card-row"><span class="card-label"><i class="ti ti-book"></i>Theorie</span>
           <span class="info-val">${s.theorie?"✓ Bestanden":"Ausstehend"}</span></div>
+        ${s.tel?`<div class="card-row" style="cursor:pointer" onclick="window.open('https://wa.me/${s.tel.replace(/^\+/,'').replace(/[^0-9]/g,'')}','_blank')">
+          <span class="card-label"><i class="ti ti-brand-whatsapp" style="color:#25D366;font-size:18px"></i>WhatsApp</span>
+          <span style="font-size:15px;font-weight:600;color:#25D366">${s.tel}</span>
+        </div>`:""}
         <div class="card-row"><span class="card-label"><i class="ti ti-calendar-event"></i>Prüfung</span>
           <span class="info-val">${naechstePruef?(fmtDate(naechstePruef.datum).day+". "+fmtDate(naechstePruef.datum).mon+" "+fmtDate(naechstePruef.datum).year+(naechstePruef.uhr?`<br><span style="font-size:13px;color:var(--tx2)">`+naechstePruef.uhr+" Uhr</span>":"")+  (naechstePruef.bestanden===true?`<br><span style="font-size:13px;font-weight:700;color:#27A843">✓ Bestanden</span>`:naechstePruef.bestanden===false?`<br><span style="font-size:13px;font-weight:700;color:#E24B4A">✗ Nicht bestanden</span>`:"")):"–"}</span></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-map-pin"></i>Prüfort</span>
