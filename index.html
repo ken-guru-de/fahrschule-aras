@@ -704,8 +704,8 @@ function renderSchueler(sid){
         <div class="info-row"><span class="info-lbl"><i class="ti ti-calendar-plus"></i>Beginn</span><span class="info-val">${fmtDate(s.beginn).day}. ${fmtDate(s.beginn).mon} ${fmtDate(s.beginn).year}</span></div>
         <div class="info-row"><span class="info-lbl"><i class="ti ti-book"></i>Theorie</span><span class="info-val" style="color:${s.theorie?"#3B6D11":"#993C1D"}">${s.theorie?"✓ Bestanden":"✗ Ausstehend"}</span></div>
         <div class="info-row"><span class="info-lbl"><i class="ti ti-map-pin"></i>Prüfort</span><span class="info-val">${s.prufort}</span></div>
-        ${s.tel?`<div class="info-row"><span class="info-lbl"><i class="ti ti-brand-whatsapp"></i>WhatsApp</span>
-          <a href="https://wa.me/${s.tel.replace(/[^0-9]/g,'')}" style="font-size:15px;font-weight:500;color:var(--accent);text-decoration:none" onclick="event.stopPropagation()">${s.tel}</a>
+        ${s.tel?`<div class="info-row"><span class="info-lbl"><i class="ti ti-brand-whatsapp" style="color:#25D366"></i>WhatsApp</span>
+          <a href="https://wa.me/${s.tel.replace(/^\+/,'').replace(/[^0-9]/g,'')}" style="font-size:15px;font-weight:500;color:#25D366;text-decoration:none" onclick="event.stopPropagation()">${s.tel}</a>
         </div>`:""}
       </div></div>
 
