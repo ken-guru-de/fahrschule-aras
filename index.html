@@ -1655,12 +1655,12 @@ function renderStatistik(){
     </div>
     <div class="scroll">
       <div class="stat-grid">
-        <div class="stat-box accent" style="text-align:center"><div class="stat-lbl">Bestehensquote</div><div class="stat-num" style="font-size:48px">${quote}<span class="stat-unit">%</span></div></div>
-        <div class="stat-box" style="text-align:center"><div class="stat-lbl">Prüfungen gesamt</div><div class="stat-num" style="font-size:48px">${gesamt}</div></div>
+        <div class="stat-box accent"><div class="stat-lbl">Bestehensquote</div><div class="stat-num">${quote}<span class="stat-unit">%</span></div></div>
+        <div class="stat-box"><div class="stat-lbl">Prüfungen gesamt</div><div class="stat-num">${gesamt}</div></div>
       </div>
       <div class="stat-grid">
-        <div class="stat-box" style="text-align:center"><div class="stat-lbl">Bestanden</div><div class="stat-num" style="font-size:48px;color:#27500A">${bestanden}</div></div>
-        <div class="stat-box" style="text-align:center"><div class="stat-lbl">Nicht bestanden</div><div class="stat-num" style="font-size:48px;color:#A32D2D">${gesamt-bestanden}</div></div>
+        <div class="stat-box"><div class="stat-lbl">Bestanden</div><div class="stat-num" style="color:#27500A">${bestanden}</div></div>
+        <div class="stat-box"><div class="stat-lbl">Nicht bestanden</div><div class="stat-num" style="color:#A32D2D">${gesamt-bestanden}</div></div>
       </div>`;
 
   if(gesamt===0){
@@ -1670,13 +1670,13 @@ function renderStatistik(){
     v.filter(x=>x.list.length>0).forEach(x=>{
       const best=x.list.filter(p=>p.bestanden).length;
       const pct=x.list.length?Math.round((best/x.list.length)*100):0;
-      html+=`<div class="stat-bar-wrap"><span class="stat-bar-label">${x.n}.</span><div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${pct}%"></div></div><span class="stat-bar-val">${pct}%</span><span style="font-size:11px;color:var(--tx3);min-width:36px">${best}/${x.list.length}</span></div>`;
+      html+=`<div class="stat-bar-wrap" style="margin-bottom:14px;padding:4px 0"><span class="stat-bar-label" style="font-size:15px">${x.n}.</span><div class="stat-bar-bg" style="height:12px;border-radius:6px"><div class="stat-bar-fill" style="height:12px;border-radius:6px;width:${pct}%"></div></div><span class="stat-bar-val" style="font-size:14px">${pct}%</span><span style="font-size:12px;color:var(--tx3);min-width:36px">${best}/${x.list.length}</span></div>`;
     });
     html+=`</div></div>`;
     if(ortStats.length){
       html+=`<div><div class="sec-label">Nach Prüfort</div><div class="stat-card">`;
       ortStats.forEach(o=>{
-        html+=`<div class="stat-bar-wrap"><span class="stat-bar-label" style="min-width:90px;font-size:11px">${o.ort.replace("DEKRA ","").replace("TÜV ","")}</span><div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${o.quote}%"></div></div><span class="stat-bar-val">${o.quote}%</span><span style="font-size:11px;color:var(--tx3);min-width:36px">${o.best}/${o.tot}</span></div>`;
+        html+=`<div class="stat-bar-wrap" style="margin-bottom:14px;padding:4px 0"><span class="stat-bar-label" style="min-width:90px;font-size:13px">${o.ort.replace("DEKRA ","").replace("TÜV ","")}</span><div class="stat-bar-bg" style="height:12px;border-radius:6px"><div class="stat-bar-fill" style="height:12px;border-radius:6px;width:${o.quote}%"></div></div><span class="stat-bar-val" style="font-size:14px">${o.quote}%</span><span style="font-size:12px;color:var(--tx3);min-width:36px">${o.best}/${o.tot}</span></div>`;
       });
       html+=`</div></div>`;
     }
@@ -1687,11 +1687,11 @@ function renderStatistik(){
         const fd=fmtDate(p.datum);
         const pOffen=p.bestanden===null||p.bestanden===undefined;
         const isUpcoming=p.datum>=td2&&pOffen;
-        html+=`<div class="pruef-result-item" onclick="renderDashSchueler('${p.sid}')" style="cursor:pointer;${isUpcoming?"border-left:3px solid var(--accent);":""}">
-          <div style="width:32px;height:32px;border-radius:50%;flex-shrink:0;text-align:center;line-height:32px;font-size:13px;font-weight:700;${pOffen?"background:rgba(255,107,43,0.15);color:var(--accent);":p.bestanden?"background:#EAF3DE;color:#27500A;":"background:#FCEBEB;color:#A32D2D;"}">${p.versuch}</div>
-          <div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--tx)">${p.name}</div>
-          <div style="font-size:11px;color:var(--tx2);margin-top:2px">${p.versuch}. Prüfung · ${fd.day}. ${fd.mon} ${fd.year}${p.prufort?" · "+p.prufort:""}</div></div>
-          <span style="font-size:12px;font-weight:500;color:${pOffen?"var(--accent)":p.bestanden?"#27500A":"#A32D2D"}">${pOffen?"⏳":p.bestanden?"✓":"✗"}</span>
+        html+=`<div class="pruef-result-item" onclick="renderDashSchueler('${p.sid}')" style="cursor:pointer;padding:14px 16px;gap:14px;${isUpcoming?"border-left:3px solid var(--accent);":""}">
+          <div style="width:40px;height:40px;border-radius:50%;flex-shrink:0;text-align:center;line-height:40px;font-size:15px;font-weight:700;${pOffen?"background:rgba(255,107,43,0.15);color:var(--accent);":p.bestanden?"background:#EAF3DE;color:#27500A;":"background:#FCEBEB;color:#A32D2D;"}">${p.versuch}</div>
+          <div style="flex:1"><div style="font-size:15px;font-weight:600;color:var(--tx)">${p.name}</div>
+          <div style="font-size:12px;color:var(--tx2);margin-top:3px">${p.versuch}. Prüfung · ${fd.day}. ${fd.mon} ${fd.year}${p.prufort?" · "+p.prufort:""}</div></div>
+          <span style="font-size:18px;font-weight:500;color:${pOffen?"var(--accent)":p.bestanden?"#27500A":"#A32D2D"}">${pOffen?"⏳":p.bestanden?"✓":"✗"}</span>
         </div>`;
       });
       html+=`</div>`;
