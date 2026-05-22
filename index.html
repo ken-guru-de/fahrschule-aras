@@ -392,10 +392,29 @@ function renderDashboard(dashDateOffset=0){
   const td=todayStr();
   const heuteTermine=(termine[td]||[]).sort((a,b)=>a.uhr.localeCompare(b.uhr));
   const allePruef=[];
+  const _pruefSeen=new Set();
+  // Quelle 1: s.pruefungen
   schueler.forEach(s=>{
     (s.pruefungen||[]).forEach((p,pi)=>{
-      if(p.datum>=td)
-        allePruef.push({sid:s.id,datum:p.datum,versuch:p.versuch,pi,bestanden:p.bestanden,prufort:p.prufort||s.prufort||""});
+      if(p.datum<td)return;
+      const k=s.id+"_"+p.datum;
+      if(_pruefSeen.has(k))return;
+      _pruefSeen.add(k);
+      allePruef.push({sid:s.id,datum:p.datum,versuch:p.versuch,pi,bestanden:p.bestanden,prufort:p.prufort||s.prufort||""});
+    });
+  });
+  // Quelle 2: Kalendertermine mit typ=pruef ODER notiz="Prüfung"
+  Object.entries(termine).forEach(([datum,ts])=>{
+    if(datum<td)return;
+    ts.forEach(t=>{
+      if(!t.sid||t.sid.startsWith("__auffrisch__"))return;
+      const istPruef=t.typ==="pruef"||(t.notiz&&t.notiz.trim().toLowerCase()==="prüfung");
+      if(!istPruef)return;
+      const k=t.sid+"_"+datum;
+      if(_pruefSeen.has(k))return;
+      _pruefSeen.add(k);
+      const s2=getS(t.sid);if(!s2)return;
+      allePruef.push({sid:t.sid,datum,versuch:(s2.pruefungen||[]).length+1,bestanden:null,prufort:s2.prufort||""});
     });
   });
   allePruef.sort((a,b)=>a.datum.localeCompare(b.datum));
