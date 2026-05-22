@@ -474,19 +474,23 @@ function renderDashboard(dashDateOffset=0){
     html+=`<div style="padding:12px 0;font-size:13px;color:var(--tx3)">Keine Termine geplant</div>`;
   }
   html+=`</div>`;
-  if(allePruef.length){
-    html+=`<div><div class="sec-label">Prüfungen (${allePruef.length})</div>`;
-    allePruef.forEach(ep=>{
+  // Nächste Prüfungen: nur anstehende ohne Ergebnis, inkl. Prüfort
+  const pruefOffen=allePruef.filter(ep=>ep.bestanden===null||ep.bestanden===undefined);
+  if(pruefOffen.length){
+    html+=`<div><div class="sec-label">Nächste Prüfungen (${pruefOffen.length})</div>`;
+    pruefOffen.forEach(ep=>{
       const s2=getS(ep.sid);if(!s2)return;
       const fd=fmtDate(ep.datum);
+      const prufort=s2.prufort||"";
       const vergangen=ep.datum<td;
-      const dotCol=ep.bestanden===true?"#639922":ep.bestanden===false?"#E24B4A":vergangen?"var(--accent)":"var(--accent)";
-      const ergebnis=ep.bestanden===true?"✓ Bestanden":ep.bestanden===false?"✗ Nicht bestanden":"Ergebnis ausstehend";
-      const sub=`${ep.versuch}. Prüfung · ${ergebnis}`;
-      html+=`<div class="list-item" style="margin-bottom:6px" onclick="renderDashSchueler('${ep.sid}')">
+      const dotCol=vergangen?"#E24B4A":"var(--accent)";
+      html+=`<div class="list-item" style="margin-bottom:6px;cursor:pointer" onclick="renderDashSchueler('${ep.sid}')">
         <span class="status-dot" style="background:${dotCol}"></span>
-        <div class="item-info"><div class="item-name">${s2.vorname} ${s2.nachname}</div><div class="item-sub">${sub}</div></div>
-        <span style="font-size:13px;color:var(--tx2);font-weight:500">${fd.day}. ${fd.mon}${vergangen&&ep.typ==="offen"?" ⚠️":""}</span>
+        <div class="item-info">
+          <div class="item-name">${s2.vorname} ${s2.nachname}</div>
+          <div class="item-sub">${ep.versuch}. Prüfung${prufort?" · "+prufort:""}${vergangen?" ⚠️":""}</div>
+        </div>
+        <span style="font-size:13px;color:var(--tx2);font-weight:600;white-space:nowrap">${fd.day}. ${fd.mon}</span>
       </div>`;
     });
     html+=`</div>`;
