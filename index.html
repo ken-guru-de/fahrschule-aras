@@ -389,6 +389,7 @@ function farbStyle(farbe){const f=FARBEN.find(x=>x.key===farbe)||FARBEN[0];retur
 
 // ── DASHBOARD ─────────────────────────────────────────────────────────────────
 function renderDashboard(dashDateOffset=0){
+  syncKalenderToFahrstunden();
   const td=todayStr();
   const heuteTermine=(termine[td]||[]).sort((a,b)=>a.uhr.localeCompare(b.uhr));
   const allePruef=[];
@@ -403,7 +404,7 @@ function renderDashboard(dashDateOffset=0){
   let html=`<div class="screen active" id="scr-dash">
     <div class="topbar">
       <div style="display:flex;align-items:center;justify-content:space-between;width:100%;gap:2px">
-        <div style="font-size:22px;color:white;flex-shrink:0"><i class="ti ti-steering-wheel" style="font-size:30px;vertical-align:-3px"></i></div>
+        <button class="btn-icon" onclick="toggleDatenMenu()" title="Datensicherung"><i class="ti ti-steering-wheel" style="font-size:26px"></i></button>
         <button class="btn-icon" onclick="renderKalender()"><i class="ti ti-calendar"></i></button>
         <button class="btn-icon" onclick="renderListe()"><i class="ti ti-users"></i></button>
         <button class="btn-icon" onclick="renderNeuSchueler()"><i class="ti ti-user-plus"></i></button>
@@ -496,14 +497,7 @@ function renderDashboard(dashDateOffset=0){
     html+=`</div>`;
   }
 
-  html+=`<div style="display:flex;flex-direction:column;gap:8px">
-    <button class="btn-full" onclick="exportDaten()" style="background:#EAF3DE;border-color:#97C459;color:#27500A;font-size:15px"><i class="ti ti-download"></i> Daten sichern</button>
-    <label style="display:block;width:100%;padding:14px;border-radius:var(--r-lg);border:1.5px solid var(--accent);background:rgba(255,107,43,.1);color:#FF6B2B;font-size:15px;font-weight:600;text-align:center;cursor:pointer;box-sizing:border-box;font-family:inherit">
-      <i class="ti ti-upload"></i> Daten wiederherstellen (Datei)
-      <input type="file" accept=".json" style="display:none" onchange="importDaten(this)"/>
-    </label>
-    <button class="btn-full" onclick="importDatenPaste()" style="background:rgba(255,107,43,.06);border-color:var(--accent);color:#FF6B2B;font-size:15px"><i class="ti ti-clipboard-text"></i> Daten einfügen (JSON)</button>
-  </div></div></div>`;
+  html+=`</div></div>`;
   renderApp(html);
   setTimeout(()=>{
     initPTR();
@@ -2208,6 +2202,41 @@ function initPTR(){
 }
 
 // ── BACKUP / RESTORE ─────────────────────────────────────────────────────────
+function toggleDatenMenu(){
+  var el=document.getElementById("daten-menu-overlay");
+  if(el){el.remove();return;}
+  var overlay=document.createElement("div");
+  overlay.id="daten-menu-overlay";
+  overlay.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:999;display:flex;align-items:flex-end;justify-content:center;padding-bottom:env(safe-area-inset-bottom)";
+  overlay.addEventListener("click",function(e){if(e.target===overlay)overlay.remove();});
+  var sheet=document.createElement("div");
+  sheet.style.cssText="background:var(--bg2);border-radius:20px 20px 0 0;padding:20px 20px 28px;width:100%;max-width:520px;display:flex;flex-direction:column;gap:10px";
+  sheet.innerHTML='<div style="font-size:17px;font-weight:700;margin-bottom:4px;color:var(--tx)">Datensicherung</div>';
+  // Sichern
+  var btnSave=document.createElement("button");
+  btnSave.style.cssText="width:100%;padding:14px;border-radius:14px;border:1.5px solid #97C459;background:#EAF3DE;color:#27500A;font-size:16px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px";
+  btnSave.innerHTML='<i class="ti ti-download"></i> Daten sichern';
+  btnSave.onclick=function(){overlay.remove();exportDaten();};
+  sheet.appendChild(btnSave);
+  // Wiederherstellen Datei
+  var lbl=document.createElement("label");
+  lbl.style.cssText="width:100%;padding:14px;border-radius:14px;border:1.5px solid var(--accent);background:rgba(255,107,43,.1);color:#FF6B2B;font-size:16px;font-weight:600;text-align:center;cursor:pointer;box-sizing:border-box;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px";
+  lbl.innerHTML='<i class="ti ti-upload"></i> Wiederherstellen (Datei)';
+  var fileInput=document.createElement("input");
+  fileInput.type="file";fileInput.accept=".json";fileInput.style.display="none";
+  fileInput.onchange=function(){overlay.remove();importDaten(this);};
+  lbl.appendChild(fileInput);
+  sheet.appendChild(lbl);
+  // Einfügen JSON
+  var btnPaste=document.createElement("button");
+  btnPaste.style.cssText="width:100%;padding:14px;border-radius:14px;border:1.5px solid var(--accent);background:rgba(255,107,43,.06);color:#FF6B2B;font-size:16px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px";
+  btnPaste.innerHTML='<i class="ti ti-clipboard-text"></i> Daten einfügen (JSON)';
+  btnPaste.onclick=function(){overlay.remove();importDatenPaste();};
+  sheet.appendChild(btnPaste);
+  overlay.appendChild(sheet);
+  document.body.appendChild(overlay);
+}
+
 function exportDaten(){
   const data = { schueler, termine, exportiert: new Date().toISOString() };
   const json = JSON.stringify(data, null, 2);
