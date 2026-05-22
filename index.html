@@ -1791,7 +1791,8 @@ function renderEditDashTermin(date,idx){
   const t=(termine[date]||[])[idx];if(!t)return;
   const s=getS(t.sid);if(!s)return;
   const fd=fmtDate(date);
-  AppState.et.date=date;AppState.et.idx=idx;AppState.et.min=t.min;AppState.et.isAuffrisch=isAuffrisch3;AppState.et.backSid=t.sid;
+  const _isAuffrisch3=t&&t.sid&&t.sid.startsWith("__auffrisch__");
+  AppState.et.date=date;AppState.et.idx=idx;AppState.et.min=t.min;AppState.et.isAuffrisch=_isAuffrisch3;AppState.et.backSid=t.sid;
   let html=`<div class="screen active" id="scr-edit-termin">
     <div class="topbar">
       <button class="btn-icon" onclick="AppState.et.backSid?renderDashSchueler(AppState.et.backSid):renderDashboard()"><i class="ti ti-arrow-left"></i></button>
@@ -2410,6 +2411,24 @@ function renderDashSchueler(sid){
       </div>
       <div id="fahr-list-${sid}" style="display:none;margin-bottom:8px" data-showing=""></div>
       <div id="fs-list-${sid}" style="display:none"></div>
+      ${(()=>{
+        const wt2=["So","Mo","Di","Mi","Do","Fr","Sa"];
+        const futureList=Object.entries(termine).filter(([d])=>d>=td).flatMap(([d,ts])=>ts.filter(t=>t.sid===sid).map(t=>({datum:d,...t}))).sort((a,b)=>{const aP=a.typ==="pruef"?0:1;const bP=b.typ==="pruef"?0:1;if(aP!==bP)return aP-bP;return a.datum.localeCompare(b.datum)||(a.uhr||"").localeCompare(b.uhr||"");});
+        const pastList=Object.entries(termine).filter(([d])=>d<td).flatMap(([d,ts])=>ts.filter(t=>t.sid===sid).map(t=>({datum:d,...t}))).sort((a,b)=>b.datum.localeCompare(a.datum));
+        const allList=[...futureList,...pastList];
+        if(!allList.length)return "";
+        return "<div style=\"margin-bottom:8px;border-radius:14px;overflow:hidden;border:.5px solid var(--br2)\">"+allList.map(e=>{
+          const fd=fmtDate(e.datum);
+          const dow=wt2[new Date(e.datum).getDay()];
+          const isPruef=e.typ==="pruef";
+          const isPast=e.datum<td;
+          const realIdx=(termine[e.datum]||[]).findIndex(t=>t.sid===e.sid&&t.uhr===e.uhr&&t.min===e.min);
+          return "<div onclick=\"closeToggleAndEdit(\'"+sid+"\',\'"+e.datum+"\',"+realIdx+")\" style=\"display:flex;justify-content:space-between;align-items:center;padding:13px 14px;border-bottom:.5px solid var(--br2);cursor:pointer;background:"+(isPruef?"rgba(226,75,74,0.06)":isPast?"rgba(0,0,0,0.02)":"var(--bg)")+"\">"+
+            "<span style=\"font-size:15px;color:"+(isPruef?"#E24B4A":isPast?"var(--tx3)":"var(--tx2)")+"\">"+dow+" "+fd.day+". "+fd.mon+(isPruef?" 🎯":"")+(isPast?" <span style=\"font-size:11px;opacity:.6\">(vergangenheit)</span>":"")+"</span>"+
+            "<div style=\"display:flex;align-items:center;gap:10px\"><span style=\"font-size:15px;font-weight:"+(isPruef?"600":"500")+";color:"+(isPruef?"#E24B4A":isPast?"var(--tx3)":"var(--tx)")+"\">"+(e.uhr||"")+" · "+e.min+" min</span><i class=\"ti ti-pencil\" style=\"font-size:14px;color:var(--tx3)\"></i></div>"+
+          "</div>";
+        }).join("")+"</div>";
+      })()}
 
       <div class="card" style="margin-bottom:12px">
         <div class="card-row"><span class="card-label"><i class="ti ti-book"></i>Theorie</span>
