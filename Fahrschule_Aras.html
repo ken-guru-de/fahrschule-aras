@@ -1,0 +1,2867 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Fahrschule"/>
+<meta name="theme-color" content="#1a2744"/>
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAAFpElEQVR4nO3Ty3FVQQyEYcdBAixIg2zIfw3FksI2xmc0/dB/qnp7R2p99+XF7Pvy9ftPkhO1F/mnPgAB/ONPXSrxiNrho09dHvGO2ueHP3VRJCtqr29+6mJIdtR+//jUZZCOqB0DmYwEzKQuYCZ1ATOpC5hJXcBM6gJmUhcwk7qA+UJ+/vh2LOpdEgLoQzkJF+ifD5g/GSVggB9ErR4WwAA/ilo9KJCBfQy0ekgQg/soavWAQAb2MdDq4UAM7qOo1YMBGdiABvN61NWY1UgSo77ZCGr1QEDWR31DQIMZ1K+BVg8DZL+ob/sItXoQMHtGfeM1oNWH3hT1ratBq4+7Oerb14FWH5T4o44BrT4kyUAdAVp9QJKD2h60+nAkCzWYSR9q9QBgzo7aij1o9YFINmor0OrDkHzUNqDVByEdqC1Aqw/x9IDuv7kJtRy0+gAnjpX2RjNqKWh18aeOk/xeG2pAHzhIw7uALsWs3kX9vnqXSNDqok+X3ziHwz4RoNUFTxTePI/LToC+WHT7TC472YFWFztV8JbZnPaSg1YXOlnspvncdlsNOmG3hBnddrsOur3IrbM67lcPOm2/tHnd9hsH3VxeKujmu4yCbi2tAXTrfSpB30SRDLrxRmOgG//9gPa/UyXo2zi2z+y0azXoW0i2zuq46whodVG3oWyc03XfNaAnwWyaz/0ex0GrC1IUuWGulFusBX2yzOZ5Um4A6IOFts6S0v8YaHUxqmLbZkjqHtAD5ba8ndT5OGh1IcqCG951CKBNSk5+zymANik78R3HANqk9KTfd44NaHUR6uJTfjshgDYo3/03kwJoUhVAk6rIQSsWVZe+KepbrwAN6u7OV4IGdm/Xq0EDu6/jetBu87TFrV9Ag7qqWxlo19KBnd8poA3mTEhKl4A2mtcxaR3Wgj51iM2oEzsEtOHs6iR3B2jjHVogJ9x9Pegm2E1dATrkUPQE6OtR46QfQMcejl4AXXEw+gF0xaHoCdA1R6IrQFccpw228w5rQavR0R2gY47hlsQOa0GfPIgaVgNq93lXgFZjckpKl4AGclWnEtC3FnScqSWO3T7xWAdaDSQxbv3Wg/7IkmoUDXHpeDVoNYLGqLteCVp99A1xuXU9aPWhN0V96+ugAUZO5qlFQBOrANqgfPffTAqgDUpP+e2EWIDeVPz07nQLaHnZie84BtAmJSe/5xRAm5Tb8K5DrEA3Fazcm84BLS+1bYak7kdBpxbrtLPTLCn9A/pwmc3zpNxgPWjXnV3nSrnFcdDuRbrv6z6f+z3WgJ7YMwX0pruMgHYrbxJJEugNd6kGPY0jEXT7fSpB30KRDLr1TmOglWUlo0ie3WHPStC3YTC3z56joFtLawDdepdx0M3lpYJuvkc96Bslbp3Vcb8roB2KnCxz24xuu60FPVXqpvncdpOBbi52y2xOe1mAdir4ZMntM7nsBOhLZTfP47KTLWjHwp+W3jiHwz4xoF3L/+wBmt5X7xIL2vkQ/3uMhncbMAP60GGS3wP0QtT/OlLaG62YLUCnHeu1w7n/5hbMNqCTD0h8MFuBBnV21HYsQYM6M2oz1qBBnRW1lb9A//7UQ4A6M2ojr2J2BQ1q76htRIIGtWfUJqJBg9oragsVoEHtEbWBKtCgBnMdaGADuRI0qMH8LmhQkyrMqaCBDeRK0KDejflV0A2ogb0P8puYW0ADew/kVaBBvQPzu6AbUQO7F/I/MbeC3o5b3bkU9AbUW2CrO7bAvAV0K251l5agN6JOh63uzhrzZtQpwNXdxGEG9N8BsEc+DRrUHwtw7+URZlATpxzBDGrikKOYQU2UGcEMaqLIKGZQk5u5ghnU5EauYgY1mYwEM7DJ6agd//GpyyDZUft981MXQ7Ki9vrhT10U8Y7a56NPXR7xiNrhyKculYD46qc+AMkG+wtjkuTc31NDGAAAAABJRU5ErkJggg=="/>
+<title>Fahrschule v2.0</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css"/>
+<style>
+:root {
+  --bg:#f2f2f7;--bg2:#e5e5ea;--bg3:#d8d8dd;
+  --tx:#0a0a0a;--tx2:#555555;--tx3:#8e8e93;
+  --br:rgba(0,0,0,0.10);--br2:rgba(0,0,0,0.18);
+  --r-md:10px;--r-lg:16px;
+  --accent:#FF6B2B;--accent2:#ff8c55;--accent-dark:#FF6B2B;--accent-tx:#ffffff;
+  --shadow-sm:0 2px 8px rgba(0,0,0,0.10);
+  --shadow-md:0 4px 16px rgba(0,0,0,0.13);
+  --shadow-lg:0 8px 32px rgba(0,0,0,0.16);
+  --safe-top:env(safe-area-inset-top,59px);--safe-bot:env(safe-area-inset-bottom,34px);
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#111113;--bg2:#1c1c1e;--bg3:#2c2c2e;
+  --tx:#f5f5f7;--tx2:#aeaeb2;--tx3:#636366;
+  --br:rgba(255,255,255,0.08);--br2:rgba(255,255,255,0.16);
+  --shadow-sm:0 2px 8px rgba(0,0,0,0.40);
+  --shadow-md:0 4px 16px rgba(0,0,0,0.50);
+  --shadow-lg:0 8px 32px rgba(0,0,0,0.60);
+}}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;}
+html,body{height:100%;background:var(--bg);color:var(--tx);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",sans-serif;overflow:hidden;}
+.app{display:flex;flex-direction:column;height:100%;}
+.screen{display:none;flex-direction:column;height:100%;}
+.screen.active{display:flex;}
+.topbar{display:flex;align-items:center;gap:8px;padding:calc(var(--safe-top) + 10px) 20px 14px;background:linear-gradient(160deg,#FF8240 0%,#FF6B2B 60%,#e85510 100%);flex-shrink:0;min-height:52px;box-shadow:0 4px 20px rgba(255,107,43,0.45);}
+.topbar-title{font-size:19px;font-weight:700;flex:1;color:white;letter-spacing:-.3px;}
+.btn-icon{background:rgba(255,255,255,0.18);border:none;cursor:pointer;color:white;font-size:28px;display:flex;align-items:center;padding:8px;border-radius:14px;min-width:46px;min-height:46px;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.20),inset 0 1px 0 rgba(255,255,255,0.30);transition:background .12s;}
+.btn-icon:active{background:rgba(255,255,255,0.30);}
+.btn-icon.dark{color:var(--tx2);background:var(--bg2);box-shadow:var(--shadow-sm);}
+.btn-icon.dark:active{background:var(--bg3);}
+.scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 16px calc(var(--safe-bot) + 24px);display:flex;flex-direction:column;gap:12px;overscroll-behavior:contain;}
+.sec-label{font-size:11px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;}
+.sec-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.card{background:var(--bg2);border-radius:var(--r-lg);box-shadow:var(--shadow-sm);}
+.card>.card-row:first-child,.card>.info-row:first-child,.card>.gfa-row:first-child,.card>.sonder-btn-row:first-child{border-radius:var(--r-lg) var(--r-lg) 0 0;}
+.card>.card-row:last-child,.card>.info-row:last-child,.card>.gfa-row:last-child,.card>.sonder-btn-row:last-child{border-radius:0 0 var(--r-lg) var(--r-lg);border-bottom:none;}
+.card>.card-row:only-child,.card>.info-row:only-child{border-radius:var(--r-lg);border-bottom:none;}
+@media(prefers-color-scheme:dark){.card{background:var(--bg2);}}
+.card-row{display:flex;align-items:center;gap:10px;padding:13px 16px;border-bottom:1px solid var(--br);min-height:52px;}
+.card-row:last-child{border-bottom:none;}
+.card-label{font-size:15px;color:var(--tx2);display:flex;align-items:center;gap:6px;min-width:130px;flex-shrink:0;}
+.card-label i{font-size:15px;}
+.card-row input,.card-row select,.card-row textarea{flex:1;border:none;background:transparent;font-size:15px;color:var(--tx);font-family:inherit;outline:none;text-align:right;}
+.card-row input[type=text],.card-row input[type=tel],.card-row input[type=search],.card-row textarea{text-align:left;}
+.card-row textarea{text-align:left;resize:none;}
+.card-row select option{background:var(--bg);}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.stat-box{background:var(--bg2);border-radius:var(--r-lg);padding:12px 14px;box-shadow:var(--shadow-sm);}
+.stat-box.accent{background:linear-gradient(135deg,#FF8240,#e85510);box-shadow:0 6px 20px rgba(255,107,43,0.45);}
+.stat-box.accent .stat-lbl{color:rgba(255,255,255,0.75);}
+.stat-box.accent .stat-num{color:white;}
+.stat-box.accent .stat-unit{color:rgba(255,255,255,0.65);}
+.stat-lbl{font-size:11px;font-weight:600;color:var(--tx3);margin-bottom:3px;text-transform:uppercase;letter-spacing:.04em;}
+.stat-num{font-size:26px;font-weight:700;color:var(--tx);line-height:1.1;}
+.stat-unit{font-size:12px;color:var(--tx2);font-weight:400;margin-left:2px;}
+.list-item{background:var(--bg2);border-radius:var(--r-lg);padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;box-shadow:var(--shadow-md);transition:all .12s;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;}
+.list-item:active{box-shadow:none;opacity:.85;}
+.list-item.lp-active{transform:scale(.97);opacity:.75;transition:transform .1s,opacity .1s;}
+.avatar{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0;box-shadow:var(--shadow-sm);}
+.av-blue{background:#B5D4F4;color:#0C447C;}
+.av-teal{background:#9FE1CB;color:#085041;}
+.av-purple{background:#CECBF6;color:#3C3489;}
+.av-coral{background:#F5C4B3;color:#712B13;}
+.av-green{background:#C0DD97;color:#27500A;}
+.av-amber{background:#FAC775;color:#633806;}
+.item-name{font-size:16px;font-weight:600;}
+.item-sub{font-size:13px;color:var(--tx2);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.item-info{flex:1;min-width:0;}
+.badge{font-size:12px;font-weight:700;padding:4px 10px;border-radius:20px;flex-shrink:0;letter-spacing:.02em;}
+.badge-B{background:var(--accent-dark);color:white;}
+.badge-BA{background:#e85510;color:white;}
+.badge-B197{background:#c44000;color:white;}
+.badge-B17{background:#27500A;color:white;}
+.status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.dot-blue{background:var(--accent);}
+.search-wrap{position:relative;}
+.search-wrap input{width:100%;height:46px;padding:0 14px 0 40px;border:1.5px solid var(--br2);border-radius:var(--r-lg);background:var(--bg2);color:var(--tx);font-size:16px;font-family:inherit;outline:none;box-shadow:var(--shadow-sm);}
+.search-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--tx3);font-size:18px;pointer-events:none;}
+.btn-full{width:100%;padding:15px;background:var(--bg2);border:1.5px solid var(--br2);border-radius:var(--r-lg);font-size:17px;font-weight:600;color:var(--tx);cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;min-height:54px;box-shadow:var(--shadow-sm);}
+.btn-full:active{transform:scale(.97);opacity:.85;}
+.btn-full.gruen{background:#d4edbc;border-color:#7ab840;color:#1e4208;}
+.btn-full.rot{background:#fde8e8;border-color:#e07070;color:#8b1f1f;}
+.btn-full.danger{color:#E24B4A;border-color:#E24B4A;}
+.fab-btn{background:none;border:none;cursor:pointer;color:var(--tx2);font-size:22px;display:flex;align-items:center;padding:4px;}
+.toast{display:none;background:linear-gradient(135deg,#FF8240,#e85510);color:white;border:none;border-radius:var(--r-md);padding:10px 14px;font-size:13px;align-items:center;gap:8px;flex-shrink:0;box-shadow:var(--shadow-md);}.toast.show{display:flex;}
+.toast.show{display:flex;}
+.pill{padding:8px 16px;border-radius:20px;border:1.5px solid var(--br2);background:var(--bg2);font-size:15px;color:var(--tx2);cursor:pointer;font-family:inherit;min-height:44px;display:flex;align-items:center;box-shadow:var(--shadow-sm);}
+.pill.active{background:var(--accent);color:white;border-color:var(--accent);box-shadow:0 3px 10px rgba(255,107,43,0.4);}
+.farb-row{display:flex;gap:8px;justify-content:flex-end;flex:1;}
+.farb-dot{width:26px;height:26px;border-radius:50%;cursor:pointer;border:2px solid transparent;}
+.farb-dot.sel{border-color:var(--tx);box-shadow:var(--shadow-sm);}
+.toggle-wrap{position:relative;width:51px;height:31px;flex-shrink:0;}
+.toggle-wrap input{opacity:0;width:0;height:0;position:absolute;}
+.toggle-track{position:absolute;inset:0;border-radius:16px;background:var(--bg3);border:1px solid var(--br2);cursor:pointer;transition:background .15s;}
+.toggle-track.locked{cursor:not-allowed;opacity:.4;}
+.toggle-thumb{position:absolute;top:3px;left:3px;width:25px;height:25px;border-radius:50%;background:white;box-shadow:0 2px 6px rgba(0,0,0,.25);transition:transform .15s;pointer-events:none;}
+.toggle-wrap input:checked+.toggle-track{background:var(--accent);border-color:var(--accent);}
+.toggle-wrap input:checked+.toggle-track+.toggle-thumb{transform:translateX(20px);}
+.sonder-btn-row{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--br);}
+.sonder-btn-row:last-child{border-bottom:none;}
+.sonder-btn-row.done{background:rgba(255,107,43,.08);}
+.sonder-btn-row.done .sonder-btn-label{color:var(--accent);}
+.sonder-btn-label{font-size:13px;color:var(--tx2);display:flex;align-items:center;gap:8px;}
+.sonder-btn-label i{font-size:15px;}
+.sonder-progress{display:flex;border:1px solid var(--br);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow-sm);}
+.sp-step{flex:1;padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;text-align:center;border-right:1px solid var(--br);color:var(--tx3);}
+.sp-step:last-child{border-right:none;}
+.sp-step i{font-size:16px;}
+.sp-step.done{background:linear-gradient(135deg,#FF8240,#e85510);color:white;}
+.sp-step.next{background:rgba(255,107,43,.10);color:var(--accent);}
+.info-row{display:flex;align-items:center;gap:10px;padding:13px 16px;border-bottom:1px solid var(--br);min-height:52px;}
+.info-row:last-child{border-bottom:none;}
+.info-lbl{font-size:15px;color:var(--tx2);display:flex;align-items:center;gap:6px;min-width:140px;}
+.info-lbl i{font-size:14px;}
+.info-val{font-size:15px;font-weight:600;flex:1;text-align:right;}
+.pruef-card{background:linear-gradient(135deg,#FF8240,#e85510);border:none;border-radius:var(--r-lg);padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow-md);}
+.pruef-result-item{background:var(--bg2);border-radius:var(--r-lg);padding:12px 14px;display:flex;align-items:center;gap:12px;margin-bottom:8px;box-shadow:var(--shadow-sm);}
+.pruef-versuch{width:34px;height:34px;border-radius:50%;flex-shrink:0;font-size:14px;font-weight:800;text-align:center;line-height:34px;box-shadow:var(--shadow-sm);}
+.pruef-best{background:#d4edbc;color:#1e4208;}
+.pruef-nicht{background:#fde8e8;color:#8b1f1f;}
+.gfa-row{display:flex;align-items:center;padding:12px 14px;border-bottom:1px solid var(--br);}
+.gfa-row:last-child{border-bottom:none;}
+.gfa-label{flex:1;font-size:15px;font-weight:500;color:var(--tx);}
+.gfa-controls{display:flex;align-items:center;gap:12px;}
+.gfa-count{font-size:18px;font-weight:700;min-width:28px;text-align:center;color:var(--tx);}
+.gfa-btn{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--br2);background:var(--bg3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--tx2);font-family:inherit;line-height:1;box-shadow:var(--shadow-sm);}
+.gfa-btn:active{transform:scale(.88);background:var(--accent);color:white;border-color:var(--accent);}
+.stat-card{background:var(--bg2);border-radius:var(--r-lg);padding:14px 16px;box-shadow:var(--shadow-sm);}
+.stat-bar-wrap{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.stat-bar-label{font-size:12px;font-weight:600;color:var(--tx2);min-width:28px;}
+.stat-bar-bg{flex:1;height:8px;border-radius:4px;background:var(--bg3);overflow:hidden;}
+.stat-bar-fill{height:8px;border-radius:4px;background:linear-gradient(90deg,#FF8240,#e85510);}
+.stat-bar-val{font-size:12px;font-weight:600;color:var(--tx2);min-width:28px;text-align:right;}
+.month-nav{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--br);flex-shrink:0;background:var(--bg2);}
+.month-label{font-size:17px;font-weight:700;}
+.weekdays{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;padding:10px 12px 4px;flex-shrink:0;}
+.wd{text-align:center;font-size:12px;font-weight:600;letter-spacing:.03em;}
+.cal-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.cal-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;padding:4px 12px 12px;}
+.cal-day{min-height:58px;border-radius:var(--r-md);padding:5px;cursor:pointer;border:.5px solid transparent;display:flex;flex-direction:column;align-items:center;gap:2px;}
+.cal-day:active{background:var(--bg2);}
+.cal-day.today{border-color:var(--accent);background:var(--accent);}
+.cal-day.sel{background:rgba(255,107,43,.15);border-color:var(--accent);}
+.cal-day.disabled{cursor:default;opacity:.25;pointer-events:none;}
+.day-num{font-size:15px;font-weight:500;color:var(--tx);line-height:1;text-align:center;width:100%;}
+.cal-day.today .day-num{color:white;}
+.dot-row{display:flex;gap:2px;flex-wrap:wrap;justify-content:center;}
+.cdot{width:6px;height:6px;border-radius:50%;}
+.cdot-r{background:#E24B4A;}.cdot-g{background:#639922;}.cdot-b{background:#378ADD;}
+.spacer-day{min-height:58px;}
+.termin-item{background:var(--bg);border:.5px solid var(--br);border-radius:var(--r-lg);padding:9px 12px;display:flex;align-items:center;gap:10px;}
+.t-avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0;}
+.t-info{flex:1;}
+.t-name{font-size:13px;font-weight:500;}
+.t-sub{font-size:11px;color:var(--tx2);margin-top:1px;}
+.t-del{background:none;border:none;cursor:pointer;color:var(--tx3);font-size:16px;padding:3px;display:flex;align-items:center;}
+.t-del:active{color:#E24B4A;}
+.cir-btn{width:32px;height:32px;border-radius:50%;border:.5px solid var(--br2);background:var(--bg2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--tx2);font-family:inherit;line-height:1;}
+.cir-btn:active{transform:scale(.93);}
+.notiz-area{width:100%;min-height:200px;border:none;background:transparent;font-size:20px;line-height:1.7;color:var(--tx);font-family:inherit;outline:none;resize:none;padding:0;}
+.empty-hint{text-align:center;padding:24px 0;font-size:13px;color:var(--tx3);}
+.err-border{outline:2px solid #E24B4A !important;border-radius:4px;}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9000;display:flex;align-items:flex-end;justify-content:center;animation:fadein .15s ease;}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+.modal-sheet{background:var(--bg2);border-radius:20px 20px 0 0;padding:20px 20px calc(var(--safe-bot) + 20px);width:100%;max-width:520px;animation:slideup .2s ease;}
+@keyframes slideup{from{transform:translateY(60px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-title{font-size:17px;font-weight:700;margin-bottom:6px;color:var(--tx);}
+.modal-msg{font-size:15px;color:var(--tx2);margin-bottom:20px;line-height:1.4;}
+.modal-btns{display:flex;flex-direction:column;gap:8px;}
+.modal-input-wrap{margin-bottom:16px;}
+.modal-input-wrap textarea,.modal-input-wrap input[type=text]{width:100%;padding:12px;border:1.5px solid var(--br2);border-radius:var(--r-md);background:var(--bg);color:var(--tx);font-size:16px;font-family:inherit;outline:none;resize:none;-webkit-user-select:text;user-select:text;}
+.foto-circle{width:80px;height:80px;border-radius:50%;overflow:hidden;flex-shrink:0;position:relative;cursor:pointer;}
+.foto-circle img{width:100%;height:100%;object-fit:cover;display:block;}
+.foto-circle .foto-overlay,.foto-initials .foto-overlay{position:absolute;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s;border-radius:50%;}
+.foto-circle:active .foto-overlay,.foto-initials:active .foto-overlay{opacity:1;}
+.foto-overlay i{color:white;font-size:22px;}
+.foto-initials{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:600;flex-shrink:0;cursor:pointer;position:relative;}
+.swipe-wrap{position:relative;border-radius:var(--r-lg);margin-bottom:8px;}
+.swipe-del-bg{position:absolute;right:0;top:0;bottom:0;width:80px;background:#E24B4A;display:flex;align-items:center;justify-content:center;color:white;font-size:22px;border-radius:0 var(--r-lg) var(--r-lg) 0;}
+.swipe-item{position:relative;transition:transform .2s ease;touch-action:pan-y;background:var(--bg);border-radius:var(--r-lg);width:100%;z-index:1;}
+.swipe-item.swiped{transform:translateX(-80px);}
+.ptr-wrap{position:relative;flex:1;overflow:hidden;display:flex;flex-direction:column;}
+.ptr-indicator{position:absolute;top:-72px;left:0;right:0;height:72px;display:flex;align-items:center;justify-content:center;transition:top .2s ease;z-index:10;pointer-events:none;background:rgba(255,107,43,.08);border-radius:0 0 20px 20px;}
+.ptr-spinner{width:44px;height:44px;border-radius:50%;border:4px solid rgba(255,107,43,.2);border-top-color:var(--accent);box-shadow:0 2px 8px rgba(255,107,43,.3);}
+@keyframes ptr-spin{to{transform:rotate(360deg);}}
+.ptr-spinner.spinning{animation:ptr-spin .7s linear infinite;}
+
+/* ── IPAD OPTIMIERUNG ────────────────────────────────────────────────────────*/
+@media (min-width: 768px) {
+  body { background: var(--bg2); }
+  .app { display: flex; flex-direction: row; height: 100vh; max-width: 100%; }
+  #ipad-sidebar { width: 300px; min-width: 200px; max-width: 500px; flex-shrink: 0; border-right: 0.5px solid var(--br); display: flex; flex-direction: column; height: 100vh; background: var(--bg); position: relative; overflow: visible; }
+  #ipad-resize-handle { position: absolute; right: -6px; top: 0; bottom: 0; width: 12px; cursor: col-resize; z-index: 100; background: transparent; display: flex; align-items: center; justify-content: center; }
+  #ipad-resize-handle::after { content: ""; width: 4px; height: 40px; background: var(--br2); border-radius: 2px; transition: background 0.15s; }
+  #ipad-resize-handle:hover::after { background: var(--accent); }
+  #ipad-detail { flex: 1; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+  .screen { display: flex !important; flex-direction: column; height: 100vh; }
+
+  .topbar { padding: calc(var(--safe-top) + 14px) 28px 14px; }
+  .topbar-title { font-size: 22px; }
+  .btn-icon { font-size: 24px; min-width: 48px; min-height: 48px; }
+
+  .scroll { padding: 20px 28px calc(var(--safe-bot) + 28px); gap: 18px; }
+
+  .stat-num { font-size: 30px; }
+  .stat-lbl { font-size: 13px; }
+
+  .list-item { padding: 16px 20px; min-height: 80px; gap: 16px; }
+  .avatar { width: 54px; height: 54px; font-size: 18px; }
+  .item-name { font-size: 19px; }
+  .item-sub { font-size: 15px; margin-top: 5px; }
+  .badge { font-size: 14px; padding: 5px 12px; }
+
+  .card-row { padding: 15px 20px; min-height: 58px; }
+  .card-label { font-size: 17px; min-width: 150px; }
+  .card-row input, .card-row select, .card-row textarea { font-size: 17px; }
+
+  .info-row { padding: 14px 20px; min-height: 58px; }
+  .info-lbl { font-size: 17px; min-width: 160px; }
+  .info-val { font-size: 17px; }
+
+  .btn-full { padding: 17px; font-size: 19px; min-height: 60px; }
+
+  .sec-label { font-size: 13px; margin-bottom: 10px; }
+
+  .gfa-row { padding: 14px 20px; }
+  .gfa-label { font-size: 17px; }
+  .gfa-count { font-size: 20px; }
+  .gfa-btn { width: 36px; height: 36px; font-size: 20px; }
+
+  .notiz-area { font-size: 22px; min-height: 240px; }
+
+  .cal-day { min-height: 68px; }
+  .day-num { font-size: 17px; }
+  .wd { font-size: 14px; }
+  .month-label { font-size: 20px; }
+
+  .cir-btn { width: 36px; height: 36px; font-size: 20px; }
+  .pill { font-size: 16px; padding: 9px 18px; }
+
+  .foto-circle, .foto-initials { width: 90px; height: 90px; font-size: 26px; }
+  .detail-avatar { width: 60px; height: 60px; font-size: 20px; }
+
+  .sonder-btn-label { font-size: 15px; }
+  .sp-step { font-size: 12px; padding: 10px 8px; }
+  .sp-step i { font-size: 18px; }
+
+  .search-wrap input { height: 50px; font-size: 18px; }
+  .search-icon { font-size: 20px; }
+
+  .toggle-wrap { width: 56px; height: 34px; }
+  .toggle-thumb { width: 28px; height: 28px; }
+  .toggle-wrap input:checked + .toggle-track + .toggle-thumb { transform: translateX(22px); }
+
+  .swipe-del-bg { width: 90px; font-size: 26px; }
+
+  .termin-item { padding: 12px 16px; }
+  .t-name { font-size: 15px; }
+  .t-sub { font-size: 13px; }
+
+  .pruef-result-item { padding: 12px 16px; }
+  .pruef-versuch { width: 38px; height: 38px; font-size: 15px; }
+
+  .stat-card { padding: 16px 20px; }
+  .stat-bar-label { font-size: 14px; }
+  .stat-bar-val { font-size: 14px; }
+  .stat-bar-bg { height: 10px; }
+  .stat-bar-fill { height: 10px; }
+}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+<div id="ipad-app" style="display:none;flex-direction:row;height:100vh;width:100%">
+  <div id="ipad-sidebar" style="width:300px;flex-shrink:0;border-right:.5px solid var(--br);display:flex;flex-direction:column;height:100vh;background:var(--bg);position:relative"><div id="ipad-resize-handle"></div></div>
+  <div id="ipad-detail" style="flex:1;display:flex;flex-direction:column;height:100vh;overflow:hidden;background:var(--bg)"></div>
+</div>
+<script>
+const IS_IPAD=false;
+
+// ── ZENTRALER APP-STATE ───────────────────────────────────────────────────────
+const AppState={
+  fahrt:{typ:"normal",einh:1},
+  efahrt:{typ:"normal",einh:1},
+  kal:{typ:"normal",min:80,sonderKey:null,pers:"schueler",alleSchueler:false},
+  et:{date:null,idx:null,min:80},
+  pr:{versuch:1},
+  pn:{versuch:1,bestanden:null},
+  selFarbe:"blue",
+  geschlecht:"m",
+};
+
+// ── MODAL-SYSTEM ──────────────────────────────────────────────────────────────
+function showModal({title="",msg="",btns=[],input=null,onOpen=null}){
+  const existing=document.getElementById("fs-modal");
+  if(existing)existing.remove();
+  const inputHtml=input?`<div class="modal-input-wrap">${
+    input.multiline
+      ?`<textarea id="fs-modal-inp" rows="3" placeholder="${input.placeholder||''}">${input.value||''}</textarea>`
+      :`<input type="text" id="fs-modal-inp" placeholder="${input.placeholder||''}" value="${input.value||''}"/>`
+  }</div>`:"";
+  const btnsHtml=btns.map(b=>`<button onclick="${b.action}" style="width:100%;padding:15px;border-radius:var(--r-md);border:${b.danger?'1.5px solid #E24B4A':'1.5px solid var(--br2)'};background:${b.danger?'#fde8e8':b.primary?'var(--accent)':'var(--bg)'};color:${b.danger?'#8b1f1f':b.primary?'white':'var(--tx)'};font-size:17px;font-weight:600;cursor:pointer;font-family:inherit">${b.label}</button>`).join("");
+  const div=document.createElement("div");
+  div.id="fs-modal";
+  div.className="modal-overlay";
+  div.innerHTML=`<div class="modal-sheet"><div class="modal-title">${title}</div><div class="modal-msg">${msg}</div>${inputHtml}<div class="modal-btns">${btnsHtml}</div></div>`;
+  div.addEventListener("click",e=>{if(e.target===div)closeModal();});
+  document.body.appendChild(div);
+  if(onOpen)onOpen();
+  const inp=document.getElementById("fs-modal-inp");
+  if(inp)setTimeout(()=>{inp.focus();inp.select&&inp.select();},80);
+}
+function closeModal(){const m=document.getElementById("fs-modal");if(m)m.remove();}
+function modalInputVal(){const el=document.getElementById("fs-modal-inp");return el?el.value.trim():"";}
+
+// ── TOAST-HELPER ──────────────────────────────────────────────────────────────
+function showToast(id,msg){
+  const el=document.getElementById(id);
+  const msgEl=document.getElementById(id+"-msg");
+  if(el&&msgEl){msgEl.textContent=msg;el.classList.add("show");setTimeout(()=>el.classList.remove("show"),2000);}
+}
+const FARBEN=[{key:"blue",bg:"rgba(255,107,43,.2)",tx:"#FF6B2B"},{key:"teal",bg:"#9FE1CB",tx:"#085041"},{key:"purple",bg:"#CECBF6",tx:"#3C3489"},{key:"coral",bg:"#F5C4B3",tx:"#712B13"},{key:"green",bg:"#C0DD97",tx:"#27500A"},{key:"amber",bg:"#FAC775",tx:"#633806"}];
+const KLASSEN=["B","BA","B197","B17"];
+const PRUFORTE=["DEKRA Pankow","DEKRA Ferdi","TÜV Hornbach"];
+const GRUNDFAHRAUFGABEN=[
+  {key:"laengs",      label:"Einparken längs",          icon:"ti-car"},
+  {key:"rechts",      label:"Einparken quer",            icon:"ti-parking"},
+  {key:"umkehr",      label:"Umkehren",                  icon:"ti-refresh"},
+  {key:"rueckwaerts", label:"Rückwärts um die Ecke",     icon:"ti-corner-down-left"},
+  {key:"stopp_mit",   label:"Stopschild mit Haltelinie", icon:"ti-octagon"},
+  {key:"stopp_ohne",  label:"Stopschild ohne Haltelinie",icon:"ti-octagon-off"},
+  {key:"stadtautobahn",label:"Stadtautobahn",            icon:"ti-road"},
+  {key:"strassenbahn",label:"Straßenbahn",               icon:"ti-train"},
+];
+const SONDER=[{key:"ueberland",label:"Überlandfahrt",icon:"ti-trees",min:270},{key:"autobahn",label:"Autobahnfahrt",icon:"ti-road",min:225},{key:"nacht",label:"Nachtfahrt",icon:"ti-moon",min:135}];
+const MONATE=["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
+const MONATE_K=["Jan","Feb","Mär","Apr","Mai","Jun","Jul","Aug","Sep","Okt","Nov","Dez"];
+const START_DATE=new Date(2026,3,15);
+
+function load(k,def){try{const v=localStorage.getItem(k);return v?JSON.parse(v):def;}catch(e){return def;}}
+function save(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true;}catch(e){console.error("save error",k,e);return false;}}
+// saveAll defined below with cloud sync
+function showSyncStatus(msg){
+  const el=document.getElementById("sync-status");
+  if(!el)return;
+  el.textContent=msg;el.style.opacity="1";
+  setTimeout(()=>{el.style.opacity="0";},2000);
+}
+
+function saveAll(){
+  const ids=new Set(schueler.map(s=>s.id));
+  Object.keys(termine).forEach(d=>{
+    termine[d]=termine[d].filter(t=>t.sid&&(ids.has(t.sid)||t.sid.startsWith("__auffrisch__")));
+    if(!termine[d].length)delete termine[d];
+  });
+  save("fs_schueler",schueler);
+  save("fs_termine",termine);
+  showSyncStatus("✓ Gespeichert");
+}
+
+
+let schueler=load("fs_schueler",[]);;
+let termine=load("fs_termine",{});
+
+function toKey(y,m,d){return y+"-"+String(m).padStart(2,"0")+"-"+String(d).padStart(2,"0");}
+function todayStr(){const t=new Date();return toKey(t.getFullYear(),t.getMonth()+1,t.getDate());}
+function initials(s){return s.vorname[0]+s.nachname[0];}
+function getS(id){return schueler.find(s=>s.id===id);}
+function fmtDate(d){const p=d.split("-");return{day:parseInt(p[2]),mon:MONATE_K[parseInt(p[1])-1],year:p[0]};}
+function isWeekday(y,m,d){const dw=new Date(y,m-1,d).getDay();return dw>=1&&dw<=5;}
+function isBefore(y,m,d){return new Date(y,m-1,d)<START_DATE;}
+function nextSonder(s){if(Array.isArray(s.sonder))return s.sonder.findIndex(x=>!x);const so=s.sonder||{};if(!so.ueberland||so.ueberland<225)return 0;if(!so.autobahn||so.autobahn<220)return 1;if(!so.nacht||so.nacht<135)return 2;return -1;}
+function todayTotalMin(){const td=todayStr();return(termine[td]||[]).reduce((a,e)=>a+(e.min||0),0);}
+function todayMinCheck(){}
+function farbStyle(farbe){const f=FARBEN.find(x=>x.key===farbe)||FARBEN[0];return`background:${f.bg};color:${f.tx}`;}
+
+// ── DASHBOARD ─────────────────────────────────────────────────────────────────
+function renderDashboard(dashDateOffset=0){
+  const td=todayStr();
+  const heuteTermine=(termine[td]||[]).sort((a,b)=>a.uhr.localeCompare(b.uhr));
+  const allePruef=[];
+  schueler.forEach(s=>{
+    (s.pruefungen||[]).forEach((p,pi)=>{
+      if(p.datum>=td)
+        allePruef.push({sid:s.id,datum:p.datum,versuch:p.versuch,pi,bestanden:p.bestanden,typ:"offen"});
+    });
+  });
+  allePruef.sort((a,b)=>a.datum.localeCompare(b.datum));
+
+  let html=`<div class="screen active" id="scr-dash">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;justify-content:space-between;width:100%;gap:2px">
+        <div style="font-size:22px;color:white;flex-shrink:0"><i class="ti ti-steering-wheel" style="font-size:30px;vertical-align:-3px"></i></div>
+        <button class="btn-icon" onclick="renderKalender()"><i class="ti ti-calendar"></i></button>
+        <button class="btn-icon" onclick="renderListe()"><i class="ti ti-users"></i></button>
+        <button class="btn-icon" onclick="renderNeuSchueler()"><i class="ti ti-user-plus"></i></button>
+        <button class="btn-icon" onclick="renderAbrechnung()"><i class="ti ti-receipt"></i></button>
+        <button class="btn-icon" onclick="renderStatistik()"><i class="ti ti-chart-bar"></i></button>
+      </div>
+    </div>
+    <div class="scroll">
+      <div class="stat-grid">
+        <div class="stat-box accent" style="text-align:center;box-shadow:0 8px 32px rgba(255,107,43,0.45),inset 0 1px 0 rgba(255,200,150,0.5)"><div class="stat-lbl">Aktive Schüler</div><div class="stat-num" style="font-size:42px">${schueler.filter(s=>!(s.pruefungen||[]).some(p=>p.bestanden===true)).length}</div></div>
+        <div class="stat-box"><div class="stat-lbl" id="ddb-lbl">Heute geplant</div><div class="stat-num" id="ddb-min">0<span class="stat-unit">min</span></div></div>
+      </div>`;
+
+  // Find display date based on offset
+  let anzeigeDatum=td;
+  let anzeigeLabel="Heute";
+  if(dashDateOffset===0&&!heuteTermine.length){
+    const alleKeys=Object.keys(termine).filter(d=>d>td).sort();
+    if(alleKeys.length){
+      anzeigeDatum=alleKeys[0];
+      const fd2=fmtDate(anzeigeDatum);
+      anzeigeLabel="Nächster Termin · "+fd2.day+". "+fd2.mon;
+    }
+  } else if(dashDateOffset!==0){
+    // Navigate by working days
+    const allKeys=Object.keys(termine).filter(d=>{const day=new Date(d).getDay();return day>=1&&day<=5;}).sort();
+    const todayIdx=allKeys.findIndex(d=>d>=td);
+    const targetIdx=Math.max(0,Math.min(allKeys.length-1,(todayIdx<0?allKeys.length-1:todayIdx)+dashDateOffset));
+    if(allKeys[targetIdx]){
+      anzeigeDatum=allKeys[targetIdx];
+      const fd2=fmtDate(anzeigeDatum);
+      anzeigeLabel=anzeigeDatum===td?"Heute":fd2.day+". "+fd2.mon+" "+fd2.year;
+    }
+  }
+  const anzeigeTermine=(termine[anzeigeDatum]||[]).sort((a,b)=>a.uhr.localeCompare(b.uhr));
+  const anzeigeTotalMin=anzeigeTermine.reduce((a,t)=>a+(t.min||0),0);
+  const anzeigeLblShort=anzeigeDatum===td?"Heute":fmtDate(anzeigeDatum).day+". "+fmtDate(anzeigeDatum).mon;
+
+  html+=`<div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+      <button onclick="renderDashboard(${dashDateOffset-1})" style="background:rgba(10,40,120,0.45);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border:1.5px solid rgba(100,150,255,0.5);border-radius:50%;color:#a8c4ff;font-size:22px;width:52px;height:52px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 15px rgba(10,40,120,0.3)"><i class="ti ti-chevron-left"></i></button>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+        <span style="font-size:17px;font-weight:800;letter-spacing:.04em;color:var(--tx);text-transform:uppercase">${anzeigeLabel}</span>
+        ${dashDateOffset!==0?`<button onclick="renderDashboard(0)" style="background:none;border:1px solid var(--accent);border-radius:8px;color:var(--accent);font-size:11px;padding:2px 10px;cursor:pointer;font-family:inherit">Heute</button>`:''}
+      </div>
+      <button onclick="renderDashboard(${dashDateOffset+1})" style="background:rgba(10,40,120,0.45);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border:1.5px solid rgba(100,150,255,0.5);border-radius:50%;color:#a8c4ff;font-size:22px;width:52px;height:52px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 15px rgba(10,40,120,0.3)"><i class="ti ti-chevron-right"></i></button>
+    </div>`;
+  if(anzeigeTermine.length){
+    anzeigeTermine.forEach((t,ti)=>{
+      const s=getS(t.sid);if(!s)return;
+      const nick=s.spitz?` «${s.spitz}»`:"";
+      const endZeit=(()=>{const [h,m]=t.uhr.split(":").map(Number);const tot=h*60+m+t.min;return String(Math.floor(tot/60)%24).padStart(2,"0")+":"+String(tot%60).padStart(2,"0");})();
+      const tIdx=Object.values(termine[anzeigeDatum]||[]).indexOf(t);
+      const realIdx=(termine[anzeigeDatum]||[]).findIndex((x,i)=>x===t||( x.sid===t.sid&&x.uhr===t.uhr&&x.min===t.min));
+      html+=`<div class="list-item" style="margin-bottom:6px;user-select:none" 
+        onclick="renderDashSchueler('${s.id}')"
+        oncontextmenu="event.preventDefault();showTerminActions('${anzeigeDatum}',${realIdx},'${s.id}')"
+        ontouchstart="_lpStart(event,'${anzeigeDatum}',${realIdx},'${s.id}')"
+        ontouchend="_lpEnd()"
+        ontouchmove="_lpEnd()">
+        ${s.foto?`<div class="avatar" style="overflow:hidden;flex-shrink:0"><img src="${s.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/></div>`:`<div class="avatar av-${s.farbe}">${initials(s)}</div>`}
+        <div class="item-info"><div class="item-name">${s.vorname}${nick} ${s.nachname}</div><div class="item-sub">${t.uhr}–${endZeit}Uhr · ${t.min} min${t.notiz?" · "+t.notiz:""}</div></div>
+        <span class="badge badge-${s.klasse}">${s.klasse}</span>
+        <i class="ti ti-chevron-right" style="color:var(--tx3);font-size:16px"></i>
+      </div>`;
+    });
+  }else{
+    html+=`<div style="padding:12px 0;font-size:13px;color:var(--tx3)">Keine Termine geplant</div>`;
+  }
+  html+=`</div>`;
+  if(allePruef.length){
+    html+=`<div><div class="sec-label">Prüfungen (${allePruef.length})</div>`;
+    allePruef.forEach(ep=>{
+      const s2=getS(ep.sid);if(!s2)return;
+      const fd=fmtDate(ep.datum);
+      const vergangen=ep.datum<td;
+      const dotCol=ep.bestanden===true?"#639922":ep.bestanden===false?"#E24B4A":vergangen?"var(--accent)":"var(--accent)";
+      const ergebnis=ep.bestanden===true?"✓ Bestanden":ep.bestanden===false?"✗ Nicht bestanden":"Ergebnis ausstehend";
+      const sub=`${ep.versuch}. Prüfung · ${ergebnis}`;
+      html+=`<div class="list-item" style="margin-bottom:6px" onclick="renderDashSchueler('${ep.sid}')">
+        <span class="status-dot" style="background:${dotCol}"></span>
+        <div class="item-info"><div class="item-name">${s2.vorname} ${s2.nachname}</div><div class="item-sub">${sub}</div></div>
+        <span style="font-size:13px;color:var(--tx2);font-weight:500">${fd.day}. ${fd.mon}${vergangen&&ep.typ==="offen"?" ⚠️":""}</span>
+      </div>`;
+    });
+    html+=`</div>`;
+  }
+
+  html+=`<div style="display:flex;flex-direction:column;gap:8px">
+    <button class="btn-full" onclick="exportDaten()" style="background:#EAF3DE;border-color:#97C459;color:#27500A;font-size:15px"><i class="ti ti-download"></i> Daten sichern</button>
+    <label style="display:block;width:100%;padding:14px;border-radius:var(--r-lg);border:1.5px solid var(--accent);background:rgba(255,107,43,.1);color:#FF6B2B;font-size:15px;font-weight:600;text-align:center;cursor:pointer;box-sizing:border-box;font-family:inherit">
+      <i class="ti ti-upload"></i> Daten wiederherstellen (Datei)
+      <input type="file" accept=".json" style="display:none" onchange="importDaten(this)"/>
+    </label>
+    <button class="btn-full" onclick="importDatenPaste()" style="background:rgba(255,107,43,.06);border-color:var(--accent);color:#FF6B2B;font-size:15px"><i class="ti ti-clipboard-text"></i> Daten einfügen (JSON)</button>
+  </div></div></div>`;
+  renderApp(html);
+  setTimeout(()=>{
+    initPTR();
+    const lbl=document.getElementById("ddb-lbl");
+    const min=document.getElementById("ddb-min");
+    const isPast=anzeigeDatum<td;
+    if(lbl){lbl.textContent=anzeigeLblShort+(isPast?" gefahren":" geplant");lbl.style.textAlign="center";}
+    if(min){min.innerHTML=anzeigeTotalMin+'<span class="stat-unit">min</span>';min.style.fontSize="42px";min.style.textAlign="center";}
+    const box=document.getElementById("dash-day-box");
+    if(box)box.style.textAlign="center";
+  },10);
+}
+
+// ── SCHÜLER LISTE HELPER ──────────────────────────────────────────────────────
+function _nextTerminDT(s){
+  const td=todayStr();
+  const nowDT=(()=>{const n=new Date();return n.getFullYear()+"-"+String(n.getMonth()+1).padStart(2,"0")+"-"+String(n.getDate()).padStart(2,"0")+"T"+String(n.getHours()).padStart(2,"0")+":"+String(n.getMinutes()).padStart(2,"0");})();
+  const all=Object.entries(termine)
+    .filter(([d])=>d>=td)
+    .flatMap(([d,ts])=>ts.filter(t=>t.sid===s.id).map(t=>d+"T"+(t.uhr||"00:00")))
+    .filter(dt=>dt>=nowDT);
+  return all.sort()[0]||"9999";
+}
+
+function _schuelerCardHTML(s,heuteIds,sortMode){
+  const td=todayStr();
+  const bestanden=(s.pruefungen||[]).some(p=>p.bestanden===true);
+  const dotColor=bestanden?"#639922":"var(--accent)";
+  const nextDT=_nextTerminDT(s);
+  let subLine;
+  if(sortMode==="termin"){
+    if(nextDT==="9999"){subLine="Kein Termin geplant";}
+    else{const nd=nextDT.split("T")[0];const t=(termine[nd]||[]).find(t=>t.sid===s.id);subLine=fmtDate(nd).day+". "+fmtDate(nd).mon+" "+fmtDate(nd).year+(t?" · "+t.uhr+" Uhr":"");}
+  }else{
+    subLine="Beginn "+fmtDate(s.beginn).day+". "+fmtDate(s.beginn).mon+" "+fmtDate(s.beginn).year;
+  }
+  const gefahren=Object.entries(termine).filter(([d])=>d<=td).flatMap(([d,ts])=>ts.filter(t=>t.sid===s.id)).length;
+  const offen=Object.entries(termine).filter(([d])=>d>td).flatMap(([d,ts])=>ts.filter(t=>t.sid===s.id)).length;
+  const avatarHTML=s.foto
+    ?`<div class="avatar" style="overflow:hidden;flex-shrink:0"><img src="${s.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/></div>`
+    :`<div class="avatar av-${s.farbe}">${initials(s)}</div>`;
+  return`<div class="swipe-wrap" id="wrap-${s.id}">
+    <div class="swipe-del-bg" onclick="confirmDelete('${s.id}')"><i class="ti ti-trash"></i></div>
+    <div class="swipe-item list-item" id="swipe-${s.id}" onclick="handleTap('${s.id}')" style="${bestanden?"border-left:3px solid #639922;":""}">
+      ${avatarHTML}
+      <div class="item-info">
+        <div class="item-name">${s.vorname} ${s.nachname}${s.spitz?` <span style="color:var(--tx3);font-size:12px">«${s.spitz}»</span>`:""}</div>
+        ${bestanden?`<div style="margin-top:3px"><span style="font-size:11px;color:#27500A;background:#EAF3DE;padding:2px 8px;border-radius:20px">✓ Bestanden</span></div>`:""}
+        <div class="item-sub">${subLine}</div>
+        <div style="font-size:12px;color:var(--tx3);margin-top:2px;white-space:nowrap">${gefahren} gefahren · ${offen} geplant</div>
+      </div>
+      <span class="badge badge-${s.klasse}">${s.klasse}</span>
+      <span class="status-dot" style="background:${dotColor}"></span>
+    </div>
+  </div>`;
+}
+
+// ── SCHÜLERLISTE ──────────────────────────────────────────────────────────────
+function renderListe(q="",sortMode="termin"){
+  const td=todayStr();
+  const heuteIds=new Set((termine[td]||[]).map(t=>t.sid));
+  const basis=q?schueler.filter(s=>(s.vorname+" "+s.nachname+" "+(s.spitz||"")).toLowerCase().includes(q.toLowerCase())):schueler;
+
+  const filtered=[...basis].sort((a,b)=>{
+    if(sortMode==="alpha") return a.nachname.localeCompare(b.nachname,"de");
+    return _nextTerminDT(a).localeCompare(_nextTerminDT(b));
+  });
+  let html=`<div class="screen active" id="scr-liste">
+    <div class="topbar">
+      <button class="btn-icon" onclick="renderDashboard()"><i class="ti ti-arrow-left"></i></button>
+      <span class="topbar-title">Schüler</span>
+      <button class="btn-icon" onclick="renderListe('','${sortMode==='termin'?'alpha':'termin'}')" aria-label="Sortierung" title="${sortMode==='termin'?'Alphabetisch':'Nächster Termin'}"><i class="ti ti-sort-ascending"></i></button>
+      <button class="btn-icon" onclick="renderNeuSchueler()"><i class="ti ti-user-plus"></i></button>
+    </div>
+    <div class="scroll">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+        <span style="font-size:12px;color:var(--tx3)">${sortMode==="alpha"?"↑ A–Z":"↑ Nächster Termin"}</span>
+        <button onclick="renderListe('${q}','${sortMode==='termin'?'alpha':'termin'}')" style="font-size:12px;color:var(--accent);background:none;border:none;cursor:pointer;font-family:inherit;padding:0">Ändern</button>
+      </div>
+      <div class="search-wrap">
+        <i class="ti ti-search search-icon"></i>
+        <input type="search" placeholder="Suchen…" value="${q}" oninput="filterListeOnly(this.value,'${sortMode}')" id="search-input" style="padding-right:${q?'40px':'12px'}"/>
+        <button class="search-clear-x" onclick="renderListe('','${sortMode}')" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--tx3);font-size:18px;display:${q?'flex':'none'};align-items:center;padding:4px"><i class="ti ti-x"></i></button>
+      </div>`;
+  html+=`<div id="liste-items">`;
+  if(!filtered.length){
+    html+=`<div class="empty-hint"><i class="ti ti-search" style="font-size:28px;display:block;margin:0 auto 8px"></i>Keine Schüler gefunden</div>`;
+  }else{
+    filtered.forEach(s=>{html+=_schuelerCardHTML(s,heuteIds,sortMode);});
+  }
+  html+=`</div></div></div>`;
+  renderApp(html);
+  initSwipe();
+  setTimeout(initPTR,50);
+}
+
+
+function filterListeOnly(q, sortMode){
+  const container=document.getElementById("liste-items");
+  if(!container){renderListe(q,sortMode);return;}
+
+  const clearBtns=document.querySelectorAll(".search-clear-x");
+  clearBtns.forEach(b=>b.style.display=q?"flex":"none");
+
+  const td=todayStr();
+  const heuteIds=new Set((termine[td]||[]).map(t=>t.sid));
+  const basis=q?schueler.filter(s=>(s.vorname+" "+s.nachname+" "+(s.spitz||"")).toLowerCase().includes(q.toLowerCase())):schueler;
+
+  const filtered=[...basis].sort((a,b)=>{
+    if(sortMode==="termin") return _nextTerminDT(a).localeCompare(_nextTerminDT(b));
+    return (heuteIds.has(a.id)?0:1)-(heuteIds.has(b.id)?0:1);
+  });
+
+  let html="";
+  if(!filtered.length){
+    html=`<div class="empty-hint"><i class="ti ti-search" style="font-size:28px;display:block;margin:0 auto 8px"></i>Keine Schüler gefunden</div>`;
+  }else{
+    filtered.forEach(s=>{html+=_schuelerCardHTML(s,heuteIds,sortMode);});
+  }
+  container.innerHTML=html;
+  initSwipe();
+}
+
+function initSwipe(){
+  document.querySelectorAll(".swipe-item").forEach(el=>{
+    const sid=el.id.replace("swipe-","");
+    let startX,startY,dragging=false;
+    el.addEventListener("touchstart",e=>{startX=e.touches[0].clientX;startY=e.touches[0].clientY;dragging=false;},{passive:true});
+    el.addEventListener("touchmove",e=>{
+      const dx=e.touches[0].clientX-startX,dy=e.touches[0].clientY-startY;
+      if(!dragging&&Math.abs(dy)>Math.abs(dx)+5)return;
+      dragging=true;
+      const base=el.classList.contains("swiped")?-80:0;
+      el.style.transition="none";
+      el.style.transform=`translateX(${Math.max(Math.min(base+dx,0),-80)}px)`;
+    },{passive:true});
+    el.addEventListener("touchend",e=>{
+      if(!dragging)return;
+      const dx=e.changedTouches[0].clientX-startX;
+      el.style.transition="transform .2s ease";
+      if(el.classList.contains("swiped")){if(dx>30){el.style.transform="translateX(0)";el.classList.remove("swiped");}else el.style.transform="translateX(-80px)";}
+      else{if(dx<-30){el.style.transform="translateX(-80px)";el.classList.add("swiped");}else el.style.transform="translateX(0)";}
+      setTimeout(()=>{el.style.transition="";dragging=false;},220);
+    });
+  });
+}
+function handleTap(sid){
+  const el=document.getElementById("swipe-"+sid);
+  if(el&&el.classList.contains("swiped")){el.style.transition="transform .2s ease";el.style.transform="translateX(0)";el.classList.remove("swiped");return;}
+  renderDashSchueler(sid);
+}
+function confirmDelete(sid){
+  const s=getS(sid);if(!s)return;
+  showModal({
+    title:"Schüler löschen",
+    msg:`${s.vorname} ${s.nachname} wirklich löschen? Alle Termine dieses Schülers werden ebenfalls entfernt.`,
+    btns:[
+      {label:"Löschen",danger:true,action:`_doDeleteSchueler('${sid}')`},
+      {label:"Abbrechen",action:"closeModal()"},
+    ]
+  });
+}
+function _doDeleteSchueler(sid){
+  closeModal();
+  schueler=schueler.filter(x=>x.id!==sid);
+  saveAll();renderListe();
+}
+
+// ── SCHÜLER DETAIL ────────────────────────────────────────────────────────────
+function renderSchueler(sid){
+  const s=getS(sid);if(!s)return;
+  const nsi=nextSonder(s);
+  const totalEinh=(s.fahrstunden||[]).reduce((a,f)=>a+(f.typ==="normal"?f.einh:0),0);
+
+  let html=`<div class="screen active" id="scr-detail">
+    <div class="topbar">
+      <button class="btn-icon" onclick="renderListe()"><i class="ti ti-arrow-left"></i></button>
+      <span class="topbar-title">${s.nachname}</span>
+      <button class="btn-icon" onclick="renderEditSchueler('${s.id}')"><i class="ti ti-edit"></i></button>
+    </div>
+    <div class="scroll">
+      <div style="display:flex;align-items:center;gap:16px;padding-bottom:4px">
+        ${s.foto
+          ?`<div class="foto-circle" onclick="triggerFotoUpload('${s.id}')"><img src="${s.foto}" alt="${s.vorname}"/><div class="foto-overlay"><i class="ti ti-camera"></i></div></div>`
+          :`<div class="foto-initials av-${s.farbe}" style="${farbStyle(s.farbe)}" onclick="triggerFotoUpload('${s.id}')">${initials(s)}<div class="foto-overlay"><i class="ti ti-camera"></i></div></div>`
+        }
+        <input type="file" id="foto-input-${s.id}" accept="image/*" style="display:none" onchange="saveFoto('${s.id}',this)"/>
+        <div>
+          <div style="font-size:18px;font-weight:600">${s.vorname}${s.spitz?` <span style="font-size:14px;color:var(--tx3);font-weight:400">«${s.spitz}»</span>`:""} ${s.nachname}</div>
+          <div style="font-size:13px;color:var(--tx2);margin-top:2px">Klasse ${s.klasse} · ${s.prufort}</div>
+          <div style="font-size:11px;color:var(--tx3);margin-top:3px">${s.foto?"Foto antippen — ändern, zuschneiden oder löschen":"Foto antippen — Kamera oder Datei"}</div>
+        </div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-box"><div class="stat-lbl">Einheiten</div><div class="stat-num">${totalEinh}<span class="stat-unit">× 80 min</span></div></div>
+        <div class="stat-box"><div class="stat-lbl">Sonderfahrten</div><div class="stat-num">${s.sonder.filter(Boolean).length}<span class="stat-unit">/ 3</span></div></div>
+      </div>
+
+      <div><div class="sec-label">Stammdaten</div>
+      <div class="card">
+        <div class="info-row"><span class="info-lbl"><i class="ti ti-calendar-plus"></i>Beginn</span><span class="info-val">${fmtDate(s.beginn).day}. ${fmtDate(s.beginn).mon} ${fmtDate(s.beginn).year}</span></div>
+        <div class="info-row"><span class="info-lbl"><i class="ti ti-book"></i>Theorie</span><span class="info-val" style="color:${s.theorie?"#3B6D11":"#993C1D"}">${s.theorie?"✓ Bestanden":"✗ Ausstehend"}</span></div>
+        <div class="info-row"><span class="info-lbl"><i class="ti ti-map-pin"></i>Prüfort</span><span class="info-val">${s.prufort}</span></div>
+        ${s.tel?`<div class="info-row"><span class="info-lbl"><i class="ti ti-brand-whatsapp" style="color:#25D366"></i>WhatsApp</span>
+          <a href="https://wa.me/${s.tel.replace(/^\+/,'').replace(/[^0-9]/g,'')}" style="font-size:15px;font-weight:500;color:#25D366;text-decoration:none" onclick="event.stopPropagation()">${s.tel}</a>
+        </div>`:""}
+      </div></div>
+
+      <div><div class="sec-label">Sonderfahrten</div>
+      ${renderSonderDoku(sid,s)}</div>
+      <div><div class="sec-label">Grundfahraufgaben</div>
+      <div class="card">
+        ${GRUNDFAHRAUFGABEN.map(g=>{const cnt=(s.gfa&&s.gfa[g.key])||0;return`<div class="gfa-row"><span class="gfa-label"><i class="ti ${g.icon}" style="font-size:16px;margin-right:8px;color:var(--tx3)"></i>${g.label}</span><div class="gfa-controls"><button class="gfa-btn" onclick="changeGFA('${s.id}','${g.key}',-1)">−</button><span class="gfa-count" id="gfa-${s.id}-${g.key}">${cnt}</span><button class="gfa-btn" onclick="changeGFA('${s.id}','${g.key}',1)">+</button></div></div>`;}).join("")}
+      </div></div>
+
+
+
+      <div><div class="sec-row"><div class="sec-label" style="margin:0">Notizen</div>
+        <button class="fab-btn" onclick="addNotizItem('${s.id}')"><i class="ti ti-plus"></i></button>
+      </div>
+      <div class="card" id="notiz-list-${s.id}">
+        ${(()=>{
+          const items=Array.isArray(s.notiz)?s.notiz:(s.notiz?[{text:s.notiz,done:false}]:[]);
+          if(!items.length)return`<div class="empty-hint" style="padding:14px 0">Tippe + für eine neue Notiz</div>`;
+          return items.map((item,ni)=>`
+            <div class="notiz-item" style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:.5px solid var(--br);">
+              <label class="toggle-wrap" style="width:28px;height:28px;flex-shrink:0">
+                <input type="checkbox" ${item.done?"checked":""} onchange="toggleNotiz('${s.id}',${ni},this.checked)"/>
+                <div class="toggle-track" style="border-radius:50%"></div>
+                <div class="toggle-thumb" style="width:22px;height:22px;top:3px;left:3px"></div>
+              </label>
+              <span style="flex:1;font-size:18px;color:var(--tx);${item.done?"text-decoration:line-through;color:var(--tx3)":""}" onclick="editNotizItem('${s.id}',${ni})">${item.text||"…"}</span>
+              <button onclick="deleteNotizItem('${s.id}',${ni})" style="background:none;border:none;cursor:pointer;color:var(--tx3);font-size:16px;padding:4px"><i class="ti ti-x"></i></button>
+            </div>`).join("");
+        })()}
+      </div></div>
+
+    </div>
+  </div>`;
+  renderApp(html);
+  setTimeout(initPTR,50);
+}
+
+function saveNotiz(sid,val){const s=getS(sid);if(!s)return;s.notiz=val;saveAll();}
+
+function addNotizItem(sid){
+  const s=getS(sid);if(!s)return;
+  showModal({
+    title:"Neue Notiz",
+    msg:"",
+    input:{placeholder:"Notiz eingeben…",multiline:false,value:""},
+    btns:[
+      {label:"Hinzufügen",primary:true,action:`_doAddNotiz('${sid}')`},
+      {label:"Abbrechen",action:"closeModal()"},
+    ]
+  });
+}
+function _doAddNotiz(sid){
+  const text=modalInputVal();if(!text)return;
+  closeModal();
+  const s=getS(sid);if(!s)return;
+  if(!Array.isArray(s.notiz))s.notiz=s.notiz?[{text:s.notiz,done:false}]:[];
+  s.notiz.push({text,done:false});
+  saveAll();renderSchueler(sid);
+}
+
+function toggleNotiz(sid,idx,done){
+  const s=getS(sid);if(!s)return;
+  if(!Array.isArray(s.notiz))return;
+  s.notiz[idx].done=done;
+  saveAll();
+  // update visual without full re-render
+  const span=event.target.closest(".notiz-item").querySelector("span");
+  if(span){span.style.textDecoration=done?"line-through":"";span.style.color=done?"var(--tx3)":"var(--tx)";}
+}
+
+function editNotizItem(sid,idx){
+  const s=getS(sid);if(!s)return;
+  if(!Array.isArray(s.notiz))return;
+  showModal({
+    title:"Notiz bearbeiten",
+    msg:"",
+    input:{placeholder:"Notiz…",multiline:false,value:s.notiz[idx].text},
+    btns:[
+      {label:"Speichern",primary:true,action:`_doEditNotiz('${sid}',${idx})`},
+      {label:"Abbrechen",action:"closeModal()"},
+    ]
+  });
+}
+function _doEditNotiz(sid,idx){
+  const text=modalInputVal();
+  closeModal();
+  const s=getS(sid);if(!s)return;
+  if(text)s.notiz[idx].text=text;
+  saveAll();renderSchueler(sid);
+}
+
+function deleteNotizItem(sid,idx){
+  const s=getS(sid);if(!s)return;
+  if(!Array.isArray(s.notiz))return;
+  s.notiz.splice(idx,1);
+  saveAll();renderSchueler(sid);
+}
+function changeGFA(sid,key,d){const s=getS(sid);if(!s)return;if(!s.gfa)s.gfa={};s.gfa[key]=Math.max(0,(s.gfa[key]||0)+d);saveAll();const el=document.getElementById("gfa-"+sid+"-"+key);if(el)el.textContent=s.gfa[key];}
+
+// ── SCHÜLER ANLEGEN/BEARBEITEN ────────────────────────────────────────────────
+function renderNeuSchueler(fromSid){
+  const s=fromSid?getS(fromSid):null;
+  let selFarbe=s?s.farbe:"blue";
+  const title=s?"Schüler bearbeiten":"Neuer Schüler";
+  const back=s?`renderDashSchueler('${s.id}')`:"renderDashboard()";
+  let html=`<div class="screen active" id="scr-neu">
+    <div class="topbar">
+      <button class="btn-icon" onclick="${back}"><i class="ti ti-arrow-left"></i></button>
+      <span class="topbar-title">${title}</span>
+    </div>
+    <div class="scroll">
+      <div id="toast-neu" class="toast"><i class="ti ti-circle-check" style="font-size:16px"></i><span id="toast-neu-msg"></span></div>
+      <div><div class="sec-label">Name</div>
+      <div class="card" style="margin-bottom:12px;padding:16px;display:flex;align-items:center;gap:16px">
+        ${s?(`<div onclick="triggerFotoUpload('${s.id}')" style="cursor:pointer;flex-shrink:0">
+          ${s.foto?`<div class="foto-circle" style="width:64px;height:64px"><img src="${s.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/><div class="foto-overlay"><i class="ti ti-camera"></i></div></div>`
+          :`<div class="foto-initials av-${s.farbe}" style="width:64px;height:64px;font-size:20px;display:flex;align-items:center;justify-content:center;border-radius:50%">${initials(s)}<div class="foto-overlay"><i class="ti ti-camera"></i></div></div>`}
+          <input type="file" id="foto-input-${s.id}" accept="image/*" style="display:none" onchange="saveFoto('${s.id}',this)"/>
+        </div><div style="font-size:13px;color:var(--tx3)">Foto antippen</div>`):""}
+      </div>
+      <div class="card">
+        <div class="card-row"><span class="card-label"><i class="ti ti-user"></i>Vorname</span><input type="text" id="n-vn" value="${s?s.vorname:""}" placeholder="Pflichtfeld"/></div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-user"></i>Nachname</span><input type="text" id="n-nn" value="${s?s.nachname:""}" placeholder="Pflichtfeld"/></div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-mood-smile"></i>Spitzname</span><input type="text" id="n-sp" value="${s?s.spitz:""}" placeholder="Optional"/></div>
+
+      </div></div>
+      <div><div class="sec-label">Ausbildung</div>
+      <div class="card">
+        <div class="card-row"><span class="card-label"><i class="ti ti-phone"></i>Telefon</span><input type="tel" id="n-tel" value="${s?s.tel||'+49 ':'+49 '}" placeholder="+49 …"/></div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-calendar-plus"></i>Beginn</span><input type="date" id="n-bg" value="${s?s.beginn:new Date().toISOString().split("T")[0]}"/></div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-license"></i>Klasse</span>
+          <select id="n-kl">${KLASSEN.map(k=>`<option value="${k}" ${s&&s.klasse===k?"selected":""}>${k}</option>`).join("")}</select>
+        </div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-map-pin"></i>Prüfort</span>
+          <select id="n-pf">
+            <option value="">Auswählen…</option>
+            ${PRUFORTE.map(p=>`<option value="${p}" ${s&&s.prufort===p?"selected":""}>${p}</option>`).join("")}
+          </select>
+        </div>
+
+        <div class="card-row"><span class="card-label"><i class="ti ti-book"></i>Theorie</span>
+          <label class="toggle-wrap"><input type="checkbox" id="n-th" ${s&&s.theorie?"checked":""}/><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+        </div>
+      </div></div>
+
+
+      <button class="btn-full" onclick="saveSchueler('${s?s.id:""}')">${s?"Änderungen speichern":"Schüler speichern"}</button>
+      ${s?`<button class="btn-full danger" style="margin-top:6px" onclick="deleteSchueler('${s.id}')"><i class="ti ti-trash"></i> Schüler löschen</button>`:""}
+    </div>
+  </div>`;
+  renderApp(html);
+  AppState.selFarbe=selFarbe;
+  AppState.geschlecht=s?s.geschlecht||'m':'m';
+  setTimeout(initPTR,50);
+}
+function renderEditSchueler(sid){renderNeuSchueler(sid);}
+function changeKlasse(sid){
+  const s=getS(sid);if(!s)return;
+  const idx=KLASSEN.indexOf(s.klasse);
+  const next=KLASSEN[(idx+1)%KLASSEN.length];
+  showModal({
+    title:"Klasse ändern",
+    msg:`Klasse von ${s.klasse} auf ${next} ändern?`,
+    btns:[
+      {label:"Ändern",primary:true,action:`_doChangeKlasse('${sid}','${next}')`},
+      {label:"Abbrechen",action:"closeModal()"},
+    ]
+  });
+}
+function _doChangeKlasse(sid,next){
+  closeModal();
+  const s=getS(sid);if(!s)return;
+  s.klasse=next;saveAll();
+  const el=document.getElementById("klasse-box-"+sid);
+  if(el)el.textContent=next;
+}
+function renderFarbDots(cid){const el=document.getElementById(cid);if(!el)return;el.innerHTML=FARBEN.map(f=>`<div class="farb-dot ${f.key===AppState.selFarbe?"sel":""}" style="background:${f.bg}" onclick="AppState.selFarbe='${f.key}';renderFarbDots('${cid}')"></div>`).join("");}
+
+function setGeschlecht(g){
+  AppState.geschlecht=g;
+  const gm=document.getElementById("g-m");
+  const gw=document.getElementById("g-w");
+  if(gm)gm.classList.toggle("active",g==="m");
+  if(gw)gw.classList.toggle("active",g==="w");
+}
+function saveSchueler(editSid){
+  const vn=document.getElementById("n-vn").value.trim();
+  const nn=document.getElementById("n-nn").value.trim();
+  const kl=document.getElementById("n-kl").value;
+  if(!vn||!nn){if(!vn)document.getElementById("n-vn").classList.add("err-border");if(!nn)document.getElementById("n-nn").classList.add("err-border");setTimeout(()=>document.querySelectorAll(".err-border").forEach(e=>e.classList.remove("err-border")),1500);return;}
+  const pf=document.getElementById("n-pf").value;
+  const pt='';
+  const th=document.getElementById("n-th").checked;
+  const sp=document.getElementById("n-sp").value.trim();
+  const bgEl=document.getElementById("n-bg");
+  const bg=bgEl&&bgEl.value?bgEl.value:(editSid?getS(editSid).beginn:todayStr());
+  if(editSid){
+    const s=getS(editSid);
+    s.vorname=vn;s.nachname=nn;s.spitz=sp;s.geschlecht=AppState.geschlecht||'m';s.tel=document.getElementById('n-tel').value.trim();s.beginn=bg;s.klasse=kl;s.prufort=pf;s.prueftermin=pt;s.theorie=th;s.farbe=AppState.selFarbe;
+    
+    saveAll();syncFahrstundenToKalender();renderDashSchueler(editSid);
+  }else{
+    const tel2=document.getElementById('n-tel').value.trim();const ptuhr='';const ns={id:"s"+Date.now(),vorname:vn,nachname:nn,spitz:sp,geschlecht:AppState.geschlecht||'m',tel:tel2,farbe:AppState.selFarbe||"blue",klasse:kl,beginn:bg,prufort:pf,prueftermin:pt,pruefzeit:ptuhr,theorie:th,sonder:[false,false,false],notiz:"",fahrstunden:[],pruefungen:[],gfa:{laengs:0,rechts:0,umkehr:0,rueckwaerts:0,stopp_mit:0,stopp_ohne:0,stadtautobahn:0,strassenbahn:0},foto:null};
+    schueler.push(ns);
+    saveAll();
+    syncKalenderToFahrstunden();
+    renderDashSchueler(ns.id);
+  }
+}
+function deleteSchueler(sid){
+  const s=getS(sid);if(!s)return;
+  showModal({
+    title:"Schüler löschen",
+    msg:`${s.vorname} ${s.nachname} wirklich löschen? Alle zugehörigen Termine werden ebenfalls entfernt.`,
+    btns:[
+      {label:"Löschen",danger:true,action:`_doDeleteSchuelerFull('${sid}')`},
+      {label:"Abbrechen",action:"closeModal()"},
+    ]
+  });
+}
+function _doDeleteSchuelerFull(sid){
+  closeModal();
+  schueler=schueler.filter(x=>x.id!==sid);
+  Object.keys(termine).forEach(d=>{
+    termine[d]=termine[d].filter(t=>t.sid!==sid);
+    if(!termine[d].length)delete termine[d];
+  });
+  saveAll();renderListe();
+}
+
+// ── FAHRSTUNDE ────────────────────────────────────────────────────────────────
+function renderNeuFahrstunde(sid){
+  const s=getS(sid);if(!s)return;
+  const nsi=nextSonder(s);
+  let html=`<div class="screen active" id="scr-fahrt">
+    <div class="topbar">
+      <button class="btn-icon" onclick="renderSchueler('${sid}')"><i class="ti ti-x"></i></button>
+      <span class="topbar-title">Fahrstunde · ${s.vorname}</span>
+    </div>
+    <div class="scroll">
+      <div id="toast-fahrt" class="toast"><i class="ti ti-circle-check" style="font-size:16px"></i><span id="toast-fahrt-msg"></span></div>
+      <div><div class="sec-label">Termin</div>
+      <div class="card">
+        <div class="card-row">
+          <div style="display:flex;gap:0;width:100%">
+            <button class="pill active" id="typ-normal" style="flex:1;border-radius:var(--r-md) 0 0 var(--r-md);justify-content:center;flex-direction:column;align-items:center;gap:2px;padding:10px 8px" onclick="setTypF('normal')">
+              <i class="ti ti-steering-wheel" style="font-size:18px"></i><span style="font-size:12px">Fahrstunde</span><span style="font-size:10px;opacity:.7">80 min/Einh.</span>
+            </button>
+            <button class="pill" id="typ-pruef" style="flex:1;border-radius:0 var(--r-md) var(--r-md) 0;justify-content:center;flex-direction:column;align-items:center;gap:2px;padding:10px 8px;border-left:none" onclick="setTypF('pruef')">
+              <i class="ti ti-license" style="font-size:18px"></i><span style="font-size:12px">Prüfungsfahrt</span><span style="font-size:10px;opacity:.7">100 min</span>
+            </button>
+          </div>
+        </div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-calendar"></i>Datum</span><div style="display:flex;gap:4px;justify-content:flex-end;flex:1">
+            <input type="number" id="f-dat-tag" min="1" max="31" placeholder="TT" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" onfocus="this.select()" value="${todayStr()?parseInt((todayStr()).split('-')[2]):''}"/>
+            <input type="number" id="f-dat-mon" min="1" max="12" placeholder="MM" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" onfocus="this.select()" value="${todayStr()?parseInt((todayStr()).split('-')[1]):''}"/>
+            <input type="number" id="f-dat-jahr" min="2024" max="2030" placeholder="JJJJ" style="width:64px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" onfocus="this.select()" value="${todayStr()?(todayStr()).split('-')[0]:''}"/>
+          </div></div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Uhrzeit</span><input type="time" step="300" id="f-uhr" value="09:00"/></div>
+        <div class="card-row" id="einh-row2">
+          <span class="card-label"><i class="ti ti-clock"></i>Einheiten</span>
+          <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end;flex:1">
+            <button class="cir-btn" onclick="changeEinh(-1)">−</button>
+            <span id="einh-disp" style="font-size:16px;font-weight:500;min-width:72px;text-align:center">1 × 80 min</span>
+            <button class="cir-btn" onclick="changeEinh(1)">+</button>
+          </div>
+        </div>
+        <div class="card-row" id="pruef-row2" style="display:none"><span class="card-label"><i class="ti ti-clock"></i>Dauer</span><span class="card-val" style="flex:1;text-align:right;font-size:13px;color:var(--tx2)">100 min (fest)</span></div>
+      </div></div>`;
+
+  if(nsi!==-1){
+    html+=`<div><div class="sec-label">Sonderfahrt dabei?</div><div class="card">
+    ${SONDER.map((sf,i)=>{
+      const done=s.sonder[i],isNext=i===nsi,locked=!done&&!isNext;
+      return`<div class="sonder-btn-row ${done?"done":""}">
+        <span class="sonder-btn-label"><i class="ti ${sf.icon}"></i>${i+1}. ${sf.label} <span style="font-size:11px;color:var(--tx3)">${sf.min} min</span>${locked?` <span style="font-size:10px;color:var(--tx3)">(gesperrt)</span>`:""}</span>
+        <label class="toggle-wrap"><input type="checkbox" id="sf-${sf.key}" ${done?"checked disabled":""} ${locked?"disabled":""}/><div class="toggle-track ${locked||done?"locked":""}"></div><div class="toggle-thumb"></div></label>
+      </div>`;
+    }).join("")}
+    </div></div>`;
+  }
+
+  html+=`<button class="btn-full" onclick="saveFahrstunde('${sid}')"><i class="ti ti-circle-check"></i> Fahrstunde speichern</button></div></div>`;
+  renderApp(html);
+  AppState.fahrt.einh=1;AppState.fahrt.typ="normal";
+  setTimeout(initPTR,50);
+}
+function setTypF(typ){AppState.fahrt.typ=typ;document.getElementById("typ-normal").classList.toggle("active",typ==="normal");document.getElementById("typ-pruef").classList.toggle("active",typ==="pruef");document.getElementById("einh-row2").style.display=typ==="normal"?"":"none";document.getElementById("pruef-row2").style.display=typ==="pruef"?"":"none";}
+function changeEinh(d){AppState.fahrt.einh=Math.max(1,Math.min(4,(AppState.fahrt.einh||1)+d));document.getElementById("einh-disp").textContent=AppState.fahrt.einh+" × 80 min";}
+function saveFahrstunde(sid){
+  const s=getS(sid);if(!s)return;
+  const fTag=document.getElementById('f-dat-tag').value,fMon=document.getElementById('f-dat-mon').value,fJahr=document.getElementById('f-dat-jahr').value;
+  const dat=(fTag&&fMon&&fJahr)?fJahr+'-'+String(fMon).padStart(2,'0')+'-'+String(fTag).padStart(2,'0'):'';if(!dat)return;
+  const typ=AppState.fahrt.typ||"normal";
+  const einh=AppState.fahrt.einh||1;
+  const nsi=nextSonder(s);
+  let sonderGemacht=null;
+  if(nsi!==-1){const sfEl=document.getElementById("sf-"+SONDER[nsi].key);if(sfEl&&sfEl.checked&&!s.sonder[nsi]){s.sonder[nsi]=true;sonderGemacht=SONDER[nsi].label;}}
+  if(!s.fahrstunden)s.fahrstunden=[];
+  const fuhr=document.getElementById("f-uhr")?document.getElementById("f-uhr").value:"09:00";
+  s.fahrstunden.unshift({datum:dat,uhr:fuhr,einh,typ,sonder:sonderGemacht});
+  // Sync to Kalender
+  const kalMin = typ==="pruef" ? 100 : einh*80;
+  if(!termine[dat])termine[dat]=[];
+  // avoid duplicate
+  const exists=termine[dat].find(t=>t.sid===s.id&&t.uhr===fuhr);
+  if(!exists)termine[dat].push({sid:s.id,uhr:fuhr,min:kalMin,notiz:sonderGemacht||""});
+  termine[dat].sort((a,b)=>a.uhr.localeCompare(b.uhr));
+  saveAll();
+  const msg=sonderGemacht?sonderGemacht+" abgeschlossen":"Fahrstunde gespeichert";
+  document.getElementById("toast-fahrt-msg").textContent=msg;
+  document.getElementById("toast-fahrt").classList.add("show");
+  setTimeout(()=>renderSchueler(sid),1800);
+}
+
+// ── PRÜFUNG ERGEBNIS ──────────────────────────────────────────────────────────
+function showPruefResult(sid,datum,pi,typ){
+  const s=getS(sid);if(!s)return;
+  const fd=fmtDate(datum);
+  const versuchNr=pi>=0?(s.pruefungen[pi]||{}).versuch||1:((s.pruefungen||[]).length+1);
+  let html=`<div class="screen active" id="scr-pruef-res">
+    <div class="topbar">
+      <button class="btn-icon" onclick="renderDashboard()"><i class="ti ti-x"></i></button>
+      <span class="topbar-title">${s.vorname} ${s.nachname}</span>
+    </div>
+    <div class="scroll">
+      <div style="text-align:center;padding:20px 0 16px">
+        <div class="foto-initials av-${s.farbe}" style="${farbStyle(s.farbe)};width:60px;height:60px;font-size:18px;margin:0 auto 10px;cursor:default">${initials(s)}</div>
+        <div style="font-size:16px;font-weight:600">${fd.day}. ${fd.mon} ${fd.year}</div>
+        <div style="font-size:13px;color:var(--tx2);margin-top:4px">Klasse ${s.klasse} · ${s.prufort}</div>
+      </div>
+      <div><div class="sec-label">Prüfungsnummer</div>
+      <div class="card"><div class="card-row">
+        <span class="card-label"><i class="ti ti-list-numbers"></i>Prüfung Nr.</span>
+        <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end;flex:1">
+          <button class="cir-btn" onclick="changePRVersuch(-1)">−</button>
+          <span id="pr-versuch-disp" style="font-size:16px;font-weight:500;min-width:40px;text-align:center">${versuchNr}.</span>
+          <button class="cir-btn" onclick="changePRVersuch(1)">+</button>
+        </div>
+      </div></div></div>
+      <div><div class="sec-label">Ergebnis</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <button class="btn-full gruen" onclick="savePruefResult('${sid}','${datum}',${pi},true)"><i class="ti ti-circle-check" style="font-size:20px"></i> Bestanden ✓</button>
+        <button class="btn-full rot" onclick="savePruefResult('${sid}','${datum}',${pi},false)"><i class="ti ti-circle-x" style="font-size:20px"></i> Nicht bestanden ✗</button>
+        <button class="btn-full" onclick="savePruefResult('${sid}','${datum}',${pi},null)"><i class="ti ti-clock"></i> Offen</button>
+      </div></div>
+      <button class="btn-full" style="margin-top:4px" onclick="renderSchueler('${sid}')"><i class="ti ti-user"></i> Zum Schüler</button>
+    </div>
+  </div>`;
+  renderApp(html);
+  AppState.pr.versuch=versuchNr;
+  setTimeout(initPTR,50);
+}
+function changePRVersuch(d){AppState.pr.versuch=Math.max(1,Math.min(4,(AppState.pr.versuch||1)+d));const el=document.getElementById("pr-versuch-disp");if(el)el.textContent=AppState.pr.versuch+".";}
+function savePruefResult(sid,datum,pi,bestanden){
+  const s=getS(sid);if(!s)return;
+  if(!s.pruefungen)s.pruefungen=[];
+  if(pi>=0&&s.pruefungen[pi]){s.pruefungen[pi].bestanden=bestanden;s.pruefungen[pi].versuch=AppState.pr.versuch||1;}
+  else{s.pruefungen.push({datum,versuch:AppState.pr.versuch||1,bestanden});s.pruefungen.sort((a,b)=>a.datum.localeCompare(b.datum));}
+  saveAll();renderDashboard();
+}
+
+// ── FAHRSTUNDE BEARBEITEN ────────────────────────────────────────────────────
+function renderEditFahrstunde(sid, idx){
+  const s=getS(sid);if(!s)return;
+  const f=s.fahrstunden[idx];if(!f)return;
+  const nsi=nextSonder(s);
+  let html=`<div class="screen active" id="scr-edit-fahrt">
+    <div class="topbar">
+      <button class="btn-icon" onclick="renderSchueler('${sid}')"><i class="ti ti-x"></i></button>
+      <span class="topbar-title">Fahrstunde bearbeiten</span>
+    </div>
+    <div class="scroll">
+      <div><div class="sec-label">Fahrstunde</div>
+      <div class="card">
+        <div class="card-row">
+          <div style="display:flex;gap:0;width:100%">
+            <button class="pill ${f.typ==="normal"?"active":""}" id="etyp-normal" style="flex:1;border-radius:var(--r-md) 0 0 var(--r-md);justify-content:center;flex-direction:column;align-items:center;gap:2px;padding:10px 8px" onclick="setETypF('normal')">
+              <i class="ti ti-steering-wheel" style="font-size:18px"></i><span style="font-size:12px">Fahrstunde</span><span style="font-size:10px;opacity:.7">80 min/Einh.</span>
+            </button>
+            <button class="pill ${f.typ==="pruef"?"active":""}" id="etyp-pruef" style="flex:1;border-radius:0 var(--r-md) var(--r-md) 0;justify-content:center;flex-direction:column;align-items:center;gap:2px;padding:10px 8px;border-left:none" onclick="setETypF('pruef')">
+              <i class="ti ti-license" style="font-size:18px"></i><span style="font-size:12px">Prüfungsfahrt</span><span style="font-size:10px;opacity:.7">100 min</span>
+            </button>
+          </div>
+        </div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-calendar"></i>Datum</span><div style="display:flex;gap:4px;justify-content:flex-end;flex:1">
+            <input type="number" id="ef-dat-tag" min="1" max="31" placeholder="TT" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" onfocus="this.select()" value="${f.datum?parseInt((f.datum).split('-')[2]):''}"/>
+            <input type="number" id="ef-dat-mon" min="1" max="12" placeholder="MM" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" onfocus="this.select()" value="${f.datum?parseInt((f.datum).split('-')[1]):''}"/>
+            <input type="number" id="ef-dat-jahr" min="2024" max="2030" placeholder="JJJJ" style="width:64px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" onfocus="this.select()" value="${f.datum?(f.datum).split('-')[0]:''}"/>
+          </div></div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Uhrzeit</span><input type="time" step="300" id="ef-uhr" value="${f.uhr||'09:00'}"/></div>
+        <div class="card-row" id="eeinh-row">
+          <span class="card-label"><i class="ti ti-clock"></i>Einheiten</span>
+          <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end;flex:1">
+            <button class="cir-btn" onclick="changeEEinh(-1)">−</button>
+            <span id="eeinh-disp" style="font-size:16px;font-weight:500;min-width:72px;text-align:center">${f.einh||1} × 80 min</span>
+            <button class="cir-btn" onclick="changeEEinh(1)">+</button>
+          </div>
+        </div>
+        <div class="card-row" id="epruef-row" style="${f.typ==="pruef"?"":"display:none"}"><span class="card-label"><i class="ti ti-clock"></i>Dauer</span><span style="flex:1;text-align:right;font-size:13px;color:var(--tx2)">100 min (fest)</span></div>
+      </div></div>
+      <button class="btn-full" onclick="saveEditFahrstunde('${sid}',${idx})"><i class="ti ti-circle-check"></i> Speichern</button>
+      <button class="btn-full danger" style="margin-top:6px" onclick="deleteEditFahrstunde('${sid}',${idx})"><i class="ti ti-trash"></i> Fahrstunde löschen</button>
+    </div>
+  </div>`;
+  renderApp(html);
+  AppState.efahrt.typ=f.typ||"normal";
+  AppState.efahrt.einh=f.einh||1;
+  setTimeout(initPTR,50);
+}
+
+function setETypF(typ){
+  AppState.efahrt.typ=typ;
+  document.getElementById("etyp-normal").classList.toggle("active",typ==="normal");
+  document.getElementById("etyp-pruef").classList.toggle("active",typ==="pruef");
+  document.getElementById("eeinh-row").style.display=typ==="normal"?"":"none";
+  document.getElementById("epruef-row").style.display=typ==="pruef"?"":"none";
+}
+
+function changeEEinh(d){
+  AppState.efahrt.einh=Math.max(1,Math.min(4,(AppState.efahrt.einh||1)+d));
+  const el=document.getElementById("eeinh-disp");
+  if(el)el.textContent=AppState.efahrt.einh+" × 80 min";
+}
+
+function saveEditFahrstunde(sid,idx){
+  const s=getS(sid);if(!s)return;
+  const efTag=document.getElementById('ef-dat-tag').value,efMon=document.getElementById('ef-dat-mon').value,efJahr=document.getElementById('ef-dat-jahr').value;
+  const dat=(efTag&&efMon&&efJahr)?efJahr+'-'+String(efMon).padStart(2,'0')+'-'+String(efTag).padStart(2,'0'):'';if(!dat)return;
+  const uhr=document.getElementById("ef-uhr")?document.getElementById("ef-uhr").value:"09:00";
+  const oldF=s.fahrstunden[idx];
+  const newTyp=AppState.efahrt.typ||"normal";
+  const newEinh=AppState.efahrt.einh||1;
+  // Remove old kalender entry if exists
+  if(oldF.datum&&oldF.uhr&&termine[oldF.datum]){
+    termine[oldF.datum]=termine[oldF.datum].filter(t=>!(t.sid===s.id&&t.uhr===oldF.uhr));
+    if(!termine[oldF.datum].length)delete termine[oldF.datum];
+  }
+  s.fahrstunden[idx]={datum:dat,uhr:uhr,typ:newTyp,einh:newEinh,sonder:oldF.sonder};
+  // Add new kalender entry
+  const newMin=newTyp==="pruef"?100:newEinh*80;
+  if(!termine[dat])termine[dat]=[];
+  const ex2=termine[dat].find(t=>t.sid===s.id&&t.uhr===uhr);
+  if(!ex2)termine[dat].push({sid:s.id,uhr:uhr,min:newMin,notiz:""});
+  termine[dat].sort((a,b)=>a.uhr.localeCompare(b.uhr));
+  s.fahrstunden.sort((a,b)=>b.datum.localeCompare(a.datum));
+  saveAll();renderSchueler(sid);
+}
+
+function deleteEditFahrstunde(sid,idx){
+  const s=getS(sid);if(!s)return;
+  showModal({
+    title:"Fahrstunde löschen",
+    msg:"Diese Fahrstunde wirklich löschen?",
+    btns:[
+      {label:"Löschen",danger:true,action:`_doDeleteFahrstunde('${sid}',${idx})`},
+      {label:"Abbrechen",action:"closeModal()"},
+    ]
+  });
+}
+function _doDeleteFahrstunde(sid,idx){
+  closeModal();
+  const s=getS(sid);if(!s)return;
+  const df=s.fahrstunden[idx];
+  if(df.datum&&df.uhr&&termine[df.datum]){
+    termine[df.datum]=termine[df.datum].filter(t=>!(t.sid===s.id&&t.uhr===df.uhr));
+    if(!termine[df.datum].length)delete termine[df.datum];
+  }
+  s.fahrstunden.splice(idx,1);
+  saveAll();renderSchueler(sid);
+}
+
+// ── PRÜFUNG NEU (inline vom Schüler) ─────────────────────────────────────────
+function renderNeuPruefungInline(sid){
+  const s=getS(sid);if(!s)return;
+  const versuchNr=(s.pruefungen||[]).length+1;
+  let html=`<div class="screen active" id="scr-pruef-neu">
+    <div class="topbar">
+      <button class="btn-icon" onclick="renderSchueler('${sid}')"><i class="ti ti-x"></i></button>
+      <span class="topbar-title">Prüfung · ${s.vorname}</span>
+    </div>
+    <div class="scroll">
+      <div><div class="sec-label">Prüfungstermin</div>
+      <div class="card">
+        <div class="card-row"><span class="card-label"><i class="ti ti-calendar"></i>Datum</span><div style="display:flex;gap:4px;justify-content:flex-end;flex:1">
+            <input type="number" id="pn-datum-tag" min="1" max="31" placeholder="TT" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" onfocus="this.select()" value="${todayStr()?parseInt((todayStr()).split('-')[2]):''}"/>
+            <input type="number" id="pn-datum-mon" min="1" max="12" placeholder="MM" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" onfocus="this.select()" value="${todayStr()?parseInt((todayStr()).split('-')[1]):''}"/>
+            <input type="number" id="pn-datum-jahr" min="2024" max="2030" placeholder="JJJJ" style="width:64px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" onfocus="this.select()" value="${todayStr()?(todayStr()).split('-')[0]:''}"/>
+          </div></div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Uhrzeit</span><input type="time" step="300" id="pn-uhr" value="08:00"/></div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-list-numbers"></i>Prüfung Nr.</span>
+          <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end;flex:1">
+            <button class="cir-btn" onclick="changePNVersuch(-1)">−</button>
+            <span id="pn-versuch-disp" style="font-size:16px;font-weight:500;min-width:40px;text-align:center">${versuchNr}.</span>
+            <button class="cir-btn" onclick="changePNVersuch(1)">+</button>
+          </div>
+        </div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-trophy"></i>Ergebnis</span>
+          <div style="display:flex;gap:6px;justify-content:flex-end;flex:1;flex-wrap:wrap">
+            <button class="pill" id="pn-offen" onclick="setPNResult(null)" style="font-size:13px;padding:6px 10px">Offen</button>
+            <button class="pill" id="pn-best" onclick="setPNResult(true)" style="font-size:13px;padding:6px 10px">Bestanden ✓</button>
+            <button class="pill" id="pn-nicht" onclick="setPNResult(false)" style="font-size:13px;padding:6px 10px">Nicht bestanden ✗</button>
+          </div>
+        </div>
+      </div></div>
+      <button class="btn-full" onclick="saveNeuPruefung('${sid}')"><i class="ti ti-circle-check"></i> Prüfung speichern</button>
+    </div>
+  </div>`;
+  renderApp(html);
+  AppState.pn.versuch=versuchNr;
+  AppState.pn.bestanden=null;
+  document.getElementById("pn-offen").classList.add("active");
+  setTimeout(initPTR,50);
+}
+function changePNVersuch(d){AppState.pn.versuch=Math.max(1,Math.min(4,(AppState.pn.versuch||1)+d));const el=document.getElementById("pn-versuch-disp");if(el)el.textContent=AppState.pn.versuch+".";}
+function setPNResult(val){
+  AppState.pn.bestanden=val;
+  ["pn-offen","pn-best","pn-nicht"].forEach(id=>document.getElementById(id)&&document.getElementById(id).classList.remove("active"));
+  if(val===null)document.getElementById("pn-offen").classList.add("active");
+  else if(val===true)document.getElementById("pn-best").classList.add("active");
+  else document.getElementById("pn-nicht").classList.add("active");
+}
+function saveNeuPruefung(sid){
+  const s=getS(sid);if(!s)return;
+  const pnTag=document.getElementById('pn-datum-tag').value,pnMon=document.getElementById('pn-datum-mon').value,pnJahr=document.getElementById('pn-datum-jahr').value;
+  const datum=(pnTag&&pnMon&&pnJahr)?pnJahr+'-'+String(pnMon).padStart(2,'0')+'-'+String(pnTag).padStart(2,'0'):'';if(!datum)return;
+  if(!s.pruefungen)s.pruefungen=[];
+  const pnuhr=document.getElementById("pn-uhr")?document.getElementById("pn-uhr").value:"08:00";
+  s.pruefungen.push({datum,uhr:pnuhr,versuch:AppState.pn.versuch||1,bestanden:AppState.pn.bestanden});
+  s.pruefungen.sort((a,b)=>a.datum.localeCompare(b.datum));
+  saveAll();renderSchueler(sid);
+}
+
+// ── PRÜFUNG BEARBEITEN ────────────────────────────────────────────────────────
+function renderEditPruefung(sid,idx){
+  const s=getS(sid);if(!s)return;
+  const p=s.pruefungen[idx];if(!p)return;
+  let html=`<div class="screen active" id="scr-pruef-edit">
+    <div class="topbar">
+      <button class="btn-icon" onclick="renderSchueler('${sid}')"><i class="ti ti-x"></i></button>
+      <span class="topbar-title">Prüfung bearbeiten</span>
+    </div>
+    <div class="scroll">
+      <div><div class="sec-label">Prüfungsergebnis</div>
+      <div class="card">
+        <div class="card-row"><span class="card-label"><i class="ti ti-calendar"></i>Datum</span><div style="display:flex;gap:4px;justify-content:flex-end;flex:1">
+            <input type="number" id="pe-datum-tag" min="1" max="31" placeholder="TT" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" onfocus="this.select()" value="${p.datum?parseInt((p.datum).split('-')[2]):''}"/>
+            <input type="number" id="pe-datum-mon" min="1" max="12" placeholder="MM" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" onfocus="this.select()" value="${p.datum?parseInt((p.datum).split('-')[1]):''}"/>
+            <input type="number" id="pe-datum-jahr" min="2024" max="2030" placeholder="JJJJ" style="width:64px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" onfocus="this.select()" value="${p.datum?(p.datum).split('-')[0]:''}"/>
+          </div></div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Uhrzeit</span><input type="time" step="300" id="pe-uhr" value="${p.uhr||'08:00'}"/></div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-list-numbers"></i>Prüfung Nr.</span>
+          <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end;flex:1">
+            <button class="cir-btn" onclick="changePEVersuch(-1)">−</button>
+            <span id="pe-versuch-disp" style="font-size:16px;font-weight:500;min-width:40px;text-align:center">${p.versuch}.</span>
+            <button class="cir-btn" onclick="changePEVersuch(1)">+</button>
+          </div>
+        </div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-trophy"></i>Ergebnis</span>
+          <div style="display:flex;gap:6px;justify-content:flex-end;flex:1;flex-wrap:wrap">
+            <button class="pill ${p.bestanden===null||p.bestanden===undefined?"active":""}" id="pe-offen" onclick="setPEResult(null)" style="font-size:13px;padding:6px 10px">Offen</button>
+            <button class="pill ${p.bestanden===true?"active":""}" id="pe-best" onclick="setPEResult(true)" style="font-size:13px;padding:6px 10px">Bestanden ✓</button>
+            <button class="pill ${p.bestanden===false?"active":""}" id="pe-nicht" onclick="setPEResult(false)" style="font-size:13px;padding:6px 10px">Nicht bestanden ✗</button>
+          </div>
+        </div>
+      </div></div>
+      <button class="btn-full" onclick="saveEditPruefung('${sid}',${idx})"><i class="ti ti-circle-check"></i> Speichern</button>
+      <button class="btn-full danger" style="margin-top:6px" onclick="deletePruefung('${sid}',${idx})"><i class="ti ti-trash"></i> Prüfung löschen</button>
+    </div>
+  </div>`;
+  renderApp(html);
+  AppState.pr.versuch=p.versuch;AppState.pr.bestanden=p.bestanden;
+  setTimeout(initPTR,50);
+}
+function changePEVersuch(d){AppState.pr.versuch=Math.max(1,Math.min(4,(AppState.pr.versuch||1)+d));const el=document.getElementById("pe-versuch-disp");if(el)el.textContent=AppState.pr.versuch+".";}
+function setPEResult(val){
+  AppState.pr.bestanden=val;
+  ["pe-offen","pe-best","pe-nicht"].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove("active");});
+  if(val===null){const el=document.getElementById("pe-offen");if(el)el.classList.add("active");}
+  else if(val===true){const el=document.getElementById("pe-best");if(el)el.classList.add("active");}
+  else{const el=document.getElementById("pe-nicht");if(el)el.classList.add("active");}
+}
+function saveEditPruefung(sid,idx){const s=getS(sid);if(!s)return;const peTag=document.getElementById('pe-datum-tag').value,peMon=document.getElementById('pe-datum-mon').value,peJahr=document.getElementById('pe-datum-jahr').value;
+  const datum=(peTag&&peMon&&peJahr)?peJahr+'-'+String(peMon).padStart(2,'0')+'-'+String(peTag).padStart(2,'0'):'';if(!datum)return;s.pruefungen[idx]={datum,versuch:AppState.pr.versuch||1,bestanden:AppState.pr.bestanden};s.pruefungen.sort((a,b)=>a.datum.localeCompare(b.datum));saveAll();renderSchueler(sid);}
+function deletePruefung(sid,idx){
+  const s=getS(sid);if(!s)return;
+  showModal({
+    title:"Prüfung löschen",
+    msg:"Diese Prüfung wirklich löschen?",
+    btns:[
+      {label:"Löschen",danger:true,action:`_doDeletePruefung('${sid}',${idx})`},
+      {label:"Abbrechen",action:"closeModal()"},
+    ]
+  });
+}
+function _doDeletePruefung(sid,idx){
+  closeModal();
+  const s=getS(sid);if(!s)return;
+  s.pruefungen.splice(idx,1);saveAll();renderSchueler(sid);
+}
+
+// ── FOTO ──────────────────────────────────────────────────────────────────────
+function triggerFotoUpload(sid){
+  const s=getS(sid);
+  if(s&&s.foto){
+    showModal({title:"Foto",msg:"Was m\u00f6chtest du tun?",btns:[
+      {label:"Neues Foto aufnehmen / w\u00e4hlen",action:`closeModal();setTimeout(()=>{const inp=document.getElementById('foto-input-${sid}');if(inp)inp.click();},100);`},
+      {label:"Ausschnitt & Zoom anpassen",action:`closeModal();setTimeout(()=>showFotoEditor('${sid}'),100);`},
+      {label:"Foto l\u00f6schen",danger:true,action:`closeModal();deleteFoto('${sid}');`},
+      {label:"Abbrechen",action:"closeModal();"}
+    ]});
+  } else {
+    const inp=document.getElementById("foto-input-"+sid);if(inp)inp.click();
+  }
+}
+function deleteFoto(sid){
+  const s=getS(sid);if(!s)return;
+  s.foto=null;saveAll();renderSchueler(sid);
+  showToast("toast-main","Foto gel\u00f6scht");
+}
+function showFotoEditor(sid){
+  const s=getS(sid);if(!s||!s.foto)return;
+  const existing=document.getElementById("fs-modal");if(existing)existing.remove();
+  const div=document.createElement("div");
+  div.id="fs-modal";div.className="modal-overlay";div.style.alignItems="center";
+  div.innerHTML=`<div class="modal-sheet" style="border-radius:20px;max-width:360px;margin:16px">
+    <div class="modal-title" style="margin-bottom:12px">Ausschnitt anpassen</div>
+    <div style="position:relative;width:240px;height:240px;border-radius:50%;overflow:hidden;margin:0 auto 16px;border:3px solid var(--accent);background:#000">
+      <img id="foto-edit-img" src="${s.foto}" style="position:absolute;transform-origin:center center;cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none"/>
+    </div>
+    <div style="margin-bottom:8px">
+      <div style="font-size:12px;color:var(--tx3);margin-bottom:6px;text-align:center">Zoom</div>
+      <input type="range" id="foto-zoom" min="50" max="200" value="100" style="width:100%;accent-color:var(--accent)"/>
+    </div>
+    <div class="modal-btns" style="margin-top:16px">
+      <button onclick="applyFotoEdit('${sid}')" style="width:100%;padding:15px;border-radius:var(--r-md);border:none;background:var(--accent);color:white;font-size:17px;font-weight:600;cursor:pointer;font-family:inherit">Speichern</button>
+      <button onclick="closeModal()" style="width:100%;padding:15px;border-radius:var(--r-md);border:1.5px solid var(--br2);background:var(--bg);color:var(--tx);font-size:17px;font-weight:600;cursor:pointer;font-family:inherit">Abbrechen</button>
+    </div>
+  </div>`;
+  div.addEventListener("click",e=>{if(e.target===div)closeModal();});
+  document.body.appendChild(div);
+  setTimeout(()=>{
+    const img=document.getElementById("foto-edit-img");
+    const zoom=document.getElementById("foto-zoom");
+    if(!img||!zoom)return;
+    let ox=0,oy=0,startX=0,startY=0,dragging=false;
+    function applyTransform(){img.style.transform=`translate(${ox}px,${oy}px) scale(${zoom.value/100})`;}
+    img.onload=function(){
+      const iw=img.naturalWidth,ih=img.naturalHeight;
+      const fit=Math.max(240/iw,240/ih);
+      zoom.value=Math.round(fit*100);
+      img.style.width=iw+"px";img.style.height=ih+"px";
+      img.style.left=((240-iw)/2)+"px";img.style.top=((240-ih)/2)+"px";
+      applyTransform();
+    };
+    if(img.complete&&img.naturalWidth)img.onload();
+    zoom.addEventListener("input",applyTransform);
+    img.addEventListener("touchstart",e=>{e.preventDefault();dragging=true;startX=e.touches[0].clientX-ox;startY=e.touches[0].clientY-oy;},{passive:false});
+    img.addEventListener("touchmove",e=>{e.preventDefault();if(!dragging)return;ox=e.touches[0].clientX-startX;oy=e.touches[0].clientY-startY;applyTransform();},{passive:false});
+    img.addEventListener("touchend",()=>{dragging=false;});
+    img.addEventListener("mousedown",e=>{dragging=true;startX=e.clientX-ox;startY=e.clientY-oy;img.style.cursor="grabbing";});
+    document.addEventListener("mousemove",e=>{if(!dragging)return;ox=e.clientX-startX;oy=e.clientY-startY;applyTransform();});
+    document.addEventListener("mouseup",()=>{dragging=false;img.style.cursor="grab";});
+  },100);
+}
+function applyFotoEdit(sid){
+  const img=document.getElementById("foto-edit-img");
+  const zoom=document.getElementById("foto-zoom");
+  if(!img)return;
+  const sc=zoom?zoom.value/100:1;
+  const match=(img.style.transform||"").match(/translate\(([^,]+)px,([^p]+)px\)/);
+  const ox=match?parseFloat(match[1]):0;
+  const oy=match?parseFloat(match[2]):0;
+  const iw=img.naturalWidth,ih=img.naturalHeight;
+  const imgLeft=(240-iw)/2,imgTop=(240-ih)/2;
+  const screenX=imgLeft+ox,screenY=imgTop+oy;
+  const SIZE=300;
+  const canvas=document.createElement("canvas");
+  canvas.width=SIZE;canvas.height=SIZE;
+  canvas.getContext("2d").drawImage(img,-screenX/sc,-screenY/sc,240/sc,240/sc,0,0,SIZE,SIZE);
+  const s=getS(sid);if(s){s.foto=canvas.toDataURL("image/jpeg",.85);saveAll();closeModal();renderSchueler(sid);showToast("toast-main","Foto gespeichert");}
+}
+function saveFoto(sid,input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    const img=new Image();
+    img.onload=function(){
+      const canvas=document.createElement("canvas");
+      const minSide=Math.min(img.width,img.height);
+      const sx=(img.width-minSide)/2,sy=(img.height-minSide)/2;
+      const outSize=Math.min(minSide,400);
+      canvas.width=outSize;canvas.height=outSize;
+      canvas.getContext("2d").drawImage(img,sx,sy,minSide,minSide,0,0,outSize,outSize);
+      const s=getS(sid);if(s){s.foto=canvas.toDataURL("image/jpeg",.85);saveAll();renderSchueler(sid);showToast("toast-main","Foto gespeichert");}
+    };
+    img.src=e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+// ── KALENDER ──────────────────────────────────────────────────────────────────
+let curYear=2026,curMonth=5,selDate=null;
+function renderKalender(){const td=todayStr();const p=td.split("-");if(!curYear||!curMonth){curYear=parseInt(p[0]);curMonth=parseInt(p[1]);}selDate=selDate||td;buildKalender();}
+function buildKalender(){
+  let html=`<div class="screen active" id="scr-kal">
+    <div class="topbar">
+      <button class="btn-icon" onclick="renderDashboard()"><i class="ti ti-arrow-left"></i></button>
+      <span class="topbar-title">Kalender</span>
+    </div>
+    <div class="month-nav">
+      <button class="btn-icon dark" onclick="prevMonth()"><i class="ti ti-chevron-left"></i></button>
+      <span class="month-label" id="cal-month-label" style="color:var(--tx)">${MONATE[curMonth-1]} ${curYear}</span>
+      <button class="btn-icon dark" onclick="nextMonth()"><i class="ti ti-chevron-right"></i></button>
+    </div>
+    <div class="weekdays">
+      <div class="wd" style="color:#E24B4A">Mo</div>
+      <div class="wd" style="color:#BA7517">Di</div>
+      <div class="wd" style="color:#639922">Mi</div>
+      <div class="wd" style="color:var(--accent)">Do</div>
+      <div class="wd" style="color:#3C3489">Fr</div>
+    </div>
+    <div class="cal-scroll"><div class="cal-grid" id="cal-grid"></div></div>
+  </div>`;
+  if(typeof IS_IPAD!=="undefined"&&IS_IPAD){
+    const d=document.getElementById("ipad-detail");
+    if(d){d.innerHTML=`<div style="display:flex;flex-direction:column;height:100%;overflow:hidden">${html}</div>`;renderCalGrid();return;}
+  }
+  renderApp(html);
+  renderCalGrid();
+}
+function renderCalGrid(){
+  const grid=document.getElementById("cal-grid");if(!grid)return;
+  grid.innerHTML="";
+  const td=todayStr();
+  const dim=new Date(curYear,curMonth,0).getDate();
+  // collect only weekdays
+  const weekdays=[];
+  for(let d=1;d<=dim;d++)if(isWeekday(curYear,curMonth,d))weekdays.push(d);
+  if(!weekdays.length)return;
+  // offset: what weekday (Mon=0) is the first weekday of the month
+  const firstDow=(new Date(curYear,curMonth-1,weekdays[0]).getDay()+6)%7;
+  for(let i=0;i<firstDow;i++){const sp=document.createElement("div");sp.className="spacer-day";grid.appendChild(sp);}
+  for(let d=1;d<=dim;d++){
+    if(!isWeekday(curYear,curMonth,d))continue;
+    const isWE=false;
+    const key=toKey(curYear,curMonth,d);
+    const el=document.createElement("div");el.className="cal-day";
+    if(isBefore(curYear,curMonth,d))el.classList.add("disabled");
+    if(key===td)el.classList.add("today");
+    if(key===selDate)el.classList.add("sel");
+    const dn=document.createElement("div");dn.className="day-num";dn.textContent=d;el.appendChild(dn);
+    const t=termine[key];
+    if(t&&t.length){
+      const dr=document.createElement("div");dr.className="dot-row";
+      t.slice(0,6).forEach(e=>{
+        let cls="cdot-g";
+        if(e.typ==="pruef")cls="cdot-r";
+        else if(e.typ==="ueberland"||e.typ==="autobahn"||e.typ==="nacht"||e.min===225||e.min===220||e.min===135)cls="cdot-b";
+        const dot=document.createElement("div");
+        dot.className="cdot "+cls;
+        dr.appendChild(dot);
+      });
+      el.appendChild(dr);
+    }
+    el.setAttribute("onclick",`selDate='${key}';renderTagAnsicht('${key}')`);
+    grid.appendChild(el);
+  }
+}
+function renderCalDetail(){
+  const el=document.getElementById("cal-detail");if(!el)return;
+  if(!selDate){el.innerHTML="";return;}
+  const p=selDate.split("-");
+  const lbl=`${parseInt(p[2])}. ${MONATE_K[parseInt(p[1])-1]} ${p[0]}`;
+  const t=termine[selDate]||[];
+  let html=`<div class="sec-label" style="margin-bottom:8px">${lbl}</div>`;
+  if(!t.length)html+=`<div style="padding:12px 0;font-size:13px;color:var(--tx3)">Kein Termin — tippe + zum Hinzufügen</div>`;
+  else t.forEach((e,i)=>{
+    const s=getS(e.sid);if(!s)return;
+    const nick=s.spitz?` «${s.spitz}»`:"";
+    html+=`<div class="termin-item" style="margin-bottom:6px">
+      <div class="t-avatar av-${s.farbe}">${initials(s)}</div>
+      <div class="t-info"><div class="t-name">${s.vorname}${nick} ${s.nachname}</div><div class="t-sub">${e.uhr}–${(()=>{const [h,m]=e.uhr.split(":").map(Number);const t=h*60+m+e.min;return String(Math.floor(t/60)%24).padStart(2,"0")+":"+String(t%60).padStart(2,"0");})()}Uhr · ${e.min} min · Kl. ${s.klasse}${e.notiz?" · "+e.notiz:""}</div></div>
+      <button class="t-del" onclick="delKalTermin('${date}',${i})"><i class="ti ti-trash"></i></button>
+    </div>`;
+  });
+  html+=`<button class="btn-full" style="margin-top:6px" onclick="renderNeuKalTermin('${selDate}')"><i class="ti ti-plus"></i> Termin hinzufügen</button>`;
+  el.innerHTML=html;
+}
+function delKalTermin(key,i){
+  if(!termine[key])return;
+  const t=termine[key][i];const s=getS(t.sid);const name=s?s.vorname+" "+s.nachname:"Termin";
+  showModal({
+    title:"Termin löschen",
+    msg:`${name} · ${t.uhr} Uhr wirklich löschen?`,
+    btns:[
+      {label:"Löschen",danger:true,action:`_doDelKalTermin('${key}',${i})`},
+      {label:"Abbrechen",action:"closeModal()"},
+    ]
+  });
+}
+function _doDelKalTermin(key,i){
+  closeModal();
+  if(!termine[key])return;
+  termine[key].splice(i,1);if(!termine[key].length)delete termine[key];
+  saveAll();setTimeout(()=>renderTagAnsicht(key),50);
+}
+function prevMonth(){
+  curMonth--;if(curMonth<1){curMonth=12;curYear--;}
+  selDate=null;
+  const ml=document.getElementById("cal-month-label");
+  if(ml)ml.textContent=MONATE[curMonth-1]+" "+curYear;
+  renderCalGrid();
+}
+function nextMonth(){
+  curMonth++;if(curMonth>12){curMonth=1;curYear++;}
+  selDate=null;
+  const ml=document.getElementById("cal-month-label");
+  if(ml)ml.textContent=MONATE[curMonth-1]+" "+curYear;
+  renderCalGrid();
+}
+
+function renderNeuKalTermin(date){
+  AppState.kal.min=80;AppState.kal.typ="normal";AppState.kal.sonderKey=null;AppState.kal.pers="schueler";AppState.kal.alleSchueler=false;
+  const p=date.split("-");
+  const lbl=`${parseInt(p[2])}. ${MONATE_K[parseInt(p[1])-1]} ${p[0]}`;
+  let html=`<div class="screen active" id="scr-kal-neu">
+    <div class="topbar">
+      <button class="btn-icon" onclick="buildKalender()"><i class="ti ti-x"></i></button>
+      <span class="topbar-title">${lbl}</span>
+    </div>
+    <div class="scroll">
+      <div id="toast-kal" class="toast"><i class="ti ti-circle-check" style="font-size:16px"></i><span id="toast-kal-msg"></span></div>
+      <div><div class="sec-label">Termin</div>
+      <div class="card">
+        <div class="card-row" style="flex-direction:column;align-items:stretch;gap:8px;padding:12px 14px">
+          <div style="display:flex;gap:6px">
+            <button class="pill active" id="kpers-schueler" onclick="setKPers('schueler')" style="font-size:13px;padding:7px 14px">Schüler</button>
+            <button class="pill" id="kpers-auffrisch" onclick="setKPers('auffrisch')" style="font-size:13px;padding:7px 14px">Auffrischung</button>
+          </div>
+        </div>
+        <div class="card-row" id="k-schueler-row"><span class="card-label"><i class="ti ti-user"></i>Schüler</span>
+          <select id="k-sid"><option value="">Auswählen…</option>
+          ${(AppState.kal.alleSchueler?schueler:schueler.filter(s=>!(s.pruefungen||[]).some(p=>p.bestanden===true))).map(s=>`<option value="${s.id}">${s.vorname} ${s.nachname}${s.spitz?" «"+s.spitz+"»":""}</option>`).join("")}
+          </select>
+        </div>
+        <div class="card-row" style="padding:8px 16px">
+          <button onclick="toggleKalAlleSchueler()" style="background:none;border:none;cursor:pointer;color:var(--accent);font-size:13px;font-family:inherit;padding:0;text-align:left" id="k-alle-btn">+ Auch bestandene Schüler anzeigen</button>
+        </div>
+        <div class="card-row" id="k-auffrisch-row" style="display:none"><span class="card-label"><i class="ti ti-user-check"></i>Name</span>
+          <input type="text" id="k-auffrisch-name" placeholder="Name eingeben" style="flex:1;text-align:left;border:none;background:transparent;font-size:15px;color:var(--tx);outline:none"/>
+        </div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Startzeit</span><input type="time" step="300" id="k-uhr" value="09:00" oninput="kalUpdateEnd()"/></div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-clock-check"></i>Endzeit</span><span id="k-endzeit" style="flex:1;text-align:right;font-size:15px;font-weight:500;color:var(--accent)">10:20</span></div>
+        <div class="card-row" style="flex-direction:column;align-items:stretch;gap:8px;padding:12px 14px">
+          <span style="font-size:13px;color:var(--tx2)">Art der Fahrt</span>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button class="pill active" id="ktyp-normal" onclick="setKTyp('normal')" style="font-size:13px;padding:7px 12px">Fahrstunde</button>
+            <button class="pill" id="ktyp-pruef" onclick="setKTyp('pruef')" style="font-size:13px;padding:7px 12px">Prüfung</button>
+            <button class="pill" id="ktyp-ueberland" onclick="setKTyp('ueberland')" style="font-size:13px;padding:7px 12px">Überlandfahrt</button>
+            <button class="pill" id="ktyp-autobahn" onclick="setKTyp('autobahn')" style="font-size:13px;padding:7px 12px">Autobahnfahrt</button>
+            <button class="pill" id="ktyp-nacht" onclick="setKTyp('nacht')" style="font-size:13px;padding:7px 12px">Nachtfahrt</button>
+            <button class="pill" id="ktyp-auffrisch" onclick="setKTyp('auffrisch')" style="font-size:13px;padding:7px 12px">Auffrischung</button>
+          </div>
+        </div>
+        <div class="card-row" id="kal-prufort-row" style="display:none">
+          <span class="card-label"><i class="ti ti-map-pin"></i>Prüfort</span>
+          <select id="k-prufort">
+            ${PRUFORTE.map(p=>`<option value="${p}">${p}</option>`).join("")}
+          </select>
+        </div>
+        <div class="card-row">
+          <span class="card-label"><i class="ti ti-hourglass"></i>Minuten</span>
+          <div style="display:flex;align-items:center;gap:10px;justify-content:flex-end;flex:1">
+            <button class="cir-btn" onclick="changeKalMin(-5);kalUpdateEnd()">−</button>
+            <span id="kal-min-disp" style="font-size:16px;font-weight:500;min-width:52px;text-align:center">80 min</span>
+            <button class="cir-btn" onclick="changeKalMin(5);kalUpdateEnd()">+</button>
+          </div>
+        </div>
+      </div></div>
+      <div><div class="card" style="margin-top:0">
+        <div class="card-row" style="align-items:flex-start;padding-top:12px">
+          <span class="card-label" style="padding-top:2px"><i class="ti ti-notes"></i>Notiz</span>
+          <textarea id="k-notiz" style="flex:1;border:none;background:transparent;font-size:15px;color:var(--tx);font-family:inherit;outline:none;text-align:left;resize:none;height:60px" placeholder="Optional…"></textarea>
+        </div>
+      </div></div>
+      <button class="btn-full" onclick="saveKalTermin('${date}')"><i class="ti ti-circle-check"></i> Termin speichern</button>
+    </div>
+  </div>`;
+  renderApp(html);
+  setTimeout(initPTR,50);
+}
+function changeKalMin(d){AppState.kal.min=Math.max(5,Math.min(300,AppState.kal.min+d));const el=document.getElementById("kal-min-disp");if(el)el.textContent=AppState.kal.min+" min";}
+
+function setKTyp(typ){
+  AppState.kal.typ=typ;
+  ["normal","pruef","ueberland","autobahn","nacht","auffrisch"].forEach(t=>{const el=document.getElementById("ktyp-"+t);if(el)el.classList.toggle("active",t===typ);});
+  if(typ==="normal")AppState.kal.min=80;
+  else if(typ==="pruef")AppState.kal.min=100;
+  else if(typ==="ueberland")AppState.kal.min=225;
+  else if(typ==="autobahn")AppState.kal.min=220;
+  else if(typ==="nacht")AppState.kal.min=135;
+  else if(typ==="auffrisch")AppState.kal.min=80;
+  const el=document.getElementById("kal-min-disp");if(el)el.textContent=AppState.kal.min+" min";
+  const pf=document.getElementById("kal-prufort-row");
+  if(pf)pf.style.display=typ==="pruef"?"":"none";
+  kalUpdateEnd();
+}
+
+function setKSonder(key,min){
+  SONDER.forEach(sf=>{const el=document.getElementById("ksf-"+sf.key);if(el)el.classList.toggle("active",sf.key===key);});
+  AppState.kal.min=min;AppState.kal.sonderKey=key;
+  const el=document.getElementById("kal-min-disp");if(el)el.textContent=min+" min";
+  kalUpdateEnd();
+}
+
+function kalUpdateEnd(){
+  const uhr=document.getElementById("k-uhr");
+  const endEl=document.getElementById("k-endzeit");
+  if(!uhr||!endEl)return;
+  const [h,m]=uhr.value.split(":").map(Number);
+  const total=h*60+m+(AppState.kal.min||80);
+  const eh=Math.floor(total/60)%24;
+  const em=total%60;
+  endEl.textContent=String(eh).padStart(2,"0")+":"+String(em).padStart(2,"0")+" Uhr";
+}
+function toggleKalAlleSchueler(){
+  AppState.kal.alleSchueler=!AppState.kal.alleSchueler;
+  const sel=document.getElementById("k-sid");
+  const btn=document.getElementById("k-alle-btn");
+  if(!sel)return;
+  const list=AppState.kal.alleSchueler?[...schueler]:schueler.filter(s=>!(s.pruefungen||[]).some(p=>p.bestanden===true));
+  sel.innerHTML='<option value="">Auswählen…</option>'+list.map(s=>'<option value="'+s.id+'">'+s.vorname+' '+s.nachname+(s.spitz?' «'+s.spitz+'»':'')+'</option>').join('');
+  if(btn)btn.textContent=AppState.kal.alleSchueler?'− Nur aktive Schüler anzeigen':'+ Auch bestandene Schüler anzeigen';
+}
+
+function setKPers(typ){
+  AppState.kal.pers=typ;
+  document.getElementById("kpers-schueler").classList.toggle("active",typ==="schueler");
+  document.getElementById("kpers-auffrisch").classList.toggle("active",typ==="auffrisch");
+  document.getElementById("k-schueler-row").style.display=typ==="schueler"?"":"none";
+  document.getElementById("k-auffrisch-row").style.display=typ==="auffrisch"?"":"none";
+}
+
+function saveKalTermin(date){
+  try{
+  const uhr=document.getElementById("k-uhr")?document.getElementById("k-uhr").value:"";
+  if(!uhr)return;
+  const isAuffrisch=(AppState.kal.pers||"schueler")==="auffrisch";
+  let sid;
+  if(!isAuffrisch){
+    sid=document.getElementById("k-sid")?document.getElementById("k-sid").value:"";
+    if(!sid){
+      const el=document.getElementById("k-sid");
+      if(el){el.classList.add("err-border");setTimeout(()=>el.classList.remove("err-border"),1500);}
+      return;
+    }
+  } else {
+    const nameEl=document.getElementById("k-auffrisch-name");
+    const name=nameEl?nameEl.value.trim():"";
+    if(!name){
+      if(nameEl){nameEl.classList.add("err-border");setTimeout(()=>nameEl.classList.remove("err-border"),1500);}
+      return;
+    }
+    sid="__auffrisch__:"+name;
+  }
+  const min=AppState.kal.min||80;
+  if(!termine[date])termine[date]=[];
+  const knotiz=document.getElementById('k-notiz');const notizVal=knotiz?knotiz.value.trim():'';
+  const ksf2=AppState.kal.sonderKey;const ktyp2=AppState.kal.typ||'normal';
+  const autoN=ktyp2==='pruef'?'Prüfung':ktyp2==='auffrisch'?'Auffrischung':ktyp2==='ueberland'?'Überlandfahrt':ktyp2==='autobahn'?'Autobahnfahrt':ktyp2==='nacht'?'Nachtfahrt':'';
+  // Store typ in termin for reliable sync
+  const kalTypStr=ktyp2;
+  termine[date].push({sid,uhr,min,notiz:notizVal||autoN,typ:kalTypStr||ktyp2||''});
+  termine[date].sort((a,b)=>a.uhr.localeCompare(b.uhr));
+  // If Prüfung: add to student's Prüfungen list
+  if((AppState.kal.typ||"normal")==="pruef"&&!sid.startsWith("__auffrisch__")){
+    const ps=getS(sid);
+    if(ps){
+      if(!ps.pruefungen)ps.pruefungen=[];
+      const prufort=document.getElementById("k-prufort")?document.getElementById("k-prufort").value:ps.prufort;
+      const versuch=(ps.pruefungen.length+1);
+      // Always update/add pruefung for this date+uhr
+      const existIdx=ps.pruefungen.findIndex(p=>p.datum===date&&p.uhr===uhr);
+      if(existIdx>=0){
+        ps.pruefungen[existIdx].prufort=prufort;
+      } else {
+        ps.pruefungen.push({datum:date,uhr,versuch:0,bestanden:null,prufort});
+        ps.pruefungen.sort((a,b)=>a.datum.localeCompare(b.datum));
+        // Assign versuch numbers in chronological order
+        ps.pruefungen.forEach((p,i)=>{if(p.versuch===0)p.versuch=i+1;});
+      }
+    }
+  }
+  saveAll();
+  selDate=date;
+  renderTagAnsicht(date);
+  }catch(e){document.getElementById("app").innerHTML=`<div style="padding:20px;color:red">Fehler: ${e.message}</div>`;}
+}
+
+// ── STATISTIK ─────────────────────────────────────────────────────────────────
+function renderStatistik(){
+  const alle=schueler.flatMap(s=>(s.pruefungen||[]).filter(p=>p.bestanden!==null&&p.bestanden!==undefined).map(p=>({...p,sid:s.id,name:s.vorname+" "+s.nachname,klasse:s.klasse,prufort:s.prufort})));
+  const alleInklOffen=schueler.flatMap(s=>(s.pruefungen||[]).map(p=>({...p,sid:s.id,name:s.vorname+" "+s.nachname,klasse:s.klasse,prufort:s.prufort})));
+  const gesamt=alle.length;
+  const bestanden=alle.filter(p=>p.bestanden).length;
+  const quote=gesamt?Math.round((bestanden/gesamt)*100):0;
+  const v=[1,2,3,4].map(n=>({n,list:alle.filter(p=>p.versuch===n)}));
+  const ortStats=PRUFORTE.map(o=>{
+    const ps=schueler.filter(s=>s.prufort===o).flatMap(s=>(s.pruefungen||[]).filter(p=>p.bestanden!==null&&p.bestanden!==undefined));
+    const tot=ps.length,best=ps.filter(p=>p.bestanden).length;
+    return{ort:o,tot,best,quote:tot?Math.round((best/tot)*100):null};
+  }).filter(o=>o.tot>0);
+  const td2=todayStr();
+  // Upcoming (future, open) first sorted by date asc, then past results sorted by date desc
+  const recent=[...alleInklOffen].sort((a,b)=>{
+    const aUpcoming=a.datum>=td2&&(a.bestanden===null||a.bestanden===undefined);
+    const bUpcoming=b.datum>=td2&&(b.bestanden===null||b.bestanden===undefined);
+    if(aUpcoming&&!bUpcoming)return -1;
+    if(!aUpcoming&&bUpcoming)return 1;
+    if(aUpcoming&&bUpcoming)return a.datum.localeCompare(b.datum); // upcoming: earliest first
+    return b.datum.localeCompare(a.datum); // past: most recent first
+  }).slice(0,15);
+
+  let html=`<div class="screen active" id="scr-stat">
+    <div class="topbar">
+      <button class="btn-icon" onclick="renderDashboard()"><i class="ti ti-arrow-left"></i></button>
+      <span class="topbar-title">Statistik</span>
+    </div>
+    <div class="scroll">
+      <div class="stat-grid">
+        <div class="stat-box accent" style="text-align:center"><div class="stat-lbl">Bestehensquote</div><div class="stat-num" style="font-size:48px">${quote}<span class="stat-unit">%</span></div></div>
+        <div class="stat-box" style="text-align:center"><div class="stat-lbl">Prüfungen gesamt</div><div class="stat-num" style="font-size:48px">${gesamt}</div></div>
+      </div>
+      <div class="stat-grid">
+        <div class="stat-box" style="text-align:center"><div class="stat-lbl">Bestanden</div><div class="stat-num" style="font-size:48px;color:#27500A">${bestanden}</div></div>
+        <div class="stat-box" style="text-align:center"><div class="stat-lbl">Nicht bestanden</div><div class="stat-num" style="font-size:48px;color:#A32D2D">${gesamt-bestanden}</div></div>
+      </div>`;
+
+  if(gesamt===0){
+    html+=`<div class="empty-hint"><i class="ti ti-chart-bar" style="font-size:32px;display:block;margin:0 auto 10px"></i>Noch keine Prüfungsdaten.<br>Ergebnisse über das Dashboard eintragen.</div>`;
+  }else{
+    html+=`<div><div class="sec-label">Nach Prüfungsversuch</div><div class="stat-card">`;
+    v.filter(x=>x.list.length>0).forEach(x=>{
+      const best=x.list.filter(p=>p.bestanden).length;
+      const pct=x.list.length?Math.round((best/x.list.length)*100):0;
+      html+=`<div class="stat-bar-wrap" style="margin-bottom:14px;padding:4px 0"><span class="stat-bar-label" style="font-size:15px">${x.n}.</span><div class="stat-bar-bg" style="height:12px;border-radius:6px"><div class="stat-bar-fill" style="height:12px;border-radius:6px;width:${pct}%"></div></div><span class="stat-bar-val" style="font-size:14px">${pct}%</span><span style="font-size:12px;color:var(--tx3);min-width:36px">${best}/${x.list.length}</span></div>`;
+    });
+    html+=`</div></div>`;
+    if(ortStats.length){
+      html+=`<div><div class="sec-label">Nach Prüfort</div><div class="stat-card">`;
+      ortStats.forEach(o=>{
+        html+=`<div class="stat-bar-wrap" style="margin-bottom:14px;padding:4px 0"><span class="stat-bar-label" style="min-width:90px;font-size:13px">${o.ort.replace("DEKRA ","").replace("TÜV ","")}</span><div class="stat-bar-bg" style="height:12px;border-radius:6px"><div class="stat-bar-fill" style="height:12px;border-radius:6px;width:${o.quote}%"></div></div><span class="stat-bar-val" style="font-size:14px">${o.quote}%</span><span style="font-size:12px;color:var(--tx3);min-width:36px">${o.best}/${o.tot}</span></div>`;
+      });
+      html+=`</div></div>`;
+    }
+    if(recent.length){
+      const upcomingCount=recent.filter(p=>p.datum>=td2&&(p.bestanden===null||p.bestanden===undefined)).length;
+      html+=`<div><div class="sec-label">Prüfungen (${upcomingCount} ausstehend)</div>`;
+      recent.forEach(p=>{
+        const fd=fmtDate(p.datum);
+        const pOffen=p.bestanden===null||p.bestanden===undefined;
+        const isUpcoming=p.datum>=td2&&pOffen;
+        html+=`<div class="pruef-result-item" onclick="renderDashSchueler('${p.sid}')" style="cursor:pointer;padding:14px 16px;gap:14px;${isUpcoming?"border-left:3px solid var(--accent);":""}">
+          <div style="width:40px;height:40px;border-radius:50%;flex-shrink:0;text-align:center;line-height:40px;font-size:15px;font-weight:700;${pOffen?"background:rgba(255,107,43,0.15);color:var(--accent);":p.bestanden?"background:#EAF3DE;color:#27500A;":"background:#FCEBEB;color:#A32D2D;"}">${p.versuch}</div>
+          <div style="flex:1"><div style="font-size:15px;font-weight:600;color:var(--tx)">${p.name}</div>
+          <div style="font-size:12px;color:var(--tx2);margin-top:3px">${p.versuch}. Prüfung · ${fd.day}. ${fd.mon} ${fd.year}${p.prufort?" · "+p.prufort:""}</div></div>
+          <span style="font-size:18px;color:${pOffen?"var(--accent)":p.bestanden?"#27500A":"#A32D2D"}">${pOffen?"⏳":p.bestanden?"✓":"✗"}</span>
+        </div>`;
+      });
+      html+=`</div>`;
+    }
+  }
+  html+=`</div></div>`;
+  renderApp(html);
+  setTimeout(initPTR,50);
+}
+
+// ── TERMIN BEARBEITEN (Dashboard) ────────────────────────────────────────────
+function renderEditDashTermin(date,idx){
+  const t=(termine[date]||[])[idx];if(!t)return;
+  const s=getS(t.sid);if(!s)return;
+  const fd=fmtDate(date);
+  AppState.et.date=date;AppState.et.idx=idx;AppState.et.min=t.min;AppState.et.isAuffrisch=isAuffrisch3;
+  let html=`<div class="screen active" id="scr-edit-termin">
+    <div class="topbar">
+      <button class="btn-icon" onclick="renderDashboard()"><i class="ti ti-x"></i></button>
+      <span class="topbar-title">Termin bearbeiten</span>
+    </div>
+    <div class="scroll">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:4px">
+        ${isAuffrisch3?`<div class="avatar" style="background:rgba(255,107,43,.15);color:var(--accent)">🔄</div>`:(s.foto?`<div class="avatar" style="overflow:hidden;flex-shrink:0"><img src="${s.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/></div>`:`<div class="avatar av-${s.farbe}">${initials(s)}</div>`)}
+        <div><div style="font-size:17px;font-weight:600">${isAuffrisch3?auffrischName3:s.vorname+" "+s.nachname}</div>
+        <div style="font-size:13px;color:var(--tx2)">${fd.day}. ${fd.mon} ${fd.year}</div></div>
+      </div>
+      <div><div class="sec-label">Termin</div>
+      <div class="card">
+        <div class="card-row"><span class="card-label"><i class="ti ti-user"></i>Schüler</span>
+          <select id="et-sid">
+            ${schueler.map(sc=>`<option value="${sc.id}" ${sc.id===t.sid?"selected":""}>${sc.vorname} ${sc.nachname}${sc.spitz?" «"+sc.spitz+"»":""}</option>`).join("")}
+          </select>
+        </div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Uhrzeit</span><input type="time" step="300" id="et-uhr" value="${t.uhr}"/></div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-hourglass"></i>Minuten</span>
+          <div style="display:flex;align-items:center;gap:10px;justify-content:flex-end;flex:1">
+            <button class="cir-btn" onclick="changeETMin(-5)">−</button>
+            <span id="et-min-disp" style="font-size:16px;font-weight:500;min-width:52px;text-align:center">${t.min} min</span>
+            <button class="cir-btn" onclick="changeETMin(5)">+</button>
+          </div>
+        </div>
+        <div class="card-row" style="align-items:flex-start;padding-top:12px"><span class="card-label" style="padding-top:2px"><i class="ti ti-notes"></i>Notiz</span><textarea id="et-notiz" style="flex:1;border:none;background:transparent;font-size:15px;color:var(--tx);font-family:inherit;outline:none;text-align:left;resize:none;height:60px" placeholder="Optional…">${t.notiz||""}</textarea></div>
+      </div></div>
+      <button class="btn-full" onclick="saveEditDashTermin()"><i class="ti ti-circle-check"></i> Speichern</button>
+      <button class="btn-full" style="margin-top:6px" onclick="renderSchueler('${t.sid}')"><i class="ti ti-user"></i> Zum Schüler</button>
+      <button class="btn-full danger" style="margin-top:6px" onclick="deleteEditDashTermin()"><i class="ti ti-trash"></i> Termin löschen</button>
+    </div>
+  </div>`;
+  renderApp(html);
+  setTimeout(initPTR,50);
+}
+
+function changeETMin(d){
+  AppState.et.min=Math.max(10,Math.min(300,(AppState.et.min||80)+d));
+  const el=document.getElementById("et-min-disp");
+  if(el)el.textContent=AppState.et.min+" min";
+}
+
+function saveEditDashTermin(){
+  const date=AppState.et.date;const idx=AppState.et.idx;
+  if(!termine[date]||!termine[date][idx])return;
+  termine[date][idx].sid=document.getElementById("et-sid").value;
+  termine[date][idx].uhr=document.getElementById("et-uhr").value;
+  termine[date][idx].min=AppState.et.min||80;
+  termine[date][idx].notiz=document.getElementById("et-notiz").value.trim();
+  termine[date].sort((a,b)=>a.uhr.localeCompare(b.uhr));
+  saveAll();renderDashboard();
+}
+
+function deleteEditDashTermin(){
+  const date=AppState.et.date;const idx=AppState.et.idx;
+  if(!termine[date])return;
+  const t=termine[date][idx];const s=getS(t.sid);
+  const name=s?s.vorname+" "+s.nachname:"Termin";
+  showModal({
+    title:"Termin löschen",
+    msg:`${name} · ${t.uhr} Uhr wirklich löschen?`,
+    btns:[
+      {label:"Löschen",danger:true,action:"_doDeleteEditDashTermin()"},
+      {label:"Abbrechen",action:"closeModal()"},
+    ]
+  });
+}
+function _doDeleteEditDashTermin(){
+  closeModal();
+  const date=AppState.et.date;const idx=AppState.et.idx;
+  if(!termine[date])return;
+  termine[date].splice(idx,1);
+  if(!termine[date].length)delete termine[date];
+  saveAll();renderDashboard();
+}
+
+// ── TAGESANSICHT ─────────────────────────────────────────────────────────────
+function renderTagAnsicht(date){
+  const p=date.split("-");
+  const fd=fmtDate(date);
+  const wochentage=["So","Mo","Di","Mi","Do","Fr","Sa"];
+  const dow=wochentage[new Date(date).getDay()];
+  const t=termine[date]||[];
+  const td=todayStr();
+
+  let html=`<div class="screen active" id="scr-tag">
+    <div class="topbar">
+      <button class="btn-icon" onclick="buildKalender()"><i class="ti ti-calendar"></i></button>
+      <button class="btn-icon" onclick="(d=>{do{d.setDate(d.getDate()-1);}while(d.getDay()===0||d.getDay()===6);const nd=toKey(d.getFullYear(),d.getMonth()+1,d.getDate());selDate=nd;renderTagAnsicht(nd);})(new Date('${date}'))" style="font-size:24px;color:#4A90D9"><i class="ti ti-chevron-left"></i></button>
+      <span class="topbar-title">${dow}, ${fd.day}. ${fd.mon} <span style="font-size:13px;opacity:0.7">${fd.year}</span></span>
+      <button class="btn-icon" onclick="(d=>{do{d.setDate(d.getDate()+1);}while(d.getDay()===0||d.getDay()===6);const nd=toKey(d.getFullYear(),d.getMonth()+1,d.getDate());selDate=nd;renderTagAnsicht(nd);})(new Date('${date}'))" style="font-size:24px;color:#4A90D9"><i class="ti ti-chevron-right"></i></button>
+      <button class="btn-icon" onclick="renderNeuKalTermin('${date}')"><i class="ti ti-plus"></i></button>
+    </div>
+    <div class="scroll">`;
+
+  if(!t.length){
+    html+=`<div class="empty-hint"><i class="ti ti-calendar-off" style="font-size:32px;display:block;margin:0 auto 10px"></i>Keine Termine<br><span style="font-size:12px">Tippe + um einen Termin hinzuzufügen</span></div>`;
+  } else {
+    // Sort by time
+    const sorted=[...t].sort((a,b)=>a.uhr.localeCompare(b.uhr));
+    let totalMin=0;
+    sorted.forEach((e,i)=>{
+      const isAuffrisch2=e.sid&&e.sid.startsWith("__auffrisch__");
+      const auffrischName=isAuffrisch2?e.sid.replace("__auffrisch__:",""):"";
+      const s=isAuffrisch2?null:getS(e.sid);if(!s&&!isAuffrisch2)return;
+      const nick=s&&s.spitz?` «${s.spitz}»`:"";
+      const endMin=(()=>{const [h,m]=e.uhr.split(":").map(Number);const tot=h*60+m+e.min;return String(Math.floor(tot/60)%24).padStart(2,"0")+":"+String(tot%60).padStart(2,"0");})();
+      const notizL=(e.notiz||'').toLowerCase();const isSonder=e.typ==='ueberland'||e.typ==='autobahn'||e.typ==='nacht'||notizL.includes('überland')||notizL.includes('autobahn')||notizL.includes('nachtfahrt')||e.min===225||e.min===220||e.min===135;
+      const isPruef=e.typ==="pruef";
+      const dotCol=isPruef?"#E24B4A":isSonder?"#378ADD":"#639922";
+      totalMin+=e.min;
+      const realIdx=t.indexOf(e);
+      html+=`<div class="card" style="margin-bottom:8px;cursor:pointer" onclick="showTagTerminActions('${date}',${realIdx})">
+        <div class="card-row" style="gap:14px;padding:14px 16px 14px;align-items:flex-start">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:2px;min-width:44px">
+            <span style="font-size:14px;font-weight:600;color:var(--tx)">${e.uhr}</span>
+            <span style="font-size:11px;color:var(--tx3)">–${endMin}</span>
+          </div>
+          <div style="width:3px;border-radius:2px;background:${dotCol};align-self:stretch;flex-shrink:0"></div>
+          <div style="flex:1">
+            <div style="font-size:15px;font-weight:500">${isAuffrisch2?"🔄 "+auffrischName:s.vorname+nick+" "+s.nachname}</div>
+            <div style="font-size:12px;color:var(--tx2);margin-top:2px">${e.min} min${isAuffrisch2?" · Auffrischung":s?" · Kl. "+s.klasse:""}${e.notiz?" · "+e.notiz:""}${isPruef&&s&&s.prufort?" · "+s.prufort:""}</div>
+            ${!isAuffrisch2?`<div style="margin-top:5px;padding-bottom:2px"><span class="badge badge-${s.klasse}">${s.klasse}</span></div>`:""}
+          </div>
+          <i class="ti ti-chevron-right" style="color:var(--tx3);font-size:16px"></i>
+        </div>
+      </div>`;
+    });
+    html+=`<div class="stat-box" style="margin-top:4px">
+      <div class="stat-lbl">Gesamtzeit heute</div>
+      <div class="stat-num">${totalMin}<span class="stat-unit">min</span></div>
+    </div>`;
+  }
+
+  html+=`<button class="btn-full" style="margin-top:8px" onclick="renderNeuKalTermin('${date}')"><i class="ti ti-plus"></i> Termin hinzufügen</button>
+    </div>
+  </div>`;
+  renderApp(html);
+  setTimeout(initPTR,50);
+}
+
+function renderEditKalTermin(date,idx){
+  const t=(termine[date]||[])[idx];if(!t)return;
+  const isAuffrisch3=t.sid&&t.sid.startsWith("__auffrisch__");
+  const s=isAuffrisch3?null:getS(t.sid);if(!s&&!isAuffrisch3)return;
+  const auffrischName3=isAuffrisch3?t.sid.replace("__auffrisch__:",""):"";
+  AppState.et.date=date;AppState.et.idx=idx;AppState.et.min=t.min;
+  const fd=fmtDate(date);
+  let html=`<div class="screen active" id="scr-edit-kaltermin">
+    <div class="topbar">
+      <button class="btn-icon" onclick="renderTagAnsicht('${date}')"><i class="ti ti-x"></i></button>
+      <span class="topbar-title">Termin bearbeiten</span>
+    </div>
+    <div class="scroll">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:4px">
+        ${isAuffrisch3?`<div class="avatar" style="background:rgba(255,107,43,.15);color:var(--accent)">🔄</div>`:(s.foto?`<div class="avatar" style="overflow:hidden;flex-shrink:0"><img src="${s.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/></div>`:`<div class="avatar av-${s.farbe}">${initials(s)}</div>`)}
+        <div><div style="font-size:17px;font-weight:600">${isAuffrisch3?auffrischName3:s.vorname+" "+s.nachname}</div>
+        <div style="font-size:13px;color:var(--tx2)">${fd.day}. ${fd.mon} ${fd.year}</div></div>
+      </div>
+      <div><div class="sec-label">Termin</div>
+      <div class="card">
+        ${isAuffrisch3?`<div class="card-row"><span class="card-label"><i class="ti ti-user-check"></i>Name</span><span style="flex:1;text-align:right;font-size:15px">${auffrischName3}</span></div>`:`<div class="card-row"><span class="card-label"><i class="ti ti-user"></i>Schüler</span>
+          <select id="ekt-sid">
+            ${schueler.map(sc=>"<option value=\""+sc.id+"\" "+(sc.id===t.sid?"selected":"")+">"+sc.vorname+" "+sc.nachname+(sc.spitz?" «"+sc.spitz+"»":"")+"</option>").join("")}
+          </select></div>`}
+        <div class="card-row"><span class="card-label"><i class="ti ti-calendar"></i>Datum</span>
+          <div style="display:flex;gap:4px;justify-content:flex-end;flex:1">
+            <input type="number" id="ekt-dat-tag" min="1" max="31" placeholder="TT" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" onfocus="this.select()" value="${parseInt(date.split('-')[2])}"/>
+            <input type="number" id="ekt-dat-mon" min="1" max="12" placeholder="MM" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" onfocus="this.select()" value="${parseInt(date.split('-')[1])}"/>
+            <input type="number" id="ekt-dat-jahr" min="2024" max="2030" placeholder="JJJJ" style="width:64px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" onfocus="this.select()" value="${date.split('-')[0]}"/>
+          </div>
+        </div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Startzeit</span><input type="time" step="300" id="ekt-uhr" value="${t.uhr}" oninput="ektUpdateEnd()"/></div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-clock-check"></i>Endzeit</span><span id="ekt-endzeit" style="flex:1;text-align:right;font-size:15px;font-weight:500;color:var(--accent)"></span></div>
+        <div class="card-row" style="flex-direction:column;align-items:stretch;gap:8px;padding:12px 14px">
+          <span style="font-size:13px;color:var(--tx2)">Art der Fahrt</span>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button class="pill ${t.min===80?"active":""}" id="ektyp-normal" onclick="setEKTyp('normal')" style="font-size:13px;padding:6px 10px">Fahrstunde</button>
+            <button class="pill ${t.typ==="pruef"?"active":""}" id="ektyp-pruef" onclick="setEKTyp('pruef')" style="font-size:13px;padding:6px 10px">Prüfung</button>
+            <button class="pill ${t.min===225?"active":""}" id="ektyp-ueberland" onclick="setEKTyp('ueberland')" style="font-size:12px;padding:5px 8px">Überland</button>
+            <button class="pill ${t.min===220?"active":""}" id="ektyp-autobahn" onclick="setEKTyp('autobahn')" style="font-size:12px;padding:5px 8px">Autobahn</button>
+            <button class="pill ${t.min===135?"active":""}" id="ektyp-nacht" onclick="setEKTyp('nacht')" style="font-size:12px;padding:5px 8px">Nacht</button>
+            <button class="pill" id="ektyp-auffrisch" onclick="setEKTyp('auffrisch')" style="font-size:12px;padding:5px 8px">Auffrischung</button>
+        </div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-hourglass"></i>Minuten</span>
+          <div style="display:flex;align-items:center;gap:10px;justify-content:flex-end;flex:1">
+            <button class="cir-btn" onclick="changeETMin(-5);ektUpdateEnd()">−</button>
+            <span id="et-min-disp" style="font-size:16px;font-weight:500;min-width:52px;text-align:center">${t.min} min</span>
+            <button class="cir-btn" onclick="changeETMin(5);ektUpdateEnd()">+</button>
+          </div>
+        </div>
+        <div class="card-row" style="align-items:flex-start;padding-top:12px"><span class="card-label" style="padding-top:2px"><i class="ti ti-notes"></i>Notiz</span>
+          <textarea id="ekt-notiz" style="flex:1;border:none;background:transparent;font-size:15px;color:var(--tx);font-family:inherit;outline:none;text-align:left;resize:none;height:60px" placeholder="Optional…">${t.notiz||""}</textarea>
+        </div>
+      </div></div>
+      <button class="btn-full" onclick="saveEktTermin('${date}',${idx})"><i class="ti ti-circle-check"></i> Speichern</button>
+      <button class="btn-full danger" style="margin-top:6px" onclick="deleteEktTermin('${date}',${idx})"><i class="ti ti-trash"></i> Termin löschen</button>
+    </div>
+  </div>`;
+  renderApp(html);
+  AppState.et.min=t.min;
+  setTimeout(()=>{ektUpdateEnd();initPTR();},50);
+}
+
+function ektUpdateEnd(){
+  const uhr=document.getElementById("ekt-uhr");
+  const endEl=document.getElementById("ekt-endzeit");
+  if(!uhr||!endEl)return;
+  const [h,m]=uhr.value.split(":").map(Number);
+  const total=h*60+m+(AppState.et.min||80);
+  const eh=Math.floor(total/60)%24;
+  const em=total%60;
+  endEl.textContent=String(eh).padStart(2,"0")+":"+String(em).padStart(2,"0")+" Uhr";
+}
+
+function setEKTyp(typ){
+  ["normal","pruef","ueberland","autobahn","nacht","auffrisch"].forEach(t=>{const el=document.getElementById("ektyp-"+t);if(el)el.classList.toggle("active",t===typ);});
+  if(typ==="normal"||typ==="auffrisch")AppState.et.min=80;
+  else if(typ==="pruef")AppState.et.min=100;
+  else if(typ==="ueberland")AppState.et.min=225;
+  else if(typ==="autobahn")AppState.et.min=220;
+  else if(typ==="nacht")AppState.et.min=135;
+  const el=document.getElementById("et-min-disp");if(el)el.textContent=AppState.et.min+" min";
+  ektUpdateEnd();
+}
+
+function setEKSonder(key,min){
+  SONDER.forEach(sf=>{const el=document.getElementById("eksf-"+sf.key);if(el)el.classList.toggle("active",sf.key===key);});
+  AppState.et.min=min;
+  const el=document.getElementById("et-min-disp");if(el)el.textContent=min+" min";
+  ektUpdateEnd();
+}
+
+function saveEktTermin(date,idx){
+  if(!termine[date]||!termine[date][idx])return;
+  const isAuffrisch3=AppState.et.isAuffrisch||false;
+  const ekTag=document.getElementById('ekt-dat-tag').value;
+  const ekMon=document.getElementById('ekt-dat-mon').value;
+  const ekJahr=document.getElementById('ekt-dat-jahr').value;
+  const newDate=(ekTag&&ekMon&&ekJahr)?ekJahr+'-'+String(ekMon).padStart(2,'0')+'-'+String(ekTag).padStart(2,'0'):date;
+  const entry=termine[date][idx];
+  if(!isAuffrisch3){const ektSid=document.getElementById('ekt-sid');if(ektSid)entry.sid=ektSid.value;}
+  entry.uhr=document.getElementById("ekt-uhr").value;
+  entry.min=AppState.et.min||80;
+  entry.notiz=document.getElementById("ekt-notiz").value.trim();
+  // Move to new date if changed
+  if(newDate!==date){
+    termine[date].splice(idx,1);
+    if(!termine[date].length)delete termine[date];
+    if(!termine[newDate])termine[newDate]=[];
+    termine[newDate].push(entry);
+    termine[newDate].sort((a,b)=>a.uhr.localeCompare(b.uhr));
+  } else {
+    termine[date].sort((a,b)=>a.uhr.localeCompare(b.uhr));
+  }
+  // If Prüfung type: sync to student's pruefungen
+  if(entry.typ==="pruef"&&!entry.sid.startsWith("__auffrisch__")){
+    const ps=getS(entry.sid);
+    if(ps){
+      if(!ps.pruefungen)ps.pruefungen=[];
+      const versuch=(ps.pruefungen.length+1);
+      const existIdx=ps.pruefungen.findIndex(p=>p.datum===newDate);
+      if(existIdx>=0){
+        ps.pruefungen[existIdx].uhr=entry.uhr;
+      } else {
+        ps.pruefungen.push({datum:newDate,uhr:entry.uhr,versuch:0,bestanden:null,prufort:ps.prufort||""});
+        ps.pruefungen.sort((a,b)=>a.datum.localeCompare(b.datum));
+        ps.pruefungen.forEach((p,i)=>{if(p.versuch===0)p.versuch=i+1;});
+      }
+    }
+  }
+  saveAll();
+  selDate=newDate;
+  setTimeout(()=>renderTagAnsicht(newDate),100);
+}
+
+function deleteEktTermin(date,idx){
+  if(!termine[date]||!termine[date][idx])return;
+  const t=termine[date][idx];
+  const s=getS(t.sid);
+  const name=(s?s.vorname+" "+s.nachname:"Termin")+" · "+t.uhr+" Uhr";
+  showModal({
+    title:"Termin löschen",
+    msg:`${name} wirklich löschen?`,
+    btns:[
+      {label:"Löschen",danger:true,action:`_doDeleteEktTermin('${date}',${idx})`},
+      {label:"Abbrechen",action:"closeModal()"},
+    ]
+  });
+}
+function _doDeleteEktTermin(date,idx){
+  closeModal();
+  if(!termine[date])return;
+  termine[date].splice(idx,1);
+  if(!termine[date].length)delete termine[date];
+  saveAll();renderTagAnsicht(date);
+}
+
+// ── LONG-PRESS / TERMIN AKTIONEN ─────────────────────────────────────────────
+let _lpTimer=null;
+function _lpStart(e,date,idx,sid){
+  _lpEnd();
+  const el=e.currentTarget;
+  _lpTimer=setTimeout(()=>{
+    _lpEnd();
+    el.classList.remove("lp-active");
+    if(navigator.vibrate)navigator.vibrate(40);
+    showTerminActions(date,idx,sid);
+  },500);
+  el.classList.add("lp-active");
+}
+function _lpEnd(){
+  if(_lpTimer){clearTimeout(_lpTimer);_lpTimer=null;}
+  document.querySelectorAll(".lp-active").forEach(el=>el.classList.remove("lp-active"));
+}
+
+function showTerminActions(date,idx,sid){
+  const t=(termine[date]||[])[idx];if(!t)return;
+  const s=getS(sid);
+  const name=s?s.vorname+" "+s.nachname:"Termin";
+  const fd=fmtDate(date);
+  showModal({
+    title:`${name}`,
+    msg:`${fd.day}. ${fd.mon} ${fd.year} · ${t.uhr} Uhr · ${t.min} min`,
+    btns:[
+      {label:"✎ Bearbeiten",primary:true,action:`closeModal();renderEditKalTermin('${date}',${idx})`},
+      {label:"→ Zum Schüler",action:`closeModal();renderDashSchueler('${sid}')`},
+      {label:"Termin löschen",danger:true,action:`closeModal();_confirmDelDashTermin('${date}',${idx})`},
+      {label:"Abbrechen",action:"closeModal()"},
+    ]
+  });
+}
+function _confirmDelDashTermin(date,idx){
+  const t=(termine[date]||[])[idx];if(!t)return;
+  const s=getS(t.sid);
+  const name=s?s.vorname+" "+s.nachname:"Termin";
+  showModal({
+    title:"Termin löschen",
+    msg:`${name} · ${t.uhr} Uhr wirklich löschen?`,
+    btns:[
+      {label:"Löschen",danger:true,action:`_doDelDashTermin('${date}',${idx})`},
+      {label:"Abbrechen",action:"closeModal()"},
+    ]
+  });
+}
+function _doDelDashTermin(date,idx){
+  closeModal();
+  if(!termine[date])return;
+  termine[date].splice(idx,1);
+  if(!termine[date].length)delete termine[date];
+  saveAll();renderDashboard();
+}
+function showTagTerminActions(date,idx){
+  const t=(termine[date]||[]);const e=t[idx];if(!e)return;
+  const isAuffrisch=e.sid&&e.sid.startsWith("__auffrisch__");
+  const s=isAuffrisch?null:getS(e.sid);
+  const name=isAuffrisch?("Auffrischung: "+e.sid.replace("__auffrisch__:","")):(s?s.vorname+" "+s.nachname:"Termin");
+  const fd=fmtDate(date);
+  const btns=[{label:"Bearbeiten",primary:true,action:`closeModal();renderEditKalTermin('${date}',${idx})`}];
+  if(!isAuffrisch&&s)btns.push({label:"Zur Schülerkarte",action:`closeModal();renderDashSchueler('${e.sid}')`});
+  btns.push({label:"Termin löschen",danger:true,action:`closeModal();_confirmDelTagTermin('${date}',${idx})`});
+  btns.push({label:"Abbrechen",action:"closeModal()"});
+  showModal({title:name,msg:`${fd.day}. ${fd.mon} ${fd.year} · ${e.uhr} Uhr · ${e.min} min`,btns});
+}
+function _confirmDelTagTermin(date,idx){
+  const t=(termine[date]||[]);const e=t[idx];if(!e)return;
+  const isAuffrisch=e.sid&&e.sid.startsWith("__auffrisch__");
+  const s=isAuffrisch?null:getS(e.sid);
+  const name=isAuffrisch?e.sid.replace("__auffrisch__:",""):(s?s.vorname+" "+s.nachname:"Termin");
+  showModal({title:"Termin löschen",msg:`${name} · ${e.uhr} Uhr — wirklich löschen?`,btns:[
+    {label:"Löschen",danger:true,action:`_doDelTagTermin('${date}',${idx})`},
+    {label:"Abbrechen",action:"closeModal()"},
+  ]});
+}
+function _doDelTagTermin(date,idx){
+  closeModal();
+  if(!termine[date])return;
+  termine[date].splice(idx,1);
+  if(!termine[date].length)delete termine[date];
+  saveAll();renderTagAnsicht(date);
+}
+function initPTR(){
+  const scrollEl=document.querySelector(".scroll");if(!scrollEl)return;
+  const parent=scrollEl.parentElement;
+  let ptrWrap=parent.querySelector(".ptr-wrap");
+  if(!ptrWrap){ptrWrap=document.createElement("div");ptrWrap.className="ptr-wrap";parent.insertBefore(ptrWrap,scrollEl);ptrWrap.appendChild(scrollEl);}
+  let indicator=ptrWrap.querySelector(".ptr-indicator");
+  if(!indicator){indicator=document.createElement("div");indicator.className="ptr-indicator";indicator.innerHTML='<div class="ptr-spinner" id="ptr-spinner"></div>';ptrWrap.insertBefore(indicator,scrollEl);}
+  let startY=0,pulling=false,triggered=false;
+  const THRESHOLD=72;
+  scrollEl.addEventListener("touchstart",e=>{if(scrollEl.scrollTop===0){startY=e.touches[0].clientY;pulling=true;triggered=false;}},{passive:true});
+  scrollEl.addEventListener("touchmove",e=>{
+    if(!pulling)return;
+    const dy=e.touches[0].clientY-startY;if(dy<=0){pulling=false;return;}
+    const pull=Math.min(dy*.45,70);
+    const spinner=document.getElementById("ptr-spinner");
+    if(pull>10){indicator.style.top=(pull-56)+"px";if(spinner){spinner.style.transform=`rotate(${Math.round((pull/THRESHOLD)*270)}deg)`;spinner.style.borderTopColor=pull>=THRESHOLD?"var(--accent)":"rgba(255,107,43,.5)";}}
+    if(pull>=THRESHOLD&&!triggered){triggered=true;const sp=document.getElementById("ptr-spinner");if(sp)sp.classList.add("spinning");}
+  },{passive:true});
+  scrollEl.addEventListener("touchend",e=>{
+    if(!pulling)return;pulling=false;
+    if(triggered){indicator.style.top="0px";setTimeout(()=>{const sp=document.getElementById("ptr-spinner");if(sp)sp.classList.remove("spinning");indicator.style.top="-56px";location.reload();},600);}
+    else indicator.style.top="-56px";
+  },{passive:true});
+}
+
+// ── BACKUP / RESTORE ─────────────────────────────────────────────────────────
+function exportDaten(){
+  const data = { schueler, termine, exportiert: new Date().toISOString() };
+  const json = JSON.stringify(data, null, 2);
+  const blob = new Blob([json], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  const datum = new Date().toISOString().split("T")[0];
+  a.href = url;
+  a.download = "fahrschule-backup-"+datum+".json";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importDatenPaste(){
+  document.getElementById("app").innerHTML=`
+    <div style="display:flex;flex-direction:column;height:100vh;padding:24px;gap:16px;box-sizing:border-box">
+      <div style="font-size:20px;font-weight:700;color:var(--accent)">JSON einfügen</div>
+      <div style="font-size:14px;color:var(--tx2)">Kopiere den Inhalt der Sicherungsdatei und füge ihn unten ein:</div>
+      <textarea id="paste-area" style="flex:1;border:1px solid var(--br2);border-radius:12px;padding:12px;font-size:13px;color:var(--tx);background:var(--bg2);outline:none;resize:none;-webkit-user-select:text;user-select:text" placeholder="JSON hier einfügen…"></textarea>
+      <button onclick="importDatenFromTextarea()" style="background:var(--accent);color:white;border:none;border-radius:12px;padding:16px;font-size:17px;cursor:pointer;font-family:inherit">✓ Wiederherstellen</button>
+      <button onclick="renderDashboard()" style="background:none;border:none;color:var(--tx3);font-size:14px;cursor:pointer;font-family:inherit">Abbrechen</button>
+    </div>`;
+  setTimeout(()=>{const ta=document.getElementById("paste-area");if(ta)ta.focus();},200);
+}
+function importDatenFromTextarea(){
+  const ta=document.getElementById("paste-area");
+  if(!ta||!ta.value.trim()){
+    showModal({title:"Fehler",msg:"Bitte JSON einfügen.",btns:[{label:"OK",action:"closeModal()"}]});return;
+  }
+  try{
+    const data=JSON.parse(ta.value.trim());
+    if(!data.schueler||!data.termine){
+      showModal({title:"Ungültige Daten",msg:"Die eingefügte Datei enthält keine gültigen Schüler- oder Terminedaten.",btns:[{label:"OK",action:"closeModal()"}]});return;
+    }
+    schueler=data.schueler;
+    termine=data.termine;
+    saveAll();
+    syncKalenderToFahrstunden();
+    renderDashboard();
+  }catch(err){
+    showModal({title:"Fehler",msg:"Fehler beim Einlesen: "+err.message,btns:[{label:"OK",action:"closeModal()"}]});
+  }
+}
+
+function importDaten(input){
+  const file = input.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e){
+    try {
+      const data = JSON.parse(e.target.result);
+      if(!data.schueler || !data.termine) {
+        showModal({title:"Ungültige Datei",msg:"Die Datei enthält keine gültigen Backup-Daten.",btns:[{label:"OK",action:"closeModal()"}]});return;
+      }
+      showModal({
+        title:"Daten wiederherstellen",
+        msg:"Alle aktuellen Daten werden durch das Backup ersetzt. Fortfahren?",
+        btns:[
+          {label:"Wiederherstellen",primary:true,action:"_doImportDaten("+JSON.stringify(JSON.stringify(data))+")"},
+          {label:"Abbrechen",action:"closeModal()"},
+        ]
+      });
+    } catch(err) {
+      showModal({title:"Fehler",msg:"Fehler beim Einlesen der Datei.",btns:[{label:"OK",action:"closeModal()"}]});
+    }
+  };
+  reader.readAsText(file);
+  input.value = "";
+}
+function _doImportDaten(jsonStr){
+  closeModal();
+  try{
+    const data=JSON.parse(jsonStr);
+    schueler=data.schueler;termine=data.termine;
+    saveAll();syncKalenderToFahrstunden();renderDashboard();
+  }catch(e){showModal({title:"Fehler",msg:"Daten konnten nicht wiederhergestellt werden.",btns:[{label:"OK",action:"closeModal()"}]});}
+}
+
+// ── SYNC FAHRSTUNDEN → KALENDER ──────────────────────────────────────────────
+function syncFahrstundenToKalender(){}
+
+function renderApp(html){
+  if(typeof IS_IPAD!=="undefined"&&IS_IPAD){
+    const d=document.getElementById("ipad-detail");
+    if(d){d.innerHTML=`<div style="display:flex;flex-direction:column;height:100%;overflow:hidden">${html}</div>`;return;}
+  }
+  document.getElementById("app").innerHTML=html;
+}
+
+
+function syncKalenderToFahrstunden(){
+  schueler.forEach(s=>{
+    s.fahrstunden=[];
+    const prevSonder={...(s.sonder&&!Array.isArray(s.sonder)?s.sonder:{ueberland:0,autobahn:0,nacht:0})};
+    const manualOverride={...(s.manualSonder||{})};
+    s.sonder={ueberland:0,autobahn:0,nacht:0};
+    Object.entries(termine).forEach(([datum,ts])=>{
+      ts.filter(t=>t.sid===s.id).forEach(t=>{
+        if(t.typ==="pruef"){
+          if(!s.pruefungen)s.pruefungen=[];
+          // Robust duplicate check: same datum (ignore time differences)
+          const existIdx=s.pruefungen.findIndex(p=>p.datum===datum);
+          if(existIdx<0){
+            // Push without versuch yet — we'll renumber after sort
+            s.pruefungen.push({datum,uhr:t.uhr,versuch:0,bestanden:null,prufort:s.prufort||""});
+          } else {
+            // Update uhr if missing
+            if(!s.pruefungen[existIdx].uhr&&t.uhr)s.pruefungen[existIdx].uhr=t.uhr;
+          }
+          return;
+        }
+        const notiz=(t.notiz||"").toLowerCase();
+        let typ=t.typ||"normal";
+        if(typ==="normal"||typ===""){
+          if(notiz.includes("überlandfahrt")||notiz.includes("überland"))typ="ueberland";
+          else if(notiz.includes("autobahnfahrt")||notiz.includes("autobahn"))typ="autobahn";
+          else if(notiz.includes("nachtfahrt")||notiz.includes("nacht"))typ="nacht";
+        }
+        if(typ==="ueberland")s.sonder.ueberland=(s.sonder.ueberland||0)+t.min;
+        if(typ==="autobahn")s.sonder.autobahn=(s.sonder.autobahn||0)+t.min;
+        if(typ==="nacht")s.sonder.nacht=(s.sonder.nacht||0)+t.min;
+        s.fahrstunden.push({datum,uhr:t.uhr,min:t.min,typ,einh:1,notiz:t.notiz||""});
+      });
+    });
+    s.fahrstunden.sort((a,b)=>b.datum.localeCompare(a.datum)||(b.uhr||"").localeCompare(a.uhr||""));
+    // Sort pruefungen by date, then assign versuch numbers correctly
+    if(s.pruefungen&&s.pruefungen.length){
+      s.pruefungen.sort((a,b)=>a.datum.localeCompare(b.datum));
+      s.pruefungen.forEach((p,i)=>{
+        // Only reassign if versuch is 0 (new) or was wrong
+        if(p.versuch===0)p.versuch=i+1;
+      });
+    }
+    // Apply manual overrides (explicit user setting takes precedence)
+    ['ueberland','autobahn','nacht'].forEach(k=>{
+      if(k in manualOverride){s.sonder[k]=manualOverride[k];}
+      else if((prevSonder[k]||0)>(s.sonder[k]||0)){s.sonder[k]=prevSonder[k];}
+    });
+  });
+}
+function renderDashSchueler(sid){
+  syncKalenderToFahrstunden();
+  const s=getS(sid);if(!s)return;
+  const td=todayStr();
+  const gefahren=Object.entries(termine).filter(([d])=>d<td).flatMap(([d,ts])=>ts.filter(t=>t.sid===sid));
+  const geplant=Object.entries(termine).filter(([d])=>d>=td).flatMap(([d,ts])=>ts.filter(t=>{
+    if(t.sid!==sid)return false;
+    // Exclude pruefung if already passed
+    if(t.typ==="pruef"){
+      const pruef=(s.pruefungen||[]).find(p=>p.datum===d&&p.bestanden===true);
+      if(pruef)return false;
+    }
+    return true;
+  }));
+  const gefahrenMin=gefahren.reduce((a,t)=>a+(t.min||0),0);
+  const geplantMin=geplant.reduce((a,t)=>a+(t.min||0),0);
+  const fahrstundenGesamt=(s.fahrstunden||[]).length;
+  const fahrstundenMin=(s.fahrstunden||[]).reduce((a,f)=>a+(f.min||80),0);
+  const naechstePruef=(()=>{
+    // Show upcoming without result, OR most recent past prüfung
+    const sorted=(s.pruefungen||[]).slice().sort((a,b)=>b.datum.localeCompare(a.datum));
+    const upcoming=sorted.find(p=>p.datum>=td&&p.bestanden===null||p.datum>=td&&p.bestanden===undefined);
+    const p=upcoming||sorted[0]||null;
+    if(!p)return null;
+    if(!p.uhr){
+      const kt=(termine[p.datum]||[]).find(t=>t.sid===sid&&t.typ==="pruef");
+      if(kt)p.uhr=kt.uhr;
+    }
+    return p;
+  })();
+  // Sonderfahrten progress - handle both array and object format
+  const sonderObj=(s.sonder&&!Array.isArray(s.sonder))?s.sonder:{ueberland:0,autobahn:0,nacht:0};
+  const notizLL=n=>(n||"").toLowerCase();
+  const sonderHTML=SONDER.map(sf=>{
+    const sfTermine=Object.entries(termine)
+      .filter(([d,ts])=>ts.some(t=>t.sid===sid&&(t.typ===sf.key||notizLL(t.notiz).includes(sf.key==="ueberland"?"überland":sf.key==="autobahn"?"autobahn":"nacht"))))
+      .map(([d,ts])=>{const t=ts.find(t=>t.sid===sid&&(t.typ===sf.key||notizLL(t.notiz).includes(sf.key==="ueberland"?"überland":sf.key==="autobahn"?"autobahn":"nacht")));return{datum:d,min:t?t.min:0};})
+      .sort((a,b)=>b.datum.localeCompare(a.datum));
+    const kalMin=sfTermine.reduce((a,t)=>a+t.min,0);
+    const manualDone=(s.sonder&&!Array.isArray(s.sonder))?s.sonder[sf.key]||0:0;
+    const isDone=kalMin>=sf.min||manualDone>=sf.min;
+    return`<div style="border-bottom:.5px solid var(--br2);padding:12px 0">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:${sfTermine.length?"6px":"0"}">
+        <div style="display:flex;align-items:center;gap:10px;cursor:pointer" onclick="toggleSonderDash('${sid}','${sf.key}',${sf.min})">
+          <i class="ti ${isDone?"ti-circle-check":"ti-circle"}" style="font-size:${isDone?"24px":"20px"};color:${isDone?"#27A843":"var(--tx3)"}"></i>
+          <span style="font-size:15px;font-weight:500;${isDone?"text-decoration:line-through;color:var(--tx3)":"color:var(--tx)"}">${sf.label}</span>
+        </div>
+        <span style="font-size:13px;color:${isDone?"#27A843":"var(--tx2)"}">${kalMin||manualDone}/${sf.min} min</span>
+      </div>
+      ${sfTermine.map(t=>{const fd=fmtDate(t.datum);return`<div style="display:flex;justify-content:space-between;padding:2px 0 2px 34px;font-size:12px;color:var(--tx2)"><span>${fd.day}. ${fd.mon} ${fd.year}</span><span>${t.min} min</span></div>`;}).join("")}
+    </div>`;
+  }).join("");
+  const gfaCount=GRUNDFAHRAUFGABEN.filter(g=>((s.gfa||{})[g.key]||0)>0).length;
+
+  let html=`<div class="screen active">
+    <div class="topbar">
+      <button class="btn-icon" onclick="renderDashboard()"><i class="ti ti-arrow-left"></i></button>
+      <span class="topbar-title">${s.vorname} ${s.nachname}</span>
+      <button class="btn-icon" onclick="renderNeuSchueler('${sid}')"><i class="ti ti-pencil"></i></button>
+    </div>
+    <div class="scroll">
+      <div class="stat-grid">
+        <div class="stat-box" onclick="changeKlasse('${sid}')" style="text-align:center;background:rgba(59,130,246,0.18);border:1px solid rgba(59,130,246,0.35);cursor:pointer;position:relative;"><div class="stat-lbl" style="color:#3B82F6">Klasse <i class="ti ti-pencil" style="font-size:10px;opacity:.6"></i></div><div class="stat-num" style="font-size:28px;color:#1D4ED8" id="klasse-box-${sid}">${s.klasse}</div></div>
+        <div class="stat-box" style="text-align:center;background:rgba(39,168,67,0.12);border:1px solid rgba(39,168,67,0.3)"><div class="stat-lbl" style="color:#27A843">Beginn</div><div class="stat-num" style="font-size:16px;color:#166534">${fmtDate(s.beginn).day}. ${fmtDate(s.beginn).mon} ${fmtDate(s.beginn).year}</div></div>
+      </div>
+      <div class="stat-grid">
+        <div class="stat-box accent" onclick="toggleFahrstundenDash('${sid}','past')" style="cursor:pointer;text-align:center;background:linear-gradient(135deg,rgba(255,120,50,0.9),rgba(210,55,0,0.95));border:1px solid rgba(255,170,100,0.6);box-shadow:0 4px 16px rgba(255,107,43,0.35)"><div class="stat-lbl">Gefahren</div><div class="stat-num">${gefahren.length}<span class="stat-unit">×</span></div><div style="font-size:11px;color:rgba(255,255,255,.7);margin-top:2px">${gefahrenMin} min</div></div>
+        <div class="stat-box" onclick="toggleFahrstundenDash('${sid}','future')" style="cursor:pointer;text-align:center;background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.3)"><div class="stat-lbl" style="color:#6366F1">Geplant</div><div class="stat-num" style="color:#4338CA">${geplant.length}<span class="stat-unit" style="color:#6366F1">×</span></div><div style="font-size:11px;color:#6366F1;margin-top:2px">${geplantMin} min</div></div>
+      </div>
+      <div id="fahr-list-${sid}" style="display:none;margin-bottom:8px" data-showing=""></div>
+      <div id="fs-list-${sid}" style="display:none"></div>
+
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-row"><span class="card-label"><i class="ti ti-book"></i>Theorie</span>
+          <span class="info-val">${s.theorie?"✓ Bestanden":"Ausstehend"}</span></div>
+        ${s.tel?`<div class="card-row" style="cursor:pointer" onclick="window.open('https://wa.me/${s.tel.replace(/^\+/,'').replace(/[^0-9]/g,'')}','_blank')">
+          <span class="card-label"><i class="ti ti-brand-whatsapp" style="color:#25D366;font-size:18px"></i>WhatsApp</span>
+          <span style="font-size:15px;font-weight:600;color:#25D366">${s.tel}</span>
+        </div>`:""}
+        <div class="card-row"><span class="card-label"><i class="ti ti-calendar-event"></i>Prüfung</span>
+          <span class="info-val">${naechstePruef?(fmtDate(naechstePruef.datum).day+". "+fmtDate(naechstePruef.datum).mon+" "+fmtDate(naechstePruef.datum).year+(naechstePruef.uhr?`<br><span style="font-size:13px;color:var(--tx2)">`+naechstePruef.uhr+" Uhr</span>":"")+  (naechstePruef.bestanden===true?`<br><span style="font-size:13px;font-weight:700;color:#27A843">✓ Bestanden</span>`:naechstePruef.bestanden===false?`<br><span style="font-size:13px;font-weight:700;color:#E24B4A">✗ Nicht bestanden</span>`:"")):"–"}</span></div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-map-pin"></i>Prüfort</span>
+          <span class="info-val">${naechstePruef&&naechstePruef.prufort?naechstePruef.prufort:s.prufort||"–"}</span></div>
+        ${naechstePruef?`<div style="padding-top:8px;display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;gap:8px">
+            <button onclick="setPruefErgebnis('${sid}','${naechstePruef.datum}',true)" style="flex:1;background:${naechstePruef.bestanden===true?'rgba(39,168,67,0.3)':'rgba(39,168,67,0.12)'};border:1.5px solid rgba(39,168,67,0.5);border-radius:10px;color:#166534;font-size:14px;font-weight:600;padding:10px 6px;cursor:pointer;font-family:inherit">${naechstePruef.bestanden===true?"✓ Bestanden ✓":"✓ Bestanden"}</button>
+            <button onclick="setPruefErgebnis('${sid}','${naechstePruef.datum}',false)" style="flex:1;background:${naechstePruef.bestanden===false?'rgba(226,75,74,0.25)':'rgba(226,75,74,0.1)'};border:1.5px solid rgba(226,75,74,0.4);border-radius:10px;color:#A32D2D;font-size:14px;font-weight:600;padding:10px 6px;cursor:pointer;font-family:inherit">${naechstePruef.bestanden===false?"✗ Nicht best. ✗":"✗ Nicht best."}</button>
+          </div>
+          ${naechstePruef.bestanden===true||naechstePruef.bestanden===false?`<button onclick="resetPruefErgebnis('${sid}','${naechstePruef.datum}')" style="background:none;border:1px solid var(--br2);border-radius:10px;color:var(--tx3);font-size:13px;padding:8px;cursor:pointer;font-family:inherit;width:100%">↩ Ergebnis zurücksetzen</button>`:""}
+        </div>`:""}
+      </div>
+
+      
+      <div><div class="sec-label">Grundfahraufgaben <span style="color:var(--tx3);font-weight:400">${gfaCount}/${GRUNDFAHRAUFGABEN.length}</span></div>
+      <div class="card">
+        ${GRUNDFAHRAUFGABEN.map(g=>{const cnt=(s.gfa||{})[g.key]||0;return`<div class="gfa-row"><span class="gfa-label"><i class="ti ${g.icon}" style="font-size:16px;margin-right:8px;color:var(--tx3)"></i>${g.label}</span><div class="gfa-controls"><button class="gfa-btn" onclick="changeGFADash('${sid}','${g.key}',-1)">−</button><span class="gfa-count" id="gfa-${sid}-${g.key}-d">${cnt}</span><button class="gfa-btn" onclick="changeGFADash('${sid}','${g.key}',1)">+</button></div></div>`;}).join("")}
+      </div></div>
+
+      <div>
+        <div onclick="toggleNotizBadge('${sid}')" style="display:flex;align-items:center;justify-content:space-between;padding:16px 14px;background:rgba(255,107,43,0.08);border-radius:12px;cursor:pointer;border:1px solid rgba(255,107,43,0.2);margin-bottom:4px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <i class="ti ti-notes" style="font-size:20px;color:var(--accent)"></i>
+            <span style="font-weight:600;color:var(--tx)">Notizen</span>
+            ${(s.notizen&&s.notizen.length)?`<span style="background:var(--accent);color:white;border-radius:10px;padding:1px 8px;font-size:12px">${s.notizen.length}</span>`:''}
+          </div>
+          <i id="notiz-chevron-${sid}" class="ti ti-chevron-down" style="color:var(--tx3);transition:transform .2s"></i>
+        </div>
+        <div id="notiz-dash-body-${sid}" style="display:none;margin-bottom:8px">
+          <div class="card" style="padding:12px 16px">
+            <textarea id="notiz-dash-input-${sid}"
+              style="width:100%;min-height:140px;border:none;background:transparent;font-size:18px;color:var(--tx);outline:none;resize:vertical;font-family:inherit;line-height:1.6;-webkit-user-select:text;user-select:text"
+              placeholder="Notizen hier eingeben…"
+              onblur="saveNotizTextDash('${sid}',this.value)"
+            >${(s.notizen&&s.notizen.length)?s.notizen.map(n=>n.text).join('\n'):''}</textarea>
+          </div>
+        </div>
+      </div>
+
+      </div>`;
+  renderApp(html);
+  setTimeout(()=>{
+    initPTR();
+    const lbl=document.getElementById("ddb-lbl");
+    const min=document.getElementById("ddb-min");
+    if(lbl)lbl.textContent=anzeigeLblShort+" geplant";
+    if(min)min.innerHTML=anzeigeTotalMin+'<span class="stat-unit">min</span>';
+  },10);
+}
+
+function resetPruefErgebnis(sid,datum){
+  const s=getS(sid);if(!s)return;
+  const p=(s.pruefungen||[]).find(p=>p.datum===datum);
+  if(p){p.bestanden=null;}
+  saveAll();
+  renderDashSchueler(sid);
+}
+
+function setPruefErgebnis(sid,datum,bestanden){
+  const s=getS(sid);if(!s)return;
+  if(!s.pruefungen)s.pruefungen=[];
+  const p=s.pruefungen.find(p=>p.datum===datum);
+  if(p){
+    if(bestanden===null){delete p.bestanden;p.bestanden=null;}
+    else{p.bestanden=bestanden;}
+  } else if(bestanden!==null){
+    s.pruefungen.push({datum,versuch:1,bestanden,prufort:s.prufort||""});
+  }
+  saveAll();
+  syncKalenderToFahrstunden();
+  renderDashSchueler(sid);
+}
+
+function toggleNotizBadge(sid){
+  const s=getS(sid);if(!s)return;
+  const text=(s.notizen&&s.notizen.length)?s.notizen.map(n=>n.text).join('\n'):'';
+  const html=`<div class="screen active">
+    <div class="topbar">
+      <button class="btn-icon" onclick="renderDashSchueler('${sid}')"><i class="ti ti-arrow-left"></i></button>
+      <span class="topbar-title"><i class="ti ti-notes" style="margin-right:6px"></i>Notizen · ${s.vorname}</span>
+    </div>
+    <div class="scroll" style="padding:16px">
+      <textarea id="notiz-screen-${sid}"
+        style="width:100%;min-height:calc(100vh - 140px);border:none;background:transparent;font-size:24px;color:var(--tx);outline:none;resize:none;font-family:inherit;line-height:1.8;-webkit-user-select:text;user-select:text;box-sizing:border-box"
+        placeholder="Notizen hier eingeben…"
+        onblur="saveNotizTextDash('${sid}',this.value)"
+      >${text}</textarea>
+    </div>
+  </div>`;
+  renderApp(html);
+  setTimeout(()=>{initPTR();const ta=document.getElementById("notiz-screen-"+sid);if(ta)ta.focus();},100);
+}
+
+function saveNotizTextDash(sid,val){
+  const s=getS(sid);if(!s)return;
+  const lines=val.split("\n").map(t=>t.trim()).filter(t=>t);
+  s.notizen=lines.map(t=>({text:t,done:false}));
+  saveAll();
+}
+
+function toggleSonderDash(sid,key,min){
+  const s=getS(sid);if(!s)return;
+  if(!s.sonder||Array.isArray(s.sonder))s.sonder={ueberland:0,autobahn:0,nacht:0};
+  s.sonder[key]=(s.sonder[key]||0)>=min?0:min;
+  saveAll();
+  const icon=document.getElementById("sf-icon-"+key);
+  const label=document.getElementById("sf-label-"+key);
+  if(icon){icon.className="ti "+(s.sonder[key]>=min?"ti-checkbox":"ti-square");icon.style.color=s.sonder[key]>=min?"#27A843":"var(--tx3)";}
+  if(label){label.style.textDecoration=s.sonder[key]>=min?"line-through":"none";label.style.color=s.sonder[key]>=min?"var(--tx3)":"var(--tx)";}
+}
+
+function renderSonderDoku(sid,s){
+  const SONDER_TYPEN=[
+    {key:'ueberland',label:'Überlandfahrt',required:270},
+    {key:'autobahn',label:'Autobahnfahrt',required:225},
+    {key:'nacht',label:'Nachtfahrt',required:135}
+  ];
+  const notizL=n=>(n||'').toLowerCase();
+  let html='<div class="card" style="padding:0;overflow:hidden">';
+  SONDER_TYPEN.forEach(sf=>{
+    const sfTermine=Object.entries(termine)
+      .filter(([d,ts])=>ts.some(t=>t.sid===sid&&(t.typ===sf.key||notizL(t.notiz).includes(sf.key==='ueberland'?'überland':sf.key==='autobahn'?'autobahn':'nacht'))))
+      .map(([d,ts])=>{const t=ts.find(t=>t.sid===sid&&(t.typ===sf.key||notizL(t.notiz).includes(sf.key==='ueberland'?'überland':sf.key==='autobahn'?'autobahn':'nacht')));return{datum:d,min:t?t.min:0};})
+      .sort((a,b)=>b.datum.localeCompare(a.datum));
+    const manualMin=(s.sonder&&!Array.isArray(s.sonder)?s.sonder[sf.key]:0)||0;
+    const totalMin=sfTermine.reduce((a,t)=>a+t.min,0)||manualMin;
+    const done=totalMin>=sf.required;
+    html+=`<div style="padding:12px 16px;border-bottom:.5px solid var(--br2)">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:${sfTermine.length?'6px':'0'}">
+        <div style="display:flex;align-items:center;gap:8px">
+          <i class="ti ${done?'ti-circle-check':'ti-circle'}" style="font-size:${done?'22px':'18px'};color:${done?'#27A843':'var(--tx3)'}"></i>
+          <span style="font-weight:500;${done?'text-decoration:line-through;color:var(--tx3)':'color:var(--tx)'}">${sf.label}</span>
+        </div>
+        <span style="font-size:13px;color:${done?'#27A843':'var(--tx2)'}">${totalMin}/${sf.required} min</span>
+      </div>
+      ${sfTermine.map(t=>{const fd=fmtDate(t.datum);return`<div style="display:flex;justify-content:space-between;padding:2px 0 2px 30px;font-size:12px;color:var(--tx2)"><span>${fd.day}. ${fd.mon} ${fd.year}</span><span>${t.min} min</span></div>`;}).join('')}
+    </div>`;
+  });
+  html+='</div>';
+  return html;
+}
+
+function toggleSonderSchueler(sid,key,min){
+  const s=getS(sid);if(!s)return;
+  if(!s.sonder||Array.isArray(s.sonder))s.sonder={ueberland:0,autobahn:0,nacht:0};
+  if(!s.manualSonder)s.manualSonder={};
+  const isDone=(s.sonder[key]||0)>=min;
+  s.sonder[key]=isDone?0:min;
+  s.manualSonder[key]=s.sonder[key]; // store explicit override
+  saveAll();
+  const icon=document.getElementById("sf-icon-"+key);
+  const label=document.getElementById("sf-label-"+key);
+  const inp=document.getElementById("sf-"+key);
+  if(icon){icon.className="ti "+(isDone?"ti-square":"ti-checkbox");icon.style.color=isDone?"var(--tx3)":"#27A843";}
+  if(label){label.style.textDecoration=isDone?"none":"line-through";label.style.color=isDone?"var(--tx)":"var(--tx3)";}
+  if(inp)inp.value=isDone?0:min;
+}
+
+function toggleSonderEdit(key,min){
+  const inp=document.getElementById("sf-"+key);
+  const icon=document.getElementById("sf-icon-"+key);
+  if(!inp)return;
+  const cur=parseInt(inp.value)||0;
+  const next=cur>=min?0:min;
+  inp.value=next;
+  if(icon){icon.className="ti "+(next>=min?"ti-checkbox":"ti-square");icon.style.color=next>=min?"var(--accent)":"var(--tx3)";}
+}
+
+function changeGFADash(sid,key,d){
+  const s=getS(sid);if(!s)return;
+  if(!s.gfa)s.gfa={};
+  s.gfa[key]=Math.max(0,(s.gfa[key]||0)+d);
+  saveAll();
+  const el=document.getElementById("gfa-"+sid+"-"+key+"-d");
+  if(el)el.textContent=s.gfa[key];
+}
+
+function toggleFahrstundenDash(sid,type){
+  const el=document.getElementById("fahr-list-"+sid);
+  if(!el)return;
+  const showing=el.dataset.showing===type;
+  if(showing){el.style.display="none";el.dataset.showing="";return;}
+  el.dataset.showing=type;
+  el.style.display="block";
+  const s=getS(sid);if(!s)return;
+  const td=todayStr();
+  let entries;
+  if(type==="past"){
+    entries=Object.entries(termine).filter(([d])=>d<td).flatMap(([d,ts])=>ts.filter(t=>t.sid===sid).map(t=>({datum:d,...t}))).sort((a,b)=>b.datum.localeCompare(a.datum));
+  } else {
+    entries=Object.entries(termine).filter(([d])=>d>=td).flatMap(([d,ts])=>ts.filter(t=>t.sid===sid).map(t=>({datum:d,...t}))).sort((a,b)=>{
+      const aP=a.typ==="pruef"?0:1;
+      const bP=b.typ==="pruef"?0:1;
+      if(aP!==bP)return aP-bP;
+      return b.datum.localeCompare(a.datum)||(b.uhr||"").localeCompare(a.uhr||"");
+    });
+  }
+  const wt=["So","Mo","Di","Mi","Do","Fr","Sa"];
+  el.innerHTML=entries.length?entries.map(e=>{
+    const fd=fmtDate(e.datum);
+    const dow=wt[new Date(e.datum).getDay()];
+    const isPruef=e.typ==="pruef";
+    return`<div style="display:flex;justify-content:space-between;padding:8px 12px;border-bottom:.5px solid var(--br2);font-size:13px;${isPruef?'background:rgba(226,75,74,0.06)':''}">
+      <span style="color:${isPruef?'#E24B4A':'var(--tx2)'};">${dow} ${fd.day}. ${fd.mon}${isPruef?' 🎯':''}</span>
+      <span style="color:${isPruef?'#E24B4A':'var(--tx)'};font-weight:${isPruef?'600':'400'}">${e.uhr||""} · ${e.min} min</span>
+    </div>`;
+  }).join(""):`<div style="padding:10px 12px;font-size:13px;color:var(--tx3)">Keine Einträge</div>`;
+}
+
+// ── STATISTIK ─────────────────────────────────────────────────────────────────
+function renderAbrechnung(weekOffset=0){
+  const satz=getAbrechnungSatz();
+  const td=todayStr();
+  const now=new Date();
+  const moK=["Jan","Feb","M\u00e4r","Apr","Mai","Jun","Jul","Aug","Sep","Okt","Nov","Dez"];
+  const moLang=["Januar","Februar","M\u00e4rz","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
+  function toEuro(min){return((min/60)*satz).toFixed(2).replace('.',',')+" \u20ac";}
+  function getMin(prefix){return Object.entries(termine).reduce((sum,[d,ts])=>{if(d.startsWith(prefix))return sum+ts.reduce((a,e)=>a+(e.min||0),0);return sum;},0);}
+  // Tag
+  const tagMin=getMin(td);
+  const tagName=now.getDate()+". "+moK[now.getMonth()];
+  // Woche Mo-Fr (navigierbar)
+  const baseDate=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  const todayDow=(baseDate.getDay()+6)%7;
+  baseDate.setDate(baseDate.getDate()-todayDow+weekOffset*7);
+  const baseDateStr=toKey(baseDate.getFullYear(),baseDate.getMonth()+1,baseDate.getDate());
+  const wocheMin=Object.entries(termine).reduce((sum,[d,ts])=>{
+    const diff=Math.round((new Date(d)-new Date(baseDateStr))/86400000);
+    if(diff>=0&&diff<=4)return sum+ts.reduce((a,e)=>a+(e.min||0),0);
+    return sum;
+  },0);
+  const wkEnd=new Date(baseDate);wkEnd.setDate(wkEnd.getDate()+4);
+  const wkLabel=baseDate.getDate()+". \u2013 "+wkEnd.getDate()+". "+moK[wkEnd.getMonth()];
+  const weekDays=[];
+  const wtN=["Mo","Di","Mi","Do","Fr"];
+  for(let i=0;i<5;i++){
+    const d2=new Date(baseDate);d2.setDate(d2.getDate()+i);
+    const ds=toKey(d2.getFullYear(),d2.getMonth()+1,d2.getDate());
+    const min=(termine[ds]||[]).reduce((a,e)=>a+(e.min||0),0);
+    weekDays.push({name:wtN[i],ds,min,isToday:ds===td});
+  }
+  const maxDayMin=Math.max(...weekDays.map(x=>x.min),1);
+  // Monat & Jahr
+  const monatStr=td.substring(0,7);
+  const jahrStr=td.substring(0,4);
+  const monatMin=getMin(monatStr);
+  const jahrMin=getMin(jahrStr);
+  // Monatsverlauf
+  const allMonths={};
+  Object.entries(termine).forEach(([d,ts])=>{const m=d.substring(0,7);if(!allMonths[m])allMonths[m]=0;allMonths[m]+=ts.reduce((a,e)=>a+(e.min||0),0);});
+  const sortedMonths=Object.entries(allMonths).sort((a,b)=>b[0].localeCompare(a[0]));
+  const maxMonthMin=sortedMonths[0]?.[1]||1;
+  const html=`<div class="screen active" id="scr-abrech">
+    <div class="topbar">
+      <button class="btn-icon" onclick="renderDashboard()"><i class="ti ti-arrow-left"></i></button>
+      <span class="topbar-title"><i class="ti ti-receipt" style="font-size:18px;margin-right:6px"></i>Abrechnung</span>
+    </div>
+    <div class="scroll">
+      <!-- 4 Kacheln -->
+      <div class="stat-grid" style="margin-bottom:10px">
+        <div class="stat-box accent" style="text-align:center">
+          <div class="stat-lbl">HEUTE \u00b7 ${tagName}</div>
+          <div style="font-size:26px;font-weight:700;color:white;margin-top:4px">${toEuro(tagMin)}</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.7);margin-top:3px">${tagMin} min</div>
+        </div>
+        <div class="stat-box" style="text-align:center">
+          <div class="stat-lbl">WOCHE</div>
+          <div style="font-size:26px;font-weight:700;color:#E24B4A;margin-top:4px">${toEuro(wocheMin)}</div>
+          <div style="font-size:13px;color:var(--tx3);margin-top:3px">${wocheMin} min</div>
+        </div>
+        <div class="stat-box" style="text-align:center">
+          <div class="stat-lbl">${moLang[now.getMonth()].toUpperCase()}</div>
+          <div style="font-size:26px;font-weight:700;color:#E24B4A;margin-top:4px">${toEuro(monatMin)}</div>
+          <div style="font-size:13px;color:var(--tx3);margin-top:3px">${monatMin} min</div>
+        </div>
+        <div class="stat-box" style="text-align:center">
+          <div class="stat-lbl">${jahrStr}</div>
+          <div style="font-size:26px;font-weight:700;color:#E24B4A;margin-top:4px">${toEuro(jahrMin)}</div>
+        </div>
+      </div>
+      <!-- Woche Mo-Fr mit Navigation -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;padding:0 2px">
+        <button onclick="renderAbrechnung(${weekOffset-1})" style="background:none;border:none;cursor:pointer;color:var(--accent);font-size:22px;padding:4px 10px"><i class="ti ti-chevron-left"></i></button>
+        <span style="font-size:14px;font-weight:600;color:var(--tx)">Mo\u2013Fr \u00b7 ${wkLabel}${weekOffset===0?" \u00b7 diese Woche":""}</span>
+        <button onclick="renderAbrechnung(${weekOffset+1})" style="background:none;border:none;cursor:pointer;color:${weekOffset<0?"var(--accent)":"var(--tx3)"};font-size:22px;padding:4px 10px"><i class="ti ti-chevron-right"></i></button>
+      </div>
+      <div class="stat-card" style="margin-bottom:10px">
+        ${weekDays.map(d=>`<div style="margin-bottom:10px;cursor:pointer" onclick="renderTagAnsicht('${d.ds}')">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">
+            <span style="font-size:14px;font-weight:${d.isToday?"700":"400"};color:${d.isToday?"var(--accent)":"var(--tx)"}">${d.name} ${parseInt(d.ds.split("-")[2])}.</span>
+            <span style="font-size:13px;color:var(--tx2)">${d.min?d.min+" min \u00b7 "+toEuro(d.min):"\u2013"}</span>
+          </div>
+          ${d.min?`<div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${Math.round((d.min/maxDayMin)*100)}%"></div></div>`:""}
+        </div>`).join("")}
+      </div>
+      <!-- Monatsverlauf -->
+      <div><div class="sec-label">Monatsverlauf</div>
+      <div class="stat-card">
+        ${sortedMonths.map(([m,min])=>{
+          const [y,mo]=m.split("-");
+          const mName=moK[parseInt(mo)-1];
+          const isCurrent=m===monatStr;
+          return`<div style="margin-bottom:14px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+              <span style="font-size:14px;font-weight:${isCurrent?"700":"400"};color:${isCurrent?"var(--accent)":"var(--tx)"}">${mName} ${y}</span>
+              <div style="text-align:right">
+                <div style="font-size:15px;font-weight:700;color:${isCurrent?"#E24B4A":"var(--tx)"}">${toEuro(min)}</div>
+                <div style="font-size:11px;color:var(--tx3)">${min} min</div>
+              </div>
+            </div>
+            <div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${Math.round((min/maxMonthMin)*100)}%"></div></div>
+          </div>`;
+        }).join("")}
+      </div></div>
+      <!-- Einstellungen -->
+      <div><div class="sec-label">Einstellungen</div>
+      <div class="card">
+        <div class="card-row">
+          <span class="card-label"><i class="ti ti-currency-euro"></i>Satz / 60 min</span>
+          <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end;flex:1">
+            <input type="number" id="satz-input" value="${satz}" min="1" max="999" step="0.5" onfocus="this.select()"
+              style="width:80px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:17px;color:var(--tx);padding:6px"
+              onchange="saveSatz(this.value)"/>
+            <span style="font-size:15px;color:var(--tx2)">\u20ac</span>
+          </div>
+        </div>
+      </div></div>
+    </div>
+  </div>`;
+  renderApp(html);
+  setTimeout(initPTR,50);
+}
+
+function getAbrechnungSatz(){return parseFloat(localStorage.getItem("fs_satz")||"25");}
+function saveSatz(val){const v=parseFloat(val);if(!isNaN(v)&&v>0){localStorage.setItem("fs_satz",String(v));renderAbrechnung();}}
+function getKW(date){const d=new Date(Date.UTC(date.getFullYear(),date.getMonth(),date.getDate()));const dayNum=d.getUTCDay()||7;d.setUTCDate(d.getUTCDate()+4-dayNum);const yearStart=new Date(Date.UTC(d.getUTCFullYear(),0,1));return Math.ceil((((d-yearStart)/86400000)+1)/7);}
+
+function exportMonatPDF(monatStr){
+  const satz=getAbrechnungSatz();
+  const [y,m]=monatStr.split('-');
+  const monatName=["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"][parseInt(m)-1];
+  const dim=new Date(parseInt(y),parseInt(m),0).getDate();
+  function toEuro(min){return((min/60)*satz).toFixed(2).replace('.',',')+" €";}
+  function toStd(min){const h=Math.floor(min/60);const mm=min%60;return h+"h "+String(mm).padStart(2,"0")+"min";}
+  const wochentage=["So","Mo","Di","Mi","Do","Fr","Sa"];
+  let rows='';let total=0;
+  for(let d=1;d<=dim;d++){
+    const ds=toKey(parseInt(y),parseInt(m),d);
+    const date=new Date(parseInt(y),parseInt(m)-1,d);
+    const dow=date.getDay();
+    if(dow===0||dow===6)continue;
+    const min=(termine[ds]||[]).reduce((a,t)=>a+(t.min||0),0);
+    total+=min;
+    rows+=`<tr style="background:${min?'#fff':'#f9f9f9'}">
+      <td style="padding:14px 16px;border-bottom:1px solid #eee;color:#666">${wochentage[dow]}</td>
+      <td style="padding:14px 16px;border-bottom:1px solid #eee;font-weight:600">${d}. ${monatName}</td>
+      <td style="padding:14px 16px;border-bottom:1px solid #eee;text-align:right">${min?min+' min':'-'}</td>
+      <td style="padding:14px 16px;border-bottom:1px solid #eee;text-align:right">${min?toStd(min):'-'}</td>
+      <td style="padding:14px 16px;border-bottom:1px solid #eee;text-align:right;color:${min?'#E24B4A':'#999'}">${min?toEuro(min):'-'}</td>
+    </tr>`;
+  }
+  const html=`<!DOCTYPE html><html><head><meta charset="utf-8">
+  <title>Abrechnung ${monatName} ${y}</title>
+  <style>body{font-family:-apple-system,sans-serif;padding:20px;color:#333}
+  h1{font-size:26px;margin-bottom:4px}h2{font-size:18px;color:#666;font-weight:normal;margin-bottom:20px}
+  table{width:100%;border-collapse:collapse;font-size:20px}th{padding:14px 16px;background:#FF6B2B;color:white;text-align:left;font-size:19px}
+  td{font-size:20px}
+  .total{font-weight:700;font-size:23px;padding:16px;text-align:right;border-top:2px solid #FF6B2B}
+  @media print{button{display:none}}</style></head>
+  <body>
+  <h1>Fahrschule Aras — Abrechnung ${monatName} ${y}</h1>
+  <h2>Satz: ${satz} € / 60 min</h2>
+  <table><tr><th>Tag</th><th>Datum</th><th>Minuten</th><th>Stunden</th><th>Verdienst</th></tr>
+  ${rows}
+  <tr><td colspan="2" class="total">Gesamt</td>
+  <td class="total">${total} min</td>
+  <td class="total">${toStd(total)}</td>
+  <td class="total" style="color:#E24B4A">${toEuro(total)}</td></tr>
+  </table>
+  <br><div style="display:flex;flex-direction:column;gap:12px;margin-top:16px"><button onclick="window.print()" style="background:#FF6B2B;color:white;border:none;padding:52px 16px;border-radius:18px;font-size:24px;font-weight:700;cursor:pointer;width:100%">🖨️ Drucken / Als PDF speichern</button><button onclick="window.close()" style="background:#eee;color:#333;border:none;padding:52px 16px;border-radius:18px;font-size:24px;font-weight:700;cursor:pointer;width:100%">✕ Schließen</button></div>
+  </body></html>`;
+  const w=window.open('','_blank');
+  w.document.write(html);
+  w.document.close();
+}
+
+(async()=>{
+  try{
+    // Korrektur 1: Versuchsnummern chronologisch neu vergeben
+    schueler.forEach(s=>{
+      if(s.pruefungen&&s.pruefungen.length>1){
+        s.pruefungen.sort((a,b)=>a.datum.localeCompare(b.datum));
+        s.pruefungen.forEach((p,i)=>{p.versuch=i+1;});
+      }
+    });
+    // Korrektur 2: Prüfungen entfernen die keinen echten pruef-Kalendereintrag haben
+    // und kein Ergebnis (bestanden/nicht bestanden) gesetzt haben — nur "Geister"
+    schueler.forEach(s=>{
+      if(!s.pruefungen||!s.pruefungen.length)return;
+      s.pruefungen=s.pruefungen.filter(p=>{
+        // Prüfung mit gesetztem Ergebnis immer behalten
+        if(p.bestanden===true||p.bestanden===false)return true;
+        // Prüfen ob ein echter pruef-Eintrag im Kalender existiert
+        const kalEintrag=(termine[p.datum]||[]).find(t=>
+          t.sid===s.id&&t.typ==="pruef"
+        );
+        return !!kalEintrag;
+      });
+      // Versuchsnummern nach dem Filter neu vergeben
+      s.pruefungen.sort((a,b)=>a.datum.localeCompare(b.datum));
+      s.pruefungen.forEach((p,i)=>{p.versuch=i+1;});
+    });
+    syncKalenderToFahrstunden();
+    save("fs_schueler",schueler);
+  }catch(e){console.error("sync error:",e);}
+  try{
+    if(!localStorage.getItem("fs_schueler")&&schueler.length===0){
+      document.getElementById("app").innerHTML=`
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:32px;text-align:center;gap:16px">
+          <i class="ti ti-steering-wheel" style="font-size:64px;color:var(--accent)"></i>
+          <div style="font-size:22px;font-weight:700">Fahrschule</div>
+          <div style="font-size:14px;color:var(--tx2);line-height:1.5">Keine Daten gefunden.<br><br>
+            <strong>So geht es:</strong><br>
+            1. Öffne die JSON-Sicherung in der Dateien-App<br>
+            2. Tippe lange → Alles auswählen → Kopieren<br>
+            3. Komm zurück und tippe auf den Button:
+          </div>
+          <button onclick="importDatenPaste()" style="background:var(--accent);color:white;border:none;border-radius:12px;padding:16px 28px;font-size:17px;cursor:pointer;font-family:inherit;width:100%;margin-top:8px">
+            <i class="ti ti-clipboard"></i> JSON hier einfügen
+          </button>
+          <div style="font-size:12px;color:var(--tx3)">oder</div>
+          <button onclick="document.getElementById('import-input-boot').click()" style="background:none;border:1px solid var(--br);border-radius:12px;padding:12px 20px;font-size:15px;cursor:pointer;font-family:inherit;color:var(--tx);width:100%">
+            <i class="ti ti-upload"></i> Datei auswählen
+          </button>
+          <input type="file" id="import-input-boot" accept=".json" style="display:none" onchange="importDaten(this)"/>
+          <button onclick="renderDashboard()" style="background:none;border:none;color:var(--tx3);font-size:13px;cursor:pointer;font-family:inherit;margin-top:4px">Leer starten</button>
+        </div>`;
+    } else {
+      renderDashboard();
+    }
+  }catch(e){
+    console.error("render error:",e);
+    document.getElementById("app").innerHTML=`<div style="padding:20px;color:red">Fehler: ${e.message}</div>`;
+  }
+})();
+</script>
+</body>
+</html>
