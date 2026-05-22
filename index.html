@@ -1791,10 +1791,10 @@ function renderEditDashTermin(date,idx){
   const t=(termine[date]||[])[idx];if(!t)return;
   const s=getS(t.sid);if(!s)return;
   const fd=fmtDate(date);
-  AppState.et.date=date;AppState.et.idx=idx;AppState.et.min=t.min;AppState.et.isAuffrisch=isAuffrisch3;
+  AppState.et.date=date;AppState.et.idx=idx;AppState.et.min=t.min;AppState.et.isAuffrisch=isAuffrisch3;AppState.et.backSid=t.sid;
   let html=`<div class="screen active" id="scr-edit-termin">
     <div class="topbar">
-      <button class="btn-icon" onclick="renderDashboard()"><i class="ti ti-x"></i></button>
+      <button class="btn-icon" onclick="AppState.et.backSid?renderDashSchueler(AppState.et.backSid):renderDashboard()"><i class="ti ti-arrow-left"></i></button>
       <span class="topbar-title">Termin bearbeiten</span>
     </div>
     <div class="scroll">
@@ -1843,7 +1843,7 @@ function saveEditDashTermin(){
   termine[date][idx].min=AppState.et.min||80;
   termine[date][idx].notiz=document.getElementById("et-notiz").value.trim();
   termine[date].sort((a,b)=>a.uhr.localeCompare(b.uhr));
-  saveAll();renderDashboard();
+  saveAll();if(AppState.et.backSid)renderDashSchueler(AppState.et.backSid);else renderDashboard();
 }
 
 function deleteEditDashTermin(){
@@ -2143,7 +2143,7 @@ function _doDelDashTermin(date,idx){
   if(!termine[date])return;
   termine[date].splice(idx,1);
   if(!termine[date].length)delete termine[date];
-  saveAll();renderDashboard();
+  saveAll();if(AppState.et.backSid)renderDashSchueler(AppState.et.backSid);else renderDashboard();
 }
 function showTagTerminActions(date,idx){
   const t=(termine[date]||[]);const e=t[idx];if(!e)return;
@@ -2595,6 +2595,14 @@ function changeGFADash(sid,key,d){
   if(el)el.textContent=s.gfa[key];
 }
 
+function closeToggleAndEdit(sid,datum,idx){
+  // Schließe die aufgeklappte Liste, dann öffne Edit-Dialog
+  const el=document.getElementById("fahr-list-"+sid);
+  if(el){el.style.display="none";el.dataset.showing="";}
+  if(idx<0)return;
+  renderEditDashTermin(datum,idx);
+}
+
 function toggleFahrstundenDash(sid,type){
   const el=document.getElementById("fahr-list-"+sid);
   if(!el)return;
@@ -2616,13 +2624,14 @@ function toggleFahrstundenDash(sid,type){
     });
   }
   const wt=["So","Mo","Di","Mi","Do","Fr","Sa"];
-  el.innerHTML=entries.length?entries.map(e=>{
+  el.innerHTML=entries.length?entries.map((e,i)=>{
     const fd=fmtDate(e.datum);
     const dow=wt[new Date(e.datum).getDay()];
     const isPruef=e.typ==="pruef";
-    return`<div style="display:flex;justify-content:space-between;padding:8px 12px;border-bottom:.5px solid var(--br2);font-size:13px;${isPruef?'background:rgba(226,75,74,0.06)':''}">
+    const realIdx=(termine[e.datum]||[]).findIndex(t=>t.sid===e.sid&&t.uhr===e.uhr&&t.min===e.min);
+    return`<div onclick="closeToggleAndEdit('${sid}','${e.datum}',${realIdx})" style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-bottom:.5px solid var(--br2);font-size:13px;cursor:pointer;${isPruef?'background:rgba(226,75,74,0.06)':''}">
       <span style="color:${isPruef?'#E24B4A':'var(--tx2)'};">${dow} ${fd.day}. ${fd.mon}${isPruef?' 🎯':''}</span>
-      <span style="color:${isPruef?'#E24B4A':'var(--tx)'};font-weight:${isPruef?'600':'400'}">${e.uhr||""} · ${e.min} min</span>
+      <div style="display:flex;align-items:center;gap:8px"><span style="color:${isPruef?'#E24B4A':'var(--tx)'};font-weight:${isPruef?'600':'400'}">${e.uhr||""} · ${e.min} min</span><i class="ti ti-pencil" style="font-size:13px;color:var(--tx3)"></i></div>
     </div>`;
   }).join(""):`<div style="padding:10px 12px;font-size:13px;color:var(--tx3)">Keine Einträge</div>`;
 }
