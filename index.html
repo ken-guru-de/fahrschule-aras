@@ -1464,7 +1464,7 @@ function renderCalGrid(){
       const dr=document.createElement("div");dr.className="dot-row";
       t.slice(0,6).forEach(e=>{
         let cls="cdot-g";
-        if(e.typ==="pruef"||(e.min===100&&(!e.typ||e.typ===""||e.typ==="normal")))cls="cdot-r";
+        if(e.typ==="pruef")cls="cdot-r";
         else if(e.typ==="ueberland"||e.typ==="autobahn"||e.typ==="nacht"||e.min===225||e.min===220||e.min===135)cls="cdot-b";
         const dot=document.createElement("div");
         dot.className="cdot "+cls;
@@ -1900,7 +1900,7 @@ function renderTagAnsicht(date){
       const nick=s&&s.spitz?` «${s.spitz}»`:"";
       const endMin=(()=>{const [h,m]=e.uhr.split(":").map(Number);const tot=h*60+m+e.min;return String(Math.floor(tot/60)%24).padStart(2,"0")+":"+String(tot%60).padStart(2,"0");})();
       const notizL=(e.notiz||'').toLowerCase();const isSonder=e.typ==='ueberland'||e.typ==='autobahn'||e.typ==='nacht'||notizL.includes('überland')||notizL.includes('autobahn')||notizL.includes('nachtfahrt')||e.min===225||e.min===220||e.min===135;
-      const isPruef=e.typ==="pruef"||(e.min===100&&(!e.typ||e.typ==="normal"||e.typ===""));
+      const isPruef=e.typ==="pruef";
       const dotCol=isPruef?"#E24B4A":isSonder?"#378ADD":"#639922";
       totalMin+=e.min;
       const realIdx=t.indexOf(e);
@@ -1970,7 +1970,7 @@ function renderEditKalTermin(date,idx){
           <span style="font-size:13px;color:var(--tx2)">Art der Fahrt</span>
           <div style="display:flex;gap:6px;flex-wrap:wrap">
             <button class="pill ${t.min===80?"active":""}" id="ektyp-normal" onclick="setEKTyp('normal')" style="font-size:13px;padding:6px 10px">Fahrstunde</button>
-            <button class="pill ${t.min===100?"active":""}" id="ektyp-pruef" onclick="setEKTyp('pruef')" style="font-size:13px;padding:6px 10px">Prüfung</button>
+            <button class="pill ${t.typ==="pruef"?"active":""}" id="ektyp-pruef" onclick="setEKTyp('pruef')" style="font-size:13px;padding:6px 10px">Prüfung</button>
             <button class="pill ${t.min===225?"active":""}" id="ektyp-ueberland" onclick="setEKTyp('ueberland')" style="font-size:12px;padding:5px 8px">Überland</button>
             <button class="pill ${t.min===220?"active":""}" id="ektyp-autobahn" onclick="setEKTyp('autobahn')" style="font-size:12px;padding:5px 8px">Autobahn</button>
             <button class="pill ${t.min===135?"active":""}" id="ektyp-nacht" onclick="setEKTyp('nacht')" style="font-size:12px;padding:5px 8px">Nacht</button>
@@ -2048,7 +2048,7 @@ function saveEktTermin(date,idx){
     termine[date].sort((a,b)=>a.uhr.localeCompare(b.uhr));
   }
   // If Prüfung type: sync to student's pruefungen
-  if(entry.min===100&&!entry.sid.startsWith("__auffrisch__")){
+  if(entry.typ==="pruef"&&!entry.sid.startsWith("__auffrisch__")){
     const ps=getS(entry.sid);
     if(ps){
       if(!ps.pruefungen)ps.pruefungen=[];
@@ -2296,7 +2296,7 @@ function syncKalenderToFahrstunden(){
     s.sonder={ueberland:0,autobahn:0,nacht:0};
     Object.entries(termine).forEach(([datum,ts])=>{
       ts.filter(t=>t.sid===s.id).forEach(t=>{
-        if(t.typ==="pruef"||(t.min===100&&(!t.typ||t.typ==="normal"||t.typ===""))){
+        if(t.typ==="pruef"){
           if(!s.pruefungen)s.pruefungen=[];
           // Robust duplicate check: same datum (ignore time differences)
           const existIdx=s.pruefungen.findIndex(p=>p.datum===datum);
@@ -2346,7 +2346,7 @@ function renderDashSchueler(sid){
   const geplant=Object.entries(termine).filter(([d])=>d>=td).flatMap(([d,ts])=>ts.filter(t=>{
     if(t.sid!==sid)return false;
     // Exclude pruefung if already passed
-    if(t.typ==="pruef"||(t.min===100&&(!t.typ||t.typ==="normal"||t.typ===""))){
+    if(t.typ==="pruef"){
       const pruef=(s.pruefungen||[]).find(p=>p.datum===d&&p.bestanden===true);
       if(pruef)return false;
     }
@@ -2363,7 +2363,7 @@ function renderDashSchueler(sid){
     const p=upcoming||sorted[0]||null;
     if(!p)return null;
     if(!p.uhr){
-      const kt=(termine[p.datum]||[]).find(t=>t.sid===sid&&t.min===100);
+      const kt=(termine[p.datum]||[]).find(t=>t.sid===sid&&t.typ==="pruef");
       if(kt)p.uhr=kt.uhr;
     }
     return p;
@@ -2608,8 +2608,8 @@ function toggleFahrstundenDash(sid,type){
     entries=Object.entries(termine).filter(([d])=>d<td).flatMap(([d,ts])=>ts.filter(t=>t.sid===sid).map(t=>({datum:d,...t}))).sort((a,b)=>b.datum.localeCompare(a.datum));
   } else {
     entries=Object.entries(termine).filter(([d])=>d>=td).flatMap(([d,ts])=>ts.filter(t=>t.sid===sid).map(t=>({datum:d,...t}))).sort((a,b)=>{
-      const aP=a.min===100||a.typ==="pruef"?0:1;
-      const bP=b.min===100||b.typ==="pruef"?0:1;
+      const aP=a.typ==="pruef"?0:1;
+      const bP=b.typ==="pruef"?0:1;
       if(aP!==bP)return aP-bP;
       return b.datum.localeCompare(a.datum)||(b.uhr||"").localeCompare(a.uhr||"");
     });
@@ -2618,7 +2618,7 @@ function toggleFahrstundenDash(sid,type){
   el.innerHTML=entries.length?entries.map(e=>{
     const fd=fmtDate(e.datum);
     const dow=wt[new Date(e.datum).getDay()];
-    const isPruef=e.min===100||e.typ==="pruef";
+    const isPruef=e.typ==="pruef";
     return`<div style="display:flex;justify-content:space-between;padding:8px 12px;border-bottom:.5px solid var(--br2);font-size:13px;${isPruef?'background:rgba(226,75,74,0.06)':''}">
       <span style="color:${isPruef?'#E24B4A':'var(--tx2)'};">${dow} ${fd.day}. ${fd.mon}${isPruef?' 🎯':''}</span>
       <span style="color:${isPruef?'#E24B4A':'var(--tx)'};font-weight:${isPruef?'600':'400'}">${e.uhr||""} · ${e.min} min</span>
@@ -2821,7 +2821,7 @@ function exportMonatPDF(monatStr){
         if(p.bestanden===true||p.bestanden===false)return true;
         // Prüfen ob ein echter pruef-Eintrag im Kalender existiert
         const kalEintrag=(termine[p.datum]||[]).find(t=>
-          t.sid===s.id&&(t.typ==="pruef"||(t.min===100&&(!t.typ||t.typ===""||t.typ==="normal")))
+          t.sid===s.id&&t.typ==="pruef"
         );
         return !!kalEintrag;
       });
