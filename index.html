@@ -1788,11 +1788,14 @@ function renderStatistik(){
 
 // ── TERMIN BEARBEITEN (Dashboard) ────────────────────────────────────────────
 function renderEditDashTermin(date,idx){
-  const t=(termine[date]||[])[idx];if(!t)return;
-  const s=getS(t.sid);if(!s)return;
+  const t=(termine[date]||[])[idx];
+  if(!t){console.warn("kein Termin",date,idx);return;}
+  const isAuffrisch3=t.sid&&t.sid.startsWith("__auffrisch__");
+  const auffrischName3=isAuffrisch3?t.sid.replace("__auffrisch__:",""):"";
+  const s=isAuffrisch3?null:getS(t.sid);
+  if(!s&&!isAuffrisch3){console.warn("Schueler nicht gefunden",t.sid);return;}
   const fd=fmtDate(date);
-  const _isAuffrisch3=t&&t.sid&&t.sid.startsWith("__auffrisch__");
-  AppState.et.date=date;AppState.et.idx=idx;AppState.et.min=t.min;AppState.et.isAuffrisch=_isAuffrisch3;AppState.et.backSid=t.sid;
+  AppState.et.date=date;AppState.et.idx=idx;AppState.et.min=t.min;AppState.et.isAuffrisch=isAuffrisch3;AppState.et.backSid=t.sid;
   let html=`<div class="screen active" id="scr-edit-termin">
     <div class="topbar">
       <button class="btn-icon" onclick="AppState.et.backSid?renderDashSchueler(AppState.et.backSid):renderDashboard()"><i class="ti ti-arrow-left"></i></button>
