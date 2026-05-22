@@ -392,17 +392,28 @@ function renderDashboard(dashDateOffset=0){
   syncKalenderToFahrstunden();
   const td=todayStr();
   const heuteTermine=(termine[td]||[]).sort((a,b)=>a.uhr.localeCompare(b.uhr));
-  // Prüftermine direkt aus Kalender lesen — zuverlässiger als s.pruefungen
+  // Prüftermine: aus s.pruefungen (Hauptquelle) + Kalender-Einträge mit typ=pruef
   const allePruef=[];
+  const seenPruef=new Set();
+  // Quelle 1: s.pruefungen (bestehende Einträge, inkl. mit Ergebnis)
+  schueler.forEach(s=>{
+    (s.pruefungen||[]).forEach(p=>{
+      if(p.datum<td)return;
+      const key=s.id+"_"+p.datum;
+      if(seenPruef.has(key))return;
+      seenPruef.add(key);
+      allePruef.push({sid:s.id,datum:p.datum,versuch:p.versuch,bestanden:p.bestanden,uhr:p.uhr||"",prufort:p.prufort||s.prufort||""});
+    });
+  });
+  // Quelle 2: Kalender-Einträge mit typ=pruef die noch nicht in s.pruefungen sind
   Object.entries(termine).forEach(([datum,ts])=>{
     if(datum<td)return;
     ts.filter(t=>t.typ==="pruef"&&t.sid&&!t.sid.startsWith("__auffrisch__")).forEach(t=>{
+      const key=t.sid+"_"+datum;
+      if(seenPruef.has(key))return;
+      seenPruef.add(key);
       const s2=getS(t.sid);if(!s2)return;
-      // Ergebnis aus s.pruefungen holen falls vorhanden
-      const pruefEintrag=(s2.pruefungen||[]).find(p=>p.datum===datum);
-      const bestanden=pruefEintrag?pruefEintrag.bestanden:null;
-      const versuch=pruefEintrag?pruefEintrag.versuch:((s2.pruefungen||[]).length+1);
-      allePruef.push({sid:t.sid,datum,versuch,bestanden,uhr:t.uhr});
+      allePruef.push({sid:t.sid,datum,versuch:(s2.pruefungen||[]).length+1,bestanden:null,uhr:t.uhr||"",prufort:s2.prufort||""});
     });
   });
   allePruef.sort((a,b)=>a.datum.localeCompare(b.datum));
@@ -488,7 +499,7 @@ function renderDashboard(dashDateOffset=0){
     pruefOffen.forEach(ep=>{
       const s2=getS(ep.sid);if(!s2)return;
       const fd=fmtDate(ep.datum);
-      const prufort=s2.prufort||"";
+      const prufort=ep.prufort||s2.prufort||"";
       const vergangen=ep.datum<td;
       const dotCol=vergangen?"#E24B4A":"var(--accent)";
       html+=`<div class="list-item" style="margin-bottom:6px;cursor:pointer" onclick="renderDashSchueler('${ep.sid}')">
