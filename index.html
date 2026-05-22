@@ -1709,6 +1709,7 @@ function saveKalTermin(date){
 
 // ── STATISTIK ─────────────────────────────────────────────────────────────────
 function renderStatistik(){
+  syncKalenderToFahrstunden();
   const alle=schueler.flatMap(s=>(s.pruefungen||[]).filter(p=>p.bestanden!==null&&p.bestanden!==undefined).map(p=>({...p,sid:s.id,name:s.vorname+" "+s.nachname,klasse:s.klasse,prufort:s.prufort})));
   const alleInklOffen=schueler.flatMap(s=>(s.pruefungen||[]).map(p=>({...p,sid:s.id,name:s.vorname+" "+s.nachname,klasse:s.klasse,prufort:s.prufort})));
   const gesamt=alle.length;
