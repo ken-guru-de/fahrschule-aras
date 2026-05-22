@@ -2411,7 +2411,6 @@ function renderDashSchueler(sid){
       </div>
       <div id="fahr-list-${sid}" style="display:none;margin-bottom:8px" data-showing=""></div>
       <div id="fs-list-${sid}" style="display:none"></div>
-      <div id="termine-inline-${sid}"></div>
 
       <div class="card" style="margin-bottom:12px">
         <div class="card-row"><span class="card-label"><i class="ti ti-book"></i>Theorie</span>
@@ -2467,55 +2466,7 @@ function renderDashSchueler(sid){
     const min=document.getElementById("ddb-min");
     if(lbl)lbl.textContent=anzeigeLblShort+" geplant";
     if(min)min.innerHTML=anzeigeTotalMin+'<span class="stat-unit">min</span>';
-    renderTermineInline(sid);
   },10);
-}
-
-function renderTermineInline(sid){
-  const el=document.getElementById("termine-inline-"+sid);
-  if(!el)return;
-  const td=todayStr();
-  const wt2=["So","Mo","Di","Mi","Do","Fr","Sa"];
-  const futureList=Object.entries(termine).filter(([d])=>d>=td).flatMap(([d,ts])=>ts.filter(t=>t.sid===sid).map(t=>({datum:d,...t}))).sort((a,b)=>{
-    const aP=a.typ==="pruef"?0:1,bP=b.typ==="pruef"?0:1;
-    if(aP!==bP)return aP-bP;
-    return a.datum.localeCompare(b.datum)||(a.uhr||"").localeCompare(b.uhr||"");
-  });
-  const pastList=Object.entries(termine).filter(([d])=>d<td).flatMap(([d,ts])=>ts.filter(t=>t.sid===sid).map(t=>({datum:d,...t}))).sort((a,b)=>b.datum.localeCompare(a.datum));
-  const allList=[...futureList,...pastList];
-  if(!allList.length){el.innerHTML="";return;}
-  const wrap=document.createElement("div");
-  wrap.style.cssText="margin-bottom:8px;border-radius:14px;overflow:hidden;border:.5px solid var(--br2)";
-  allList.forEach(function(e){
-    const fd=fmtDate(e.datum);
-    const dow=wt2[new Date(e.datum).getDay()];
-    const isPruef=e.typ==="pruef";
-    const isPast=e.datum<td;
-    const realIdx=(termine[e.datum]||[]).findIndex(function(t){return t.sid===e.sid&&t.uhr===e.uhr&&t.min===e.min;});
-    const txCol=isPruef?"#E24B4A":isPast?"var(--tx3)":"var(--tx)";
-    const lblCol=isPruef?"#E24B4A":isPast?"var(--tx3)":"var(--tx2)";
-    const div=document.createElement("div");
-    div.style.cssText="display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:.5px solid var(--br2);cursor:pointer;background:"+(isPruef?"rgba(226,75,74,0.06)":isPast?"rgba(0,0,0,0.015)":"var(--bg)");
-    const left=document.createElement("span");
-    left.style.cssText="font-size:15px;color:"+lblCol;
-    left.textContent=dow+" "+fd.day+". "+fd.mon+(isPruef?" 🎯":"");
-    const right=document.createElement("div");
-    right.style.cssText="display:flex;align-items:center;gap:10px";
-    const timeSpan=document.createElement("span");
-    timeSpan.style.cssText="font-size:15px;font-weight:"+(isPruef?600:500)+";color:"+txCol;
-    timeSpan.textContent=(e.uhr||"")+" · "+e.min+" min";
-    const icon=document.createElement("i");
-    icon.className="ti ti-pencil";
-    icon.style.cssText="font-size:14px;color:var(--tx3)";
-    right.appendChild(timeSpan);
-    right.appendChild(icon);
-    div.appendChild(left);
-    div.appendChild(right);
-    div.addEventListener("click",function(){closeToggleAndEdit(sid,e.datum,realIdx);});
-    wrap.appendChild(div);
-  });
-  el.innerHTML="";
-  el.appendChild(wrap);
 }
 
 function resetPruefErgebnis(sid,datum){
@@ -2645,43 +2596,64 @@ function changeGFADash(sid,key,d){
   if(el)el.textContent=s.gfa[key];
 }
 
-function closeToggleAndEdit(sid,datum,idx){
-  const el=document.getElementById("fahr-list-"+sid);
-  if(el){el.style.display="none";el.dataset.showing="";}
-  if(idx<0)return;
-  renderEditDashTermin(datum,idx);
-}
-
-function toggleFahrstundenDash(sid,type){
-  const el=document.getElementById("fahr-list-"+sid);
-  if(!el)return;
-  const showing=el.dataset.showing===type;
-  if(showing){el.style.display="none";el.dataset.showing="";return;}
-  el.dataset.showing=type;
-  el.style.display="block";
-  const s=getS(sid);if(!s)return;
-  const td=todayStr();
-  let entries;
-  if(type==="past"){
-    entries=Object.entries(termine).filter(([d])=>d<td).flatMap(([d,ts])=>ts.filter(t=>t.sid===sid).map(t=>({datum:d,...t}))).sort((a,b)=>b.datum.localeCompare(a.datum));
+function toggleFahrstundenDash(sid, type) {
+  var el = document.getElementById("fahr-list-" + sid);
+  if (!el) return;
+  var showing = el.dataset.showing === type;
+  if (showing) { el.style.display="none"; el.dataset.showing=""; return; }
+  el.dataset.showing = type;
+  el.style.display = "block";
+  var td = todayStr();
+  var wt = ["So","Mo","Di","Mi","Do","Fr","Sa"];
+  var entries;
+  if (type === "past") {
+    entries = Object.entries(termine)
+      .filter(function(kv){return kv[0]<td;})
+      .flatMap(function(kv){return kv[1].filter(function(t){return t.sid===sid;}).map(function(t){return Object.assign({datum:kv[0]},t);});})
+      .sort(function(a,b){return b.datum.localeCompare(a.datum);});
   } else {
-    entries=Object.entries(termine).filter(([d])=>d>=td).flatMap(([d,ts])=>ts.filter(t=>t.sid===sid).map(t=>({datum:d,...t}))).sort((a,b)=>{
-      const aP=a.typ==="pruef"?0:1;
-      const bP=b.typ==="pruef"?0:1;
-      if(aP!==bP)return aP-bP;
-      return b.datum.localeCompare(a.datum)||(b.uhr||"").localeCompare(a.uhr||"");
-    });
+    entries = Object.entries(termine)
+      .filter(function(kv){return kv[0]>=td;})
+      .flatMap(function(kv){return kv[1].filter(function(t){return t.sid===sid;}).map(function(t){return Object.assign({datum:kv[0]},t);});})
+      .sort(function(a,b){
+        var aP=a.typ==="pruef"?0:1, bP=b.typ==="pruef"?0:1;
+        if(aP!==bP)return aP-bP;
+        return a.datum.localeCompare(b.datum)||(a.uhr||"").localeCompare(b.uhr||"");
+      });
   }
-  const wt=["So","Mo","Di","Mi","Do","Fr","Sa"];
-  el.innerHTML=entries.length?entries.map(e=>{
-    const fd=fmtDate(e.datum);
-    const dow=wt[new Date(e.datum).getDay()];
-    const isPruef=e.typ==="pruef";
-    return`<div style="display:flex;justify-content:space-between;padding:8px 12px;border-bottom:.5px solid var(--br2);font-size:13px;${isPruef?'background:rgba(226,75,74,0.06)':''}">
-      <span style="color:${isPruef?'#E24B4A':'var(--tx2)'};">${dow} ${fd.day}. ${fd.mon}${isPruef?' 🎯':''}</span>
-      <span style="color:${isPruef?'#E24B4A':'var(--tx)'};font-weight:${isPruef?'600':'400'}">${e.uhr||""} · ${e.min} min</span>
-    </div>`;
-  }).join(""):`<div style="padding:10px 12px;font-size:13px;color:var(--tx3)">Keine Einträge</div>`;
+  el.innerHTML = "";
+  if (!entries.length) {
+    el.innerHTML = '<div style="padding:12px 16px;font-size:14px;color:var(--tx3)">Keine Eintr\u00e4ge</div>';
+    return;
+  }
+  var wrap = document.createElement("div");
+  wrap.style.cssText = "border-radius:14px;overflow:hidden;border:.5px solid var(--br2);margin-bottom:4px";
+  entries.forEach(function(e) {
+    var fd = fmtDate(e.datum);
+    var dow = wt[new Date(e.datum).getDay()];
+    var isPruef = e.typ === "pruef";
+    var realIdx = (termine[e.datum]||[]).findIndex(function(t){return t.sid===e.sid&&t.uhr===e.uhr&&t.min===e.min;});
+    var row = document.createElement("div");
+    row.style.cssText = "display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:.5px solid var(--br2);cursor:pointer;background:"+(isPruef?"rgba(226,75,74,0.06)":"var(--bg)");
+    var left = document.createElement("span");
+    left.style.cssText = "font-size:15px;color:"+(isPruef?"#E24B4A":"var(--tx2)");
+    left.textContent = dow+" "+fd.day+". "+fd.mon+(isPruef?" \uD83C\uDFAF":"");
+    var right = document.createElement("div");
+    right.style.cssText = "display:flex;align-items:center;gap:10px";
+    var timeSpan = document.createElement("span");
+    timeSpan.style.cssText = "font-size:15px;font-weight:"+(isPruef?600:400)+";color:"+(isPruef?"#E24B4A":"var(--tx)");
+    timeSpan.textContent = (e.uhr||"")+" \u00B7 "+e.min+" min";
+    var icon = document.createElement("i");
+    icon.className = "ti ti-pencil";
+    icon.style.cssText = "font-size:14px;color:var(--tx3)";
+    right.appendChild(timeSpan); right.appendChild(icon);
+    row.appendChild(left); row.appendChild(right);
+    row.addEventListener("click", (function(datum, idx){
+      return function(){ AppState.et.backSid=sid; renderEditDashTermin(datum,idx); };
+    })(e.datum, realIdx));
+    wrap.appendChild(row);
+  });
+  el.appendChild(wrap);
 }
 
 // ── STATISTIK ─────────────────────────────────────────────────────────────────
