@@ -823,6 +823,36 @@ function deleteNotizItem(sid,idx){
 function changeGFA(sid,key,d){const s=getS(sid);if(!s)return;if(!s.gfa)s.gfa={};s.gfa[key]=Math.max(0,(s.gfa[key]||0)+d);saveAll();const el=document.getElementById("gfa-"+sid+"-"+key);if(el)el.textContent=s.gfa[key];}
 
 // ── SCHÜLER ANLEGEN/BEARBEITEN ────────────────────────────────────────────────
+function renderPruefEditSection(s){
+  const pruef=s.pruefungen||[];
+  const hatBestanden=pruef.some(p=>p.bestanden===true);
+  const alleVers=[...pruef];
+  if(!hatBestanden) alleVers.push({datum:'',bestanden:null,versuch:pruef.length+1,_neu:true});
+  let rows='';
+  alleVers.forEach((p,pi)=>{
+    const versNr=p.versuch||(pi+1);
+    const versLabel=versNr===1?'Erstversuch':versNr===2?'Wiederholung 1':versNr===3?'Wiederholung 2':'Wiederholung '+(versNr-1);
+    const ergebnis=p.bestanden===true?'bestanden':p.bestanden===false?'nicht_bestanden':'offen';
+    rows+=`<div style="padding:10px 0;border-bottom:1px solid var(--sep)">
+      <div style="font-size:11px;color:var(--tx3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">${versLabel}</div>
+      <div class="card-row" style="margin-bottom:0">
+        <span class="card-label"><i class="ti ti-calendar-event"></i>Datum</span>
+        <input type="date" id="pe-datum-${pi}" value="${p.datum||''}"/>
+      </div>
+      <div class="card-row" style="margin-top:6px;margin-bottom:0">
+        <span class="card-label"><i class="ti ti-trophy"></i>Ergebnis</span>
+        <select id="pe-erg-${pi}">
+          <option value="offen" ${ergebnis==='offen'?'selected':''}>– offen</option>
+          <option value="bestanden" ${ergebnis==='bestanden'?'selected':''}>✓ Bestanden</option>
+          <option value="nicht_bestanden" ${ergebnis==='nicht_bestanden'?'selected':''}>✗ Nicht bestanden</option>
+        </select>
+      </div>
+    </div>`;
+  });
+  return `<div><div class="sec-label">Praktische Prüfung</div>
+  <div class="card"><div id="pe-rows" data-count="${alleVers.length}">${rows}</div></div></div>`;
+}
+
 function renderNeuSchueler(fromSid){
   const s=fromSid?getS(fromSid):null;
   let selFarbe=s?s.farbe:"blue";
@@ -869,7 +899,10 @@ function renderNeuSchueler(fromSid){
       </div></div>
 
 
-      <button class="btn-full" onclick="saveSchueler('${s?s.id:""}')">${s?"Änderungen speichern":"Schüler speichern"}</button>
+      ${s?renderPruefEditSection(s):''}
+
+
+            <button class="btn-full" onclick="saveSchueler('${s?s.id:""}')">${s?"Änderungen speichern":"Schüler speichern"}</button>
       ${s?`<button class="btn-full danger" style="margin-top:6px" onclick="deleteSchueler('${s.id}')"><i class="ti ti-trash"></i> Schüler löschen</button>`:""}
     </div>
   </div>`;
@@ -922,7 +955,30 @@ function saveSchueler(editSid){
   if(editSid){
     const s=getS(editSid);
     s.vorname=vn;s.nachname=nn;s.spitz=sp;s.geschlecht=AppState.geschlecht||'m';s.tel=document.getElementById('n-tel').value.trim();s.beginn=bg;s.klasse=kl;s.prufort=pf;s.prueftermin=pt;s.theorie=th;s.farbe=AppState.selFarbe;
-    
+    // Prüfungsergebnisse aus Edit-Dialog speichern
+    const peRows=document.getElementById('pe-rows');
+    if(peRows){
+      const cnt=parseInt(peRows.dataset.count||0);
+      if(!s.pruefungen)s.pruefungen=[];
+      for(let pi=0;pi<cnt;pi++){
+        const datEl=document.getElementById('pe-datum-'+pi);
+        const ergEl=document.getElementById('pe-erg-'+pi);
+        if(!datEl||!ergEl)continue;
+        const dat=datEl.value;
+        const ergVal=ergEl.value;
+        const best=ergVal==='bestanden'?true:ergVal==='nicht_bestanden'?false:null;
+        if(pi<s.pruefungen.length){
+          // bestehende Prüfung aktualisieren
+          if(dat)s.pruefungen[pi].datum=dat;
+          s.pruefungen[pi].bestanden=best;
+        } else {
+          // neue Prüfung nur speichern wenn Datum gesetzt
+          if(dat){s.pruefungen.push({datum:dat,versuch:pi+1,bestanden:best});}
+        }
+      }
+      s.pruefungen=s.pruefungen.filter(p=>p.datum); // leere entfernen
+      s.pruefungen.sort((a,b)=>a.datum.localeCompare(b.datum));
+    }
     saveAll();syncFahrstundenToKalender();renderDashSchueler(editSid);
   }else{
     const tel2=document.getElementById('n-tel').value.trim();const ptuhr='';const ns={id:"s"+Date.now(),vorname:vn,nachname:nn,spitz:sp,geschlecht:AppState.geschlecht||'m',tel:tel2,farbe:AppState.selFarbe||"blue",klasse:kl,beginn:bg,prufort:pf,prueftermin:pt,pruefzeit:ptuhr,theorie:th,sonder:[false,false,false],notiz:"",fahrstunden:[],pruefungen:[],gfa:{laengs:0,rechts:0,umkehr:0,rueckwaerts:0,stopp_mit:0,stopp_ohne:0,stadtautobahn:0,strassenbahn:0},foto:null};
