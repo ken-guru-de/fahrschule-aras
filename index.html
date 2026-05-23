@@ -724,6 +724,7 @@ function renderNeuKalTerminVonSchueler(sid){
 
 function renderSchueler(sid){
   const s=getS(sid);if(!s)return;
+  try{
   const nsi=nextSonder(s);
   const totalEinh=(s.fahrstunden||[]).reduce((a,f)=>a+(f.typ==="normal"?f.einh:0),0);
 
@@ -790,6 +791,7 @@ function renderSchueler(sid){
   html=html.replace('__NOTIZ_SEKTION__',renderKlappSektion('notiz-'+s.id,'Notizen','ti-notes','<div class="card" id="notiz-list-'+s.id+'">'+notizInner+'</div>',true,'addNotizItem(&quot;'+s.id+'&quot;)'));
   renderApp(html);
   setTimeout(initPTR,50);
+  }catch(e){document.getElementById('app').innerHTML='<div style="padding:20px;color:red;font-size:14px">renderSchueler Fehler: '+e.message+'</div>';}
 }
 
 function saveNotiz(sid,val){const s=getS(sid);if(!s)return;s.notiz=val;saveAll();}
