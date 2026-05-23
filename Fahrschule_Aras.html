@@ -685,6 +685,42 @@ function _doDeleteSchueler(sid){
 }
 
 // ── SCHÜLER DETAIL ────────────────────────────────────────────────────────────
+// ── KLAPP-SEKTION ─────────────────────────────────────────────────────────────
+function renderKlappSektion(id,label,icon,innerHtml,hasAdd,addAction){
+  const stored=localStorage.getItem('klapp_'+id);
+  const open=stored==='1';
+  const addBtn=hasAdd?`<button class="fab-btn" onclick="${addAction}"><i class="ti ti-plus"></i></button>`:'';
+  return `<div>
+    <div class="sec-row" style="cursor:pointer" onclick="toggleKlapp('${id}')">
+      <div class="sec-label" style="margin:0;display:flex;align-items:center;gap:6px">
+        <i class="ti ${icon}" style="font-size:14px"></i>${label}
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        ${hasAdd?addBtn:''}
+        <i class="ti ${open?'ti-chevron-up':'ti-chevron-down'}" id="chevron-${id}" style="color:var(--tx3);font-size:16px"></i>
+      </div>
+    </div>
+    <div id="klapp-${id}" style="display:${open?'block':'none'}">${innerHtml}</div>
+  </div>`;
+}
+function toggleKlapp(id){
+  const el=document.getElementById('klapp-'+id);
+  const ch=document.getElementById('chevron-'+id);
+  if(!el)return;
+  const open=el.style.display==='none';
+  el.style.display=open?'block':'none';
+  if(ch){ch.className='ti '+(open?'ti-chevron-up':'ti-chevron-down');}
+  localStorage.setItem('klapp_'+id,open?'1':'0');
+}
+
+// ── TERMIN VON SCHÜLER AUS ─────────────────────────────────────────────────
+function renderNeuKalTerminVonSchueler(sid){
+  const s=getS(sid);if(!s)return;
+  AppState.neuTerminSid=sid;
+  renderNeuKalTermin(todayStr());
+}
+
+
 function renderSchueler(sid){
   const s=getS(sid);if(!s)return;
   const nsi=nextSonder(s);
@@ -748,41 +784,6 @@ function renderSchueler(sid){
   </div>`;
   renderApp(html);
   setTimeout(initPTR,50);
-}
-
-// ── KLAPP-SEKTION ─────────────────────────────────────────────────────────────
-function renderKlappSektion(id,label,icon,innerHtml,hasAdd,addAction){
-  const stored=localStorage.getItem('klapp_'+id);
-  const open=stored==='1';
-  const addBtn=hasAdd?`<button class="fab-btn" onclick="${addAction}"><i class="ti ti-plus"></i></button>`:'';
-  return `<div>
-    <div class="sec-row" style="cursor:pointer" onclick="toggleKlapp('${id}')">
-      <div class="sec-label" style="margin:0;display:flex;align-items:center;gap:6px">
-        <i class="ti ${icon}" style="font-size:14px"></i>${label}
-      </div>
-      <div style="display:flex;align-items:center;gap:8px">
-        ${hasAdd?addBtn:''}
-        <i class="ti ${open?'ti-chevron-up':'ti-chevron-down'}" id="chevron-${id}" style="color:var(--tx3);font-size:16px"></i>
-      </div>
-    </div>
-    <div id="klapp-${id}" style="display:${open?'block':'none'}">${innerHtml}</div>
-  </div>`;
-}
-function toggleKlapp(id){
-  const el=document.getElementById('klapp-'+id);
-  const ch=document.getElementById('chevron-'+id);
-  if(!el)return;
-  const open=el.style.display==='none';
-  el.style.display=open?'block':'none';
-  if(ch){ch.className='ti '+(open?'ti-chevron-up':'ti-chevron-down');}
-  localStorage.setItem('klapp_'+id,open?'1':'0');
-}
-
-// ── TERMIN VON SCHÜLER AUS ─────────────────────────────────────────────────
-function renderNeuKalTerminVonSchueler(sid){
-  const s=getS(sid);if(!s)return;
-  AppState.neuTerminSid=sid;
-  renderNeuKalTermin(todayStr());
 }
 
 function saveNotiz(sid,val){const s=getS(sid);if(!s)return;s.notiz=val;saveAll();}
