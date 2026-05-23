@@ -2649,24 +2649,30 @@ function toggleTheorie(sid){
 function togglePraxis(sid){
   const s=getS(sid);if(!s)return;
   if(!s.pruefungen)s.pruefungen=[];
-  const bestanden=s.pruefungen.some(p=>p.bestanden===true);
-  if(bestanden){
+  const warBestanden=s.pruefungen.some(p=>p.bestanden===true);
+  if(warBestanden){
     // Reset to open
     s.pruefungen.forEach(p=>{if(p.bestanden===true)p.bestanden=null;});
+    saveAll();
+    renderDashSchueler(sid);
   } else {
     const td=todayStr();
     const last=s.pruefungen.slice().sort((a,b)=>b.datum.localeCompare(a.datum))[0];
     if(last){last.bestanden=true;}
     else{
-      // Find pruef termin
       const pt=Object.entries(termine).sort((a,b)=>b[0].localeCompare(a[0]))
         .flatMap(([d,ts])=>ts.filter(t=>t.sid===sid&&t.typ==='pruef').map(t=>({...t,datum:d})))[0];
       s.pruefungen.push({datum:pt?pt.datum:td,versuch:1,bestanden:true,prufort:s.prufort||''});
     }
+    s.pruefungen.sort((a,b)=>a.datum.localeCompare(b.datum));
+    saveAll();
+    // Show success and go back to list
+    showModal({
+      title:'🎉 Bestanden!',
+      msg:`${s.vorname} ${s.nachname} hat die Prüfung bestanden und wird in der Statistik erfasst.`,
+      btns:[{label:'Zur Liste',primary:true,action:"closeModal();renderListe()"}]
+    });
   }
-  s.pruefungen.sort((a,b)=>a.datum.localeCompare(b.datum));
-  saveAll();
-  renderDashSchueler(sid);
 }
 
 
