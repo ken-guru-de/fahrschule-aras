@@ -392,10 +392,29 @@ function renderDashboard(dashDateOffset=0){
   const td=todayStr();
   const heuteTermine=(termine[td]||[]).sort((a,b)=>a.uhr.localeCompare(b.uhr));
   const allePruef=[];
+  const _pruefSeen=new Set();
+  // Quelle 1: s.pruefungen
   schueler.forEach(s=>{
     (s.pruefungen||[]).forEach((p,pi)=>{
-      if(p.datum>=td)
-        allePruef.push({sid:s.id,datum:p.datum,versuch:p.versuch,pi,bestanden:p.bestanden,typ:"offen"});
+      if(p.datum<td)return;
+      const k=s.id+"_"+p.datum;
+      if(_pruefSeen.has(k))return;
+      _pruefSeen.add(k);
+      allePruef.push({sid:s.id,datum:p.datum,versuch:p.versuch,pi,bestanden:p.bestanden,prufort:p.prufort||s.prufort||""});
+    });
+  });
+  // Quelle 2: Kalendertermine mit typ=pruef ODER notiz="Prüfung"
+  Object.entries(termine).forEach(([datum,ts])=>{
+    if(datum<td)return;
+    ts.forEach(t=>{
+      if(!t.sid||t.sid.startsWith("__auffrisch__"))return;
+      const istPruef=t.typ==="pruef"||(t.notiz&&t.notiz.trim().toLowerCase()==="prüfung");
+      if(!istPruef)return;
+      const k=t.sid+"_"+datum;
+      if(_pruefSeen.has(k))return;
+      _pruefSeen.add(k);
+      const s2=getS(t.sid);if(!s2)return;
+      allePruef.push({sid:t.sid,datum,versuch:(s2.pruefungen||[]).length+1,bestanden:null,prufort:s2.prufort||""});
     });
   });
   allePruef.sort((a,b)=>a.datum.localeCompare(b.datum));
@@ -403,7 +422,7 @@ function renderDashboard(dashDateOffset=0){
   let html=`<div class="screen active" id="scr-dash">
     <div class="topbar">
       <div style="display:flex;align-items:center;justify-content:space-between;width:100%;gap:2px">
-        <div style="font-size:22px;color:white;flex-shrink:0"><i class="ti ti-steering-wheel" style="font-size:30px;vertical-align:-3px"></i></div>
+        <button class="btn-icon" onclick="toggleDatenMenu()" title="Datensicherung"><i class="ti ti-steering-wheel" style="font-size:26px"></i></button>
         <button class="btn-icon" onclick="renderKalender()"><i class="ti ti-calendar"></i></button>
         <button class="btn-icon" onclick="renderListe()"><i class="ti ti-users"></i></button>
         <button class="btn-icon" onclick="renderNeuSchueler()"><i class="ti ti-user-plus"></i></button>
@@ -475,31 +494,28 @@ function renderDashboard(dashDateOffset=0){
   }
   html+=`</div>`;
   if(allePruef.length){
-    html+=`<div><div class="sec-label">Prüfungen (${allePruef.length})</div>`;
-    allePruef.forEach(ep=>{
-      const s2=getS(ep.sid);if(!s2)return;
-      const fd=fmtDate(ep.datum);
-      const vergangen=ep.datum<td;
-      const dotCol=ep.bestanden===true?"#639922":ep.bestanden===false?"#E24B4A":vergangen?"var(--accent)":"var(--accent)";
-      const ergebnis=ep.bestanden===true?"✓ Bestanden":ep.bestanden===false?"✗ Nicht bestanden":"Ergebnis ausstehend";
-      const sub=`${ep.versuch}. Prüfung · ${ergebnis}`;
-      html+=`<div class="list-item" style="margin-bottom:6px" onclick="renderDashSchueler('${ep.sid}')">
-        <span class="status-dot" style="background:${dotCol}"></span>
-        <div class="item-info"><div class="item-name">${s2.vorname} ${s2.nachname}</div><div class="item-sub">${sub}</div></div>
-        <span style="font-size:13px;color:var(--tx2);font-weight:500">${fd.day}. ${fd.mon}${vergangen&&ep.typ==="offen"?" ⚠️":""}</span>
-      </div>`;
-    });
-    html+=`</div>`;
+    const pruefOffen=allePruef.filter(ep=>ep.bestanden===null||ep.bestanden===undefined);
+    if(pruefOffen.length){
+      html+=`<div><div class="sec-label">Nächste Prüfungen (${pruefOffen.length})</div>`;
+      pruefOffen.forEach(ep=>{
+        const s2=getS(ep.sid);if(!s2)return;
+        const fd=fmtDate(ep.datum);
+        const prufort=ep.prufort||s2.prufort||"";
+        const vergangen=ep.datum<td;
+        html+=`<div class="list-item" style="margin-bottom:6px;cursor:pointer" onclick="renderDashSchueler('${ep.sid}')">
+          <span class="status-dot" style="background:${vergangen?"#E24B4A":"var(--accent)"}"></span>
+          <div class="item-info">
+            <div class="item-name">${s2.vorname} ${s2.nachname}</div>
+            <div class="item-sub">${ep.versuch}. Prüfung${prufort?" · "+prufort:""}${vergangen?" ⚠️":""}</div>
+          </div>
+          <span style="font-size:13px;color:var(--tx2);font-weight:600;white-space:nowrap">${fd.day}. ${fd.mon}</span>
+        </div>`;
+      });
+      html+=`</div>`;
+    }
   }
 
-  html+=`<div style="display:flex;flex-direction:column;gap:8px">
-    <button class="btn-full" onclick="exportDaten()" style="background:#EAF3DE;border-color:#97C459;color:#27500A;font-size:15px"><i class="ti ti-download"></i> Daten sichern</button>
-    <label style="display:block;width:100%;padding:14px;border-radius:var(--r-lg);border:1.5px solid var(--accent);background:rgba(255,107,43,.1);color:#FF6B2B;font-size:15px;font-weight:600;text-align:center;cursor:pointer;box-sizing:border-box;font-family:inherit">
-      <i class="ti ti-upload"></i> Daten wiederherstellen (Datei)
-      <input type="file" accept=".json" style="display:none" onchange="importDaten(this)"/>
-    </label>
-    <button class="btn-full" onclick="importDatenPaste()" style="background:rgba(255,107,43,.06);border-color:var(--accent);color:#FF6B2B;font-size:15px"><i class="ti ti-clipboard-text"></i> Daten einfügen (JSON)</button>
-  </div></div></div>`;
+  html+=`</div></div>`;
   renderApp(html);
   setTimeout(()=>{
     initPTR();
@@ -704,44 +720,69 @@ function renderSchueler(sid){
         <div class="info-row"><span class="info-lbl"><i class="ti ti-calendar-plus"></i>Beginn</span><span class="info-val">${fmtDate(s.beginn).day}. ${fmtDate(s.beginn).mon} ${fmtDate(s.beginn).year}</span></div>
         <div class="info-row"><span class="info-lbl"><i class="ti ti-book"></i>Theorie</span><span class="info-val" style="color:${s.theorie?"#3B6D11":"#993C1D"}">${s.theorie?"✓ Bestanden":"✗ Ausstehend"}</span></div>
         <div class="info-row"><span class="info-lbl"><i class="ti ti-map-pin"></i>Prüfort</span><span class="info-val">${s.prufort}</span></div>
+        <div class="info-row" style="cursor:pointer;background:rgba(226,75,74,0.04);border-radius:8px;margin:2px -4px;padding:2px 4px" onclick="renderNeuPruefungInline('${s.id}')">
+          <span class="info-lbl"><i class="ti ti-trophy" style="color:#E24B4A"></i>Prüfung</span>
+          <span class="info-val" style="display:flex;align-items:center;gap:6px">
+            ${(()=>{
+              const pruef=s.pruefungen||[];
+              const last=pruef[pruef.length-1];
+              if(!pruef.length) return '<span style="color:#E24B4A;font-size:13px">Ergebnis eintragen →</span>';
+              if(last.bestanden===true) return '<span style="color:#3B6D11">✓ Bestanden</span>';
+              if(last.bestanden===false) return '<span style="color:#993C1D">✗ Nicht bestanden</span><span style="color:#E24B4A;font-size:12px;margin-left:4px">Ergebnis →</span>';
+              return '<span style="color:#E24B4A;font-size:13px">Ergebnis eintragen →</span>';
+            })()}
+          </span>
+        </div>
         ${s.tel?`<div class="info-row"><span class="info-lbl"><i class="ti ti-brand-whatsapp" style="color:#25D366"></i>WhatsApp</span>
           <a href="https://wa.me/${s.tel.replace(/^\+/,'').replace(/[^0-9]/g,'')}" style="font-size:15px;font-weight:500;color:#25D366;text-decoration:none" onclick="event.stopPropagation()">${s.tel}</a>
         </div>`:""}
       </div></div>
 
-      <div><div class="sec-label">Sonderfahrten</div>
-      ${renderSonderDoku(sid,s)}</div>
-      <div><div class="sec-label">Grundfahraufgaben</div>
-      <div class="card">
-        ${GRUNDFAHRAUFGABEN.map(g=>{const cnt=(s.gfa&&s.gfa[g.key])||0;return`<div class="gfa-row"><span class="gfa-label"><i class="ti ${g.icon}" style="font-size:16px;margin-right:8px;color:var(--tx3)"></i>${g.label}</span><div class="gfa-controls"><button class="gfa-btn" onclick="changeGFA('${s.id}','${g.key}',-1)">−</button><span class="gfa-count" id="gfa-${s.id}-${g.key}">${cnt}</span><button class="gfa-btn" onclick="changeGFA('${s.id}','${g.key}',1)">+</button></div></div>`;}).join("")}
-      </div></div>
+      <button class="btn-full" style="margin-top:4px;background:var(--accent);color:white;border:none" onclick="renderNeuKalTerminVonSchueler('${s.id}')"><i class="ti ti-plus"></i> Termin hinzufügen</button>
 
-
-
-      <div><div class="sec-row"><div class="sec-label" style="margin:0">Notizen</div>
-        <button class="fab-btn" onclick="addNotizItem('${s.id}')"><i class="ti ti-plus"></i></button>
-      </div>
-      <div class="card" id="notiz-list-${s.id}">
-        ${(()=>{
-          const items=Array.isArray(s.notiz)?s.notiz:(s.notiz?[{text:s.notiz,done:false}]:[]);
-          if(!items.length)return`<div class="empty-hint" style="padding:14px 0">Tippe + für eine neue Notiz</div>`;
-          return items.map((item,ni)=>`
-            <div class="notiz-item" style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:.5px solid var(--br);">
-              <label class="toggle-wrap" style="width:28px;height:28px;flex-shrink:0">
-                <input type="checkbox" ${item.done?"checked":""} onchange="toggleNotiz('${s.id}',${ni},this.checked)"/>
-                <div class="toggle-track" style="border-radius:50%"></div>
-                <div class="toggle-thumb" style="width:22px;height:22px;top:3px;left:3px"></div>
-              </label>
-              <span style="flex:1;font-size:18px;color:var(--tx);${item.done?"text-decoration:line-through;color:var(--tx3)":""}" onclick="editNotizItem('${s.id}',${ni})">${item.text||"…"}</span>
-              <button onclick="deleteNotizItem('${s.id}',${ni})" style="background:none;border:none;cursor:pointer;color:var(--tx3);font-size:16px;padding:4px"><i class="ti ti-x"></i></button>
-            </div>`).join("");
-        })()}
-      </div></div>
+      ${renderKlappSektion('sonder-${s.id}','Sonderfahrten','ti-car-suv',renderSonderDoku(sid,s))}
+      ${renderKlappSektion('gfa-${s.id}','Grundfahraufgaben','ti-steering-wheel',`<div class="card">${GRUNDFAHRAUFGABEN.map(g=>{const cnt=(s.gfa&&s.gfa[g.key])||0;return'<div class="gfa-row"><span class="gfa-label"><i class="ti '+g.icon+'" style="font-size:16px;margin-right:8px;color:var(--tx3)"></i>'+g.label+'</span><div class="gfa-controls"><button class="gfa-btn" onclick="changeGFA(\'${s.id}\',\''+g.key+'\',-1)">−</button><span class="gfa-count" id="gfa-${s.id}-'+g.key+'">'+cnt+'</span><button class="gfa-btn" onclick="changeGFA(\'${s.id}\',\''+g.key+'\',1)">+</button></div></div>';}).join('')}</div>`)}
+      ${renderKlappSektion('notiz-${s.id}','Notizen','ti-notes',`<div class="card" id="notiz-list-${s.id}">${(()=>{const items=Array.isArray(s.notiz)?s.notiz:(s.notiz?[{text:s.notiz,done:false}]:[]);if(!items.length)return'<div class="empty-hint" style="padding:14px 0">Tippe + für eine neue Notiz</div>';return items.map((item,ni)=>'<div class="notiz-item" style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:.5px solid var(--br);"><label class="toggle-wrap" style="width:28px;height:28px;flex-shrink:0"><input type="checkbox" '+(item.done?"checked":"")+'  onchange="toggleNotiz(\'${s.id}\','+ni+',this.checked)"/><div class="toggle-track" style="border-radius:50%"></div><div class="toggle-thumb" style="width:22px;height:22px;top:3px;left:3px"></div></label><span style="flex:1;font-size:18px;color:var(--tx);'+(item.done?"text-decoration:line-through;color:var(--tx3)":"")+'" onclick="editNotizItem(\'${s.id}\','+ni+')">'+(item.text||"…")+'</span><button onclick="deleteNotizItem(\'${s.id}\','+ni+')" style="background:none;border:none;cursor:pointer;color:var(--tx3);font-size:16px;padding:4px"><i class="ti ti-x"></i></button></div>').join('');})()}</div>`,true,'addNotizItem(\'${s.id}\')')}
 
     </div>
   </div>`;
   renderApp(html);
   setTimeout(initPTR,50);
+}
+
+// ── KLAPP-SEKTION ─────────────────────────────────────────────────────────────
+function renderKlappSektion(id,label,icon,innerHtml,hasAdd,addAction){
+  const stored=localStorage.getItem('klapp_'+id);
+  const open=stored==='1';
+  const addBtn=hasAdd?`<button class="fab-btn" onclick="${addAction}"><i class="ti ti-plus"></i></button>`:'';
+  return `<div>
+    <div class="sec-row" style="cursor:pointer" onclick="toggleKlapp('${id}')">
+      <div class="sec-label" style="margin:0;display:flex;align-items:center;gap:6px">
+        <i class="ti ${icon}" style="font-size:14px"></i>${label}
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        ${hasAdd?addBtn:''}
+        <i class="ti ${open?'ti-chevron-up':'ti-chevron-down'}" id="chevron-${id}" style="color:var(--tx3);font-size:16px"></i>
+      </div>
+    </div>
+    <div id="klapp-${id}" style="display:${open?'block':'none'}">${innerHtml}</div>
+  </div>`;
+}
+function toggleKlapp(id){
+  const el=document.getElementById('klapp-'+id);
+  const ch=document.getElementById('chevron-'+id);
+  if(!el)return;
+  const open=el.style.display==='none';
+  el.style.display=open?'block':'none';
+  if(ch){ch.className='ti '+(open?'ti-chevron-up':'ti-chevron-down');}
+  localStorage.setItem('klapp_'+id,open?'1':'0');
+}
+
+// ── TERMIN VON SCHÜLER AUS ─────────────────────────────────────────────────
+function renderNeuKalTerminVonSchueler(sid){
+  const s=getS(sid);if(!s)return;
+  AppState.neuTerminSid=sid;
+  renderNeuKalTermin(todayStr());
 }
 
 function saveNotiz(sid,val){const s=getS(sid);if(!s)return;s.notiz=val;saveAll();}
@@ -853,7 +894,9 @@ function renderNeuSchueler(fromSid){
       </div></div>
 
 
-      <button class="btn-full" onclick="saveSchueler('${s?s.id:""}')">${s?"Änderungen speichern":"Schüler speichern"}</button>
+
+
+            <button class="btn-full" onclick="saveSchueler('${s?s.id:""}')">${s?"Änderungen speichern":"Schüler speichern"}</button>
       ${s?`<button class="btn-full danger" style="margin-top:6px" onclick="deleteSchueler('${s.id}')"><i class="ti ti-trash"></i> Schüler löschen</button>`:""}
     </div>
   </div>`;
@@ -906,7 +949,30 @@ function saveSchueler(editSid){
   if(editSid){
     const s=getS(editSid);
     s.vorname=vn;s.nachname=nn;s.spitz=sp;s.geschlecht=AppState.geschlecht||'m';s.tel=document.getElementById('n-tel').value.trim();s.beginn=bg;s.klasse=kl;s.prufort=pf;s.prueftermin=pt;s.theorie=th;s.farbe=AppState.selFarbe;
-    
+    // Prüfungsergebnisse aus Edit-Dialog speichern
+    const peRows=document.getElementById('pe-rows');
+    if(peRows){
+      const cnt=parseInt(peRows.dataset.count||0);
+      if(!s.pruefungen)s.pruefungen=[];
+      for(let pi=0;pi<cnt;pi++){
+        const datEl=document.getElementById('pe-datum-'+pi);
+        const ergEl=document.getElementById('pe-erg-'+pi);
+        if(!datEl||!ergEl)continue;
+        const dat=datEl.value;
+        const ergVal=ergEl.value;
+        const best=ergVal==='bestanden'?true:ergVal==='nicht_bestanden'?false:null;
+        if(pi<s.pruefungen.length){
+          // bestehende Prüfung aktualisieren
+          if(dat)s.pruefungen[pi].datum=dat;
+          s.pruefungen[pi].bestanden=best;
+        } else {
+          // neue Prüfung nur speichern wenn Datum gesetzt
+          if(dat){s.pruefungen.push({datum:dat,versuch:pi+1,bestanden:best});}
+        }
+      }
+      s.pruefungen=s.pruefungen.filter(p=>p.datum); // leere entfernen
+      s.pruefungen.sort((a,b)=>a.datum.localeCompare(b.datum));
+    }
     saveAll();syncFahrstundenToKalender();renderDashSchueler(editSid);
   }else{
     const tel2=document.getElementById('n-tel').value.trim();const ptuhr='';const ns={id:"s"+Date.now(),vorname:vn,nachname:nn,spitz:sp,geschlecht:AppState.geschlecht||'m',tel:tel2,farbe:AppState.selFarbe||"blue",klasse:kl,beginn:bg,prufort:pf,prueftermin:pt,pruefzeit:ptuhr,theorie:th,sonder:[false,false,false],notiz:"",fahrstunden:[],pruefungen:[],gfa:{laengs:0,rechts:0,umkehr:0,rueckwaerts:0,stopp_mit:0,stopp_ohne:0,stadtautobahn:0,strassenbahn:0},foto:null};
@@ -1597,6 +1663,12 @@ function renderNeuKalTermin(date){
     </div>
   </div>`;
   renderApp(html);
+  // Pre-select student if called from student page
+  if(AppState.neuTerminSid){
+    const sel=document.getElementById('k-sid');
+    if(sel)sel.value=AppState.neuTerminSid;
+    AppState.neuTerminSid=null;
+  }
   setTimeout(initPTR,50);
 }
 function changeKalMin(d){AppState.kal.min=Math.max(5,Math.min(300,AppState.kal.min+d));const el=document.getElementById("kal-min-disp");if(el)el.textContent=AppState.kal.min+" min";}
@@ -1709,6 +1781,7 @@ function saveKalTermin(date){
 
 // ── STATISTIK ─────────────────────────────────────────────────────────────────
 function renderStatistik(){
+  syncKalenderToFahrstunden();
   const alle=schueler.flatMap(s=>(s.pruefungen||[]).filter(p=>p.bestanden!==null&&p.bestanden!==undefined).map(p=>({...p,sid:s.id,name:s.vorname+" "+s.nachname,klasse:s.klasse,prufort:s.prufort})));
   const alleInklOffen=schueler.flatMap(s=>(s.pruefungen||[]).map(p=>({...p,sid:s.id,name:s.vorname+" "+s.nachname,klasse:s.klasse,prufort:s.prufort})));
   const gesamt=alle.length;
@@ -1787,13 +1860,17 @@ function renderStatistik(){
 
 // ── TERMIN BEARBEITEN (Dashboard) ────────────────────────────────────────────
 function renderEditDashTermin(date,idx){
-  const t=(termine[date]||[])[idx];if(!t)return;
-  const s=getS(t.sid);if(!s)return;
+  const t=(termine[date]||[])[idx];
+  if(!t){console.warn("kein Termin",date,idx);return;}
+  const isAuffrisch3=t.sid&&t.sid.startsWith("__auffrisch__");
+  const auffrischName3=isAuffrisch3?t.sid.replace("__auffrisch__:",""):"";
+  const s=isAuffrisch3?null:getS(t.sid);
+  if(!s&&!isAuffrisch3){console.warn("Schueler nicht gefunden",t.sid);return;}
   const fd=fmtDate(date);
-  AppState.et.date=date;AppState.et.idx=idx;AppState.et.min=t.min;AppState.et.isAuffrisch=isAuffrisch3;
+  AppState.et.date=date;AppState.et.idx=idx;AppState.et.min=t.min;AppState.et.isAuffrisch=isAuffrisch3;AppState.et.backSid=t.sid;
   let html=`<div class="screen active" id="scr-edit-termin">
     <div class="topbar">
-      <button class="btn-icon" onclick="renderDashboard()"><i class="ti ti-x"></i></button>
+      <button class="btn-icon" onclick="AppState.et.backSid?renderDashSchueler(AppState.et.backSid):renderDashboard()"><i class="ti ti-arrow-left"></i></button>
       <span class="topbar-title">Termin bearbeiten</span>
     </div>
     <div class="scroll">
@@ -1842,7 +1919,7 @@ function saveEditDashTermin(){
   termine[date][idx].min=AppState.et.min||80;
   termine[date][idx].notiz=document.getElementById("et-notiz").value.trim();
   termine[date].sort((a,b)=>a.uhr.localeCompare(b.uhr));
-  saveAll();renderDashboard();
+  saveAll();if(AppState.et.backSid)renderDashSchueler(AppState.et.backSid);else renderDashboard();
 }
 
 function deleteEditDashTermin(){
@@ -2142,7 +2219,7 @@ function _doDelDashTermin(date,idx){
   if(!termine[date])return;
   termine[date].splice(idx,1);
   if(!termine[date].length)delete termine[date];
-  saveAll();renderDashboard();
+  saveAll();if(AppState.et.backSid)renderDashSchueler(AppState.et.backSid);else renderDashboard();
 }
 function showTagTerminActions(date,idx){
   const t=(termine[date]||[]);const e=t[idx];if(!e)return;
@@ -2199,6 +2276,41 @@ function initPTR(){
 }
 
 // ── BACKUP / RESTORE ─────────────────────────────────────────────────────────
+function toggleDatenMenu(){
+  var el=document.getElementById("daten-menu-overlay");
+  if(el){el.remove();return;}
+  var overlay=document.createElement("div");
+  overlay.id="daten-menu-overlay";
+  overlay.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:999;display:flex;align-items:flex-end;justify-content:center;padding-bottom:env(safe-area-inset-bottom)";
+  overlay.addEventListener("click",function(e){if(e.target===overlay)overlay.remove();});
+  var sheet=document.createElement("div");
+  sheet.style.cssText="background:var(--bg2);border-radius:20px 20px 0 0;padding:20px 20px 28px;width:100%;max-width:520px;display:flex;flex-direction:column;gap:10px";
+  sheet.innerHTML='<div style="font-size:17px;font-weight:700;margin-bottom:4px;color:var(--tx)">Datensicherung</div>';
+  // Sichern
+  var btnSave=document.createElement("button");
+  btnSave.style.cssText="width:100%;padding:14px;border-radius:14px;border:1.5px solid #97C459;background:#EAF3DE;color:#27500A;font-size:16px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px";
+  btnSave.innerHTML='<i class="ti ti-download"></i> Daten sichern';
+  btnSave.onclick=function(){overlay.remove();exportDaten();};
+  sheet.appendChild(btnSave);
+  // Wiederherstellen Datei
+  var lbl=document.createElement("label");
+  lbl.style.cssText="width:100%;padding:14px;border-radius:14px;border:1.5px solid var(--accent);background:rgba(255,107,43,.1);color:#FF6B2B;font-size:16px;font-weight:600;text-align:center;cursor:pointer;box-sizing:border-box;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px";
+  lbl.innerHTML='<i class="ti ti-upload"></i> Wiederherstellen (Datei)';
+  var fileInput=document.createElement("input");
+  fileInput.type="file";fileInput.accept=".json";fileInput.style.display="none";
+  fileInput.onchange=function(){overlay.remove();importDaten(this);};
+  lbl.appendChild(fileInput);
+  sheet.appendChild(lbl);
+  // Einfügen JSON
+  var btnPaste=document.createElement("button");
+  btnPaste.style.cssText="width:100%;padding:14px;border-radius:14px;border:1.5px solid var(--accent);background:rgba(255,107,43,.06);color:#FF6B2B;font-size:16px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px";
+  btnPaste.innerHTML='<i class="ti ti-clipboard-text"></i> Daten einfügen (JSON)';
+  btnPaste.onclick=function(){overlay.remove();importDatenPaste();};
+  sheet.appendChild(btnPaste);
+  overlay.appendChild(sheet);
+  document.body.appendChild(overlay);
+}
+
 function exportDaten(){
   const data = { schueler, termine, exportiert: new Date().toISOString() };
   const json = JSON.stringify(data, null, 2);
@@ -2594,36 +2706,64 @@ function changeGFADash(sid,key,d){
   if(el)el.textContent=s.gfa[key];
 }
 
-function toggleFahrstundenDash(sid,type){
-  const el=document.getElementById("fahr-list-"+sid);
-  if(!el)return;
-  const showing=el.dataset.showing===type;
-  if(showing){el.style.display="none";el.dataset.showing="";return;}
-  el.dataset.showing=type;
-  el.style.display="block";
-  const s=getS(sid);if(!s)return;
-  const td=todayStr();
-  let entries;
-  if(type==="past"){
-    entries=Object.entries(termine).filter(([d])=>d<td).flatMap(([d,ts])=>ts.filter(t=>t.sid===sid).map(t=>({datum:d,...t}))).sort((a,b)=>b.datum.localeCompare(a.datum));
+function toggleFahrstundenDash(sid, type) {
+  var el = document.getElementById("fahr-list-" + sid);
+  if (!el) return;
+  var showing = el.dataset.showing === type;
+  if (showing) { el.style.display="none"; el.dataset.showing=""; return; }
+  el.dataset.showing = type;
+  el.style.display = "block";
+  var td = todayStr();
+  var wt = ["So","Mo","Di","Mi","Do","Fr","Sa"];
+  var entries;
+  if (type === "past") {
+    entries = Object.entries(termine)
+      .filter(function(kv){return kv[0]<td;})
+      .flatMap(function(kv){return kv[1].filter(function(t){return t.sid===sid;}).map(function(t){return Object.assign({datum:kv[0]},t);});})
+      .sort(function(a,b){return b.datum.localeCompare(a.datum);});
   } else {
-    entries=Object.entries(termine).filter(([d])=>d>=td).flatMap(([d,ts])=>ts.filter(t=>t.sid===sid).map(t=>({datum:d,...t}))).sort((a,b)=>{
-      const aP=a.typ==="pruef"?0:1;
-      const bP=b.typ==="pruef"?0:1;
-      if(aP!==bP)return aP-bP;
-      return b.datum.localeCompare(a.datum)||(b.uhr||"").localeCompare(a.uhr||"");
-    });
+    entries = Object.entries(termine)
+      .filter(function(kv){return kv[0]>=td;})
+      .flatMap(function(kv){return kv[1].filter(function(t){return t.sid===sid;}).map(function(t){return Object.assign({datum:kv[0]},t);});})
+      .sort(function(a,b){
+        var aP=a.typ==="pruef"?0:1, bP=b.typ==="pruef"?0:1;
+        if(aP!==bP)return aP-bP;
+        return a.datum.localeCompare(b.datum)||(a.uhr||"").localeCompare(b.uhr||"");
+      });
   }
-  const wt=["So","Mo","Di","Mi","Do","Fr","Sa"];
-  el.innerHTML=entries.length?entries.map(e=>{
-    const fd=fmtDate(e.datum);
-    const dow=wt[new Date(e.datum).getDay()];
-    const isPruef=e.typ==="pruef";
-    return`<div style="display:flex;justify-content:space-between;padding:8px 12px;border-bottom:.5px solid var(--br2);font-size:13px;${isPruef?'background:rgba(226,75,74,0.06)':''}">
-      <span style="color:${isPruef?'#E24B4A':'var(--tx2)'};">${dow} ${fd.day}. ${fd.mon}${isPruef?' 🎯':''}</span>
-      <span style="color:${isPruef?'#E24B4A':'var(--tx)'};font-weight:${isPruef?'600':'400'}">${e.uhr||""} · ${e.min} min</span>
-    </div>`;
-  }).join(""):`<div style="padding:10px 12px;font-size:13px;color:var(--tx3)">Keine Einträge</div>`;
+  el.innerHTML = "";
+  if (!entries.length) {
+    el.innerHTML = '<div style="padding:12px 16px;font-size:14px;color:var(--tx3)">Keine Eintr\u00e4ge</div>';
+    return;
+  }
+  var wrap = document.createElement("div");
+  wrap.style.cssText = "border-radius:14px;overflow:hidden;border:.5px solid var(--br2);margin-bottom:4px";
+  entries.forEach(function(e) {
+    var fd = fmtDate(e.datum);
+    var dow = wt[new Date(e.datum).getDay()];
+    var isPruef = e.typ === "pruef";
+    var realIdx = (termine[e.datum]||[]).findIndex(function(t){return t.sid===e.sid&&t.uhr===e.uhr&&t.min===e.min;});
+    var row = document.createElement("div");
+    row.style.cssText = "display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:.5px solid var(--br2);cursor:pointer;background:"+(isPruef?"rgba(226,75,74,0.06)":"var(--bg)");
+    var left = document.createElement("span");
+    left.style.cssText = "font-size:15px;color:"+(isPruef?"#E24B4A":"var(--tx2)");
+    left.textContent = dow+" "+fd.day+". "+fd.mon+(isPruef?" \uD83C\uDFAF":"");
+    var right = document.createElement("div");
+    right.style.cssText = "display:flex;align-items:center;gap:10px";
+    var timeSpan = document.createElement("span");
+    timeSpan.style.cssText = "font-size:15px;font-weight:"+(isPruef?600:400)+";color:"+(isPruef?"#E24B4A":"var(--tx)");
+    timeSpan.textContent = (e.uhr||"")+" \u00B7 "+e.min+" min";
+    var icon = document.createElement("i");
+    icon.className = "ti ti-pencil";
+    icon.style.cssText = "font-size:14px;color:var(--tx3)";
+    right.appendChild(timeSpan); right.appendChild(icon);
+    row.appendChild(left); row.appendChild(right);
+    row.addEventListener("click", (function(datum, idx){
+      return function(){ AppState.et.backSid=sid; renderEditDashTermin(datum,idx); };
+    })(e.datum, realIdx));
+    wrap.appendChild(row);
+  });
+  el.appendChild(wrap);
 }
 
 // ── STATISTIK ─────────────────────────────────────────────────────────────────
@@ -2812,23 +2952,7 @@ function exportMonatPDF(monatStr){
         s.pruefungen.forEach((p,i)=>{p.versuch=i+1;});
       }
     });
-    // Korrektur 2: Prüfungen entfernen die keinen echten pruef-Kalendereintrag haben
-    // und kein Ergebnis (bestanden/nicht bestanden) gesetzt haben — nur "Geister"
-    schueler.forEach(s=>{
-      if(!s.pruefungen||!s.pruefungen.length)return;
-      s.pruefungen=s.pruefungen.filter(p=>{
-        // Prüfung mit gesetztem Ergebnis immer behalten
-        if(p.bestanden===true||p.bestanden===false)return true;
-        // Prüfen ob ein echter pruef-Eintrag im Kalender existiert
-        const kalEintrag=(termine[p.datum]||[]).find(t=>
-          t.sid===s.id&&t.typ==="pruef"
-        );
-        return !!kalEintrag;
-      });
-      // Versuchsnummern nach dem Filter neu vergeben
-      s.pruefungen.sort((a,b)=>a.datum.localeCompare(b.datum));
-      s.pruefungen.forEach((p,i)=>{p.versuch=i+1;});
-    });
+    // Korrektur 2: Prüfungen behalten — keine automatische Löschung
     syncKalenderToFahrstunden();
     save("fs_schueler",schueler);
   }catch(e){console.error("sync error:",e);}
