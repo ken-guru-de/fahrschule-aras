@@ -720,16 +720,16 @@ function renderSchueler(sid){
         <div class="info-row"><span class="info-lbl"><i class="ti ti-calendar-plus"></i>Beginn</span><span class="info-val">${fmtDate(s.beginn).day}. ${fmtDate(s.beginn).mon} ${fmtDate(s.beginn).year}</span></div>
         <div class="info-row"><span class="info-lbl"><i class="ti ti-book"></i>Theorie</span><span class="info-val" style="color:${s.theorie?"#3B6D11":"#993C1D"}">${s.theorie?"✓ Bestanden":"✗ Ausstehend"}</span></div>
         <div class="info-row"><span class="info-lbl"><i class="ti ti-map-pin"></i>Prüfort</span><span class="info-val">${s.prufort}</span></div>
-        <div class="info-row" style="cursor:pointer;background:rgba(139,92,246,0.04);border-radius:8px;margin:2px -4px;padding:2px 4px" onclick="renderNeuPruefungInline('${s.id}')">
-          <span class="info-lbl"><i class="ti ti-trophy" style="color:#8B5CF6"></i>Prüfung</span>
+        <div class="info-row" style="cursor:pointer;background:rgba(226,75,74,0.04);border-radius:8px;margin:2px -4px;padding:2px 4px" onclick="renderNeuPruefungInline('${s.id}')">
+          <span class="info-lbl"><i class="ti ti-trophy" style="color:#E24B4A"></i>Prüfung</span>
           <span class="info-val" style="display:flex;align-items:center;gap:6px">
             ${(()=>{
               const pruef=s.pruefungen||[];
               const last=pruef[pruef.length-1];
-              if(!pruef.length) return '<span style="color:#8B5CF6;font-size:13px">Ergebnis eintragen →</span>';
+              if(!pruef.length) return '<span style="color:#E24B4A;font-size:13px">Ergebnis eintragen →</span>';
               if(last.bestanden===true) return '<span style="color:#3B6D11">✓ Bestanden</span>';
-              if(last.bestanden===false) return '<span style="color:#993C1D">✗ Nicht bestanden</span><span style="color:#8B5CF6;font-size:12px;margin-left:4px">Ergebnis →</span>';
-              return '<span style="color:#8B5CF6;font-size:13px">Ergebnis eintragen →</span>';
+              if(last.bestanden===false) return '<span style="color:#993C1D">✗ Nicht bestanden</span><span style="color:#E24B4A;font-size:12px;margin-left:4px">Ergebnis →</span>';
+              return '<span style="color:#E24B4A;font-size:13px">Ergebnis eintragen →</span>';
             })()}
           </span>
         </div>
@@ -1960,7 +1960,7 @@ function renderTagAnsicht(date){
       const endMin=(()=>{const [h,m]=e.uhr.split(":").map(Number);const tot=h*60+m+e.min;return String(Math.floor(tot/60)%24).padStart(2,"0")+":"+String(tot%60).padStart(2,"0");})();
       const notizL=(e.notiz||'').toLowerCase();const isSonder=e.typ==='ueberland'||e.typ==='autobahn'||e.typ==='nacht'||notizL.includes('überland')||notizL.includes('autobahn')||notizL.includes('nachtfahrt')||e.min===225||e.min===220||e.min===135;
       const isPruef=e.typ==="pruef";
-      const dotCol=isPruef?"#8B5CF6":isSonder?"#378ADD":"#639922";
+      const dotCol=isPruef?"#E24B4A":isSonder?"#378ADD":"#639922";
       totalMin+=e.min;
       const realIdx=t.indexOf(e);
       html+=`<div class="card" style="margin-bottom:8px;cursor:pointer" onclick="showTagTerminActions('${date}',${realIdx})">
@@ -2726,14 +2726,14 @@ function toggleFahrstundenDash(sid, type) {
     var isPruef = e.typ === "pruef";
     var realIdx = (termine[e.datum]||[]).findIndex(function(t){return t.sid===e.sid&&t.uhr===e.uhr&&t.min===e.min;});
     var row = document.createElement("div");
-    row.style.cssText = "display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:.5px solid var(--br2);cursor:pointer;background:"+(isPruef?"rgba(139,92,246,0.07)":"var(--bg)");
+    row.style.cssText = "display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:.5px solid var(--br2);cursor:pointer;background:"+(isPruef?"rgba(226,75,74,0.06)":"var(--bg)");
     var left = document.createElement("span");
-    left.style.cssText = "font-size:15px;color:"+(isPruef?"#8B5CF6":"var(--tx2)");
+    left.style.cssText = "font-size:15px;color:"+(isPruef?"#E24B4A":"var(--tx2)");
     left.textContent = dow+" "+fd.day+". "+fd.mon+(isPruef?" \uD83C\uDFAF":"");
     var right = document.createElement("div");
     right.style.cssText = "display:flex;align-items:center;gap:10px";
     var timeSpan = document.createElement("span");
-    timeSpan.style.cssText = "font-size:15px;font-weight:"+(isPruef?600:400)+";color:"+(isPruef?"#8B5CF6":"var(--tx)");
+    timeSpan.style.cssText = "font-size:15px;font-weight:"+(isPruef?600:400)+";color:"+(isPruef?"#E24B4A":"var(--tx)");
     timeSpan.textContent = (e.uhr||"")+" \u00B7 "+e.min+" min";
     var icon = document.createElement("i");
     icon.className = "ti ti-pencil";
