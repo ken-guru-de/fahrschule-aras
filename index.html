@@ -2234,13 +2234,73 @@ function showTagTerminActions(date,idx){
   const t=(termine[date]||[]);const e=t[idx];if(!e)return;
   const isAuffrisch=e.sid&&e.sid.startsWith("__auffrisch__");
   const s=isAuffrisch?null:getS(e.sid);
-  const name=isAuffrisch?("Auffrischung: "+e.sid.replace("__auffrisch__:","")):(s?s.vorname+" "+s.nachname:"Termin");
+  if(!isAuffrisch&&s){
+    renderTerminDetail(date,idx);
+    return;
+  }
+  // Auffrischung: simple modal
+  const name="Auffrischung: "+e.sid.replace("__auffrisch__:","");
   const fd=fmtDate(date);
-  const btns=[{label:"Bearbeiten",primary:true,action:`closeModal();renderEditKalTermin('${date}',${idx})`}];
-  if(!isAuffrisch&&s)btns.push({label:"Zur Schülerkarte",action:`closeModal();renderDashSchueler('${e.sid}')`});
-  btns.push({label:"Termin löschen",danger:true,action:`closeModal();_confirmDelTagTermin('${date}',${idx})`});
-  btns.push({label:"Abbrechen",action:"closeModal()"});
-  showModal({title:name,msg:`${fd.day}. ${fd.mon} ${fd.year} · ${e.uhr} Uhr · ${e.min} min`,btns});
+  showModal({title:name,msg:`${fd.day}. ${fd.mon} ${fd.year} · ${e.uhr} Uhr · ${e.min} min`,btns:[
+    {label:"Bearbeiten",primary:true,action:`closeModal();renderEditKalTermin('${date}',${idx})`},
+    {label:"Löschen",danger:true,action:`closeModal();_confirmDelTagTermin('${date}',${idx})`},
+    {label:"Abbrechen",action:"closeModal()"}
+  ]});
+}
+
+function renderTerminDetail(date,idx){
+  const e=(termine[date]||[])[idx];if(!e)return;
+  const s=getS(e.sid);if(!s)return;
+  const fd=fmtDate(date);
+  const wt=["So","Mo","Di","Mi","Do","Fr","Sa"];
+  const dow=wt[new Date(date).getDay()];
+  const isPruef=e.typ==="pruef";
+  const isSonder=e.typ==="ueberland"||e.typ==="autobahn"||e.typ==="nacht";
+  const typLabel=isPruef?"Prüfung":isSonder?{ueberland:"Überlandfahrt",autobahn:"Autobahnfahrt",nacht:"Nachtfahrt"}[e.typ]||e.typ:"Fahrstunde";
+  const barCol=isPruef?"#E24B4A":isSonder?"#378ADD":"#639922";
+  const gfaCount=GRUNDFAHRAUFGABEN.filter(g=>((s.gfa||{})[g.key]||0)>0).length;
+  const notizText=(s.notizen&&s.notizen.length)?s.notizen.map(n=>n.text).join('\n'):'';
+
+  let html=`<div class="screen active">
+    <div class="topbar">
+      <button class="btn-icon" onclick="renderTagAnsicht('${date}')"><i class="ti ti-arrow-left"></i></button>
+      <span class="topbar-title" style="color:${barCol}">${s.vorname} ${s.nachname}</span>
+      <button class="btn-icon" onclick="renderEditKalTermin('${date}',${idx})"><i class="ti ti-pencil"></i></button>
+    </div>
+    <div class="scroll">
+
+      <!-- Termin Info -->
+      <div class="card" style="margin-bottom:12px;border-left:3px solid ${barCol}">
+        <div class="card-row" style="padding:12px 16px">
+          <span style="font-size:15px;font-weight:600;color:${barCol}">${typLabel}</span>
+          <span style="font-size:14px;color:var(--tx2)">${dow}, ${fd.day}. ${fd.mon} · ${e.uhr} Uhr · ${e.min} min</span>
+        </div>
+      </div>
+
+      <!-- GFA -->
+      <div><div class="sec-label">Grundfahraufgaben <span style="color:var(--tx3);font-weight:400">${gfaCount}/${GRUNDFAHRAUFGABEN.length}</span></div>
+      <div class="card">
+        ${GRUNDFAHRAUFGABEN.map(g=>{const cnt=(s.gfa||{})[g.key]||0;return`<div class="gfa-row"><span class="gfa-label"><i class="ti ${g.icon}" style="font-size:16px;margin-right:8px;color:var(--tx3)"></i>${g.label}</span><div class="gfa-controls"><button class="gfa-btn" onclick="changeGFADash('${s.id}','${g.key}',-1)">−</button><span class="gfa-count" id="gfa-${s.id}-${g.key}-d">${cnt}</span><button class="gfa-btn" onclick="changeGFADash('${s.id}','${g.key}',1)">+</button></div></div>`;}).join("")}
+      </div></div>
+
+      <!-- Notizen -->
+      <div style="margin-top:12px"><div class="sec-label">Notizen</div>
+      <div class="card" style="padding:12px 16px">
+        <textarea id="notiz-termin-${e.sid}"
+          style="width:100%;min-height:120px;border:none;background:transparent;font-size:17px;color:var(--tx);outline:none;resize:none;font-family:inherit;line-height:1.6;-webkit-user-select:text;user-select:text;box-sizing:border-box"
+          placeholder="Notizen zum Schüler…"
+          onblur="saveNotizTextDash('${e.sid}',this.value)"
+        >${notizText}</textarea>
+      </div></div>
+
+      <!-- Schülerkarte -->
+      <button class="btn-full" style="margin-top:12px" onclick="renderDashSchueler('${e.sid}')"><i class="ti ti-user"></i> Zur Schülerkarte</button>
+      <button class="btn-full danger" style="margin-top:6px" onclick="_confirmDelTagTermin('${date}',${idx})"><i class="ti ti-trash"></i> Termin löschen</button>
+
+    </div>
+  </div>`;
+  renderApp(html);
+  setTimeout(initPTR,50);
 }
 function _confirmDelTagTermin(date,idx){
   const t=(termine[date]||[]);const e=t[idx];if(!e)return;
@@ -2460,134 +2520,176 @@ function syncKalenderToFahrstunden(){
   });
 }
 function renderDashSchueler(sid){
-  syncKalenderToFahrstunden();
   const s=getS(sid);if(!s)return;
   const td=todayStr();
-  const gefahren=Object.entries(termine).filter(([d])=>d<td).flatMap(([d,ts])=>ts.filter(t=>t.sid===sid));
-  const geplant=Object.entries(termine).filter(([d])=>d>=td).flatMap(([d,ts])=>ts.filter(t=>{
-    if(t.sid!==sid)return false;
-    // Exclude pruefung if already passed
-    if(t.typ==="pruef"){
-      const pruef=(s.pruefungen||[]).find(p=>p.datum===d&&p.bestanden===true);
-      if(pruef)return false;
-    }
-    return true;
-  }));
-  const gefahrenMin=gefahren.reduce((a,t)=>a+(t.min||0),0);
-  const geplantMin=geplant.reduce((a,t)=>a+(t.min||0),0);
-  const fahrstundenGesamt=(s.fahrstunden||[]).length;
-  const fahrstundenMin=(s.fahrstunden||[]).reduce((a,f)=>a+(f.min||80),0);
-  const naechstePruef=(()=>{
-    // Show upcoming without result, OR most recent past prüfung
-    const sorted=(s.pruefungen||[]).slice().sort((a,b)=>b.datum.localeCompare(a.datum));
-    const upcoming=sorted.find(p=>p.datum>=td&&p.bestanden===null||p.datum>=td&&p.bestanden===undefined);
-    const p=upcoming||sorted[0]||null;
-    if(!p)return null;
-    if(!p.uhr){
-      const kt=(termine[p.datum]||[]).find(t=>t.sid===sid&&t.typ==="pruef");
-      if(kt)p.uhr=kt.uhr;
-    }
-    return p;
+  const pruef=s.pruefungen||[];
+  const lastPruef=pruef.slice().sort((a,b)=>b.datum.localeCompare(a.datum))[0]||null;
+  const bestanden=pruef.some(p=>p.bestanden===true);
+
+  // Next appointment
+  const naechsterTermin=(()=>{
+    const alle=Object.entries(termine)
+      .filter(([d])=>d>=td)
+      .flatMap(([d,ts])=>ts.filter(t=>t.sid===sid).map(t=>({...t,datum:d})))
+      .sort((a,b)=>a.datum.localeCompare(b.datum)||a.uhr.localeCompare(b.uhr));
+    return alle[0]||null;
   })();
-  // Sonderfahrten progress - handle both array and object format
-  const sonderObj=(s.sonder&&!Array.isArray(s.sonder))?s.sonder:{ueberland:0,autobahn:0,nacht:0};
-  const notizLL=n=>(n||"").toLowerCase();
-  const sonderHTML=SONDER.map(sf=>{
-    const sfTermine=Object.entries(termine)
-      .filter(([d,ts])=>ts.some(t=>t.sid===sid&&(t.typ===sf.key||notizLL(t.notiz).includes(sf.key==="ueberland"?"überland":sf.key==="autobahn"?"autobahn":"nacht"))))
-      .map(([d,ts])=>{const t=ts.find(t=>t.sid===sid&&(t.typ===sf.key||notizLL(t.notiz).includes(sf.key==="ueberland"?"überland":sf.key==="autobahn"?"autobahn":"nacht")));return{datum:d,min:t?t.min:0};})
-      .sort((a,b)=>b.datum.localeCompare(a.datum));
-    const kalMin=sfTermine.reduce((a,t)=>a+t.min,0);
-    const manualDone=(s.sonder&&!Array.isArray(s.sonder))?s.sonder[sf.key]||0:0;
-    const isDone=kalMin>=sf.min||manualDone>=sf.min;
-    return`<div style="border-bottom:.5px solid var(--br2);padding:12px 0">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:${sfTermine.length?"6px":"0"}">
-        <div style="display:flex;align-items:center;gap:10px;cursor:pointer" onclick="toggleSonderDash('${sid}','${sf.key}',${sf.min})">
-          <i class="ti ${isDone?"ti-circle-check":"ti-circle"}" style="font-size:${isDone?"24px":"20px"};color:${isDone?"#27A843":"var(--tx3)"}"></i>
-          <span style="font-size:15px;font-weight:500;${isDone?"text-decoration:line-through;color:var(--tx3)":"color:var(--tx)"}">${sf.label}</span>
-        </div>
-        <span style="font-size:13px;color:${isDone?"#27A843":"var(--tx2)"}">${kalMin||manualDone}/${sf.min} min</span>
-      </div>
-      ${sfTermine.map(t=>{const fd=fmtDate(t.datum);return`<div style="display:flex;justify-content:space-between;padding:2px 0 2px 34px;font-size:12px;color:var(--tx2)"><span>${fd.day}. ${fd.mon} ${fd.year}</span><span>${t.min} min</span></div>`;}).join("")}
-    </div>`;
-  }).join("");
-  const gfaCount=GRUNDFAHRAUFGABEN.filter(g=>((s.gfa||{})[g.key]||0)>0).length;
+
+  // Counts
+  const gefahren=Object.entries(termine).filter(([d])=>d<td).flatMap(([d,ts])=>ts.filter(t=>t.sid===sid));
+  const geplant=Object.entries(termine).filter(([d])=>d>=td).flatMap(([d,ts])=>ts.filter(t=>t.sid===sid));
+
+  // Sonderfahrten
+  const SONDER_DEF=[{key:'ueberland',label:'Überland',min:270,icon:'ti-road'},{key:'autobahn',label:'Autobahn',min:225,icon:'ti-road-sign'},{key:'nacht',label:'Nacht',min:135,icon:'ti-moon'}];
+  const notizL=n=>(n||'').toLowerCase();
+  const getSonderMin=(key)=>{
+    const kalMin=Object.entries(termine).flatMap(([d,ts])=>ts.filter(t=>t.sid===sid&&(t.typ===key||notizL(t.notiz).includes(key==='ueberland'?'überland':key))).map(t=>t.min||0)).reduce((a,b)=>a+b,0);
+    const manual=(s.sonder&&!Array.isArray(s.sonder)?s.sonder[key]:0)||0;
+    return Math.max(kalMin,manual);
+  };
+
+  // Pruef badge color/text
+  const pruefBadge=(()=>{
+    if(bestanden) return {bg:'#d4edbc',col:'#1e4208',tx:'✓ Praxis bestanden'};
+    if(lastPruef&&lastPruef.bestanden===false) return {bg:'#fde8e8',col:'#8b1f1f',tx:'✗ Nicht bestanden'};
+    return {bg:'rgba(226,75,74,0.1)',col:'#A32D2D',tx:'Praxis offen'};
+  })();
+
+  const theorieBadge=s.theorie
+    ? {bg:'#d4edbc',col:'#1e4208',tx:'✓ Theorie'}
+    : {bg:'rgba(0,0,0,0.06)',col:'var(--tx2)',tx:'Theorie offen'};
 
   let html=`<div class="screen active">
     <div class="topbar">
-      <button class="btn-icon" onclick="renderDashboard()"><i class="ti ti-arrow-left"></i></button>
+      <button class="btn-icon" onclick="history.back()||renderDashboard()"><i class="ti ti-arrow-left"></i></button>
       <span class="topbar-title">${s.vorname} ${s.nachname}</span>
       <button class="btn-icon" onclick="renderNeuSchueler('${sid}')"><i class="ti ti-pencil"></i></button>
     </div>
     <div class="scroll">
-      <div class="stat-grid">
-        <div class="stat-box" onclick="changeKlasse('${sid}')" style="text-align:center;background:rgba(59,130,246,0.18);border:1px solid rgba(59,130,246,0.35);cursor:pointer;position:relative;"><div class="stat-lbl" style="color:#3B82F6">Klasse <i class="ti ti-pencil" style="font-size:10px;opacity:.6"></i></div><div class="stat-num" style="font-size:28px;color:#1D4ED8" id="klasse-box-${sid}">${s.klasse}</div></div>
-        <div class="stat-box" style="text-align:center;background:rgba(39,168,67,0.12);border:1px solid rgba(39,168,67,0.3)"><div class="stat-lbl" style="color:#27A843">Beginn</div><div class="stat-num" style="font-size:16px;color:#166534">${fmtDate(s.beginn).day}. ${fmtDate(s.beginn).mon} ${fmtDate(s.beginn).year}</div></div>
+
+      <!-- Header -->
+      <div style="display:flex;align-items:center;gap:14px;padding-bottom:12px">
+        <div class="foto-initials av-${s.farbe}" style="${farbStyle(s.farbe)};width:52px;height:52px;font-size:18px;flex-shrink:0" onclick="triggerFotoUpload('${sid}')">
+          ${s.foto?`<img src="${s.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/>`:''}
+          ${!s.foto?initials(s):''}
+        </div>
+        <input type="file" id="foto-input-${sid}" accept="image/*" style="display:none" onchange="saveFoto('${sid}',this)"/>
+        <div style="flex:1">
+          <div style="font-size:17px;font-weight:700">${s.vorname} ${s.nachname}${s.spitz?` <span style="font-size:13px;color:var(--tx3);font-weight:400">«${s.spitz}»</span>`:''}</div>
+          <div style="font-size:13px;color:var(--tx2);margin-top:2px">Klasse ${s.klasse} · Beginn ${fmtDate(s.beginn).day}. ${fmtDate(s.beginn).mon} ${fmtDate(s.beginn).year}</div>
+          <div style="font-size:13px;color:var(--tx2)">${s.prufort||''}</div>
+        </div>
       </div>
-      <div class="stat-grid">
-        <div class="stat-box accent" onclick="toggleFahrstundenDash('${sid}','past')" style="cursor:pointer;text-align:center;background:linear-gradient(135deg,rgba(255,120,50,0.9),rgba(210,55,0,0.95));border:1px solid rgba(255,170,100,0.6);box-shadow:0 4px 16px rgba(255,107,43,0.35)"><div class="stat-lbl">Gefahren</div><div class="stat-num">${gefahren.length}<span class="stat-unit">×</span></div><div style="font-size:11px;color:rgba(255,255,255,.7);margin-top:2px">${gefahrenMin} min</div></div>
-        <div class="stat-box" onclick="toggleFahrstundenDash('${sid}','future')" style="cursor:pointer;text-align:center;background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.3)"><div class="stat-lbl" style="color:#6366F1">Geplant</div><div class="stat-num" style="color:#4338CA">${geplant.length}<span class="stat-unit" style="color:#6366F1">×</span></div><div style="font-size:11px;color:#6366F1;margin-top:2px">${geplantMin} min</div></div>
+
+      <!-- Stats -->
+      <div class="stat-grid" style="margin-bottom:12px">
+        <div class="stat-box accent" style="text-align:center;cursor:pointer" onclick="toggleFahrstundenDash('${sid}','past')">
+          <div class="stat-lbl">Gefahren</div>
+          <div class="stat-num">${gefahren.length}<span class="stat-unit">×</span></div>
+          <div style="font-size:11px;color:rgba(255,255,255,.7)">${gefahren.reduce((a,t)=>a+(t.min||0),0)} min</div>
+        </div>
+        <div class="stat-box" style="text-align:center;cursor:pointer;background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.25)" onclick="toggleFahrstundenDash('${sid}','future')">
+          <div class="stat-lbl" style="color:#6366F1">Geplant</div>
+          <div class="stat-num" style="color:#4338CA">${geplant.length}<span class="stat-unit" style="color:#6366F1">×</span></div>
+          <div style="font-size:11px;color:#6366F1">${geplant.reduce((a,t)=>a+(t.min||0),0)} min</div>
+        </div>
       </div>
       <div id="fahr-list-${sid}" style="display:none;margin-bottom:8px" data-showing=""></div>
       <div id="fs-list-${sid}" style="display:none"></div>
 
-      <div class="card" style="margin-bottom:12px">
-        <div class="card-row"><span class="card-label"><i class="ti ti-book"></i>Theorie</span>
-          <span class="info-val">${s.theorie?"✓ Bestanden":"Ausstehend"}</span></div>
-        ${s.tel?`<div class="card-row" style="cursor:pointer" onclick="window.open('https://wa.me/${s.tel.replace(/^\+/,'').replace(/[^0-9]/g,'')}','_blank')">
-          <span class="card-label"><i class="ti ti-brand-whatsapp" style="color:#25D366;font-size:18px"></i>WhatsApp</span>
-          <span style="font-size:15px;font-weight:600;color:#25D366">${s.tel}</span>
-        </div>`:""}
-        <div class="card-row"><span class="card-label"><i class="ti ti-calendar-event"></i>Prüfung</span>
-          <span class="info-val">${naechstePruef?(fmtDate(naechstePruef.datum).day+". "+fmtDate(naechstePruef.datum).mon+" "+fmtDate(naechstePruef.datum).year+(naechstePruef.uhr?`<br><span style="font-size:13px;color:var(--tx2)">`+naechstePruef.uhr+" Uhr</span>":"")+  (naechstePruef.bestanden===true?`<br><span style="font-size:13px;font-weight:700;color:#27A843">✓ Bestanden</span>`:naechstePruef.bestanden===false?`<br><span style="font-size:13px;font-weight:700;color:#E24B4A">✗ Nicht bestanden</span>`:"")):"–"}</span></div>
-        <div class="card-row"><span class="card-label"><i class="ti ti-map-pin"></i>Prüfort</span>
-          <span class="info-val">${naechstePruef&&naechstePruef.prufort?naechstePruef.prufort:s.prufort||"–"}</span></div>
-        ${naechstePruef?`<div style="padding-top:8px;display:flex;flex-direction:column;gap:6px">
-          <div style="display:flex;gap:8px">
-            <button onclick="setPruefErgebnis('${sid}','${naechstePruef.datum}',true)" style="flex:1;background:${naechstePruef.bestanden===true?'rgba(39,168,67,0.3)':'rgba(39,168,67,0.12)'};border:1.5px solid rgba(39,168,67,0.5);border-radius:10px;color:#166534;font-size:14px;font-weight:600;padding:10px 6px;cursor:pointer;font-family:inherit">${naechstePruef.bestanden===true?"✓ Bestanden ✓":"✓ Bestanden"}</button>
-            <button onclick="setPruefErgebnis('${sid}','${naechstePruef.datum}',false)" style="flex:1;background:${naechstePruef.bestanden===false?'rgba(226,75,74,0.25)':'rgba(226,75,74,0.1)'};border:1.5px solid rgba(226,75,74,0.4);border-radius:10px;color:#A32D2D;font-size:14px;font-weight:600;padding:10px 6px;cursor:pointer;font-family:inherit">${naechstePruef.bestanden===false?"✗ Nicht best. ✗":"✗ Nicht best."}</button>
-          </div>
-          ${naechstePruef.bestanden===true||naechstePruef.bestanden===false?`<button onclick="resetPruefErgebnis('${sid}','${naechstePruef.datum}')" style="background:none;border:1px solid var(--br2);border-radius:10px;color:var(--tx3);font-size:13px;padding:8px;cursor:pointer;font-family:inherit;width:100%">↩ Ergebnis zurücksetzen</button>`:""}
-        </div>`:""}
+      <!-- Badges -->
+      <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+        <button onclick="toggleTheorie('${sid}')" style="flex:1;min-width:120px;padding:10px 14px;border-radius:12px;border:none;background:${theorieBadge.bg};color:${theorieBadge.col};font-size:14px;font-weight:600;cursor:pointer;font-family:inherit">${theorieBadge.tx}</button>
+        <button onclick="togglePraxis('${sid}')" style="flex:1;min-width:120px;padding:10px 14px;border-radius:12px;border:none;background:${pruefBadge.bg};color:${pruefBadge.col};font-size:14px;font-weight:600;cursor:pointer;font-family:inherit">${pruefBadge.tx}</button>
       </div>
 
-      
-      <button class="btn-full" style="margin-bottom:8px;background:var(--accent);color:white;border:none" onclick="renderNeuKalTerminVonSchueler('${sid}')"><i class="ti ti-plus"></i> Termin hinzufügen</button>
-
-      <div><div class="sec-label">Grundfahraufgaben <span style="color:var(--tx3);font-weight:400">${gfaCount}/${GRUNDFAHRAUFGABEN.length}</span></div>
-      <div class="card">
-        ${GRUNDFAHRAUFGABEN.map(g=>{const cnt=(s.gfa||{})[g.key]||0;return`<div class="gfa-row"><span class="gfa-label"><i class="ti ${g.icon}" style="font-size:16px;margin-right:8px;color:var(--tx3)"></i>${g.label}</span><div class="gfa-controls"><button class="gfa-btn" onclick="changeGFADash('${sid}','${g.key}',-1)">−</button><span class="gfa-count" id="gfa-${sid}-${g.key}-d">${cnt}</span><button class="gfa-btn" onclick="changeGFADash('${sid}','${g.key}',1)">+</button></div></div>`;}).join("")}
-      </div></div>
-
-      <div>
-        <div onclick="toggleNotizBadge('${sid}')" style="display:flex;align-items:center;justify-content:space-between;padding:16px 14px;background:rgba(255,107,43,0.08);border-radius:12px;cursor:pointer;border:1px solid rgba(255,107,43,0.2);margin-bottom:4px">
-          <div style="display:flex;align-items:center;gap:8px">
-            <i class="ti ti-notes" style="font-size:20px;color:var(--accent)"></i>
-            <span style="font-weight:600;color:var(--tx)">Notizen</span>
-            ${(s.notizen&&s.notizen.length)?`<span style="background:var(--accent);color:white;border-radius:10px;padding:1px 8px;font-size:12px">${s.notizen.length}</span>`:''}
-          </div>
-          <i id="notiz-chevron-${sid}" class="ti ti-chevron-down" style="color:var(--tx3);transition:transform .2s"></i>
-        </div>
-        <div id="notiz-dash-body-${sid}" style="display:none;margin-bottom:8px">
-          <div class="card" style="padding:12px 16px">
-            <textarea id="notiz-dash-input-${sid}"
-              style="width:100%;min-height:140px;border:none;background:transparent;font-size:18px;color:var(--tx);outline:none;resize:vertical;font-family:inherit;line-height:1.6;-webkit-user-select:text;user-select:text"
-              placeholder="Notizen hier eingeben…"
-              onblur="saveNotizTextDash('${sid}',this.value)"
-            >${(s.notizen&&s.notizen.length)?s.notizen.map(n=>n.text).join('\n'):''}</textarea>
-          </div>
-        </div>
+      <!-- Sonderfahrten -->
+      <div style="display:flex;gap:8px;margin-bottom:12px">
+        ${SONDER_DEF.map(sf=>{
+          const done=getSonderMin(sf.key)>=sf.min;
+          return `<button onclick="toggleSonderDash('${sid}','${sf.key}',${sf.min})" style="flex:1;padding:8px 4px;border-radius:10px;border:none;background:${done?'rgba(59,130,246,0.2)':'rgba(59,130,246,0.07)'};color:${done?'#1D4ED8':'var(--tx3)'};font-size:13px;font-weight:${done?700:400};cursor:pointer;font-family:inherit;text-align:center">
+            <i class="ti ${done?'ti-circle-check':'ti-circle'}" style="display:block;font-size:18px;margin-bottom:2px;color:${done?'#1D4ED8':'var(--tx3)'}"></i>
+            ${sf.label}
+          </button>`;
+        }).join('')}
       </div>
 
-      </div>`;
+      <!-- Nächster Termin -->
+      ${naechsterTermin?`<div class="card" style="margin-bottom:12px;cursor:pointer" onclick="selDate='${naechsterTermin.datum}';renderTagAnsicht('${naechsterTermin.datum}')">
+        <div class="card-row" style="padding:12px 16px">
+          <span class="card-label"><i class="ti ti-calendar-event" style="color:var(--accent)"></i>Nächster Termin</span>
+          <span style="font-size:14px;color:var(--tx)">${fmtDate(naechsterTermin.datum).day}. ${fmtDate(naechsterTermin.datum).mon} · ${naechsterTermin.uhr} Uhr · ${naechsterTermin.min} min</span>
+        </div>
+      </div>`:''}
+
+      <!-- WhatsApp -->
+      ${s.tel?`<div class="card" style="margin-bottom:12px;cursor:pointer" onclick="window.open('https://wa.me/${s.tel.replace(/^\+/,'').replace(/[^0-9]/g,'')}','_blank')">
+        <div class="card-row" style="padding:12px 16px">
+          <span class="card-label"><i class="ti ti-brand-whatsapp" style="color:#25D366"></i>WhatsApp</span>
+          <span style="font-size:14px;font-weight:600;color:#25D366">${s.tel}</span>
+        </div>
+      </div>`:''}
+
+      <!-- Termin hinzufügen -->
+      <button class="btn-full" style="background:var(--accent);color:white;border:none;margin-bottom:12px" onclick="renderNeuKalTerminVonSchueler('${sid}')"><i class="ti ti-plus"></i> Termin hinzufügen</button>
+
+    </div>
+  </div>`;
   renderApp(html);
-  setTimeout(()=>{
-    initPTR();
-    const lbl=document.getElementById("ddb-lbl");
-    const min=document.getElementById("ddb-min");
-    if(lbl)lbl.textContent=anzeigeLblShort+" geplant";
-    if(min)min.innerHTML=anzeigeTotalMin+'<span class="stat-unit">min</span>';
-  },10);
+  setTimeout(initPTR,50);
+}
+
+function toggleTheorie(sid){
+  const s=getS(sid);if(!s)return;
+  s.theorie=!s.theorie;
+  saveAll();
+  renderDashSchueler(sid);
+}
+
+function togglePraxis(sid){
+  const s=getS(sid);if(!s)return;
+  if(!s.pruefungen)s.pruefungen=[];
+  const bestanden=s.pruefungen.some(p=>p.bestanden===true);
+  if(bestanden){
+    // Reset to open
+    s.pruefungen.forEach(p=>{if(p.bestanden===true)p.bestanden=null;});
+  } else {
+    const td=todayStr();
+    const last=s.pruefungen.slice().sort((a,b)=>b.datum.localeCompare(a.datum))[0];
+    if(last){last.bestanden=true;}
+    else{
+      // Find pruef termin
+      const pt=Object.entries(termine).sort((a,b)=>b[0].localeCompare(a[0]))
+        .flatMap(([d,ts])=>ts.filter(t=>t.sid===sid&&t.typ==='pruef').map(t=>({...t,datum:d})))[0];
+      s.pruefungen.push({datum:pt?pt.datum:td,versuch:1,bestanden:true,prufort:s.prufort||''});
+    }
+  }
+  s.pruefungen.sort((a,b)=>a.datum.localeCompare(b.datum));
+  saveAll();
+  renderDashSchueler(sid);
+}
+
+
+function pruefungEintragen(sid, bestanden){
+  const s=getS(sid);if(!s)return;
+  if(!s.pruefungen)s.pruefungen=[];
+  const td=todayStr();
+  // Find existing open pruefung or use today
+  const existing=s.pruefungen.find(p=>p.bestanden===null||p.bestanden===undefined);
+  if(existing){
+    existing.bestanden=bestanden;
+  } else {
+    // Check if there's a pruef termin today or most recent
+    const pruefTermin=Object.entries(termine)
+      .sort((a,b)=>b[0].localeCompare(a[0]))
+      .flatMap(([d,ts])=>ts.filter(t=>t.sid===sid&&t.typ==='pruef').map(t=>({...t,datum:d})))
+      [0];
+    const datum=pruefTermin?pruefTermin.datum:td;
+    s.pruefungen.push({datum,versuch:s.pruefungen.length+1,bestanden,prufort:s.prufort||''});
+  }
+  s.pruefungen.sort((a,b)=>a.datum.localeCompare(b.datum));
+  saveAll();
+  renderDashSchueler(sid);
 }
 
 function resetPruefErgebnis(sid,datum){
