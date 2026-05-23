@@ -774,14 +774,19 @@ function renderSchueler(sid){
         </div>`:""}
       </div></div>
 
-      <button class="btn-full" style="margin-top:4px;background:var(--accent);color:white;border:none" onclick="renderNeuKalTerminVonSchueler('${s.id}')"><i class="ti ti-plus"></i> Termin hinzufügen</button>
-
-      ${renderKlappSektion('sonder-${s.id}','Sonderfahrten','ti-car-suv',renderSonderDoku(sid,s))}
-      ${renderKlappSektion('gfa-${s.id}','Grundfahraufgaben','ti-steering-wheel',`<div class="card">${GRUNDFAHRAUFGABEN.map(g=>{const cnt=(s.gfa&&s.gfa[g.key])||0;return'<div class="gfa-row"><span class="gfa-label"><i class="ti '+g.icon+'" style="font-size:16px;margin-right:8px;color:var(--tx3)"></i>'+g.label+'</span><div class="gfa-controls"><button class="gfa-btn" onclick="changeGFA(\'${s.id}\',\''+g.key+'\',-1)">−</button><span class="gfa-count" id="gfa-${s.id}-'+g.key+'">'+cnt+'</span><button class="gfa-btn" onclick="changeGFA(\'${s.id}\',\''+g.key+'\',1)">+</button></div></div>';}).join('')}</div>`)}
-      ${renderKlappSektion('notiz-${s.id}','Notizen','ti-notes',`<div class="card" id="notiz-list-${s.id}">${(()=>{const items=Array.isArray(s.notiz)?s.notiz:(s.notiz?[{text:s.notiz,done:false}]:[]);if(!items.length)return'<div class="empty-hint" style="padding:14px 0">Tippe + für eine neue Notiz</div>';return items.map((item,ni)=>'<div class="notiz-item" style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:.5px solid var(--br);"><label class="toggle-wrap" style="width:28px;height:28px;flex-shrink:0"><input type="checkbox" '+(item.done?"checked":"")+'  onchange="toggleNotiz(\'${s.id}\','+ni+',this.checked)"/><div class="toggle-track" style="border-radius:50%"></div><div class="toggle-thumb" style="width:22px;height:22px;top:3px;left:3px"></div></label><span style="flex:1;font-size:18px;color:var(--tx);'+(item.done?"text-decoration:line-through;color:var(--tx3)":"")+'" onclick="editNotizItem(\'${s.id}\','+ni+')">'+(item.text||"…")+'</span><button onclick="deleteNotizItem(\'${s.id}\','+ni+')" style="background:none;border:none;cursor:pointer;color:var(--tx3);font-size:16px;padding:4px"><i class="ti ti-x"></i></button></div>').join('');})()}</div>`,true,'addNotizItem(\'${s.id}\')')}
-
+      __TERMIN_BTN__
+      __SONDER_SEKTION__
+      __GFA_SEKTION__
+      __NOTIZ_SEKTION__
     </div>
   </div>`;
+  html=html.replace('__TERMIN_BTN__','<button class="btn-full" style="margin-top:4px;background:var(--accent);color:white;border:none" onclick="renderNeuKalTerminVonSchueler(\''+s.id+'\')"><i class="ti ti-plus"></i> Termin hinzufügen</button>');
+  html=html.replace('__SONDER_SEKTION__',renderKlappSektion('sonder-'+s.id,'Sonderfahrten','ti-car-suv',renderSonderDoku(sid,s)));
+  const gfaHtml='<div class="card">'+GRUNDFAHRAUFGABEN.map(g=>{const cnt=(s.gfa&&s.gfa[g.key])||0;return'<div class="gfa-row"><span class="gfa-label"><i class="ti '+g.icon+'" style="font-size:16px;margin-right:8px;color:var(--tx3)"></i>'+g.label+'</span><div class="gfa-controls"><button class="gfa-btn" onclick="changeGFA(&quot;'+s.id+'&quot;,&quot;'+g.key+'&quot;,-1)">−</button><span class="gfa-count" id="gfa-'+s.id+'-'+g.key+'">'+cnt+'</span><button class="gfa-btn" onclick="changeGFA(&quot;'+s.id+'&quot;,&quot;'+g.key+'&quot;,1)">+</button></div></div>';}).join('')+'</div>';
+  html=html.replace('__GFA_SEKTION__',renderKlappSektion('gfa-'+s.id,'Grundfahraufgaben','ti-steering-wheel',gfaHtml));
+  const notizItems=Array.isArray(s.notiz)?s.notiz:(s.notiz?[{text:s.notiz,done:false}]:[]);
+  const notizInner=notizItems.length?notizItems.map((item,ni)=>'<div class="notiz-item" style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:.5px solid var(--br);"><label class="toggle-wrap" style="width:28px;height:28px;flex-shrink:0"><input type="checkbox" '+(item.done?'checked':'')+'  onchange="toggleNotiz(&quot;'+s.id+'&quot;,'+ni+',this.checked)"/><div class="toggle-track" style="border-radius:50%"></div><div class="toggle-thumb" style="width:22px;height:22px;top:3px;left:3px"></div></label><span style="flex:1;font-size:18px;color:var(--tx);'+(item.done?'text-decoration:line-through;color:var(--tx3)':'')+'" onclick="editNotizItem(&quot;'+s.id+'&quot;,'+ni+')">'+(item.text||'…')+'</span><button onclick="deleteNotizItem(&quot;'+s.id+'&quot;,'+ni+')" style="background:none;border:none;cursor:pointer;color:var(--tx3);font-size:16px;padding:4px"><i class="ti ti-x"></i></button></div>').join(''):'<div class="empty-hint" style="padding:14px 0">Tippe + für eine neue Notiz</div>';
+  html=html.replace('__NOTIZ_SEKTION__',renderKlappSektion('notiz-'+s.id,'Notizen','ti-notes','<div class="card" id="notiz-list-'+s.id+'">'+notizInner+'</div>',true,'addNotizItem(&quot;'+s.id+'&quot;)'));
   renderApp(html);
   setTimeout(initPTR,50);
 }
