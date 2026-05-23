@@ -720,6 +720,19 @@ function renderSchueler(sid){
         <div class="info-row"><span class="info-lbl"><i class="ti ti-calendar-plus"></i>Beginn</span><span class="info-val">${fmtDate(s.beginn).day}. ${fmtDate(s.beginn).mon} ${fmtDate(s.beginn).year}</span></div>
         <div class="info-row"><span class="info-lbl"><i class="ti ti-book"></i>Theorie</span><span class="info-val" style="color:${s.theorie?"#3B6D11":"#993C1D"}">${s.theorie?"✓ Bestanden":"✗ Ausstehend"}</span></div>
         <div class="info-row"><span class="info-lbl"><i class="ti ti-map-pin"></i>Prüfort</span><span class="info-val">${s.prufort}</span></div>
+        <div class="info-row" style="cursor:pointer;background:rgba(139,92,246,0.04);border-radius:8px;margin:2px -4px;padding:2px 4px" onclick="renderNeuPruefungInline('${s.id}')">
+          <span class="info-lbl"><i class="ti ti-trophy" style="color:#8B5CF6"></i>Prüfung</span>
+          <span class="info-val" style="display:flex;align-items:center;gap:6px">
+            ${(()=>{
+              const pruef=s.pruefungen||[];
+              const last=pruef[pruef.length-1];
+              if(!pruef.length) return '<span style="color:#8B5CF6;font-size:13px">Ergebnis eintragen →</span>';
+              if(last.bestanden===true) return '<span style="color:#3B6D11">✓ Bestanden</span>';
+              if(last.bestanden===false) return '<span style="color:#993C1D">✗ Nicht bestanden</span><span style="color:#8B5CF6;font-size:12px;margin-left:4px">Ergebnis →</span>';
+              return '<span style="color:#8B5CF6;font-size:13px">Ergebnis eintragen →</span>';
+            })()}
+          </span>
+        </div>
         ${s.tel?`<div class="info-row"><span class="info-lbl"><i class="ti ti-brand-whatsapp" style="color:#25D366"></i>WhatsApp</span>
           <a href="https://wa.me/${s.tel.replace(/^\+/,'').replace(/[^0-9]/g,'')}" style="font-size:15px;font-weight:500;color:#25D366;text-decoration:none" onclick="event.stopPropagation()">${s.tel}</a>
         </div>`:""}
@@ -823,36 +836,6 @@ function deleteNotizItem(sid,idx){
 function changeGFA(sid,key,d){const s=getS(sid);if(!s)return;if(!s.gfa)s.gfa={};s.gfa[key]=Math.max(0,(s.gfa[key]||0)+d);saveAll();const el=document.getElementById("gfa-"+sid+"-"+key);if(el)el.textContent=s.gfa[key];}
 
 // ── SCHÜLER ANLEGEN/BEARBEITEN ────────────────────────────────────────────────
-function renderPruefEditSection(s){
-  const pruef=s.pruefungen||[];
-  const hatBestanden=pruef.some(p=>p.bestanden===true);
-  const alleVers=[...pruef];
-  if(!hatBestanden) alleVers.push({datum:'',bestanden:null,versuch:pruef.length+1,_neu:true});
-  let rows='';
-  alleVers.forEach((p,pi)=>{
-    const versNr=p.versuch||(pi+1);
-    const versLabel=versNr===1?'Erstversuch':versNr===2?'Wiederholung 1':versNr===3?'Wiederholung 2':'Wiederholung '+(versNr-1);
-    const ergebnis=p.bestanden===true?'bestanden':p.bestanden===false?'nicht_bestanden':'offen';
-    rows+=`<div style="padding:10px 0;border-bottom:1px solid var(--sep)">
-      <div style="font-size:11px;color:var(--tx3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">${versLabel}</div>
-      <div class="card-row" style="margin-bottom:0">
-        <span class="card-label"><i class="ti ti-calendar-event"></i>Datum</span>
-        <input type="date" id="pe-datum-${pi}" value="${p.datum||''}"/>
-      </div>
-      <div class="card-row" style="margin-top:6px;margin-bottom:0">
-        <span class="card-label"><i class="ti ti-trophy"></i>Ergebnis</span>
-        <select id="pe-erg-${pi}">
-          <option value="offen" ${ergebnis==='offen'?'selected':''}>– offen</option>
-          <option value="bestanden" ${ergebnis==='bestanden'?'selected':''}>✓ Bestanden</option>
-          <option value="nicht_bestanden" ${ergebnis==='nicht_bestanden'?'selected':''}>✗ Nicht bestanden</option>
-        </select>
-      </div>
-    </div>`;
-  });
-  return `<div><div class="sec-label">Praktische Prüfung</div>
-  <div class="card"><div id="pe-rows" data-count="${alleVers.length}">${rows}</div></div></div>`;
-}
-
 function renderNeuSchueler(fromSid){
   const s=fromSid?getS(fromSid):null;
   let selFarbe=s?s.farbe:"blue";
@@ -899,7 +882,6 @@ function renderNeuSchueler(fromSid){
       </div></div>
 
 
-      ${s?renderPruefEditSection(s):''}
 
 
             <button class="btn-full" onclick="saveSchueler('${s?s.id:""}')">${s?"Änderungen speichern":"Schüler speichern"}</button>
@@ -1978,7 +1960,7 @@ function renderTagAnsicht(date){
       const endMin=(()=>{const [h,m]=e.uhr.split(":").map(Number);const tot=h*60+m+e.min;return String(Math.floor(tot/60)%24).padStart(2,"0")+":"+String(tot%60).padStart(2,"0");})();
       const notizL=(e.notiz||'').toLowerCase();const isSonder=e.typ==='ueberland'||e.typ==='autobahn'||e.typ==='nacht'||notizL.includes('überland')||notizL.includes('autobahn')||notizL.includes('nachtfahrt')||e.min===225||e.min===220||e.min===135;
       const isPruef=e.typ==="pruef";
-      const dotCol=isPruef?"#E24B4A":isSonder?"#378ADD":"#639922";
+      const dotCol=isPruef?"#8B5CF6":isSonder?"#378ADD":"#639922";
       totalMin+=e.min;
       const realIdx=t.indexOf(e);
       html+=`<div class="card" style="margin-bottom:8px;cursor:pointer" onclick="showTagTerminActions('${date}',${realIdx})">
@@ -2744,14 +2726,14 @@ function toggleFahrstundenDash(sid, type) {
     var isPruef = e.typ === "pruef";
     var realIdx = (termine[e.datum]||[]).findIndex(function(t){return t.sid===e.sid&&t.uhr===e.uhr&&t.min===e.min;});
     var row = document.createElement("div");
-    row.style.cssText = "display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:.5px solid var(--br2);cursor:pointer;background:"+(isPruef?"rgba(226,75,74,0.06)":"var(--bg)");
+    row.style.cssText = "display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:.5px solid var(--br2);cursor:pointer;background:"+(isPruef?"rgba(139,92,246,0.07)":"var(--bg)");
     var left = document.createElement("span");
-    left.style.cssText = "font-size:15px;color:"+(isPruef?"#E24B4A":"var(--tx2)");
+    left.style.cssText = "font-size:15px;color:"+(isPruef?"#8B5CF6":"var(--tx2)");
     left.textContent = dow+" "+fd.day+". "+fd.mon+(isPruef?" \uD83C\uDFAF":"");
     var right = document.createElement("div");
     right.style.cssText = "display:flex;align-items:center;gap:10px";
     var timeSpan = document.createElement("span");
-    timeSpan.style.cssText = "font-size:15px;font-weight:"+(isPruef?600:400)+";color:"+(isPruef?"#E24B4A":"var(--tx)");
+    timeSpan.style.cssText = "font-size:15px;font-weight:"+(isPruef?600:400)+";color:"+(isPruef?"#8B5CF6":"var(--tx)");
     timeSpan.textContent = (e.uhr||"")+" \u00B7 "+e.min+" min";
     var icon = document.createElement("i");
     icon.className = "ti ti-pencil";
