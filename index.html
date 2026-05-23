@@ -722,6 +722,7 @@ function renderNeuKalTerminVonSchueler(sid){
 
 
 function renderSchueler(sid){
+  renderDashSchueler(sid); return;
   const s=getS(sid);if(!s)return;
   try{
   const nsi=nextSonder(s);
