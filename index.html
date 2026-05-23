@@ -738,39 +738,51 @@ function renderSchueler(sid){
         </div>`:""}
       </div></div>
 
-      <div><div class="sec-label">Sonderfahrten</div>
-      ${renderSonderDoku(sid,s)}</div>
-      <div><div class="sec-label">Grundfahraufgaben</div>
-      <div class="card">
-        ${GRUNDFAHRAUFGABEN.map(g=>{const cnt=(s.gfa&&s.gfa[g.key])||0;return`<div class="gfa-row"><span class="gfa-label"><i class="ti ${g.icon}" style="font-size:16px;margin-right:8px;color:var(--tx3)"></i>${g.label}</span><div class="gfa-controls"><button class="gfa-btn" onclick="changeGFA('${s.id}','${g.key}',-1)">−</button><span class="gfa-count" id="gfa-${s.id}-${g.key}">${cnt}</span><button class="gfa-btn" onclick="changeGFA('${s.id}','${g.key}',1)">+</button></div></div>`;}).join("")}
-      </div></div>
+      <button class="btn-full" style="margin-top:4px;background:var(--accent);color:white;border:none" onclick="renderNeuKalTerminVonSchueler('${s.id}')"><i class="ti ti-plus"></i> Termin hinzufügen</button>
 
-
-
-      <div><div class="sec-row"><div class="sec-label" style="margin:0">Notizen</div>
-        <button class="fab-btn" onclick="addNotizItem('${s.id}')"><i class="ti ti-plus"></i></button>
-      </div>
-      <div class="card" id="notiz-list-${s.id}">
-        ${(()=>{
-          const items=Array.isArray(s.notiz)?s.notiz:(s.notiz?[{text:s.notiz,done:false}]:[]);
-          if(!items.length)return`<div class="empty-hint" style="padding:14px 0">Tippe + für eine neue Notiz</div>`;
-          return items.map((item,ni)=>`
-            <div class="notiz-item" style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:.5px solid var(--br);">
-              <label class="toggle-wrap" style="width:28px;height:28px;flex-shrink:0">
-                <input type="checkbox" ${item.done?"checked":""} onchange="toggleNotiz('${s.id}',${ni},this.checked)"/>
-                <div class="toggle-track" style="border-radius:50%"></div>
-                <div class="toggle-thumb" style="width:22px;height:22px;top:3px;left:3px"></div>
-              </label>
-              <span style="flex:1;font-size:18px;color:var(--tx);${item.done?"text-decoration:line-through;color:var(--tx3)":""}" onclick="editNotizItem('${s.id}',${ni})">${item.text||"…"}</span>
-              <button onclick="deleteNotizItem('${s.id}',${ni})" style="background:none;border:none;cursor:pointer;color:var(--tx3);font-size:16px;padding:4px"><i class="ti ti-x"></i></button>
-            </div>`).join("");
-        })()}
-      </div></div>
+      ${renderKlappSektion('sonder-${s.id}','Sonderfahrten','ti-car-suv',renderSonderDoku(sid,s))}
+      ${renderKlappSektion('gfa-${s.id}','Grundfahraufgaben','ti-steering-wheel',`<div class="card">${GRUNDFAHRAUFGABEN.map(g=>{const cnt=(s.gfa&&s.gfa[g.key])||0;return'<div class="gfa-row"><span class="gfa-label"><i class="ti '+g.icon+'" style="font-size:16px;margin-right:8px;color:var(--tx3)"></i>'+g.label+'</span><div class="gfa-controls"><button class="gfa-btn" onclick="changeGFA(\'${s.id}\',\''+g.key+'\',-1)">−</button><span class="gfa-count" id="gfa-${s.id}-'+g.key+'">'+cnt+'</span><button class="gfa-btn" onclick="changeGFA(\'${s.id}\',\''+g.key+'\',1)">+</button></div></div>';}).join('')}</div>`)}
+      ${renderKlappSektion('notiz-${s.id}','Notizen','ti-notes',`<div class="card" id="notiz-list-${s.id}">${(()=>{const items=Array.isArray(s.notiz)?s.notiz:(s.notiz?[{text:s.notiz,done:false}]:[]);if(!items.length)return'<div class="empty-hint" style="padding:14px 0">Tippe + für eine neue Notiz</div>';return items.map((item,ni)=>'<div class="notiz-item" style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:.5px solid var(--br);"><label class="toggle-wrap" style="width:28px;height:28px;flex-shrink:0"><input type="checkbox" '+(item.done?"checked":"")+'  onchange="toggleNotiz(\'${s.id}\','+ni+',this.checked)"/><div class="toggle-track" style="border-radius:50%"></div><div class="toggle-thumb" style="width:22px;height:22px;top:3px;left:3px"></div></label><span style="flex:1;font-size:18px;color:var(--tx);'+(item.done?"text-decoration:line-through;color:var(--tx3)":"")+'" onclick="editNotizItem(\'${s.id}\','+ni+')">'+(item.text||"…")+'</span><button onclick="deleteNotizItem(\'${s.id}\','+ni+')" style="background:none;border:none;cursor:pointer;color:var(--tx3);font-size:16px;padding:4px"><i class="ti ti-x"></i></button></div>').join('');})()}</div>`,true,'addNotizItem(\'${s.id}\')')}
 
     </div>
   </div>`;
   renderApp(html);
   setTimeout(initPTR,50);
+}
+
+// ── KLAPP-SEKTION ─────────────────────────────────────────────────────────────
+function renderKlappSektion(id,label,icon,innerHtml,hasAdd,addAction){
+  const stored=localStorage.getItem('klapp_'+id);
+  const open=stored==='1';
+  const addBtn=hasAdd?`<button class="fab-btn" onclick="${addAction}"><i class="ti ti-plus"></i></button>`:'';
+  return `<div>
+    <div class="sec-row" style="cursor:pointer" onclick="toggleKlapp('${id}')">
+      <div class="sec-label" style="margin:0;display:flex;align-items:center;gap:6px">
+        <i class="ti ${icon}" style="font-size:14px"></i>${label}
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        ${hasAdd?addBtn:''}
+        <i class="ti ${open?'ti-chevron-up':'ti-chevron-down'}" id="chevron-${id}" style="color:var(--tx3);font-size:16px"></i>
+      </div>
+    </div>
+    <div id="klapp-${id}" style="display:${open?'block':'none'}">${innerHtml}</div>
+  </div>`;
+}
+function toggleKlapp(id){
+  const el=document.getElementById('klapp-'+id);
+  const ch=document.getElementById('chevron-'+id);
+  if(!el)return;
+  const open=el.style.display==='none';
+  el.style.display=open?'block':'none';
+  if(ch){ch.className='ti '+(open?'ti-chevron-up':'ti-chevron-down');}
+  localStorage.setItem('klapp_'+id,open?'1':'0');
+}
+
+// ── TERMIN VON SCHÜLER AUS ─────────────────────────────────────────────────
+function renderNeuKalTerminVonSchueler(sid){
+  const s=getS(sid);if(!s)return;
+  AppState.neuTerminSid=sid;
+  renderNeuKalTermin(todayStr());
 }
 
 function saveNotiz(sid,val){const s=getS(sid);if(!s)return;s.notiz=val;saveAll();}
@@ -1651,6 +1663,12 @@ function renderNeuKalTermin(date){
     </div>
   </div>`;
   renderApp(html);
+  // Pre-select student if called from student page
+  if(AppState.neuTerminSid){
+    const sel=document.getElementById('k-sid');
+    if(sel)sel.value=AppState.neuTerminSid;
+    AppState.neuTerminSid=null;
+  }
   setTimeout(initPTR,50);
 }
 function changeKalMin(d){AppState.kal.min=Math.max(5,Math.min(300,AppState.kal.min+d));const el=document.getElementById("kal-min-disp");if(el)el.textContent=AppState.kal.min+" min";}
