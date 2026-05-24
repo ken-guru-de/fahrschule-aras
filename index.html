@@ -403,17 +403,17 @@ function renderDashboard(dashDateOffset=0){
       allePruef.push({sid:s.id,datum:p.datum,versuch:p.versuch,pi,bestanden:p.bestanden,prufort:p.prufort||s.prufort||""});
     });
   });
-  // Quelle 2: Kalendertermine mit typ=pruef ODER notiz="Prüfung"
+  // Quelle 2: Kalendertermine mit typ=pruef
   Object.entries(termine).forEach(([datum,ts])=>{
     if(datum<td)return;
     ts.forEach(t=>{
       if(!t.sid||t.sid.startsWith("__auffrisch__"))return;
-      const istPruef=t.typ==="pruef";
-      if(!istPruef)return;
+      if(t.typ!=="pruef")return;
       const k=t.sid+"_"+datum;
       if(_pruefSeen.has(k))return;
       _pruefSeen.add(k);
       const s2=getS(t.sid);if(!s2)return;
+      if(s2.pruefungen&&s2.pruefungen.some(p=>p.bestanden===true))return;
       allePruef.push({sid:t.sid,datum,versuch:(s2.pruefungen||[]).length+1,bestanden:null,prufort:s2.prufort||""});
     });
   });
@@ -1575,7 +1575,7 @@ function renderCalGrid(){
       t.slice(0,6).forEach(e=>{
         let cls="cdot-g";
         if(e.typ==="pruef")cls="cdot-r";
-        else if(e.typ==="ueberland"||e.typ==="autobahn"||e.typ==="nacht"||e.min===225||e.min===220||e.min===135)cls="cdot-b";
+        else if(e.typ==="ueberland"||e.typ==="autobahn"||e.typ==="nacht")cls="cdot-b";
         const dot=document.createElement("div");
         dot.className="cdot "+cls;
         dr.appendChild(dot);
@@ -2043,7 +2043,7 @@ function renderTagAnsicht(date){
       const s=isAuffrisch2?null:getS(e.sid);if(!s&&!isAuffrisch2)return;
       const nick=s&&s.spitz?` «${s.spitz}»`:"";
       const endMin=(()=>{const [h,m]=e.uhr.split(":").map(Number);const tot=h*60+m+e.min;return String(Math.floor(tot/60)%24).padStart(2,"0")+":"+String(tot%60).padStart(2,"0");})();
-      const notizL=(e.notiz||'').toLowerCase();const isSonder=e.typ==='ueberland'||e.typ==='autobahn'||e.typ==='nacht'||notizL.includes('überland')||notizL.includes('autobahn')||notizL.includes('nachtfahrt')||e.min===225||e.min===220||e.min===135;
+      const isSonder=e.typ==='ueberland'||e.typ==='autobahn'||e.typ==='nacht';
       const isPruef=e.typ==="pruef";
       const dotCol=isPruef?"#E24B4A":isSonder?"#378ADD":"#639922";
       totalMin+=e.min;
