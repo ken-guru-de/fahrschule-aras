@@ -408,7 +408,7 @@ function renderDashboard(dashDateOffset=0){
     if(datum<td)return;
     ts.forEach(t=>{
       if(!t.sid||t.sid.startsWith("__auffrisch__"))return;
-      const istPruef=t.typ==="pruef"||(t.notiz&&t.notiz.trim().toLowerCase()==="prüfung");
+      const istPruef=t.typ==="pruef";
       if(!istPruef)return;
       const k=t.sid+"_"+datum;
       if(_pruefSeen.has(k))return;
@@ -1574,7 +1574,7 @@ function renderCalGrid(){
       const dr=document.createElement("div");dr.className="dot-row";
       t.slice(0,6).forEach(e=>{
         let cls="cdot-g";
-        if(e.typ==="pruef"||(e.notiz||"").toLowerCase().includes("prüfung"))cls="cdot-r";
+        if(e.typ==="pruef")cls="cdot-r";
         else if(e.typ==="ueberland"||e.typ==="autobahn"||e.typ==="nacht"||e.min===225||e.min===220||e.min===135)cls="cdot-b";
         const dot=document.createElement("div");
         dot.className="cdot "+cls;
@@ -2021,7 +2021,7 @@ function renderTagAnsicht(date){
       const nick=s&&s.spitz?` «${s.spitz}»`:"";
       const endMin=(()=>{const [h,m]=e.uhr.split(":").map(Number);const tot=h*60+m+e.min;return String(Math.floor(tot/60)%24).padStart(2,"0")+":"+String(tot%60).padStart(2,"0");})();
       const notizL=(e.notiz||'').toLowerCase();const isSonder=e.typ==='ueberland'||e.typ==='autobahn'||e.typ==='nacht'||notizL.includes('überland')||notizL.includes('autobahn')||notizL.includes('nachtfahrt')||e.min===225||e.min===220||e.min===135;
-      const isPruef=e.typ==="pruef"||(e.notiz||"").toLowerCase().includes("prüfung");
+      const isPruef=e.typ==="pruef";
       const dotCol=isPruef?"#E24B4A":isSonder?"#378ADD":"#639922";
       totalMin+=e.min;
       const realIdx=t.indexOf(e);
@@ -2289,7 +2289,7 @@ function renderTerminDetail(date,idx){
   const fd=fmtDate(date);
   const wt=["So","Mo","Di","Mi","Do","Fr","Sa"];
   const dow=wt[new Date(date).getDay()];
-  const isPruef=e.typ==="pruef"||(e.notiz||"").toLowerCase().includes("prüfung");
+  const isPruef=e.typ==="pruef";
   const isSonder=e.typ==="ueberland"||e.typ==="autobahn"||e.typ==="nacht";
   const typLabel=isPruef?"Prüfung":isSonder?{ueberland:"Überlandfahrt",autobahn:"Autobahnfahrt",nacht:"Nachtfahrt"}[e.typ]||e.typ:"Fahrstunde";
   const barCol=isPruef?"#E24B4A":isSonder?"#378ADD":"#639922";
