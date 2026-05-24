@@ -907,18 +907,26 @@ function renderNeuSchueler(fromSid){
         <div class="card-row"><span class="card-label"><i class="ti ti-book"></i>Theorie</span>
           <label class="toggle-wrap"><input type="checkbox" id="n-th" ${s&&s.theorie?"checked":""}/><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
         </div>
+        ${s&&s.pruefungen&&s.pruefungen.length?`
+        <div style="padding:8px 14px;border-top:.5px solid var(--br)">
+          <div style="font-size:12px;color:var(--tx3);margin-bottom:6px">PRÜFUNGSEINTRÄGE</div>
+          ${s.pruefungen.map((p,pi)=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:4px 0;border-bottom:.5px solid var(--br2)">
+            <span style="font-size:14px">${p.datum} · ${p.bestanden===true?'✓ Best.':p.bestanden===false?'✗ Nicht best.':'offen'}</span>
+            <button onclick="deletePruefEintrag('${s.id}',${pi})" style="background:none;border:none;color:#E24B4A;font-size:20px;cursor:pointer;padding:0 4px">×</button>
+          </div>`).join('')}
+        </div>`:''}
         ${s?`
         <div class="card-row"><span class="card-label"><i class="ti ti-trophy"></i>Praxis</span>
           <label class="toggle-wrap"><input type="checkbox" id="n-pr" ${s.pruefungen&&s.pruefungen.some(p=>p.bestanden===true)?"checked":""}/><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
         </div>
         <div class="card-row"><span class="card-label"><i class="ti ti-road"></i>Überland</span>
-          <label class="toggle-wrap"><input type="checkbox" id="n-ue" ${(s.sonder&&s.sonder.ueberland>=270)?"checked":""}/><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+          <label class="toggle-wrap"><input type="checkbox" id="n-ue" ${(s.sonder&&(s.sonder.ueberland||0)>=270)?"checked":""}/><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
         </div>
         <div class="card-row"><span class="card-label"><i class="ti ti-road-sign"></i>Autobahn</span>
-          <label class="toggle-wrap"><input type="checkbox" id="n-ab" ${(s.sonder&&s.sonder.autobahn>=225)?"checked":""}/><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+          <label class="toggle-wrap"><input type="checkbox" id="n-ab" ${(s.sonder&&(s.sonder.autobahn||0)>=225)?"checked":""}/><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
         </div>
         <div class="card-row"><span class="card-label"><i class="ti ti-moon"></i>Nacht</span>
-          <label class="toggle-wrap"><input type="checkbox" id="n-na" ${(s.sonder&&s.sonder.nacht>=135)?"checked":""}/><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+          <label class="toggle-wrap"><input type="checkbox" id="n-na" ${(s.sonder&&(s.sonder.nacht||0)>=135)?"checked":""}/><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
         </div>`:''}
       </div></div>
 
@@ -987,12 +995,14 @@ function saveSchueler(editSid){
         s.pruefungen.forEach(p=>{if(p.bestanden===true)p.bestanden=null;});
       }
     }
-    // Sonderfahrten Toggles
-    if(!s.sonder)s.sonder={};
-    const ueEl=document.getElementById('n-ue');const abEl=document.getElementById('n-ab');const naEl=document.getElementById('n-na');
-    if(ueEl)s.sonder.ueberland=ueEl.checked?270:0;
-    if(abEl)s.sonder.autobahn=abEl.checked?225:0;
-    if(naEl)s.sonder.nacht=naEl.checked?135:0;
+    // Sonderfahrten Toggles - nur im Edit-Modus
+    if(editSid){
+      if(!s.sonder||Array.isArray(s.sonder))s.sonder={ueberland:0,autobahn:0,nacht:0};
+      const ueEl=document.getElementById('n-ue');const abEl=document.getElementById('n-ab');const naEl=document.getElementById('n-na');
+      if(ueEl)s.sonder.ueberland=ueEl.checked?270:0;
+      if(abEl)s.sonder.autobahn=abEl.checked?225:0;
+      if(naEl)s.sonder.nacht=naEl.checked?135:0;
+    }
     // Prüfungsergebnisse aus Edit-Dialog speichern
     const peRows=document.getElementById('pe-rows');
     if(peRows){
@@ -2698,6 +2708,13 @@ function renderDashSchueler(sid){
   </div>`;
   renderApp(html);
   setTimeout(initPTR,50);
+}
+
+function deletePruefEintrag(sid,pi){
+  const s=getS(sid);if(!s||!s.pruefungen)return;
+  s.pruefungen.splice(pi,1);
+  saveAll();
+  renderNeuSchueler(sid);
 }
 
 function toggleTheorie(sid){
