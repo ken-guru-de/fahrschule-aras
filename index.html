@@ -2543,51 +2543,15 @@ function renderApp(html){
 function syncKalenderToFahrstunden(){
   schueler.forEach(s=>{
     s.fahrstunden=[];
-    const prevSonder={...(s.sonder&&!Array.isArray(s.sonder)?s.sonder:{ueberland:0,autobahn:0,nacht:0})};
-    const manualOverride={...(s.manualSonder||{})};
-    s.sonder={ueberland:0,autobahn:0,nacht:0};
+    // sonder bleibt manuell — wird nicht aus Terminen berechnet
+    if(!s.sonder||Array.isArray(s.sonder))s.sonder={ueberland:0,autobahn:0,nacht:0};
     Object.entries(termine).forEach(([datum,ts])=>{
       ts.filter(t=>t.sid===s.id).forEach(t=>{
-        if(t.typ==="pruef"){
-          if(!s.pruefungen)s.pruefungen=[];
-          // Robust duplicate check: same datum (ignore time differences)
-          const existIdx=s.pruefungen.findIndex(p=>p.datum===datum);
-          if(existIdx<0){
-            // Push without versuch yet — we'll renumber after sort
-            s.pruefungen.push({datum,uhr:t.uhr,versuch:0,bestanden:null,prufort:s.prufort||""});
-          } else {
-            // Update uhr if missing
-            if(!s.pruefungen[existIdx].uhr&&t.uhr)s.pruefungen[existIdx].uhr=t.uhr;
-          }
-          return;
-        }
-        const notiz=(t.notiz||"").toLowerCase();
-        let typ=t.typ||"normal";
-        if(typ==="normal"||typ===""){
-          if(notiz.includes("überlandfahrt")||notiz.includes("überland"))typ="ueberland";
-          else if(notiz.includes("autobahnfahrt")||notiz.includes("autobahn"))typ="autobahn";
-          else if(notiz.includes("nachtfahrt")||notiz.includes("nacht"))typ="nacht";
-        }
-        if(typ==="ueberland")s.sonder.ueberland=(s.sonder.ueberland||0)+t.min;
-        if(typ==="autobahn")s.sonder.autobahn=(s.sonder.autobahn||0)+t.min;
-        if(typ==="nacht")s.sonder.nacht=(s.sonder.nacht||0)+t.min;
+        const typ=t.typ||"normal";
         s.fahrstunden.push({datum,uhr:t.uhr,min:t.min,typ,einh:1,notiz:t.notiz||""});
       });
     });
     s.fahrstunden.sort((a,b)=>b.datum.localeCompare(a.datum)||(b.uhr||"").localeCompare(a.uhr||""));
-    // Sort pruefungen by date, then assign versuch numbers correctly
-    if(s.pruefungen&&s.pruefungen.length){
-      s.pruefungen.sort((a,b)=>a.datum.localeCompare(b.datum));
-      s.pruefungen.forEach((p,i)=>{
-        // Only reassign if versuch is 0 (new) or was wrong
-        if(p.versuch===0)p.versuch=i+1;
-      });
-    }
-    // Apply manual overrides (explicit user setting takes precedence)
-    ['ueberland','autobahn','nacht'].forEach(k=>{
-      if(k in manualOverride){s.sonder[k]=manualOverride[k];}
-      else if((prevSonder[k]||0)>(s.sonder[k]||0)){s.sonder[k]=prevSonder[k];}
-    });
   });
 }
 function renderDashSchueler(sid){
