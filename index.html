@@ -2087,16 +2087,17 @@ function renderEditKalTermin(date,idx){
         </div>
         <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Startzeit</span><input type="time" step="300" id="ekt-uhr" value="${t.uhr}" oninput="ektUpdateEnd()"/></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-clock-check"></i>Endzeit</span><span id="ekt-endzeit" style="flex:1;text-align:right;font-size:15px;font-weight:500;color:var(--accent)"></span></div>
-        <div class="card-row" style="flex-direction:column;align-items:stretch;gap:8px;padding:12px 14px">
-          <span style="font-size:13px;color:var(--tx2)">Art der Fahrt</span>
-          <div style="display:flex;gap:6px;flex-wrap:wrap">
-            <button class="pill ${!t.typ||t.typ==='normal'?"active":""}" id="ektyp-normal" onclick="setEKTyp('normal')" style="font-size:13px;padding:6px 10px">Fahrstunde</button>
-            <button class="pill ${t.typ==="pruef"?"active":""}" id="ektyp-pruef" onclick="setEKTyp('pruef')" style="font-size:13px;padding:6px 10px">Prüfung</button>
-            <button class="pill ${t.typ==="ueberland"?"active":""}" id="ektyp-ueberland" onclick="setEKTyp('ueberland')" style="font-size:12px;padding:5px 8px">Überland</button>
-            <button class="pill ${t.typ==="autobahn"?"active":""}" id="ektyp-autobahn" onclick="setEKTyp('autobahn')" style="font-size:12px;padding:5px 8px">Autobahn</button>
-            <button class="pill ${t.typ==="nacht"?"active":""}" id="ektyp-nacht" onclick="setEKTyp('nacht')" style="font-size:12px;padding:5px 8px">Nacht</button>
-            <button class="pill ${t.typ==="auffrisch"?"active":""}" id="ektyp-auffrisch" onclick="setEKTyp('auffrisch')" style="font-size:12px;padding:5px 8px">Auffrischung</button>
-          </div></div>
+        <div class="card-row" style="align-items:flex-start;flex-direction:column;gap:8px;padding:12px 14px">
+          <span style="font-size:13px;color:var(--tx2);font-weight:500">Art der Fahrt</span>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;width:100%">
+            <button class="pill ${!t.typ||t.typ==='normal'?'active':''}" id="ektyp-normal" onclick="setEKTyp('normal')">Fahrstunde</button>
+            <button class="pill ${t.typ==='pruef'?'active':''}" id="ektyp-pruef" onclick="setEKTyp('pruef')">Prüfung</button>
+            <button class="pill ${t.typ==='ueberland'?'active':''}" id="ektyp-ueberland" onclick="setEKTyp('ueberland')">Überland</button>
+            <button class="pill ${t.typ==='autobahn'?'active':''}" id="ektyp-autobahn" onclick="setEKTyp('autobahn')">Autobahn</button>
+            <button class="pill ${t.typ==='nacht'?'active':''}" id="ektyp-nacht" onclick="setEKTyp('nacht')">Nacht</button>
+            <button class="pill ${t.typ==='auffrisch'?'active':''}" id="ektyp-auffrisch" onclick="setEKTyp('auffrisch')">Auffrisch.</button>
+          </div>
+        </div>
         <div class="card-row"><span class="card-label"><i class="ti ti-hourglass"></i>Minuten</span>
           <div style="display:flex;align-items:center;gap:10px;justify-content:flex-end;flex:1">
             <button class="cir-btn" onclick="changeETMin(-5);ektUpdateEnd()">−</button>
