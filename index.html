@@ -1931,6 +1931,17 @@ function renderEditDashTermin(date,idx){
           </select>
         </div>
         <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Uhrzeit</span><input type="time" step="300" id="et-uhr" value="${t.uhr}"/></div>
+        <div class="card-row" style="align-items:flex-start;flex-direction:column;gap:8px;padding:12px 14px">
+          <span style="font-size:13px;color:var(--tx2);font-weight:500">Art der Fahrt</span>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;width:100%">
+            <button class="pill ${!t.typ||t.typ==='normal'?'active':''}" id="dtyp-normal" onclick="setDTyp('normal')">Fahrstunde</button>
+            <button class="pill ${t.typ==='pruef'?'active':''}" id="dtyp-pruef" onclick="setDTyp('pruef')">Prüfung</button>
+            <button class="pill ${t.typ==='ueberland'?'active':''}" id="dtyp-ueberland" onclick="setDTyp('ueberland')">Überland</button>
+            <button class="pill ${t.typ==='autobahn'?'active':''}" id="dtyp-autobahn" onclick="setDTyp('autobahn')">Autobahn</button>
+            <button class="pill ${t.typ==='nacht'?'active':''}" id="dtyp-nacht" onclick="setDTyp('nacht')">Nacht</button>
+            <button class="pill ${t.typ==='auffrisch'?'active':''}" id="dtyp-auffrisch" onclick="setDTyp('auffrisch')">Auffrisch.</button>
+          </div>
+        </div>
         <div class="card-row"><span class="card-label"><i class="ti ti-hourglass"></i>Minuten</span>
           <div style="display:flex;align-items:center;gap:10px;justify-content:flex-end;flex:1">
             <button class="cir-btn" onclick="changeETMin(-5)">−</button>
@@ -1955,15 +1966,27 @@ function changeETMin(d){
   if(el)el.textContent=AppState.et.min+" min";
 }
 
+function setDTyp(typ){
+  AppState.et.typ=typ;
+  ["normal","pruef","ueberland","autobahn","nacht","auffrisch"].forEach(t=>{const el=document.getElementById("dtyp-"+t);if(el)el.classList.toggle("active",t===typ);});
+  if(typ==="normal"||typ==="auffrisch")AppState.et.min=80;
+  else if(typ==="pruef")AppState.et.min=100;
+  else if(typ==="ueberland")AppState.et.min=270;
+  else if(typ==="autobahn")AppState.et.min=225;
+  else if(typ==="nacht")AppState.et.min=135;
+  const el=document.getElementById("et-min-disp");if(el)el.textContent=AppState.et.min+" min";
+}
+
 function saveEditDashTermin(){
   const date=AppState.et.date;const idx=AppState.et.idx;
   if(!termine[date]||!termine[date][idx])return;
   termine[date][idx].sid=document.getElementById("et-sid").value;
   termine[date][idx].uhr=document.getElementById("et-uhr").value;
   termine[date][idx].min=AppState.et.min||80;
+  termine[date][idx].typ=AppState.et.typ||'normal';
   termine[date][idx].notiz=document.getElementById("et-notiz").value.trim();
   termine[date].sort((a,b)=>a.uhr.localeCompare(b.uhr));
-  saveAll();if(AppState.et.backSid)renderDashSchueler(AppState.et.backSid);else renderDashboard();
+  saveAll();renderTagAnsicht(date);
 }
 
 function deleteEditDashTermin(){
