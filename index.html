@@ -418,6 +418,13 @@ function renderDashboard(dashDateOffset=0){
     });
   });
   allePruef.sort((a,b)=>a.datum.localeCompare(b.datum));
+  // Nur eine Prüfung pro Schüler anzeigen (die nächste)
+  const _pruefPerSid=new Map();
+  const allePruefFiltered=[];
+  allePruef.forEach(p=>{
+    if(!_pruefPerSid.has(p.sid)){_pruefPerSid.set(p.sid,true);allePruefFiltered.push(p);}
+  });
+  allePruef.length=0;allePruefFiltered.forEach(p=>allePruef.push(p));
 
   let html=`<div class="screen active" id="scr-dash">
     <div class="topbar">
@@ -2589,7 +2596,7 @@ function renderDashSchueler(sid){
 
   let html=`<div class="screen active">
     <div class="topbar">
-      <button class="btn-icon" onclick="history.back()||renderDashboard()"><i class="ti ti-arrow-left"></i></button>
+      <button class="btn-icon" onclick="renderListe()"><i class="ti ti-arrow-left"></i></button>
       <span class="topbar-title">${s.vorname} ${s.nachname}</span>
       <button class="btn-icon" onclick="renderNeuSchueler('${sid}')"><i class="ti ti-pencil"></i></button>
     </div>
