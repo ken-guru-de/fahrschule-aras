@@ -2677,7 +2677,7 @@ function renderDashSchueler(sid){
         </div>
         <div id="klapp-gfa2-${sid}" style="display:none">
           <div class="card">
-            ${GRUNDFAHRAUFGABEN.map(g=>{const cnt=(s.gfa||{})[g.key]||0;return'<div class="gfa-row"><span class="gfa-label"><i class="ti '+g.icon+'" style="font-size:16px;margin-right:8px;color:var(--tx3)"></i>'+g.label+'</span><div class="gfa-controls"><button class="gfa-btn" onclick="changeGFADash(&quot;'+s.id+'&quot;,&quot;'+g.key+'&quot;,-1)">−</button><span class="gfa-count" id="gfa2-'+s.id+'-'+g.key+'">'+cnt+'</span><button class="gfa-btn" onclick="changeGFADash(&quot;'+s.id+'&quot;,&quot;'+g.key+'&quot;,1)">+</button></div></div>';}).join('')}
+            ${GRUNDFAHRAUFGABEN.map(g=>{const cnt=(s.gfa||{})[g.key]||0;return'<div class="gfa-row"><span class="gfa-label"><i class="ti '+g.icon+'" style="font-size:16px;margin-right:8px;color:var(--tx3)"></i>'+g.label+'</span><div class="gfa-controls"><button class="gfa-btn" onclick="changeGFADash(&quot;'+s.id+'&quot;,&quot;'+g.key+'&quot;,-1)">−</button><span class="gfa-count" id="gfa-'+s.id+'-'+g.key+'-d">'+cnt+'</span><button class="gfa-btn" onclick="changeGFADash(&quot;'+s.id+'&quot;,&quot;'+g.key+'&quot;,1)">+</button></div></div>';}).join('')}
           </div>
         </div>
       </div>
