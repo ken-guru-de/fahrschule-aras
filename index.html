@@ -1911,7 +1911,7 @@ function renderEditDashTermin(date,idx){
   const s=isAuffrisch3?null:getS(t.sid);
   if(!s&&!isAuffrisch3){console.warn("Schueler nicht gefunden",t.sid);return;}
   const fd=fmtDate(date);
-  AppState.et.date=date;AppState.et.idx=idx;AppState.et.min=t.min;AppState.et.isAuffrisch=isAuffrisch3;AppState.et.backSid=t.sid;
+  AppState.et.date=date;AppState.et.idx=idx;AppState.et.min=t.min;AppState.et.typ=t.typ||'normal';AppState.et.isAuffrisch=isAuffrisch3;AppState.et.backSid=t.sid;
   let html=`<div class="screen active" id="scr-edit-termin">
     <div class="topbar">
       <button class="btn-icon" onclick="AppState.et.backSid?renderDashSchueler(AppState.et.backSid):renderDashboard()"><i class="ti ti-arrow-left"></i></button>
@@ -2090,12 +2090,12 @@ function renderEditKalTermin(date,idx){
         <div class="card-row" style="flex-direction:column;align-items:stretch;gap:8px;padding:12px 14px">
           <span style="font-size:13px;color:var(--tx2)">Art der Fahrt</span>
           <div style="display:flex;gap:6px;flex-wrap:wrap">
-            <button class="pill ${t.min===80?"active":""}" id="ektyp-normal" onclick="setEKTyp('normal')" style="font-size:13px;padding:6px 10px">Fahrstunde</button>
+            <button class="pill ${!t.typ||t.typ==='normal'?"active":""}" id="ektyp-normal" onclick="setEKTyp('normal')" style="font-size:13px;padding:6px 10px">Fahrstunde</button>
             <button class="pill ${t.typ==="pruef"?"active":""}" id="ektyp-pruef" onclick="setEKTyp('pruef')" style="font-size:13px;padding:6px 10px">Prüfung</button>
-            <button class="pill ${t.min===225?"active":""}" id="ektyp-ueberland" onclick="setEKTyp('ueberland')" style="font-size:12px;padding:5px 8px">Überland</button>
-            <button class="pill ${t.min===220?"active":""}" id="ektyp-autobahn" onclick="setEKTyp('autobahn')" style="font-size:12px;padding:5px 8px">Autobahn</button>
-            <button class="pill ${t.min===135?"active":""}" id="ektyp-nacht" onclick="setEKTyp('nacht')" style="font-size:12px;padding:5px 8px">Nacht</button>
-            <button class="pill" id="ektyp-auffrisch" onclick="setEKTyp('auffrisch')" style="font-size:12px;padding:5px 8px">Auffrischung</button>
+            <button class="pill ${t.typ==="ueberland"?"active":""}" id="ektyp-ueberland" onclick="setEKTyp('ueberland')" style="font-size:12px;padding:5px 8px">Überland</button>
+            <button class="pill ${t.typ==="autobahn"?"active":""}" id="ektyp-autobahn" onclick="setEKTyp('autobahn')" style="font-size:12px;padding:5px 8px">Autobahn</button>
+            <button class="pill ${t.typ==="nacht"?"active":""}" id="ektyp-nacht" onclick="setEKTyp('nacht')" style="font-size:12px;padding:5px 8px">Nacht</button>
+            <button class="pill ${t.typ==="auffrisch"?"active":""}" id="ektyp-auffrisch" onclick="setEKTyp('auffrisch')" style="font-size:12px;padding:5px 8px">Auffrischung</button>
           </div></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-hourglass"></i>Minuten</span>
           <div style="display:flex;align-items:center;gap:10px;justify-content:flex-end;flex:1">
@@ -2129,11 +2129,12 @@ function ektUpdateEnd(){
 }
 
 function setEKTyp(typ){
+  AppState.et.typ=typ;
   ["normal","pruef","ueberland","autobahn","nacht","auffrisch"].forEach(t=>{const el=document.getElementById("ektyp-"+t);if(el)el.classList.toggle("active",t===typ);});
   if(typ==="normal"||typ==="auffrisch")AppState.et.min=80;
   else if(typ==="pruef")AppState.et.min=100;
-  else if(typ==="ueberland")AppState.et.min=225;
-  else if(typ==="autobahn")AppState.et.min=220;
+  else if(typ==="ueberland")AppState.et.min=270;
+  else if(typ==="autobahn")AppState.et.min=225;
   else if(typ==="nacht")AppState.et.min=135;
   const el=document.getElementById("et-min-disp");if(el)el.textContent=AppState.et.min+" min";
   ektUpdateEnd();
@@ -2157,6 +2158,7 @@ function saveEktTermin(date,idx){
   if(!isAuffrisch3){const ektSid=document.getElementById('ekt-sid');if(ektSid)entry.sid=ektSid.value;}
   entry.uhr=document.getElementById("ekt-uhr").value;
   entry.min=AppState.et.min||80;
+  if(AppState.et.typ)entry.typ=AppState.et.typ;
   entry.notiz=document.getElementById("ekt-notiz").value.trim();
   // Move to new date if changed
   if(newDate!==date){
