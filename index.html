@@ -900,12 +900,22 @@ function renderNeuSchueler(fromSid){
         <div class="card-row"><span class="card-label"><i class="ti ti-book"></i>Theorie</span>
           <label class="toggle-wrap"><input type="checkbox" id="n-th" ${s&&s.theorie?"checked":""}/><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
         </div>
+        ${s?`
+        <div class="card-row"><span class="card-label"><i class="ti ti-trophy"></i>Praxis</span>
+          <label class="toggle-wrap"><input type="checkbox" id="n-pr" ${s.pruefungen&&s.pruefungen.some(p=>p.bestanden===true)?"checked":""}/><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+        </div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-road"></i>Überland</span>
+          <label class="toggle-wrap"><input type="checkbox" id="n-ue" ${(s.sonder&&s.sonder.ueberland>=270)?"checked":""}/><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+        </div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-road-sign"></i>Autobahn</span>
+          <label class="toggle-wrap"><input type="checkbox" id="n-ab" ${(s.sonder&&s.sonder.autobahn>=225)?"checked":""}/><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+        </div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-moon"></i>Nacht</span>
+          <label class="toggle-wrap"><input type="checkbox" id="n-na" ${(s.sonder&&s.sonder.nacht>=135)?"checked":""}/><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+        </div>`:''}
       </div></div>
 
-
-
-
-            <button class="btn-full" onclick="saveSchueler('${s?s.id:""}')">${s?"Änderungen speichern":"Schüler speichern"}</button>
+      <button class="btn-full" onclick="saveSchueler('${s?s.id:""}')">${s?"Änderungen speichern":"Schüler speichern"}</button>
       ${s?`<button class="btn-full danger" style="margin-top:6px" onclick="deleteSchueler('${s.id}')"><i class="ti ti-trash"></i> Schüler löschen</button>`:""}
     </div>
   </div>`;
@@ -958,6 +968,24 @@ function saveSchueler(editSid){
   if(editSid){
     const s=getS(editSid);
     s.vorname=vn;s.nachname=nn;s.spitz=sp;s.geschlecht=AppState.geschlecht||'m';s.tel=document.getElementById('n-tel').value.trim();s.beginn=bg;s.klasse=kl;s.prufort=pf;s.prueftermin=pt;s.theorie=th;s.farbe=AppState.selFarbe;
+    // Praxis Toggle
+    const prEl=document.getElementById('n-pr');
+    if(prEl){
+      if(!s.pruefungen)s.pruefungen=[];
+      const warBestanden=s.pruefungen.some(p=>p.bestanden===true);
+      if(prEl.checked&&!warBestanden){
+        const pt2=Object.entries(termine).sort((a,b)=>b[0].localeCompare(a[0])).flatMap(([d,ts])=>ts.filter(t=>t.sid===s.id&&t.typ==='pruef').map(t=>({...t,datum:d})))[0];
+        s.pruefungen.push({datum:pt2?pt2.datum:todayStr(),versuch:s.pruefungen.length+1,bestanden:true,prufort:s.prufort||''});
+      } else if(!prEl.checked&&warBestanden){
+        s.pruefungen.forEach(p=>{if(p.bestanden===true)p.bestanden=null;});
+      }
+    }
+    // Sonderfahrten Toggles
+    if(!s.sonder)s.sonder={};
+    const ueEl=document.getElementById('n-ue');const abEl=document.getElementById('n-ab');const naEl=document.getElementById('n-na');
+    if(ueEl)s.sonder.ueberland=ueEl.checked?270:0;
+    if(abEl)s.sonder.autobahn=abEl.checked?225:0;
+    if(naEl)s.sonder.nacht=naEl.checked?135:0;
     // Prüfungsergebnisse aus Edit-Dialog speichern
     const peRows=document.getElementById('pe-rows');
     if(peRows){
@@ -1539,7 +1567,7 @@ function renderCalGrid(){
       const dr=document.createElement("div");dr.className="dot-row";
       t.slice(0,6).forEach(e=>{
         let cls="cdot-g";
-        if(e.typ==="pruef")cls="cdot-r";
+        if(e.typ==="pruef"||(e.notiz||"").toLowerCase().includes("prüfung"))cls="cdot-r";
         else if(e.typ==="ueberland"||e.typ==="autobahn"||e.typ==="nacht"||e.min===225||e.min===220||e.min===135)cls="cdot-b";
         const dot=document.createElement("div");
         dot.className="cdot "+cls;
@@ -1986,7 +2014,7 @@ function renderTagAnsicht(date){
       const nick=s&&s.spitz?` «${s.spitz}»`:"";
       const endMin=(()=>{const [h,m]=e.uhr.split(":").map(Number);const tot=h*60+m+e.min;return String(Math.floor(tot/60)%24).padStart(2,"0")+":"+String(tot%60).padStart(2,"0");})();
       const notizL=(e.notiz||'').toLowerCase();const isSonder=e.typ==='ueberland'||e.typ==='autobahn'||e.typ==='nacht'||notizL.includes('überland')||notizL.includes('autobahn')||notizL.includes('nachtfahrt')||e.min===225||e.min===220||e.min===135;
-      const isPruef=e.typ==="pruef";
+      const isPruef=e.typ==="pruef"||(e.notiz||"").toLowerCase().includes("prüfung");
       const dotCol=isPruef?"#E24B4A":isSonder?"#378ADD":"#639922";
       totalMin+=e.min;
       const realIdx=t.indexOf(e);
@@ -2254,7 +2282,7 @@ function renderTerminDetail(date,idx){
   const fd=fmtDate(date);
   const wt=["So","Mo","Di","Mi","Do","Fr","Sa"];
   const dow=wt[new Date(date).getDay()];
-  const isPruef=e.typ==="pruef";
+  const isPruef=e.typ==="pruef"||(e.notiz||"").toLowerCase().includes("prüfung");
   const isSonder=e.typ==="ueberland"||e.typ==="autobahn"||e.typ==="nacht";
   const typLabel=isPruef?"Prüfung":isSonder?{ueberland:"Überlandfahrt",autobahn:"Autobahnfahrt",nacht:"Nachtfahrt"}[e.typ]||e.typ:"Fahrstunde";
   const barCol=isPruef?"#E24B4A":isSonder?"#378ADD":"#639922";
