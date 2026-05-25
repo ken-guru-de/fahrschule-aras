@@ -1972,8 +1972,8 @@ function renderEditDashTermin(date,idx){
 
 function changeETMin(d){
   AppState.et.min=Math.max(10,Math.min(300,(AppState.et.min||80)+d));
-  const el=document.getElementById("et-min-disp");
-  if(el)el.textContent=AppState.et.min+" min";
+  const txt=AppState.et.min+" min";
+  ["et-min-disp","ekt-min-disp"].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=txt;});
 }
 
 function setDTyp(typ){
@@ -2134,7 +2134,7 @@ function renderEditKalTermin(date,idx){
         <div class="card-row"><span class="card-label"><i class="ti ti-hourglass"></i>Minuten</span>
           <div style="display:flex;align-items:center;gap:10px;justify-content:flex-end;flex:1">
             <button class="cir-btn" onclick="changeETMin(-5);ektUpdateEnd()">−</button>
-            <span id="et-min-disp" style="font-size:16px;font-weight:500;min-width:52px;text-align:center">${t.min} min</span>
+            <span id="ekt-min-disp" style="font-size:16px;font-weight:500;min-width:52px;text-align:center">${t.min} min</span>
             <button class="cir-btn" onclick="changeETMin(5);ektUpdateEnd()">+</button>
           </div>
         </div>
@@ -2170,14 +2170,14 @@ function setEKTyp(typ){
   else if(typ==="ueberland")AppState.et.min=270;
   else if(typ==="autobahn")AppState.et.min=225;
   else if(typ==="nacht")AppState.et.min=135;
-  const el=document.getElementById("et-min-disp");if(el)el.textContent=AppState.et.min+" min";
+  const el=document.getElementById("ekt-min-disp");if(el)el.textContent=AppState.et.min+" min";
   ektUpdateEnd();
 }
 
 function setEKSonder(key,min){
   SONDER.forEach(sf=>{const el=document.getElementById("eksf-"+sf.key);if(el)el.classList.toggle("active",sf.key===key);});
   AppState.et.min=min;
-  const el=document.getElementById("et-min-disp");if(el)el.textContent=min+" min";
+  const el=document.getElementById("ekt-min-disp");if(el)el.textContent=min+" min";
   ektUpdateEnd();
 }
 
