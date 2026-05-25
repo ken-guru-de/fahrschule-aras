@@ -36,13 +36,13 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:-apple-sy
 .screen{display:none;flex-direction:column;height:100%;}
 .screen.active{display:flex;}
 .topbar{display:flex;align-items:center;gap:8px;padding:calc(var(--safe-top) + 10px) 20px 14px;background:linear-gradient(160deg,#FF8240 0%,#FF6B2B 60%,#e85510 100%);flex-shrink:0;min-height:52px;box-shadow:0 4px 20px rgba(255,107,43,0.45);}
-.topbar-title{font-size:19px;font-weight:700;flex:1;color:white;letter-spacing:-.3px;}
-.btn-icon{background:rgba(255,255,255,0.18);border:none;cursor:pointer;color:white;font-size:28px;display:flex;align-items:center;padding:8px;border-radius:14px;min-width:46px;min-height:46px;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.20),inset 0 1px 0 rgba(255,255,255,0.30);transition:background .12s;}
+.topbar-title{font-size:22px;font-weight:700;flex:1;color:white;letter-spacing:-.3px;}
+.btn-icon{background:rgba(255,255,255,0.18);border:none;cursor:pointer;color:white;font-size:32px;display:flex;align-items:center;padding:8px;border-radius:14px;min-width:46px;min-height:46px;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.20),inset 0 1px 0 rgba(255,255,255,0.30);transition:background .12s;}
 .btn-icon:active{background:rgba(255,255,255,0.30);}
 .btn-icon.dark{color:var(--tx2);background:var(--bg2);box-shadow:var(--shadow-sm);}
 .btn-icon.dark:active{background:var(--bg3);}
 .scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 16px calc(var(--safe-bot) + 24px);display:flex;flex-direction:column;gap:12px;overscroll-behavior:contain;}
-.sec-label{font-size:11px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;}
+.sec-label{font-size:13px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;}
 .sec-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
 .card{background:var(--bg2);border-radius:var(--r-lg);box-shadow:var(--shadow-sm);}
 .card>.card-row:first-child,.card>.info-row:first-child,.card>.gfa-row:first-child,.card>.sonder-btn-row:first-child{border-radius:var(--r-lg) var(--r-lg) 0 0;}
@@ -51,9 +51,9 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:-apple-sy
 @media(prefers-color-scheme:dark){.card{background:var(--bg2);}}
 .card-row{display:flex;align-items:center;gap:10px;padding:13px 16px;border-bottom:1px solid var(--br);min-height:52px;}
 .card-row:last-child{border-bottom:none;}
-.card-label{font-size:15px;color:var(--tx2);display:flex;align-items:center;gap:6px;min-width:130px;flex-shrink:0;}
-.card-label i{font-size:15px;}
-.card-row input,.card-row select,.card-row textarea{flex:1;border:none;background:transparent;font-size:15px;color:var(--tx);font-family:inherit;outline:none;text-align:right;}
+.card-label{font-size:17px;color:var(--tx2);display:flex;align-items:center;gap:6px;min-width:130px;flex-shrink:0;}
+.card-label i{font-size:17px;}
+.card-row input,.card-row select,.card-row textarea{flex:1;border:none;background:transparent;font-size:17px;color:var(--tx);font-family:inherit;outline:none;text-align:right;}
 .card-row input[type=text],.card-row input[type=tel],.card-row input[type=search],.card-row textarea{text-align:left;}
 .card-row textarea{text-align:left;resize:none;}
 .card-row select option{background:var(--bg);}
@@ -63,23 +63,23 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:-apple-sy
 .stat-box.accent .stat-lbl{color:rgba(255,255,255,0.75);}
 .stat-box.accent .stat-num{color:white;}
 .stat-box.accent .stat-unit{color:rgba(255,255,255,0.65);}
-.stat-lbl{font-size:11px;font-weight:600;color:var(--tx3);margin-bottom:3px;text-transform:uppercase;letter-spacing:.04em;}
-.stat-num{font-size:26px;font-weight:700;color:var(--tx);line-height:1.1;}
-.stat-unit{font-size:12px;color:var(--tx2);font-weight:400;margin-left:2px;}
+.stat-lbl{font-size:13px;font-weight:600;color:var(--tx3);margin-bottom:3px;text-transform:uppercase;letter-spacing:.04em;}
+.stat-num{font-size:30px;font-weight:700;color:var(--tx);line-height:1.1;}
+.stat-unit{font-size:14px;color:var(--tx2);font-weight:400;margin-left:2px;}
 .list-item{background:var(--bg2);border-radius:var(--r-lg);padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;box-shadow:var(--shadow-md);transition:all .12s;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;}
 .list-item:active{box-shadow:none;opacity:.85;}
 .list-item.lp-active{transform:scale(.97);opacity:.75;transition:transform .1s,opacity .1s;}
-.avatar{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0;box-shadow:var(--shadow-sm);}
+.avatar{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;flex-shrink:0;box-shadow:var(--shadow-sm);}
 .av-blue{background:#B5D4F4;color:#0C447C;}
 .av-teal{background:#9FE1CB;color:#085041;}
 .av-purple{background:#CECBF6;color:#3C3489;}
 .av-coral{background:#F5C4B3;color:#712B13;}
 .av-green{background:#C0DD97;color:#27500A;}
 .av-amber{background:#FAC775;color:#633806;}
-.item-name{font-size:16px;font-weight:600;}
-.item-sub{font-size:13px;color:var(--tx2);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.item-name{font-size:18px;font-weight:600;}
+.item-sub{font-size:15px;color:var(--tx2);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .item-info{flex:1;min-width:0;}
-.badge{font-size:12px;font-weight:700;padding:4px 10px;border-radius:20px;flex-shrink:0;letter-spacing:.02em;}
+.badge{font-size:14px;font-weight:700;padding:4px 10px;border-radius:20px;flex-shrink:0;letter-spacing:.02em;}
 .badge-B{background:var(--accent-dark);color:white;}
 .badge-BA{background:#e85510;color:white;}
 .badge-B197{background:#c44000;color:white;}
@@ -87,17 +87,17 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:-apple-sy
 .status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
 .dot-blue{background:var(--accent);}
 .search-wrap{position:relative;}
-.search-wrap input{width:100%;height:46px;padding:0 14px 0 40px;border:1.5px solid var(--br2);border-radius:var(--r-lg);background:var(--bg2);color:var(--tx);font-size:16px;font-family:inherit;outline:none;box-shadow:var(--shadow-sm);}
-.search-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--tx3);font-size:18px;pointer-events:none;}
-.btn-full{width:100%;padding:15px;background:var(--bg2);border:1.5px solid var(--br2);border-radius:var(--r-lg);font-size:17px;font-weight:600;color:var(--tx);cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;min-height:54px;box-shadow:var(--shadow-sm);}
+.search-wrap input{width:100%;height:46px;padding:0 14px 0 40px;border:1.5px solid var(--br2);border-radius:var(--r-lg);background:var(--bg2);color:var(--tx);font-size:18px;font-family:inherit;outline:none;box-shadow:var(--shadow-sm);}
+.search-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--tx3);font-size:21px;pointer-events:none;}
+.btn-full{width:100%;padding:15px;background:var(--bg2);border:1.5px solid var(--br2);border-radius:var(--r-lg);font-size:20px;font-weight:600;color:var(--tx);cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;min-height:54px;box-shadow:var(--shadow-sm);}
 .btn-full:active{transform:scale(.97);opacity:.85;}
 .btn-full.gruen{background:#d4edbc;border-color:#7ab840;color:#1e4208;}
 .btn-full.rot{background:#fde8e8;border-color:#e07070;color:#8b1f1f;}
 .btn-full.danger{color:#E24B4A;border-color:#E24B4A;}
-.fab-btn{background:none;border:none;cursor:pointer;color:var(--tx2);font-size:22px;display:flex;align-items:center;padding:4px;}
-.toast{display:none;background:linear-gradient(135deg,#FF8240,#e85510);color:white;border:none;border-radius:var(--r-md);padding:10px 14px;font-size:13px;align-items:center;gap:8px;flex-shrink:0;box-shadow:var(--shadow-md);}.toast.show{display:flex;}
+.fab-btn{background:none;border:none;cursor:pointer;color:var(--tx2);font-size:25px;display:flex;align-items:center;padding:4px;}
+.toast{display:none;background:linear-gradient(135deg,#FF8240,#e85510);color:white;border:none;border-radius:var(--r-md);padding:10px 14px;font-size:15px;align-items:center;gap:8px;flex-shrink:0;box-shadow:var(--shadow-md);}.toast.show{display:flex;}
 .toast.show{display:flex;}
-.pill{padding:8px 16px;border-radius:20px;border:1.5px solid var(--br2);background:var(--bg2);font-size:15px;color:var(--tx2);cursor:pointer;font-family:inherit;min-height:44px;display:flex;align-items:center;box-shadow:var(--shadow-sm);}
+.pill{padding:8px 16px;border-radius:20px;border:1.5px solid var(--br2);background:var(--bg2);font-size:17px;color:var(--tx2);cursor:pointer;font-family:inherit;min-height:44px;display:flex;align-items:center;box-shadow:var(--shadow-sm);}
 .pill.active{background:var(--accent);color:white;border-color:var(--accent);box-shadow:0 3px 10px rgba(255,107,43,0.4);}
 .farb-row{display:flex;gap:8px;justify-content:flex-end;flex:1;}
 .farb-dot{width:26px;height:26px;border-radius:50%;cursor:pointer;border:2px solid transparent;}
@@ -113,41 +113,41 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:-apple-sy
 .sonder-btn-row:last-child{border-bottom:none;}
 .sonder-btn-row.done{background:rgba(255,107,43,.08);}
 .sonder-btn-row.done .sonder-btn-label{color:var(--accent);}
-.sonder-btn-label{font-size:13px;color:var(--tx2);display:flex;align-items:center;gap:8px;}
-.sonder-btn-label i{font-size:15px;}
+.sonder-btn-label{font-size:15px;color:var(--tx2);display:flex;align-items:center;gap:8px;}
+.sonder-btn-label i{font-size:17px;}
 .sonder-progress{display:flex;border:1px solid var(--br);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow-sm);}
-.sp-step{flex:1;padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;text-align:center;border-right:1px solid var(--br);color:var(--tx3);}
+.sp-step{flex:1;padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:12px;text-align:center;border-right:1px solid var(--br);color:var(--tx3);}
 .sp-step:last-child{border-right:none;}
-.sp-step i{font-size:16px;}
+.sp-step i{font-size:18px;}
 .sp-step.done{background:linear-gradient(135deg,#FF8240,#e85510);color:white;}
 .sp-step.next{background:rgba(255,107,43,.10);color:var(--accent);}
 .info-row{display:flex;align-items:center;gap:10px;padding:13px 16px;border-bottom:1px solid var(--br);min-height:52px;}
 .info-row:last-child{border-bottom:none;}
-.info-lbl{font-size:15px;color:var(--tx2);display:flex;align-items:center;gap:6px;min-width:140px;}
-.info-lbl i{font-size:14px;}
-.info-val{font-size:15px;font-weight:600;flex:1;text-align:right;}
+.info-lbl{font-size:17px;color:var(--tx2);display:flex;align-items:center;gap:6px;min-width:140px;}
+.info-lbl i{font-size:16px;}
+.info-val{font-size:17px;font-weight:600;flex:1;text-align:right;}
 .pruef-card{background:linear-gradient(135deg,#FF8240,#e85510);border:none;border-radius:var(--r-lg);padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow-md);}
 .pruef-result-item{background:var(--bg2);border-radius:var(--r-lg);padding:12px 14px;display:flex;align-items:center;gap:12px;margin-bottom:8px;box-shadow:var(--shadow-sm);}
-.pruef-versuch{width:34px;height:34px;border-radius:50%;flex-shrink:0;font-size:14px;font-weight:800;text-align:center;line-height:34px;box-shadow:var(--shadow-sm);}
+.pruef-versuch{width:34px;height:34px;border-radius:50%;flex-shrink:0;font-size:16px;font-weight:800;text-align:center;line-height:34px;box-shadow:var(--shadow-sm);}
 .pruef-best{background:#d4edbc;color:#1e4208;}
 .pruef-nicht{background:#fde8e8;color:#8b1f1f;}
 .gfa-row{display:flex;align-items:center;padding:12px 14px;border-bottom:1px solid var(--br);}
 .gfa-row:last-child{border-bottom:none;}
-.gfa-label{flex:1;font-size:15px;font-weight:500;color:var(--tx);}
+.gfa-label{flex:1;font-size:17px;font-weight:500;color:var(--tx);}
 .gfa-controls{display:flex;align-items:center;gap:12px;}
-.gfa-count{font-size:18px;font-weight:700;min-width:28px;text-align:center;color:var(--tx);}
-.gfa-btn{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--br2);background:var(--bg3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--tx2);font-family:inherit;line-height:1;box-shadow:var(--shadow-sm);}
+.gfa-count{font-size:21px;font-weight:700;min-width:28px;text-align:center;color:var(--tx);}
+.gfa-btn{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--br2);background:var(--bg3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:21px;color:var(--tx2);font-family:inherit;line-height:1;box-shadow:var(--shadow-sm);}
 .gfa-btn:active{transform:scale(.88);background:var(--accent);color:white;border-color:var(--accent);}
 .stat-card{background:var(--bg2);border-radius:var(--r-lg);padding:14px 16px;box-shadow:var(--shadow-sm);}
 .stat-bar-wrap{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
-.stat-bar-label{font-size:12px;font-weight:600;color:var(--tx2);min-width:28px;}
+.stat-bar-label{font-size:14px;font-weight:600;color:var(--tx2);min-width:28px;}
 .stat-bar-bg{flex:1;height:8px;border-radius:4px;background:var(--bg3);overflow:hidden;}
 .stat-bar-fill{height:8px;border-radius:4px;background:linear-gradient(90deg,#FF8240,#e85510);}
-.stat-bar-val{font-size:12px;font-weight:600;color:var(--tx2);min-width:28px;text-align:right;}
+.stat-bar-val{font-size:14px;font-weight:600;color:var(--tx2);min-width:28px;text-align:right;}
 .month-nav{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--br);flex-shrink:0;background:var(--bg2);}
-.month-label{font-size:17px;font-weight:700;}
+.month-label{font-size:20px;font-weight:700;}
 .weekdays{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;padding:10px 12px 4px;flex-shrink:0;}
-.wd{text-align:center;font-size:12px;font-weight:600;letter-spacing:.03em;}
+.wd{text-align:center;font-size:14px;font-weight:600;letter-spacing:.03em;}
 .cal-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;}
 .cal-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;padding:4px 12px 12px;}
 .cal-day{min-height:58px;border-radius:var(--r-md);padding:5px;cursor:pointer;border:.5px solid transparent;display:flex;flex-direction:column;align-items:center;gap:2px;}
@@ -155,41 +155,41 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:-apple-sy
 .cal-day.today{border-color:var(--accent);background:var(--accent);}
 .cal-day.sel{background:rgba(255,107,43,.15);border-color:var(--accent);}
 .cal-day.disabled{cursor:default;opacity:.25;pointer-events:none;}
-.day-num{font-size:15px;font-weight:500;color:var(--tx);line-height:1;text-align:center;width:100%;}
+.day-num{font-size:17px;font-weight:500;color:var(--tx);line-height:1;text-align:center;width:100%;}
 .cal-day.today .day-num{color:white;}
 .dot-row{display:flex;gap:2px;flex-wrap:wrap;justify-content:center;}
 .cdot{width:6px;height:6px;border-radius:50%;}
 .cdot-r{background:#E24B4A;}.cdot-g{background:#639922;}.cdot-b{background:#378ADD;}
 .spacer-day{min-height:58px;}
 .termin-item{background:var(--bg);border:.5px solid var(--br);border-radius:var(--r-lg);padding:9px 12px;display:flex;align-items:center;gap:10px;}
-.t-avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0;}
+.t-avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;}
 .t-info{flex:1;}
-.t-name{font-size:13px;font-weight:500;}
-.t-sub{font-size:11px;color:var(--tx2);margin-top:1px;}
-.t-del{background:none;border:none;cursor:pointer;color:var(--tx3);font-size:16px;padding:3px;display:flex;align-items:center;}
+.t-name{font-size:15px;font-weight:500;}
+.t-sub{font-size:13px;color:var(--tx2);margin-top:1px;}
+.t-del{background:none;border:none;cursor:pointer;color:var(--tx3);font-size:18px;padding:3px;display:flex;align-items:center;}
 .t-del:active{color:#E24B4A;}
-.cir-btn{width:32px;height:32px;border-radius:50%;border:.5px solid var(--br2);background:var(--bg2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--tx2);font-family:inherit;line-height:1;}
+.cir-btn{width:32px;height:32px;border-radius:50%;border:.5px solid var(--br2);background:var(--bg2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:21px;color:var(--tx2);font-family:inherit;line-height:1;}
 .cir-btn:active{transform:scale(.93);}
-.notiz-area{width:100%;min-height:200px;border:none;background:transparent;font-size:20px;line-height:1.7;color:var(--tx);font-family:inherit;outline:none;resize:none;padding:0;}
-.empty-hint{text-align:center;padding:24px 0;font-size:13px;color:var(--tx3);}
+.notiz-area{width:100%;min-height:200px;border:none;background:transparent;font-size:23px;line-height:1.7;color:var(--tx);font-family:inherit;outline:none;resize:none;padding:0;}
+.empty-hint{text-align:center;padding:24px 0;font-size:15px;color:var(--tx3);}
 .err-border{outline:2px solid #E24B4A !important;border-radius:4px;}
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9000;display:flex;align-items:flex-end;justify-content:center;animation:fadein .15s ease;}
 @keyframes fadein{from{opacity:0}to{opacity:1}}
 .modal-sheet{background:var(--bg2);border-radius:20px 20px 0 0;padding:20px 20px calc(var(--safe-bot) + 20px);width:100%;max-width:520px;animation:slideup .2s ease;}
 @keyframes slideup{from{transform:translateY(60px);opacity:0}to{transform:translateY(0);opacity:1}}
-.modal-title{font-size:17px;font-weight:700;margin-bottom:6px;color:var(--tx);}
-.modal-msg{font-size:15px;color:var(--tx2);margin-bottom:20px;line-height:1.4;}
+.modal-title{font-size:20px;font-weight:700;margin-bottom:6px;color:var(--tx);}
+.modal-msg{font-size:17px;color:var(--tx2);margin-bottom:20px;line-height:1.4;}
 .modal-btns{display:flex;flex-direction:column;gap:8px;}
 .modal-input-wrap{margin-bottom:16px;}
-.modal-input-wrap textarea,.modal-input-wrap input[type=text]{width:100%;padding:12px;border:1.5px solid var(--br2);border-radius:var(--r-md);background:var(--bg);color:var(--tx);font-size:16px;font-family:inherit;outline:none;resize:none;-webkit-user-select:text;user-select:text;}
+.modal-input-wrap textarea,.modal-input-wrap input[type=text]{width:100%;padding:12px;border:1.5px solid var(--br2);border-radius:var(--r-md);background:var(--bg);color:var(--tx);font-size:18px;font-family:inherit;outline:none;resize:none;-webkit-user-select:text;user-select:text;}
 .foto-circle{width:80px;height:80px;border-radius:50%;overflow:hidden;flex-shrink:0;position:relative;cursor:pointer;}
 .foto-circle img{width:100%;height:100%;object-fit:cover;display:block;}
 .foto-circle .foto-overlay,.foto-initials .foto-overlay{position:absolute;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s;border-radius:50%;}
 .foto-circle:active .foto-overlay,.foto-initials:active .foto-overlay{opacity:1;}
-.foto-overlay i{color:white;font-size:22px;}
-.foto-initials{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:600;flex-shrink:0;cursor:pointer;position:relative;}
+.foto-overlay i{color:white;font-size:25px;}
+.foto-initials{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:25px;font-weight:600;flex-shrink:0;cursor:pointer;position:relative;}
 .swipe-wrap{position:relative;border-radius:var(--r-lg);margin-bottom:8px;}
-.swipe-del-bg{position:absolute;right:0;top:0;bottom:0;width:80px;background:#E24B4A;display:flex;align-items:center;justify-content:center;color:white;font-size:22px;border-radius:0 var(--r-lg) var(--r-lg) 0;}
+.swipe-del-bg{position:absolute;right:0;top:0;bottom:0;width:80px;background:#E24B4A;display:flex;align-items:center;justify-content:center;color:white;font-size:25px;border-radius:0 var(--r-lg) var(--r-lg) 0;}
 .swipe-item{position:relative;transition:transform .2s ease;touch-action:pan-y;background:var(--bg);border-radius:var(--r-lg);width:100%;z-index:1;}
 .swipe-item.swiped{transform:translateX(-80px);}
 .ptr-wrap{position:relative;flex:1;overflow:hidden;display:flex;flex-direction:column;}
@@ -210,73 +210,73 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:-apple-sy
   .screen { display: flex !important; flex-direction: column; height: 100vh; }
 
   .topbar { padding: calc(var(--safe-top) + 14px) 28px 14px; }
-  .topbar-title { font-size: 22px; }
-  .btn-icon { font-size: 24px; min-width: 48px; min-height: 48px; }
+  .topbar-title { font-size:25px; }
+  .btn-icon { font-size:28px; min-width: 48px; min-height: 48px; }
 
   .scroll { padding: 20px 28px calc(var(--safe-bot) + 28px); gap: 18px; }
 
-  .stat-num { font-size: 30px; }
-  .stat-lbl { font-size: 13px; }
+  .stat-num { font-size:35px; }
+  .stat-lbl { font-size:15px; }
 
   .list-item { padding: 16px 20px; min-height: 80px; gap: 16px; }
-  .avatar { width: 54px; height: 54px; font-size: 18px; }
-  .item-name { font-size: 19px; }
-  .item-sub { font-size: 15px; margin-top: 5px; }
-  .badge { font-size: 14px; padding: 5px 12px; }
+  .avatar { width: 54px; height: 54px; font-size:21px; }
+  .item-name { font-size:22px; }
+  .item-sub { font-size:17px; margin-top: 5px; }
+  .badge { font-size:16px; padding: 5px 12px; }
 
   .card-row { padding: 15px 20px; min-height: 58px; }
-  .card-label { font-size: 17px; min-width: 150px; }
-  .card-row input, .card-row select, .card-row textarea { font-size: 17px; }
+  .card-label { font-size:20px; min-width: 150px; }
+  .card-row input, .card-row select, .card-row textarea { font-size:20px; }
 
   .info-row { padding: 14px 20px; min-height: 58px; }
-  .info-lbl { font-size: 17px; min-width: 160px; }
-  .info-val { font-size: 17px; }
+  .info-lbl { font-size:20px; min-width: 160px; }
+  .info-val { font-size:20px; }
 
-  .btn-full { padding: 17px; font-size: 19px; min-height: 60px; }
+  .btn-full { padding: 17px; font-size:22px; min-height: 60px; }
 
-  .sec-label { font-size: 13px; margin-bottom: 10px; }
+  .sec-label { font-size:15px; margin-bottom: 10px; }
 
   .gfa-row { padding: 14px 20px; }
-  .gfa-label { font-size: 17px; }
-  .gfa-count { font-size: 20px; }
-  .gfa-btn { width: 36px; height: 36px; font-size: 20px; }
+  .gfa-label { font-size:20px; }
+  .gfa-count { font-size:23px; }
+  .gfa-btn { width: 36px; height: 36px; font-size:23px; }
 
-  .notiz-area { font-size: 22px; min-height: 240px; }
+  .notiz-area { font-size:25px; min-height: 240px; }
 
   .cal-day { min-height: 68px; }
-  .day-num { font-size: 17px; }
-  .wd { font-size: 14px; }
-  .month-label { font-size: 20px; }
+  .day-num { font-size:20px; }
+  .wd { font-size:16px; }
+  .month-label { font-size:23px; }
 
-  .cir-btn { width: 36px; height: 36px; font-size: 20px; }
-  .pill { font-size: 16px; padding: 9px 18px; }
+  .cir-btn { width: 36px; height: 36px; font-size:23px; }
+  .pill { font-size:18px; padding: 9px 18px; }
 
-  .foto-circle, .foto-initials { width: 90px; height: 90px; font-size: 26px; }
-  .detail-avatar { width: 60px; height: 60px; font-size: 20px; }
+  .foto-circle, .foto-initials { width: 90px; height: 90px; font-size:30px; }
+  .detail-avatar { width: 60px; height: 60px; font-size:23px; }
 
-  .sonder-btn-label { font-size: 15px; }
-  .sp-step { font-size: 12px; padding: 10px 8px; }
-  .sp-step i { font-size: 18px; }
+  .sonder-btn-label { font-size:17px; }
+  .sp-step { font-size:14px; padding: 10px 8px; }
+  .sp-step i { font-size:21px; }
 
-  .search-wrap input { height: 50px; font-size: 18px; }
-  .search-icon { font-size: 20px; }
+  .search-wrap input { height: 50px; font-size:21px; }
+  .search-icon { font-size:23px; }
 
   .toggle-wrap { width: 56px; height: 34px; }
   .toggle-thumb { width: 28px; height: 28px; }
   .toggle-wrap input:checked + .toggle-track + .toggle-thumb { transform: translateX(22px); }
 
-  .swipe-del-bg { width: 90px; font-size: 26px; }
+  .swipe-del-bg { width: 90px; font-size:30px; }
 
   .termin-item { padding: 12px 16px; }
-  .t-name { font-size: 15px; }
-  .t-sub { font-size: 13px; }
+  .t-name { font-size:17px; }
+  .t-sub { font-size:15px; }
 
   .pruef-result-item { padding: 12px 16px; }
-  .pruef-versuch { width: 38px; height: 38px; font-size: 15px; }
+  .pruef-versuch { width: 38px; height: 38px; font-size:17px; }
 
   .stat-card { padding: 16px 20px; }
-  .stat-bar-label { font-size: 14px; }
-  .stat-bar-val { font-size: 14px; }
+  .stat-bar-label { font-size:16px; }
+  .stat-bar-val { font-size:16px; }
   .stat-bar-bg { height: 10px; }
   .stat-bar-fill { height: 10px; }
 }
@@ -312,7 +312,7 @@ function showModal({title="",msg="",btns=[],input=null,onOpen=null}){
       ?`<textarea id="fs-modal-inp" rows="3" placeholder="${input.placeholder||''}">${input.value||''}</textarea>`
       :`<input type="text" id="fs-modal-inp" placeholder="${input.placeholder||''}" value="${input.value||''}"/>`
   }</div>`:"";
-  const btnsHtml=btns.map(b=>`<button onclick="${b.action}" style="width:100%;padding:15px;border-radius:var(--r-md);border:${b.danger?'1.5px solid #E24B4A':'1.5px solid var(--br2)'};background:${b.danger?'#fde8e8':b.primary?'var(--accent)':'var(--bg)'};color:${b.danger?'#8b1f1f':b.primary?'white':'var(--tx)'};font-size:17px;font-weight:600;cursor:pointer;font-family:inherit">${b.label}</button>`).join("");
+  const btnsHtml=btns.map(b=>`<button onclick="${b.action}" style="width:100%;padding:15px;border-radius:var(--r-md);border:${b.danger?'1.5px solid #E24B4A':'1.5px solid var(--br2)'};background:${b.danger?'#fde8e8':b.primary?'var(--accent)':'var(--bg)'};color:${b.danger?'#8b1f1f':b.primary?'white':'var(--tx)'};font-size:20px;font-weight:600;cursor:pointer;font-family:inherit">${b.label}</button>`).join("");
   const div=document.createElement("div");
   div.id="fs-modal";
   div.className="modal-overlay";
@@ -429,7 +429,7 @@ function renderDashboard(dashDateOffset=0){
   let html=`<div class="screen active" id="scr-dash">
     <div class="topbar">
       <div style="display:flex;align-items:center;justify-content:space-between;width:100%;gap:2px">
-        <button class="btn-icon" onclick="toggleDatenMenu()" title="Datensicherung"><i class="ti ti-steering-wheel" style="font-size:26px"></i></button>
+        <button class="btn-icon" onclick="toggleDatenMenu()" title="Datensicherung"><i class="ti ti-steering-wheel" style="font-size:30px"></i></button>
         <button class="btn-icon" onclick="renderKalender()"><i class="ti ti-calendar"></i></button>
         <button class="btn-icon" onclick="renderListe()"><i class="ti ti-users"></i></button>
         <button class="btn-icon" onclick="renderNeuSchueler()"><i class="ti ti-user-plus"></i></button>
@@ -439,7 +439,7 @@ function renderDashboard(dashDateOffset=0){
     </div>
     <div class="scroll">
       <div class="stat-grid">
-        <div class="stat-box accent" style="text-align:center;box-shadow:0 8px 32px rgba(255,107,43,0.45),inset 0 1px 0 rgba(255,200,150,0.5)"><div class="stat-lbl">Aktive Schüler</div><div class="stat-num" style="font-size:42px">${schueler.filter(s=>!(s.pruefungen||[]).some(p=>p.bestanden===true)).length}</div></div>
+        <div class="stat-box accent" style="text-align:center;box-shadow:0 8px 32px rgba(255,107,43,0.45),inset 0 1px 0 rgba(255,200,150,0.5)"><div class="stat-lbl">Aktive Schüler</div><div class="stat-num" style="font-size:48px">${schueler.filter(s=>!(s.pruefungen||[]).some(p=>p.bestanden===true)).length}</div></div>
         <div class="stat-box"><div class="stat-lbl" id="ddb-lbl">Heute geplant</div><div class="stat-num" id="ddb-min">0<span class="stat-unit">min</span></div></div>
       </div>`;
 
@@ -470,12 +470,12 @@ function renderDashboard(dashDateOffset=0){
 
   html+=`<div>
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-      <button onclick="renderDashboard(${dashDateOffset-1})" style="background:rgba(10,40,120,0.45);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border:1.5px solid rgba(100,150,255,0.5);border-radius:50%;color:#a8c4ff;font-size:22px;width:52px;height:52px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 15px rgba(10,40,120,0.3)"><i class="ti ti-chevron-left"></i></button>
+      <button onclick="renderDashboard(${dashDateOffset-1})" style="background:rgba(10,40,120,0.45);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border:1.5px solid rgba(100,150,255,0.5);border-radius:50%;color:#a8c4ff;font-size:25px;width:52px;height:52px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 15px rgba(10,40,120,0.3)"><i class="ti ti-chevron-left"></i></button>
       <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
-        <span style="font-size:17px;font-weight:800;letter-spacing:.04em;color:var(--tx);text-transform:uppercase">${anzeigeLabel}</span>
-        ${dashDateOffset!==0?`<button onclick="renderDashboard(0)" style="background:none;border:1px solid var(--accent);border-radius:8px;color:var(--accent);font-size:11px;padding:2px 10px;cursor:pointer;font-family:inherit">Heute</button>`:''}
+        <span style="font-size:20px;font-weight:800;letter-spacing:.04em;color:var(--tx);text-transform:uppercase">${anzeigeLabel}</span>
+        ${dashDateOffset!==0?`<button onclick="renderDashboard(0)" style="background:none;border:1px solid var(--accent);border-radius:8px;color:var(--accent);font-size:13px;padding:2px 10px;cursor:pointer;font-family:inherit">Heute</button>`:''}
       </div>
-      <button onclick="renderDashboard(${dashDateOffset+1})" style="background:rgba(10,40,120,0.45);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border:1.5px solid rgba(100,150,255,0.5);border-radius:50%;color:#a8c4ff;font-size:22px;width:52px;height:52px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 15px rgba(10,40,120,0.3)"><i class="ti ti-chevron-right"></i></button>
+      <button onclick="renderDashboard(${dashDateOffset+1})" style="background:rgba(10,40,120,0.45);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border:1.5px solid rgba(100,150,255,0.5);border-radius:50%;color:#a8c4ff;font-size:25px;width:52px;height:52px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 15px rgba(10,40,120,0.3)"><i class="ti ti-chevron-right"></i></button>
     </div>`;
   if(anzeigeTermine.length){
     anzeigeTermine.forEach((t,ti)=>{
@@ -493,11 +493,11 @@ function renderDashboard(dashDateOffset=0){
         ${s.foto?`<div class="avatar" style="overflow:hidden;flex-shrink:0"><img src="${s.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/></div>`:`<div class="avatar av-${s.farbe}">${initials(s)}</div>`}
         <div class="item-info"><div class="item-name">${s.vorname}${nick} ${s.nachname}</div><div class="item-sub">${t.uhr}–${endZeit}Uhr · ${t.min} min${t.notiz?" · "+t.notiz:""}</div></div>
         <span class="badge badge-${s.klasse}">${s.klasse}</span>
-        <i class="ti ti-chevron-right" style="color:var(--tx3);font-size:16px"></i>
+        <i class="ti ti-chevron-right" style="color:var(--tx3);font-size:18px"></i>
       </div>`;
     });
   }else{
-    html+=`<div style="padding:12px 0;font-size:13px;color:var(--tx3)">Keine Termine geplant</div>`;
+    html+=`<div style="padding:12px 0;font-size:15px;color:var(--tx3)">Keine Termine geplant</div>`;
   }
   html+=`</div>`;
   if(allePruef.length){
@@ -515,7 +515,7 @@ function renderDashboard(dashDateOffset=0){
             <div class="item-name">${s2.vorname} ${s2.nachname}</div>
             <div class="item-sub">${ep.versuch}. Prüfung${prufort?" · "+prufort:""}${vergangen?" ⚠️":""}</div>
           </div>
-          <span style="font-size:13px;color:var(--tx2);font-weight:600;white-space:nowrap">${fd.day}. ${fd.mon}</span>
+          <span style="font-size:15px;color:var(--tx2);font-weight:600;white-space:nowrap">${fd.day}. ${fd.mon}</span>
         </div>`;
       });
       html+=`</div>`;
@@ -569,10 +569,10 @@ function _schuelerCardHTML(s,heuteIds,sortMode){
     <div class="swipe-item list-item" id="swipe-${s.id}" onclick="handleTap('${s.id}')" style="${bestanden?"border-left:3px solid #639922;":""}">
       ${avatarHTML}
       <div class="item-info">
-        <div class="item-name">${s.vorname} ${s.nachname}${s.spitz?` <span style="color:var(--tx3);font-size:12px">«${s.spitz}»</span>`:""}</div>
-        ${bestanden?`<div style="margin-top:3px"><span style="font-size:11px;color:#27500A;background:#EAF3DE;padding:2px 8px;border-radius:20px">✓ Bestanden</span></div>`:""}
+        <div class="item-name">${s.vorname} ${s.nachname}${s.spitz?` <span style="color:var(--tx3);font-size:14px">«${s.spitz}»</span>`:""}</div>
+        ${bestanden?`<div style="margin-top:3px"><span style="font-size:13px;color:#27500A;background:#EAF3DE;padding:2px 8px;border-radius:20px">✓ Bestanden</span></div>`:""}
         <div class="item-sub">${subLine}</div>
-        <div style="font-size:12px;color:var(--tx3);margin-top:2px;white-space:nowrap">${gefahren} gefahren · ${offen} geplant</div>
+        <div style="font-size:14px;color:var(--tx3);margin-top:2px;white-space:nowrap">${gefahren} gefahren · ${offen} geplant</div>
       </div>
       <span class="badge badge-${s.klasse}">${s.klasse}</span>
       <span class="status-dot" style="background:${dotColor}"></span>
@@ -599,17 +599,17 @@ function renderListe(q="",sortMode="termin"){
     </div>
     <div class="scroll">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-        <span style="font-size:12px;color:var(--tx3)">${sortMode==="alpha"?"↑ A–Z":"↑ Nächster Termin"}</span>
-        <button onclick="renderListe('${q}','${sortMode==='termin'?'alpha':'termin'}')" style="font-size:12px;color:var(--accent);background:none;border:none;cursor:pointer;font-family:inherit;padding:0">Ändern</button>
+        <span style="font-size:14px;color:var(--tx3)">${sortMode==="alpha"?"↑ A–Z":"↑ Nächster Termin"}</span>
+        <button onclick="renderListe('${q}','${sortMode==='termin'?'alpha':'termin'}')" style="font-size:14px;color:var(--accent);background:none;border:none;cursor:pointer;font-family:inherit;padding:0">Ändern</button>
       </div>
       <div class="search-wrap">
         <i class="ti ti-search search-icon"></i>
         <input type="search" placeholder="Suchen…" value="${q}" oninput="filterListeOnly(this.value,'${sortMode}')" id="search-input" style="padding-right:${q?'40px':'12px'}"/>
-        <button class="search-clear-x" onclick="renderListe('','${sortMode}')" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--tx3);font-size:18px;display:${q?'flex':'none'};align-items:center;padding:4px"><i class="ti ti-x"></i></button>
+        <button class="search-clear-x" onclick="renderListe('','${sortMode}')" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--tx3);font-size:21px;display:${q?'flex':'none'};align-items:center;padding:4px"><i class="ti ti-x"></i></button>
       </div>`;
   html+=`<div id="liste-items">`;
   if(!filtered.length){
-    html+=`<div class="empty-hint"><i class="ti ti-search" style="font-size:28px;display:block;margin:0 auto 8px"></i>Keine Schüler gefunden</div>`;
+    html+=`<div class="empty-hint"><i class="ti ti-search" style="font-size:32px;display:block;margin:0 auto 8px"></i>Keine Schüler gefunden</div>`;
   }else{
     filtered.forEach(s=>{html+=_schuelerCardHTML(s,heuteIds,sortMode);});
   }
@@ -638,7 +638,7 @@ function filterListeOnly(q, sortMode){
 
   let html="";
   if(!filtered.length){
-    html=`<div class="empty-hint"><i class="ti ti-search" style="font-size:28px;display:block;margin:0 auto 8px"></i>Keine Schüler gefunden</div>`;
+    html=`<div class="empty-hint"><i class="ti ti-search" style="font-size:32px;display:block;margin:0 auto 8px"></i>Keine Schüler gefunden</div>`;
   }else{
     filtered.forEach(s=>{html+=_schuelerCardHTML(s,heuteIds,sortMode);});
   }
@@ -700,11 +700,11 @@ function renderKlappSektion(id,label,icon,innerHtml,hasAdd,addAction){
   return `<div>
     <div class="sec-row" style="cursor:pointer" onclick="toggleKlapp('${id}')">
       <div class="sec-label" style="margin:0;display:flex;align-items:center;gap:6px">
-        <i class="ti ${icon}" style="font-size:14px"></i>${label}
+        <i class="ti ${icon}" style="font-size:16px"></i>${label}
       </div>
       <div style="display:flex;align-items:center;gap:8px">
         ${hasAdd?addBtn:''}
-        <i class="ti ${open?'ti-chevron-up':'ti-chevron-down'}" id="chevron-${id}" style="color:var(--tx3);font-size:16px"></i>
+        <i class="ti ${open?'ti-chevron-up':'ti-chevron-down'}" id="chevron-${id}" style="color:var(--tx3);font-size:18px"></i>
       </div>
     </div>
     <div id="klapp-${id}" style="display:${open?'block':'none'}">${innerHtml}</div>
@@ -749,9 +749,9 @@ function renderSchueler(sid){
         }
         <input type="file" id="foto-input-${s.id}" accept="image/*" style="display:none" onchange="saveFoto('${s.id}',this)"/>
         <div>
-          <div style="font-size:18px;font-weight:600">${s.vorname}${s.spitz?` <span style="font-size:14px;color:var(--tx3);font-weight:400">«${s.spitz}»</span>`:""} ${s.nachname}</div>
-          <div style="font-size:13px;color:var(--tx2);margin-top:2px">Klasse ${s.klasse} · ${s.prufort}</div>
-          <div style="font-size:11px;color:var(--tx3);margin-top:3px">${s.foto?"Foto antippen — ändern, zuschneiden oder löschen":"Foto antippen — Kamera oder Datei"}</div>
+          <div style="font-size:21px;font-weight:600">${s.vorname}${s.spitz?` <span style="font-size:16px;color:var(--tx3);font-weight:400">«${s.spitz}»</span>`:""} ${s.nachname}</div>
+          <div style="font-size:15px;color:var(--tx2);margin-top:2px">Klasse ${s.klasse} · ${s.prufort}</div>
+          <div style="font-size:13px;color:var(--tx3);margin-top:3px">${s.foto?"Foto antippen — ändern, zuschneiden oder löschen":"Foto antippen — Kamera oder Datei"}</div>
         </div>
       </div>
 
@@ -771,15 +771,15 @@ function renderSchueler(sid){
             ${(()=>{
               const pruef=s.pruefungen||[];
               const last=pruef[pruef.length-1];
-              if(!pruef.length) return '<span style="color:#E24B4A;font-size:13px">Ergebnis eintragen →</span>';
+              if(!pruef.length) return '<span style="color:#E24B4A;font-size:15px">Ergebnis eintragen →</span>';
               if(last.bestanden===true) return '<span style="color:#3B6D11">✓ Bestanden</span>';
-              if(last.bestanden===false) return '<span style="color:#993C1D">✗ Nicht bestanden</span><span style="color:#E24B4A;font-size:12px;margin-left:4px">Ergebnis →</span>';
-              return '<span style="color:#E24B4A;font-size:13px">Ergebnis eintragen →</span>';
+              if(last.bestanden===false) return '<span style="color:#993C1D">✗ Nicht bestanden</span><span style="color:#E24B4A;font-size:14px;margin-left:4px">Ergebnis →</span>';
+              return '<span style="color:#E24B4A;font-size:15px">Ergebnis eintragen →</span>';
             })()}
           </span>
         </div>
         ${s.tel?`<div class="info-row"><span class="info-lbl"><i class="ti ti-brand-whatsapp" style="color:#25D366"></i>WhatsApp</span>
-          <a href="https://wa.me/${s.tel.replace(/^\+/,'').replace(/[^0-9]/g,'')}" style="font-size:15px;font-weight:500;color:#25D366;text-decoration:none" onclick="event.stopPropagation()">${s.tel}</a>
+          <a href="https://wa.me/${s.tel.replace(/^\+/,'').replace(/[^0-9]/g,'')}" style="font-size:17px;font-weight:500;color:#25D366;text-decoration:none" onclick="event.stopPropagation()">${s.tel}</a>
         </div>`:""}
       </div></div>
 
@@ -789,16 +789,16 @@ function renderSchueler(sid){
       __NOTIZ_SEKTION__
     </div>
   </div>`;
-  const gfaHtml='<div class="card">'+GRUNDFAHRAUFGABEN.map(g=>{const cnt=(s.gfa&&s.gfa[g.key])||0;return'<div class="gfa-row"><span class="gfa-label"><i class="ti '+g.icon+'" style="font-size:16px;margin-right:8px;color:var(--tx3)"></i>'+g.label+'</span><div class="gfa-controls"><button class="gfa-btn" onclick="changeGFA(&quot;'+s.id+'&quot;,&quot;'+g.key+'&quot;,-1)">−</button><span class="gfa-count" id="gfa-'+s.id+'-'+g.key+'">'+cnt+'</span><button class="gfa-btn" onclick="changeGFA(&quot;'+s.id+'&quot;,&quot;'+g.key+'&quot;,1)">+</button></div></div>';}).join('')+'</div>';
+  const gfaHtml='<div class="card">'+GRUNDFAHRAUFGABEN.map(g=>{const cnt=(s.gfa&&s.gfa[g.key])||0;return'<div class="gfa-row"><span class="gfa-label"><i class="ti '+g.icon+'" style="font-size:18px;margin-right:8px;color:var(--tx3)"></i>'+g.label+'</span><div class="gfa-controls"><button class="gfa-btn" onclick="changeGFA(&quot;'+s.id+'&quot;,&quot;'+g.key+'&quot;,-1)">−</button><span class="gfa-count" id="gfa-'+s.id+'-'+g.key+'">'+cnt+'</span><button class="gfa-btn" onclick="changeGFA(&quot;'+s.id+'&quot;,&quot;'+g.key+'&quot;,1)">+</button></div></div>';}).join('')+'</div>';
   html=html.replace('__TERMIN_BTN__','<button class="btn-full" style="margin-top:4px;background:var(--accent);color:white;border:none" onclick="renderNeuKalTerminVonSchueler(\''+s.id+'\')"><i class="ti ti-plus"></i> Termin hinzufügen</button>');
   html=html.replace('__SONDER_SEKTION__',renderKlappSektion('sonder-'+s.id,'Sonderfahrten','ti-car-suv',renderSonderDoku(sid,s)));
   html=html.replace('__GFA_SEKTION__',renderKlappSektion('gfa-'+s.id,'Grundfahraufgaben','ti-steering-wheel',gfaHtml));
   const notizItems=Array.isArray(s.notiz)?s.notiz:(s.notiz?[{text:s.notiz,done:false}]:[]);
-  const notizInner=notizItems.length?notizItems.map((item,ni)=>'<div class="notiz-item" style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:.5px solid var(--br);"><label class="toggle-wrap" style="width:28px;height:28px;flex-shrink:0"><input type="checkbox" '+(item.done?'checked':'')+'  onchange="toggleNotiz(&quot;'+s.id+'&quot;,'+ni+',this.checked)"/><div class="toggle-track" style="border-radius:50%"></div><div class="toggle-thumb" style="width:22px;height:22px;top:3px;left:3px"></div></label><span style="flex:1;font-size:18px;color:var(--tx);'+(item.done?'text-decoration:line-through;color:var(--tx3)':'')+'" onclick="editNotizItem(&quot;'+s.id+'&quot;,'+ni+')">'+(item.text||'…')+'</span><button onclick="deleteNotizItem(&quot;'+s.id+'&quot;,'+ni+')" style="background:none;border:none;cursor:pointer;color:var(--tx3);font-size:16px;padding:4px"><i class="ti ti-x"></i></button></div>').join(''):'<div class="empty-hint" style="padding:14px 0">Tippe + für eine neue Notiz</div>';
+  const notizInner=notizItems.length?notizItems.map((item,ni)=>'<div class="notiz-item" style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:.5px solid var(--br);"><label class="toggle-wrap" style="width:28px;height:28px;flex-shrink:0"><input type="checkbox" '+(item.done?'checked':'')+'  onchange="toggleNotiz(&quot;'+s.id+'&quot;,'+ni+',this.checked)"/><div class="toggle-track" style="border-radius:50%"></div><div class="toggle-thumb" style="width:22px;height:22px;top:3px;left:3px"></div></label><span style="flex:1;font-size:21px;color:var(--tx);'+(item.done?'text-decoration:line-through;color:var(--tx3)':'')+'" onclick="editNotizItem(&quot;'+s.id+'&quot;,'+ni+')">'+(item.text||'…')+'</span><button onclick="deleteNotizItem(&quot;'+s.id+'&quot;,'+ni+')" style="background:none;border:none;cursor:pointer;color:var(--tx3);font-size:18px;padding:4px"><i class="ti ti-x"></i></button></div>').join(''):'<div class="empty-hint" style="padding:14px 0">Tippe + für eine neue Notiz</div>';
   html=html.replace('__NOTIZ_SEKTION__',renderKlappSektion('notiz-'+s.id,'Notizen','ti-notes','<div class="card" id="notiz-list-'+s.id+'">'+notizInner+'</div>',true,'addNotizItem(&quot;'+s.id+'&quot;)'));
   renderApp(html);
   setTimeout(initPTR,50);
-  }catch(e){document.getElementById('app').innerHTML='<div style="padding:20px;color:red;font-size:14px">renderSchueler Fehler: '+e.message+'</div>';}
+  }catch(e){document.getElementById('app').innerHTML='<div style="padding:20px;color:red;font-size:16px">renderSchueler Fehler: '+e.message+'</div>';}
 }
 
 function saveNotiz(sid,val){const s=getS(sid);if(!s)return;s.notiz=val;saveAll();}
@@ -875,14 +875,14 @@ function renderNeuSchueler(fromSid){
       <span class="topbar-title">${title}</span>
     </div>
     <div class="scroll">
-      <div id="toast-neu" class="toast"><i class="ti ti-circle-check" style="font-size:16px"></i><span id="toast-neu-msg"></span></div>
+      <div id="toast-neu" class="toast"><i class="ti ti-circle-check" style="font-size:18px"></i><span id="toast-neu-msg"></span></div>
       <div><div class="sec-label">Name</div>
       <div class="card" style="margin-bottom:12px;padding:16px;display:flex;align-items:center;gap:16px">
         ${s?(`<div onclick="triggerFotoUpload('${s.id}')" style="cursor:pointer;flex-shrink:0">
           ${s.foto?`<div class="foto-circle" style="width:64px;height:64px"><img src="${s.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/><div class="foto-overlay"><i class="ti ti-camera"></i></div></div>`
-          :`<div class="foto-initials av-${s.farbe}" style="width:64px;height:64px;font-size:20px;display:flex;align-items:center;justify-content:center;border-radius:50%">${initials(s)}<div class="foto-overlay"><i class="ti ti-camera"></i></div></div>`}
+          :`<div class="foto-initials av-${s.farbe}" style="width:64px;height:64px;font-size:23px;display:flex;align-items:center;justify-content:center;border-radius:50%">${initials(s)}<div class="foto-overlay"><i class="ti ti-camera"></i></div></div>`}
           <input type="file" id="foto-input-${s.id}" accept="image/*" style="display:none" onchange="saveFoto('${s.id}',this)"/>
-        </div><div style="font-size:13px;color:var(--tx3)">Foto antippen</div>`):""}
+        </div><div style="font-size:15px;color:var(--tx3)">Foto antippen</div>`):""}
       </div>
       <div class="card">
         <div class="card-row"><span class="card-label"><i class="ti ti-user"></i>Vorname</span><input type="text" id="n-vn" value="${s?s.vorname:""}" placeholder="Pflichtfeld"/></div>
@@ -909,10 +909,10 @@ function renderNeuSchueler(fromSid){
         </div>
         ${s&&s.pruefungen&&s.pruefungen.length?`
         <div style="padding:8px 14px;border-top:.5px solid var(--br)">
-          <div style="font-size:12px;color:var(--tx3);margin-bottom:6px">PRÜFUNGSEINTRÄGE</div>
+          <div style="font-size:14px;color:var(--tx3);margin-bottom:6px">PRÜFUNGSEINTRÄGE</div>
           ${s.pruefungen.map((p,pi)=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:4px 0;border-bottom:.5px solid var(--br2)">
-            <span style="font-size:14px">${p.datum} · ${p.bestanden===true?'✓ Best.':p.bestanden===false?'✗ Nicht best.':'offen'}</span>
-            <button onclick="deletePruefEintrag('${s.id}',${pi})" style="background:none;border:none;color:#E24B4A;font-size:20px;cursor:pointer;padding:0 4px">×</button>
+            <span style="font-size:16px">${p.datum} · ${p.bestanden===true?'✓ Best.':p.bestanden===false?'✗ Nicht best.':'offen'}</span>
+            <button onclick="deletePruefEintrag('${s.id}',${pi})" style="background:none;border:none;color:#E24B4A;font-size:23px;cursor:pointer;padding:0 4px">×</button>
           </div>`).join('')}
         </div>`:''}
         ${s?`
@@ -1067,34 +1067,34 @@ function renderNeuFahrstunde(sid){
       <span class="topbar-title">Fahrstunde · ${s.vorname}</span>
     </div>
     <div class="scroll">
-      <div id="toast-fahrt" class="toast"><i class="ti ti-circle-check" style="font-size:16px"></i><span id="toast-fahrt-msg"></span></div>
+      <div id="toast-fahrt" class="toast"><i class="ti ti-circle-check" style="font-size:18px"></i><span id="toast-fahrt-msg"></span></div>
       <div><div class="sec-label">Termin</div>
       <div class="card">
         <div class="card-row">
           <div style="display:flex;gap:0;width:100%">
             <button class="pill active" id="typ-normal" style="flex:1;border-radius:var(--r-md) 0 0 var(--r-md);justify-content:center;flex-direction:column;align-items:center;gap:2px;padding:10px 8px" onclick="setTypF('normal')">
-              <i class="ti ti-steering-wheel" style="font-size:18px"></i><span style="font-size:12px">Fahrstunde</span><span style="font-size:10px;opacity:.7">80 min/Einh.</span>
+              <i class="ti ti-steering-wheel" style="font-size:21px"></i><span style="font-size:14px">Fahrstunde</span><span style="font-size:12px;opacity:.7">80 min/Einh.</span>
             </button>
             <button class="pill" id="typ-pruef" style="flex:1;border-radius:0 var(--r-md) var(--r-md) 0;justify-content:center;flex-direction:column;align-items:center;gap:2px;padding:10px 8px;border-left:none" onclick="setTypF('pruef')">
-              <i class="ti ti-license" style="font-size:18px"></i><span style="font-size:12px">Prüfungsfahrt</span><span style="font-size:10px;opacity:.7">100 min</span>
+              <i class="ti ti-license" style="font-size:21px"></i><span style="font-size:14px">Prüfungsfahrt</span><span style="font-size:12px;opacity:.7">100 min</span>
             </button>
           </div>
         </div>
         <div class="card-row"><span class="card-label"><i class="ti ti-calendar"></i>Datum</span><div style="display:flex;gap:4px;justify-content:flex-end;flex:1">
-            <input type="number" id="f-dat-tag" min="1" max="31" placeholder="TT" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" onfocus="this.select()" value="${todayStr()?parseInt((todayStr()).split('-')[2]):''}"/>
-            <input type="number" id="f-dat-mon" min="1" max="12" placeholder="MM" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" onfocus="this.select()" value="${todayStr()?parseInt((todayStr()).split('-')[1]):''}"/>
-            <input type="number" id="f-dat-jahr" min="2024" max="2030" placeholder="JJJJ" style="width:64px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" onfocus="this.select()" value="${todayStr()?(todayStr()).split('-')[0]:''}"/>
+            <input type="number" id="f-dat-tag" min="1" max="31" placeholder="TT" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:17px;color:var(--tx);padding:4px" onfocus="this.select()" value="${todayStr()?parseInt((todayStr()).split('-')[2]):''}"/>
+            <input type="number" id="f-dat-mon" min="1" max="12" placeholder="MM" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:17px;color:var(--tx);padding:4px" onfocus="this.select()" value="${todayStr()?parseInt((todayStr()).split('-')[1]):''}"/>
+            <input type="number" id="f-dat-jahr" min="2024" max="2030" placeholder="JJJJ" style="width:64px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:17px;color:var(--tx);padding:4px" onfocus="this.select()" value="${todayStr()?(todayStr()).split('-')[0]:''}"/>
           </div></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Uhrzeit</span><input type="time" step="300" id="f-uhr" value="09:00"/></div>
         <div class="card-row" id="einh-row2">
           <span class="card-label"><i class="ti ti-clock"></i>Einheiten</span>
           <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end;flex:1">
             <button class="cir-btn" onclick="changeEinh(-1)">−</button>
-            <span id="einh-disp" style="font-size:16px;font-weight:500;min-width:72px;text-align:center">1 × 80 min</span>
+            <span id="einh-disp" style="font-size:18px;font-weight:500;min-width:72px;text-align:center">1 × 80 min</span>
             <button class="cir-btn" onclick="changeEinh(1)">+</button>
           </div>
         </div>
-        <div class="card-row" id="pruef-row2" style="display:none"><span class="card-label"><i class="ti ti-clock"></i>Dauer</span><span class="card-val" style="flex:1;text-align:right;font-size:13px;color:var(--tx2)">100 min (fest)</span></div>
+        <div class="card-row" id="pruef-row2" style="display:none"><span class="card-label"><i class="ti ti-clock"></i>Dauer</span><span class="card-val" style="flex:1;text-align:right;font-size:15px;color:var(--tx2)">100 min (fest)</span></div>
       </div></div>`;
 
   if(nsi!==-1){
@@ -1102,7 +1102,7 @@ function renderNeuFahrstunde(sid){
     ${SONDER.map((sf,i)=>{
       const done=s.sonder[i],isNext=i===nsi,locked=!done&&!isNext;
       return`<div class="sonder-btn-row ${done?"done":""}">
-        <span class="sonder-btn-label"><i class="ti ${sf.icon}"></i>${i+1}. ${sf.label} <span style="font-size:11px;color:var(--tx3)">${sf.min} min</span>${locked?` <span style="font-size:10px;color:var(--tx3)">(gesperrt)</span>`:""}</span>
+        <span class="sonder-btn-label"><i class="ti ${sf.icon}"></i>${i+1}. ${sf.label} <span style="font-size:13px;color:var(--tx3)">${sf.min} min</span>${locked?` <span style="font-size:12px;color:var(--tx3)">(gesperrt)</span>`:""}</span>
         <label class="toggle-wrap"><input type="checkbox" id="sf-${sf.key}" ${done?"checked disabled":""} ${locked?"disabled":""}/><div class="toggle-track ${locked||done?"locked":""}"></div><div class="toggle-thumb"></div></label>
       </div>`;
     }).join("")}
@@ -1154,23 +1154,23 @@ function showPruefResult(sid,datum,pi,typ){
     </div>
     <div class="scroll">
       <div style="text-align:center;padding:20px 0 16px">
-        <div class="foto-initials av-${s.farbe}" style="${farbStyle(s.farbe)};width:60px;height:60px;font-size:18px;margin:0 auto 10px;cursor:default">${initials(s)}</div>
-        <div style="font-size:16px;font-weight:600">${fd.day}. ${fd.mon} ${fd.year}</div>
-        <div style="font-size:13px;color:var(--tx2);margin-top:4px">Klasse ${s.klasse} · ${s.prufort}</div>
+        <div class="foto-initials av-${s.farbe}" style="${farbStyle(s.farbe)};width:60px;height:60px;font-size:21px;margin:0 auto 10px;cursor:default">${initials(s)}</div>
+        <div style="font-size:18px;font-weight:600">${fd.day}. ${fd.mon} ${fd.year}</div>
+        <div style="font-size:15px;color:var(--tx2);margin-top:4px">Klasse ${s.klasse} · ${s.prufort}</div>
       </div>
       <div><div class="sec-label">Prüfungsnummer</div>
       <div class="card"><div class="card-row">
         <span class="card-label"><i class="ti ti-list-numbers"></i>Prüfung Nr.</span>
         <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end;flex:1">
           <button class="cir-btn" onclick="changePRVersuch(-1)">−</button>
-          <span id="pr-versuch-disp" style="font-size:16px;font-weight:500;min-width:40px;text-align:center">${versuchNr}.</span>
+          <span id="pr-versuch-disp" style="font-size:18px;font-weight:500;min-width:40px;text-align:center">${versuchNr}.</span>
           <button class="cir-btn" onclick="changePRVersuch(1)">+</button>
         </div>
       </div></div></div>
       <div><div class="sec-label">Ergebnis</div>
       <div style="display:flex;flex-direction:column;gap:10px">
-        <button class="btn-full gruen" onclick="savePruefResult('${sid}','${datum}',${pi},true)"><i class="ti ti-circle-check" style="font-size:20px"></i> Bestanden ✓</button>
-        <button class="btn-full rot" onclick="savePruefResult('${sid}','${datum}',${pi},false)"><i class="ti ti-circle-x" style="font-size:20px"></i> Nicht bestanden ✗</button>
+        <button class="btn-full gruen" onclick="savePruefResult('${sid}','${datum}',${pi},true)"><i class="ti ti-circle-check" style="font-size:23px"></i> Bestanden ✓</button>
+        <button class="btn-full rot" onclick="savePruefResult('${sid}','${datum}',${pi},false)"><i class="ti ti-circle-x" style="font-size:23px"></i> Nicht bestanden ✗</button>
         <button class="btn-full" onclick="savePruefResult('${sid}','${datum}',${pi},null)"><i class="ti ti-clock"></i> Offen</button>
       </div></div>
       <button class="btn-full" style="margin-top:4px" onclick="renderSchueler('${sid}')"><i class="ti ti-user"></i> Zum Schüler</button>
@@ -1205,28 +1205,28 @@ function renderEditFahrstunde(sid, idx){
         <div class="card-row">
           <div style="display:flex;gap:0;width:100%">
             <button class="pill ${f.typ==="normal"?"active":""}" id="etyp-normal" style="flex:1;border-radius:var(--r-md) 0 0 var(--r-md);justify-content:center;flex-direction:column;align-items:center;gap:2px;padding:10px 8px" onclick="setETypF('normal')">
-              <i class="ti ti-steering-wheel" style="font-size:18px"></i><span style="font-size:12px">Fahrstunde</span><span style="font-size:10px;opacity:.7">80 min/Einh.</span>
+              <i class="ti ti-steering-wheel" style="font-size:21px"></i><span style="font-size:14px">Fahrstunde</span><span style="font-size:12px;opacity:.7">80 min/Einh.</span>
             </button>
             <button class="pill ${f.typ==="pruef"?"active":""}" id="etyp-pruef" style="flex:1;border-radius:0 var(--r-md) var(--r-md) 0;justify-content:center;flex-direction:column;align-items:center;gap:2px;padding:10px 8px;border-left:none" onclick="setETypF('pruef')">
-              <i class="ti ti-license" style="font-size:18px"></i><span style="font-size:12px">Prüfungsfahrt</span><span style="font-size:10px;opacity:.7">100 min</span>
+              <i class="ti ti-license" style="font-size:21px"></i><span style="font-size:14px">Prüfungsfahrt</span><span style="font-size:12px;opacity:.7">100 min</span>
             </button>
           </div>
         </div>
         <div class="card-row"><span class="card-label"><i class="ti ti-calendar"></i>Datum</span><div style="display:flex;gap:4px;justify-content:flex-end;flex:1">
-            <input type="number" id="ef-dat-tag" min="1" max="31" placeholder="TT" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" onfocus="this.select()" value="${f.datum?parseInt((f.datum).split('-')[2]):''}"/>
-            <input type="number" id="ef-dat-mon" min="1" max="12" placeholder="MM" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" onfocus="this.select()" value="${f.datum?parseInt((f.datum).split('-')[1]):''}"/>
-            <input type="number" id="ef-dat-jahr" min="2024" max="2030" placeholder="JJJJ" style="width:64px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" onfocus="this.select()" value="${f.datum?(f.datum).split('-')[0]:''}"/>
+            <input type="number" id="ef-dat-tag" min="1" max="31" placeholder="TT" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:17px;color:var(--tx);padding:4px" onfocus="this.select()" value="${f.datum?parseInt((f.datum).split('-')[2]):''}"/>
+            <input type="number" id="ef-dat-mon" min="1" max="12" placeholder="MM" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:17px;color:var(--tx);padding:4px" onfocus="this.select()" value="${f.datum?parseInt((f.datum).split('-')[1]):''}"/>
+            <input type="number" id="ef-dat-jahr" min="2024" max="2030" placeholder="JJJJ" style="width:64px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:17px;color:var(--tx);padding:4px" onfocus="this.select()" value="${f.datum?(f.datum).split('-')[0]:''}"/>
           </div></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Uhrzeit</span><input type="time" step="300" id="ef-uhr" value="${f.uhr||'09:00'}"/></div>
         <div class="card-row" id="eeinh-row">
           <span class="card-label"><i class="ti ti-clock"></i>Einheiten</span>
           <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end;flex:1">
             <button class="cir-btn" onclick="changeEEinh(-1)">−</button>
-            <span id="eeinh-disp" style="font-size:16px;font-weight:500;min-width:72px;text-align:center">${f.einh||1} × 80 min</span>
+            <span id="eeinh-disp" style="font-size:18px;font-weight:500;min-width:72px;text-align:center">${f.einh||1} × 80 min</span>
             <button class="cir-btn" onclick="changeEEinh(1)">+</button>
           </div>
         </div>
-        <div class="card-row" id="epruef-row" style="${f.typ==="pruef"?"":"display:none"}"><span class="card-label"><i class="ti ti-clock"></i>Dauer</span><span style="flex:1;text-align:right;font-size:13px;color:var(--tx2)">100 min (fest)</span></div>
+        <div class="card-row" id="epruef-row" style="${f.typ==="pruef"?"":"display:none"}"><span class="card-label"><i class="ti ti-clock"></i>Dauer</span><span style="flex:1;text-align:right;font-size:15px;color:var(--tx2)">100 min (fest)</span></div>
       </div></div>
       <button class="btn-full" onclick="saveEditFahrstunde('${sid}',${idx})"><i class="ti ti-circle-check"></i> Speichern</button>
       <button class="btn-full danger" style="margin-top:6px" onclick="deleteEditFahrstunde('${sid}',${idx})"><i class="ti ti-trash"></i> Fahrstunde löschen</button>
@@ -1312,23 +1312,23 @@ function renderNeuPruefungInline(sid){
       <div><div class="sec-label">Prüfungstermin</div>
       <div class="card">
         <div class="card-row"><span class="card-label"><i class="ti ti-calendar"></i>Datum</span><div style="display:flex;gap:4px;justify-content:flex-end;flex:1">
-            <input type="number" id="pn-datum-tag" min="1" max="31" placeholder="TT" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" onfocus="this.select()" value="${todayStr()?parseInt((todayStr()).split('-')[2]):''}"/>
-            <input type="number" id="pn-datum-mon" min="1" max="12" placeholder="MM" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" onfocus="this.select()" value="${todayStr()?parseInt((todayStr()).split('-')[1]):''}"/>
-            <input type="number" id="pn-datum-jahr" min="2024" max="2030" placeholder="JJJJ" style="width:64px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" onfocus="this.select()" value="${todayStr()?(todayStr()).split('-')[0]:''}"/>
+            <input type="number" id="pn-datum-tag" min="1" max="31" placeholder="TT" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:17px;color:var(--tx);padding:4px" onfocus="this.select()" value="${todayStr()?parseInt((todayStr()).split('-')[2]):''}"/>
+            <input type="number" id="pn-datum-mon" min="1" max="12" placeholder="MM" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:17px;color:var(--tx);padding:4px" onfocus="this.select()" value="${todayStr()?parseInt((todayStr()).split('-')[1]):''}"/>
+            <input type="number" id="pn-datum-jahr" min="2024" max="2030" placeholder="JJJJ" style="width:64px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:17px;color:var(--tx);padding:4px" onfocus="this.select()" value="${todayStr()?(todayStr()).split('-')[0]:''}"/>
           </div></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Uhrzeit</span><input type="time" step="300" id="pn-uhr" value="08:00"/></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-list-numbers"></i>Prüfung Nr.</span>
           <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end;flex:1">
             <button class="cir-btn" onclick="changePNVersuch(-1)">−</button>
-            <span id="pn-versuch-disp" style="font-size:16px;font-weight:500;min-width:40px;text-align:center">${versuchNr}.</span>
+            <span id="pn-versuch-disp" style="font-size:18px;font-weight:500;min-width:40px;text-align:center">${versuchNr}.</span>
             <button class="cir-btn" onclick="changePNVersuch(1)">+</button>
           </div>
         </div>
         <div class="card-row"><span class="card-label"><i class="ti ti-trophy"></i>Ergebnis</span>
           <div style="display:flex;gap:6px;justify-content:flex-end;flex:1;flex-wrap:wrap">
-            <button class="pill" id="pn-offen" onclick="setPNResult(null)" style="font-size:13px;padding:6px 10px">Offen</button>
-            <button class="pill" id="pn-best" onclick="setPNResult(true)" style="font-size:13px;padding:6px 10px">Bestanden ✓</button>
-            <button class="pill" id="pn-nicht" onclick="setPNResult(false)" style="font-size:13px;padding:6px 10px">Nicht bestanden ✗</button>
+            <button class="pill" id="pn-offen" onclick="setPNResult(null)" style="font-size:15px;padding:6px 10px">Offen</button>
+            <button class="pill" id="pn-best" onclick="setPNResult(true)" style="font-size:15px;padding:6px 10px">Bestanden ✓</button>
+            <button class="pill" id="pn-nicht" onclick="setPNResult(false)" style="font-size:15px;padding:6px 10px">Nicht bestanden ✗</button>
           </div>
         </div>
       </div></div>
@@ -1373,23 +1373,23 @@ function renderEditPruefung(sid,idx){
       <div><div class="sec-label">Prüfungsergebnis</div>
       <div class="card">
         <div class="card-row"><span class="card-label"><i class="ti ti-calendar"></i>Datum</span><div style="display:flex;gap:4px;justify-content:flex-end;flex:1">
-            <input type="number" id="pe-datum-tag" min="1" max="31" placeholder="TT" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" onfocus="this.select()" value="${p.datum?parseInt((p.datum).split('-')[2]):''}"/>
-            <input type="number" id="pe-datum-mon" min="1" max="12" placeholder="MM" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" onfocus="this.select()" value="${p.datum?parseInt((p.datum).split('-')[1]):''}"/>
-            <input type="number" id="pe-datum-jahr" min="2024" max="2030" placeholder="JJJJ" style="width:64px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" onfocus="this.select()" value="${p.datum?(p.datum).split('-')[0]:''}"/>
+            <input type="number" id="pe-datum-tag" min="1" max="31" placeholder="TT" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:17px;color:var(--tx);padding:4px" onfocus="this.select()" value="${p.datum?parseInt((p.datum).split('-')[2]):''}"/>
+            <input type="number" id="pe-datum-mon" min="1" max="12" placeholder="MM" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:17px;color:var(--tx);padding:4px" onfocus="this.select()" value="${p.datum?parseInt((p.datum).split('-')[1]):''}"/>
+            <input type="number" id="pe-datum-jahr" min="2024" max="2030" placeholder="JJJJ" style="width:64px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:17px;color:var(--tx);padding:4px" onfocus="this.select()" value="${p.datum?(p.datum).split('-')[0]:''}"/>
           </div></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Uhrzeit</span><input type="time" step="300" id="pe-uhr" value="${p.uhr||'08:00'}"/></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-list-numbers"></i>Prüfung Nr.</span>
           <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end;flex:1">
             <button class="cir-btn" onclick="changePEVersuch(-1)">−</button>
-            <span id="pe-versuch-disp" style="font-size:16px;font-weight:500;min-width:40px;text-align:center">${p.versuch}.</span>
+            <span id="pe-versuch-disp" style="font-size:18px;font-weight:500;min-width:40px;text-align:center">${p.versuch}.</span>
             <button class="cir-btn" onclick="changePEVersuch(1)">+</button>
           </div>
         </div>
         <div class="card-row"><span class="card-label"><i class="ti ti-trophy"></i>Ergebnis</span>
           <div style="display:flex;gap:6px;justify-content:flex-end;flex:1;flex-wrap:wrap">
-            <button class="pill ${p.bestanden===null||p.bestanden===undefined?"active":""}" id="pe-offen" onclick="setPEResult(null)" style="font-size:13px;padding:6px 10px">Offen</button>
-            <button class="pill ${p.bestanden===true?"active":""}" id="pe-best" onclick="setPEResult(true)" style="font-size:13px;padding:6px 10px">Bestanden ✓</button>
-            <button class="pill ${p.bestanden===false?"active":""}" id="pe-nicht" onclick="setPEResult(false)" style="font-size:13px;padding:6px 10px">Nicht bestanden ✗</button>
+            <button class="pill ${p.bestanden===null||p.bestanden===undefined?"active":""}" id="pe-offen" onclick="setPEResult(null)" style="font-size:15px;padding:6px 10px">Offen</button>
+            <button class="pill ${p.bestanden===true?"active":""}" id="pe-best" onclick="setPEResult(true)" style="font-size:15px;padding:6px 10px">Bestanden ✓</button>
+            <button class="pill ${p.bestanden===false?"active":""}" id="pe-nicht" onclick="setPEResult(false)" style="font-size:15px;padding:6px 10px">Nicht bestanden ✗</button>
           </div>
         </div>
       </div></div>
@@ -1458,12 +1458,12 @@ function showFotoEditor(sid){
       <img id="foto-edit-img" src="${s.foto}" style="position:absolute;transform-origin:center center;cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none"/>
     </div>
     <div style="margin-bottom:8px">
-      <div style="font-size:12px;color:var(--tx3);margin-bottom:6px;text-align:center">Zoom</div>
+      <div style="font-size:14px;color:var(--tx3);margin-bottom:6px;text-align:center">Zoom</div>
       <input type="range" id="foto-zoom" min="50" max="200" value="100" style="width:100%;accent-color:var(--accent)"/>
     </div>
     <div class="modal-btns" style="margin-top:16px">
-      <button onclick="applyFotoEdit('${sid}')" style="width:100%;padding:15px;border-radius:var(--r-md);border:none;background:var(--accent);color:white;font-size:17px;font-weight:600;cursor:pointer;font-family:inherit">Speichern</button>
-      <button onclick="closeModal()" style="width:100%;padding:15px;border-radius:var(--r-md);border:1.5px solid var(--br2);background:var(--bg);color:var(--tx);font-size:17px;font-weight:600;cursor:pointer;font-family:inherit">Abbrechen</button>
+      <button onclick="applyFotoEdit('${sid}')" style="width:100%;padding:15px;border-radius:var(--r-md);border:none;background:var(--accent);color:white;font-size:20px;font-weight:600;cursor:pointer;font-family:inherit">Speichern</button>
+      <button onclick="closeModal()" style="width:100%;padding:15px;border-radius:var(--r-md);border:1.5px solid var(--br2);background:var(--bg);color:var(--tx);font-size:20px;font-weight:600;cursor:pointer;font-family:inherit">Abbrechen</button>
     </div>
   </div>`;
   div.addEventListener("click",e=>{if(e.target===div)closeModal();});
@@ -1603,7 +1603,7 @@ function renderCalDetail(){
   const lbl=`${parseInt(p[2])}. ${MONATE_K[parseInt(p[1])-1]} ${p[0]}`;
   const t=termine[selDate]||[];
   let html=`<div class="sec-label" style="margin-bottom:8px">${lbl}</div>`;
-  if(!t.length)html+=`<div style="padding:12px 0;font-size:13px;color:var(--tx3)">Kein Termin — tippe + zum Hinzufügen</div>`;
+  if(!t.length)html+=`<div style="padding:12px 0;font-size:15px;color:var(--tx3)">Kein Termin — tippe + zum Hinzufügen</div>`;
   else t.forEach((e,i)=>{
     const s=getS(e.sid);if(!s)return;
     const nick=s.spitz?` «${s.spitz}»`:"";
@@ -1659,13 +1659,13 @@ function renderNeuKalTermin(date){
       <span class="topbar-title">${lbl}</span>
     </div>
     <div class="scroll">
-      <div id="toast-kal" class="toast"><i class="ti ti-circle-check" style="font-size:16px"></i><span id="toast-kal-msg"></span></div>
+      <div id="toast-kal" class="toast"><i class="ti ti-circle-check" style="font-size:18px"></i><span id="toast-kal-msg"></span></div>
       <div><div class="sec-label">Termin</div>
       <div class="card">
         <div class="card-row" style="flex-direction:column;align-items:stretch;gap:8px;padding:12px 14px">
           <div style="display:flex;gap:6px">
-            <button class="pill active" id="kpers-schueler" onclick="setKPers('schueler')" style="font-size:13px;padding:7px 14px">Schüler</button>
-            <button class="pill" id="kpers-auffrisch" onclick="setKPers('auffrisch')" style="font-size:13px;padding:7px 14px">Auffrischung</button>
+            <button class="pill active" id="kpers-schueler" onclick="setKPers('schueler')" style="font-size:15px;padding:7px 14px">Schüler</button>
+            <button class="pill" id="kpers-auffrisch" onclick="setKPers('auffrisch')" style="font-size:15px;padding:7px 14px">Auffrischung</button>
           </div>
         </div>
         <div class="card-row" id="k-schueler-row"><span class="card-label"><i class="ti ti-user"></i>Schüler</span>
@@ -1674,22 +1674,22 @@ function renderNeuKalTermin(date){
           </select>
         </div>
         <div class="card-row" style="padding:8px 16px">
-          <button onclick="toggleKalAlleSchueler()" style="background:none;border:none;cursor:pointer;color:var(--accent);font-size:13px;font-family:inherit;padding:0;text-align:left" id="k-alle-btn">+ Auch bestandene Schüler anzeigen</button>
+          <button onclick="toggleKalAlleSchueler()" style="background:none;border:none;cursor:pointer;color:var(--accent);font-size:15px;font-family:inherit;padding:0;text-align:left" id="k-alle-btn">+ Auch bestandene Schüler anzeigen</button>
         </div>
         <div class="card-row" id="k-auffrisch-row" style="display:none"><span class="card-label"><i class="ti ti-user-check"></i>Name</span>
-          <input type="text" id="k-auffrisch-name" placeholder="Name eingeben" style="flex:1;text-align:left;border:none;background:transparent;font-size:15px;color:var(--tx);outline:none"/>
+          <input type="text" id="k-auffrisch-name" placeholder="Name eingeben" style="flex:1;text-align:left;border:none;background:transparent;font-size:17px;color:var(--tx);outline:none"/>
         </div>
         <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Startzeit</span><input type="time" step="300" id="k-uhr" value="09:00" oninput="kalUpdateEnd()"/></div>
-        <div class="card-row"><span class="card-label"><i class="ti ti-clock-check"></i>Endzeit</span><span id="k-endzeit" style="flex:1;text-align:right;font-size:15px;font-weight:500;color:var(--accent)">10:20</span></div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-clock-check"></i>Endzeit</span><span id="k-endzeit" style="flex:1;text-align:right;font-size:17px;font-weight:500;color:var(--accent)">10:20</span></div>
         <div class="card-row" style="flex-direction:column;align-items:stretch;gap:8px;padding:12px 14px">
-          <span style="font-size:13px;color:var(--tx2)">Art der Fahrt</span>
+          <span style="font-size:15px;color:var(--tx2)">Art der Fahrt</span>
           <div style="display:flex;gap:6px;flex-wrap:wrap">
-            <button class="pill active" id="ktyp-normal" onclick="setKTyp('normal')" style="font-size:13px;padding:7px 12px">Fahrstunde</button>
-            <button class="pill" id="ktyp-pruef" onclick="setKTyp('pruef')" style="font-size:13px;padding:7px 12px">Prüfung</button>
-            <button class="pill" id="ktyp-ueberland" onclick="setKTyp('ueberland')" style="font-size:13px;padding:7px 12px">Überlandfahrt</button>
-            <button class="pill" id="ktyp-autobahn" onclick="setKTyp('autobahn')" style="font-size:13px;padding:7px 12px">Autobahnfahrt</button>
-            <button class="pill" id="ktyp-nacht" onclick="setKTyp('nacht')" style="font-size:13px;padding:7px 12px">Nachtfahrt</button>
-            <button class="pill" id="ktyp-auffrisch" onclick="setKTyp('auffrisch')" style="font-size:13px;padding:7px 12px">Auffrischung</button>
+            <button class="pill active" id="ktyp-normal" onclick="setKTyp('normal')" style="font-size:15px;padding:7px 12px">Fahrstunde</button>
+            <button class="pill" id="ktyp-pruef" onclick="setKTyp('pruef')" style="font-size:15px;padding:7px 12px">Prüfung</button>
+            <button class="pill" id="ktyp-ueberland" onclick="setKTyp('ueberland')" style="font-size:15px;padding:7px 12px">Überlandfahrt</button>
+            <button class="pill" id="ktyp-autobahn" onclick="setKTyp('autobahn')" style="font-size:15px;padding:7px 12px">Autobahnfahrt</button>
+            <button class="pill" id="ktyp-nacht" onclick="setKTyp('nacht')" style="font-size:15px;padding:7px 12px">Nachtfahrt</button>
+            <button class="pill" id="ktyp-auffrisch" onclick="setKTyp('auffrisch')" style="font-size:15px;padding:7px 12px">Auffrischung</button>
           </div>
         </div>
         <div class="card-row" id="kal-prufort-row" style="display:none">
@@ -1702,7 +1702,7 @@ function renderNeuKalTermin(date){
           <span class="card-label"><i class="ti ti-hourglass"></i>Minuten</span>
           <div style="display:flex;align-items:center;gap:10px;justify-content:flex-end;flex:1">
             <button class="cir-btn" onclick="changeKalMin(-5);kalUpdateEnd()">−</button>
-            <span id="kal-min-disp" style="font-size:16px;font-weight:500;min-width:52px;text-align:center">80 min</span>
+            <span id="kal-min-disp" style="font-size:18px;font-weight:500;min-width:52px;text-align:center">80 min</span>
             <button class="cir-btn" onclick="changeKalMin(5);kalUpdateEnd()">+</button>
           </div>
         </div>
@@ -1710,7 +1710,7 @@ function renderNeuKalTermin(date){
       <div><div class="card" style="margin-top:0">
         <div class="card-row" style="align-items:flex-start;padding-top:12px">
           <span class="card-label" style="padding-top:2px"><i class="ti ti-notes"></i>Notiz</span>
-          <textarea id="k-notiz" style="flex:1;border:none;background:transparent;font-size:15px;color:var(--tx);font-family:inherit;outline:none;text-align:left;resize:none;height:60px" placeholder="Optional…"></textarea>
+          <textarea id="k-notiz" style="flex:1;border:none;background:transparent;font-size:17px;color:var(--tx);font-family:inherit;outline:none;text-align:left;resize:none;height:60px" placeholder="Optional…"></textarea>
         </div>
       </div></div>
       <button class="btn-full" onclick="saveKalTermin('${date}')"><i class="ti ti-circle-check"></i> Termin speichern</button>
@@ -1865,28 +1865,28 @@ function renderStatistik(){
     </div>
     <div class="scroll">
       <div class="stat-grid">
-        <div class="stat-box accent" style="text-align:center"><div class="stat-lbl">Bestehensquote</div><div class="stat-num" style="font-size:48px">${quote}<span class="stat-unit">%</span></div></div>
-        <div class="stat-box" style="text-align:center"><div class="stat-lbl">Prüfungen gesamt</div><div class="stat-num" style="font-size:48px">${gesamt}</div></div>
+        <div class="stat-box accent" style="text-align:center"><div class="stat-lbl">Bestehensquote</div><div class="stat-num" style="font-size:55px">${quote}<span class="stat-unit">%</span></div></div>
+        <div class="stat-box" style="text-align:center"><div class="stat-lbl">Prüfungen gesamt</div><div class="stat-num" style="font-size:55px">${gesamt}</div></div>
       </div>
       <div class="stat-grid">
-        <div class="stat-box" style="text-align:center"><div class="stat-lbl">Bestanden</div><div class="stat-num" style="font-size:48px;color:#27500A">${bestanden}</div></div>
-        <div class="stat-box" style="text-align:center"><div class="stat-lbl">Nicht bestanden</div><div class="stat-num" style="font-size:48px;color:#A32D2D">${gesamt-bestanden}</div></div>
+        <div class="stat-box" style="text-align:center"><div class="stat-lbl">Bestanden</div><div class="stat-num" style="font-size:55px;color:#27500A">${bestanden}</div></div>
+        <div class="stat-box" style="text-align:center"><div class="stat-lbl">Nicht bestanden</div><div class="stat-num" style="font-size:55px;color:#A32D2D">${gesamt-bestanden}</div></div>
       </div>`;
 
   if(gesamt===0){
-    html+=`<div class="empty-hint"><i class="ti ti-chart-bar" style="font-size:32px;display:block;margin:0 auto 10px"></i>Noch keine Prüfungsdaten.<br>Ergebnisse über das Dashboard eintragen.</div>`;
+    html+=`<div class="empty-hint"><i class="ti ti-chart-bar" style="font-size:37px;display:block;margin:0 auto 10px"></i>Noch keine Prüfungsdaten.<br>Ergebnisse über das Dashboard eintragen.</div>`;
   }else{
     html+=`<div><div class="sec-label">Nach Prüfungsversuch</div><div class="stat-card">`;
     v.filter(x=>x.list.length>0).forEach(x=>{
       const best=x.list.filter(p=>p.bestanden).length;
       const pct=x.list.length?Math.round((best/x.list.length)*100):0;
-      html+=`<div class="stat-bar-wrap" style="margin-bottom:14px;padding:4px 0"><span class="stat-bar-label" style="font-size:15px">${x.n}.</span><div class="stat-bar-bg" style="height:12px;border-radius:6px"><div class="stat-bar-fill" style="height:12px;border-radius:6px;width:${pct}%"></div></div><span class="stat-bar-val" style="font-size:14px">${pct}%</span><span style="font-size:12px;color:var(--tx3);min-width:36px">${best}/${x.list.length}</span></div>`;
+      html+=`<div class="stat-bar-wrap" style="margin-bottom:14px;padding:4px 0"><span class="stat-bar-label" style="font-size:17px">${x.n}.</span><div class="stat-bar-bg" style="height:12px;border-radius:6px"><div class="stat-bar-fill" style="height:12px;border-radius:6px;width:${pct}%"></div></div><span class="stat-bar-val" style="font-size:16px">${pct}%</span><span style="font-size:14px;color:var(--tx3);min-width:36px">${best}/${x.list.length}</span></div>`;
     });
     html+=`</div></div>`;
     if(ortStats.length){
       html+=`<div><div class="sec-label">Nach Prüfort</div><div class="stat-card">`;
       ortStats.forEach(o=>{
-        html+=`<div class="stat-bar-wrap" style="margin-bottom:14px;padding:4px 0"><span class="stat-bar-label" style="min-width:90px;font-size:13px">${o.ort.replace("DEKRA ","").replace("TÜV ","")}</span><div class="stat-bar-bg" style="height:12px;border-radius:6px"><div class="stat-bar-fill" style="height:12px;border-radius:6px;width:${o.quote}%"></div></div><span class="stat-bar-val" style="font-size:14px">${o.quote}%</span><span style="font-size:12px;color:var(--tx3);min-width:36px">${o.best}/${o.tot}</span></div>`;
+        html+=`<div class="stat-bar-wrap" style="margin-bottom:14px;padding:4px 0"><span class="stat-bar-label" style="min-width:90px;font-size:15px">${o.ort.replace("DEKRA ","").replace("TÜV ","")}</span><div class="stat-bar-bg" style="height:12px;border-radius:6px"><div class="stat-bar-fill" style="height:12px;border-radius:6px;width:${o.quote}%"></div></div><span class="stat-bar-val" style="font-size:16px">${o.quote}%</span><span style="font-size:14px;color:var(--tx3);min-width:36px">${o.best}/${o.tot}</span></div>`;
       });
       html+=`</div></div>`;
     }
@@ -1898,10 +1898,10 @@ function renderStatistik(){
         const pOffen=p.bestanden===null||p.bestanden===undefined;
         const isUpcoming=p.datum>=td2&&pOffen;
         html+=`<div class="pruef-result-item" onclick="renderDashSchueler('${p.sid}')" style="cursor:pointer;padding:14px 16px;gap:14px;${isUpcoming?"border-left:3px solid var(--accent);":""}">
-          <div style="width:40px;height:40px;border-radius:50%;flex-shrink:0;text-align:center;line-height:40px;font-size:15px;font-weight:700;${pOffen?"background:rgba(255,107,43,0.15);color:var(--accent);":p.bestanden?"background:#EAF3DE;color:#27500A;":"background:#FCEBEB;color:#A32D2D;"}">${p.versuch}</div>
-          <div style="flex:1"><div style="font-size:15px;font-weight:600;color:var(--tx)">${p.name}</div>
-          <div style="font-size:12px;color:var(--tx2);margin-top:3px">${p.versuch}. Prüfung · ${fd.day}. ${fd.mon} ${fd.year}${p.prufort?" · "+p.prufort:""}</div></div>
-          <span style="font-size:18px;color:${pOffen?"var(--accent)":p.bestanden?"#27500A":"#A32D2D"}">${pOffen?"⏳":p.bestanden?"✓":"✗"}</span>
+          <div style="width:40px;height:40px;border-radius:50%;flex-shrink:0;text-align:center;line-height:40px;font-size:17px;font-weight:700;${pOffen?"background:rgba(255,107,43,0.15);color:var(--accent);":p.bestanden?"background:#EAF3DE;color:#27500A;":"background:#FCEBEB;color:#A32D2D;"}">${p.versuch}</div>
+          <div style="flex:1"><div style="font-size:17px;font-weight:600;color:var(--tx)">${p.name}</div>
+          <div style="font-size:14px;color:var(--tx2);margin-top:3px">${p.versuch}. Prüfung · ${fd.day}. ${fd.mon} ${fd.year}${p.prufort?" · "+p.prufort:""}</div></div>
+          <span style="font-size:21px;color:${pOffen?"var(--accent)":p.bestanden?"#27500A":"#A32D2D"}">${pOffen?"⏳":p.bestanden?"✓":"✗"}</span>
         </div>`;
       });
       html+=`</div>`;
@@ -1930,8 +1930,8 @@ function renderEditDashTermin(date,idx){
     <div class="scroll">
       <div style="display:flex;align-items:center;gap:14px;margin-bottom:4px">
         ${isAuffrisch3?`<div class="avatar" style="background:rgba(255,107,43,.15);color:var(--accent)">🔄</div>`:(s.foto?`<div class="avatar" style="overflow:hidden;flex-shrink:0"><img src="${s.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/></div>`:`<div class="avatar av-${s.farbe}">${initials(s)}</div>`)}
-        <div><div style="font-size:17px;font-weight:600">${isAuffrisch3?auffrischName3:s.vorname+" "+s.nachname}</div>
-        <div style="font-size:13px;color:var(--tx2)">${fd.day}. ${fd.mon} ${fd.year}</div></div>
+        <div><div style="font-size:20px;font-weight:600">${isAuffrisch3?auffrischName3:s.vorname+" "+s.nachname}</div>
+        <div style="font-size:15px;color:var(--tx2)">${fd.day}. ${fd.mon} ${fd.year}</div></div>
       </div>
       <div><div class="sec-label">Termin</div>
       <div class="card">
@@ -1942,7 +1942,7 @@ function renderEditDashTermin(date,idx){
         </div>
         <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Uhrzeit</span><input type="time" step="300" id="et-uhr" value="${t.uhr}"/></div>
         <div class="card-row" style="align-items:flex-start;flex-direction:column;gap:8px;padding:12px 14px">
-          <span style="font-size:13px;color:var(--tx2);font-weight:500">Art der Fahrt</span>
+          <span style="font-size:15px;color:var(--tx2);font-weight:500">Art der Fahrt</span>
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;width:100%">
             <button class="pill ${!t.typ||t.typ==='normal'?'active':''}" id="dtyp-normal" onclick="setDTyp('normal')">Fahrstunde</button>
             <button class="pill ${t.typ==='pruef'?'active':''}" id="dtyp-pruef" onclick="setDTyp('pruef')">Prüfung</button>
@@ -1955,11 +1955,11 @@ function renderEditDashTermin(date,idx){
         <div class="card-row"><span class="card-label"><i class="ti ti-hourglass"></i>Minuten</span>
           <div style="display:flex;align-items:center;gap:10px;justify-content:flex-end;flex:1">
             <button class="cir-btn" onclick="changeETMin(-5)">−</button>
-            <span id="et-min-disp" style="font-size:16px;font-weight:500;min-width:52px;text-align:center">${t.min} min</span>
+            <span id="et-min-disp" style="font-size:18px;font-weight:500;min-width:52px;text-align:center">${t.min} min</span>
             <button class="cir-btn" onclick="changeETMin(5)">+</button>
           </div>
         </div>
-        <div class="card-row" style="align-items:flex-start;padding-top:12px"><span class="card-label" style="padding-top:2px"><i class="ti ti-notes"></i>Notiz</span><textarea id="et-notiz" style="flex:1;border:none;background:transparent;font-size:15px;color:var(--tx);font-family:inherit;outline:none;text-align:left;resize:none;height:60px" placeholder="Optional…">${t.notiz||""}</textarea></div>
+        <div class="card-row" style="align-items:flex-start;padding-top:12px"><span class="card-label" style="padding-top:2px"><i class="ti ti-notes"></i>Notiz</span><textarea id="et-notiz" style="flex:1;border:none;background:transparent;font-size:17px;color:var(--tx);font-family:inherit;outline:none;text-align:left;resize:none;height:60px" placeholder="Optional…">${t.notiz||""}</textarea></div>
       </div></div>
       <button class="btn-full" onclick="saveEditDashTermin()"><i class="ti ti-circle-check"></i> Speichern</button>
       <button class="btn-full" style="margin-top:6px" onclick="renderSchueler('${t.sid}')"><i class="ti ti-user"></i> Zum Schüler</button>
@@ -1972,8 +1972,8 @@ function renderEditDashTermin(date,idx){
 
 function changeETMin(d){
   AppState.et.min=Math.max(10,Math.min(300,(AppState.et.min||80)+d));
-  const txt=AppState.et.min+" min";
-  ["et-min-disp","ekt-min-disp"].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=txt;});
+  const el=document.getElementById("et-min-disp");
+  if(el)el.textContent=AppState.et.min+" min";
 }
 
 function setDTyp(typ){
@@ -2034,15 +2034,15 @@ function renderTagAnsicht(date){
   let html=`<div class="screen active" id="scr-tag">
     <div class="topbar">
       <button class="btn-icon" onclick="buildKalender()"><i class="ti ti-calendar"></i></button>
-      <button class="btn-icon" onclick="(d=>{do{d.setDate(d.getDate()-1);}while(d.getDay()===0||d.getDay()===6);const nd=toKey(d.getFullYear(),d.getMonth()+1,d.getDate());selDate=nd;renderTagAnsicht(nd);})(new Date('${date}'))" style="font-size:24px;color:#4A90D9"><i class="ti ti-chevron-left"></i></button>
-      <span class="topbar-title">${dow}, ${fd.day}. ${fd.mon} <span style="font-size:13px;opacity:0.7">${fd.year}</span></span>
-      <button class="btn-icon" onclick="(d=>{do{d.setDate(d.getDate()+1);}while(d.getDay()===0||d.getDay()===6);const nd=toKey(d.getFullYear(),d.getMonth()+1,d.getDate());selDate=nd;renderTagAnsicht(nd);})(new Date('${date}'))" style="font-size:24px;color:#4A90D9"><i class="ti ti-chevron-right"></i></button>
+      <button class="btn-icon" onclick="(d=>{do{d.setDate(d.getDate()-1);}while(d.getDay()===0||d.getDay()===6);const nd=toKey(d.getFullYear(),d.getMonth()+1,d.getDate());selDate=nd;renderTagAnsicht(nd);})(new Date('${date}'))" style="font-size:28px;color:#4A90D9"><i class="ti ti-chevron-left"></i></button>
+      <span class="topbar-title">${dow}, ${fd.day}. ${fd.mon} <span style="font-size:15px;opacity:0.7">${fd.year}</span></span>
+      <button class="btn-icon" onclick="(d=>{do{d.setDate(d.getDate()+1);}while(d.getDay()===0||d.getDay()===6);const nd=toKey(d.getFullYear(),d.getMonth()+1,d.getDate());selDate=nd;renderTagAnsicht(nd);})(new Date('${date}'))" style="font-size:28px;color:#4A90D9"><i class="ti ti-chevron-right"></i></button>
       <button class="btn-icon" onclick="renderNeuKalTermin('${date}')"><i class="ti ti-plus"></i></button>
     </div>
     <div class="scroll">`;
 
   if(!t.length){
-    html+=`<div class="empty-hint"><i class="ti ti-calendar-off" style="font-size:32px;display:block;margin:0 auto 10px"></i>Keine Termine<br><span style="font-size:12px">Tippe + um einen Termin hinzuzufügen</span></div>`;
+    html+=`<div class="empty-hint"><i class="ti ti-calendar-off" style="font-size:37px;display:block;margin:0 auto 10px"></i>Keine Termine<br><span style="font-size:14px">Tippe + um einen Termin hinzuzufügen</span></div>`;
   } else {
     // Sort by time
     const sorted=[...t].sort((a,b)=>a.uhr.localeCompare(b.uhr));
@@ -2061,16 +2061,16 @@ function renderTagAnsicht(date){
       html+=`<div class="card" style="margin-bottom:8px;cursor:pointer" onclick="showTagTerminActions('${date}',${realIdx})">
         <div class="card-row" style="gap:14px;padding:14px 16px 14px;align-items:flex-start">
           <div style="display:flex;flex-direction:column;align-items:center;gap:2px;min-width:44px">
-            <span style="font-size:14px;font-weight:600;color:var(--tx)">${e.uhr}</span>
-            <span style="font-size:11px;color:var(--tx3)">–${endMin}</span>
+            <span style="font-size:16px;font-weight:600;color:var(--tx)">${e.uhr}</span>
+            <span style="font-size:13px;color:var(--tx3)">–${endMin}</span>
           </div>
           <div style="width:3px;border-radius:2px;background:${dotCol};align-self:stretch;flex-shrink:0"></div>
           <div style="flex:1">
-            <div style="font-size:15px;font-weight:500">${isAuffrisch2?"🔄 "+auffrischName:s.vorname+nick+" "+s.nachname}</div>
-            <div style="font-size:12px;color:var(--tx2);margin-top:2px">${e.min} min${isAuffrisch2?" · Auffrischung":s?" · Kl. "+s.klasse:""}${e.notiz?" · "+e.notiz:""}${isPruef&&s&&s.prufort?" · "+s.prufort:""}</div>
+            <div style="font-size:17px;font-weight:500">${isAuffrisch2?"🔄 "+auffrischName:s.vorname+nick+" "+s.nachname}</div>
+            <div style="font-size:14px;color:var(--tx2);margin-top:2px">${e.min} min${isAuffrisch2?" · Auffrischung":s?" · Kl. "+s.klasse:""}${e.notiz?" · "+e.notiz:""}${isPruef&&s&&s.prufort?" · "+s.prufort:""}</div>
             ${!isAuffrisch2?`<div style="margin-top:5px;padding-bottom:2px"><span class="badge badge-${s.klasse}">${s.klasse}</span></div>`:""}
           </div>
-          <i class="ti ti-chevron-right" style="color:var(--tx3);font-size:16px"></i>
+          <i class="ti ti-chevron-right" style="color:var(--tx3);font-size:18px"></i>
         </div>
       </div>`;
     });
@@ -2102,26 +2102,26 @@ function renderEditKalTermin(date,idx){
     <div class="scroll">
       <div style="display:flex;align-items:center;gap:14px;margin-bottom:4px">
         ${isAuffrisch3?`<div class="avatar" style="background:rgba(255,107,43,.15);color:var(--accent)">🔄</div>`:(s.foto?`<div class="avatar" style="overflow:hidden;flex-shrink:0"><img src="${s.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/></div>`:`<div class="avatar av-${s.farbe}">${initials(s)}</div>`)}
-        <div><div style="font-size:17px;font-weight:600">${isAuffrisch3?auffrischName3:s.vorname+" "+s.nachname}</div>
-        <div style="font-size:13px;color:var(--tx2)">${fd.day}. ${fd.mon} ${fd.year}</div></div>
+        <div><div style="font-size:20px;font-weight:600">${isAuffrisch3?auffrischName3:s.vorname+" "+s.nachname}</div>
+        <div style="font-size:15px;color:var(--tx2)">${fd.day}. ${fd.mon} ${fd.year}</div></div>
       </div>
       <div><div class="sec-label">Termin</div>
       <div class="card">
-        ${isAuffrisch3?`<div class="card-row"><span class="card-label"><i class="ti ti-user-check"></i>Name</span><span style="flex:1;text-align:right;font-size:15px">${auffrischName3}</span></div>`:`<div class="card-row"><span class="card-label"><i class="ti ti-user"></i>Schüler</span>
+        ${isAuffrisch3?`<div class="card-row"><span class="card-label"><i class="ti ti-user-check"></i>Name</span><span style="flex:1;text-align:right;font-size:17px">${auffrischName3}</span></div>`:`<div class="card-row"><span class="card-label"><i class="ti ti-user"></i>Schüler</span>
           <select id="ekt-sid">
             ${schueler.map(sc=>"<option value=\""+sc.id+"\" "+(sc.id===t.sid?"selected":"")+">"+sc.vorname+" "+sc.nachname+(sc.spitz?" «"+sc.spitz+"»":"")+"</option>").join("")}
           </select></div>`}
         <div class="card-row"><span class="card-label"><i class="ti ti-calendar"></i>Datum</span>
           <div style="display:flex;gap:4px;justify-content:flex-end;flex:1">
-            <input type="number" id="ekt-dat-tag" min="1" max="31" placeholder="TT" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" onfocus="this.select()" value="${parseInt(date.split('-')[2])}"/>
-            <input type="number" id="ekt-dat-mon" min="1" max="12" placeholder="MM" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" onfocus="this.select()" value="${parseInt(date.split('-')[1])}"/>
-            <input type="number" id="ekt-dat-jahr" min="2024" max="2030" placeholder="JJJJ" style="width:64px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:4px" onfocus="this.select()" value="${date.split('-')[0]}"/>
+            <input type="number" id="ekt-dat-tag" min="1" max="31" placeholder="TT" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:17px;color:var(--tx);padding:4px" onfocus="this.select()" value="${parseInt(date.split('-')[2])}"/>
+            <input type="number" id="ekt-dat-mon" min="1" max="12" placeholder="MM" style="width:44px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:17px;color:var(--tx);padding:4px" onfocus="this.select()" value="${parseInt(date.split('-')[1])}"/>
+            <input type="number" id="ekt-dat-jahr" min="2024" max="2030" placeholder="JJJJ" style="width:64px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:17px;color:var(--tx);padding:4px" onfocus="this.select()" value="${date.split('-')[0]}"/>
           </div>
         </div>
         <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Startzeit</span><input type="time" step="300" id="ekt-uhr" value="${t.uhr}" oninput="ektUpdateEnd()"/></div>
-        <div class="card-row"><span class="card-label"><i class="ti ti-clock-check"></i>Endzeit</span><span id="ekt-endzeit" style="flex:1;text-align:right;font-size:15px;font-weight:500;color:var(--accent)"></span></div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-clock-check"></i>Endzeit</span><span id="ekt-endzeit" style="flex:1;text-align:right;font-size:17px;font-weight:500;color:var(--accent)"></span></div>
         <div class="card-row" style="align-items:flex-start;flex-direction:column;gap:8px;padding:12px 14px">
-          <span style="font-size:13px;color:var(--tx2);font-weight:500">Art der Fahrt</span>
+          <span style="font-size:15px;color:var(--tx2);font-weight:500">Art der Fahrt</span>
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;width:100%">
             <button class="pill ${!t.typ||t.typ==='normal'?'active':''}" id="ektyp-normal" onclick="setEKTyp('normal')">Fahrstunde</button>
             <button class="pill ${t.typ==='pruef'?'active':''}" id="ektyp-pruef" onclick="setEKTyp('pruef')">Prüfung</button>
@@ -2134,12 +2134,12 @@ function renderEditKalTermin(date,idx){
         <div class="card-row"><span class="card-label"><i class="ti ti-hourglass"></i>Minuten</span>
           <div style="display:flex;align-items:center;gap:10px;justify-content:flex-end;flex:1">
             <button class="cir-btn" onclick="changeETMin(-5);ektUpdateEnd()">−</button>
-            <span id="ekt-min-disp" style="font-size:16px;font-weight:500;min-width:52px;text-align:center">${t.min} min</span>
+            <span id="et-min-disp" style="font-size:18px;font-weight:500;min-width:52px;text-align:center">${t.min} min</span>
             <button class="cir-btn" onclick="changeETMin(5);ektUpdateEnd()">+</button>
           </div>
         </div>
         <div class="card-row" style="align-items:flex-start;padding-top:12px"><span class="card-label" style="padding-top:2px"><i class="ti ti-notes"></i>Notiz</span>
-          <textarea id="ekt-notiz" style="flex:1;border:none;background:transparent;font-size:15px;color:var(--tx);font-family:inherit;outline:none;text-align:left;resize:none;height:60px" placeholder="Optional…">${t.notiz||""}</textarea>
+          <textarea id="ekt-notiz" style="flex:1;border:none;background:transparent;font-size:17px;color:var(--tx);font-family:inherit;outline:none;text-align:left;resize:none;height:60px" placeholder="Optional…">${t.notiz||""}</textarea>
         </div>
       </div></div>
       <button class="btn-full" onclick="saveEktTermin('${date}',${idx})"><i class="ti ti-circle-check"></i> Speichern</button>
@@ -2170,14 +2170,14 @@ function setEKTyp(typ){
   else if(typ==="ueberland")AppState.et.min=270;
   else if(typ==="autobahn")AppState.et.min=225;
   else if(typ==="nacht")AppState.et.min=135;
-  const el=document.getElementById("ekt-min-disp");if(el)el.textContent=AppState.et.min+" min";
+  const el=document.getElementById("et-min-disp");if(el)el.textContent=AppState.et.min+" min";
   ektUpdateEnd();
 }
 
 function setEKSonder(key,min){
   SONDER.forEach(sf=>{const el=document.getElementById("eksf-"+sf.key);if(el)el.classList.toggle("active",sf.key===key);});
   AppState.et.min=min;
-  const el=document.getElementById("ekt-min-disp");if(el)el.textContent=min+" min";
+  const el=document.getElementById("et-min-disp");if(el)el.textContent=min+" min";
   ektUpdateEnd();
 }
 
@@ -2343,22 +2343,22 @@ function renderTerminDetail(date,idx){
       <!-- Termin Info -->
       <div class="card" style="margin-bottom:12px;border-left:3px solid ${barCol}">
         <div class="card-row" style="padding:12px 16px">
-          <span style="font-size:15px;font-weight:600;color:${barCol}">${typLabel}</span>
-          <span style="font-size:14px;color:var(--tx2)">${dow}, ${fd.day}. ${fd.mon} · ${e.uhr} Uhr · ${e.min} min</span>
+          <span style="font-size:17px;font-weight:600;color:${barCol}">${typLabel}</span>
+          <span style="font-size:16px;color:var(--tx2)">${dow}, ${fd.day}. ${fd.mon} · ${e.uhr} Uhr · ${e.min} min</span>
         </div>
       </div>
 
       <!-- GFA -->
       <div><div class="sec-label">Grundfahraufgaben <span style="color:var(--tx3);font-weight:400">${gfaCount}/${GRUNDFAHRAUFGABEN.length}</span></div>
       <div class="card">
-        ${GRUNDFAHRAUFGABEN.map(g=>{const cnt=(s.gfa||{})[g.key]||0;return`<div class="gfa-row"><span class="gfa-label"><i class="ti ${g.icon}" style="font-size:16px;margin-right:8px;color:var(--tx3)"></i>${g.label}</span><div class="gfa-controls"><button class="gfa-btn" onclick="changeGFADash('${s.id}','${g.key}',-1)">−</button><span class="gfa-count" id="gfa-${s.id}-${g.key}-d">${cnt}</span><button class="gfa-btn" onclick="changeGFADash('${s.id}','${g.key}',1)">+</button></div></div>`;}).join("")}
+        ${GRUNDFAHRAUFGABEN.map(g=>{const cnt=(s.gfa||{})[g.key]||0;return`<div class="gfa-row"><span class="gfa-label"><i class="ti ${g.icon}" style="font-size:18px;margin-right:8px;color:var(--tx3)"></i>${g.label}</span><div class="gfa-controls"><button class="gfa-btn" onclick="changeGFADash('${s.id}','${g.key}',-1)">−</button><span class="gfa-count" id="gfa-${s.id}-${g.key}-d">${cnt}</span><button class="gfa-btn" onclick="changeGFADash('${s.id}','${g.key}',1)">+</button></div></div>`;}).join("")}
       </div></div>
 
       <!-- Notizen -->
       <div style="margin-top:12px"><div class="sec-label">Notizen</div>
       <div class="card" style="padding:12px 16px">
         <textarea id="notiz-termin-${e.sid}"
-          style="width:100%;min-height:120px;border:none;background:transparent;font-size:17px;color:var(--tx);outline:none;resize:none;font-family:inherit;line-height:1.6;-webkit-user-select:text;user-select:text;box-sizing:border-box"
+          style="width:100%;min-height:120px;border:none;background:transparent;font-size:20px;color:var(--tx);outline:none;resize:none;font-family:inherit;line-height:1.6;-webkit-user-select:text;user-select:text;box-sizing:border-box"
           placeholder="Notizen zum Schüler…"
           onblur="saveNotizTextDash('${e.sid}',this.value)"
         >${notizText}</textarea>
@@ -2425,16 +2425,16 @@ function toggleDatenMenu(){
   overlay.addEventListener("click",function(e){if(e.target===overlay)overlay.remove();});
   var sheet=document.createElement("div");
   sheet.style.cssText="background:var(--bg2);border-radius:20px 20px 0 0;padding:20px 20px 28px;width:100%;max-width:520px;display:flex;flex-direction:column;gap:10px";
-  sheet.innerHTML='<div style="font-size:17px;font-weight:700;margin-bottom:4px;color:var(--tx)">Datensicherung</div>';
+  sheet.innerHTML='<div style="font-size:20px;font-weight:700;margin-bottom:4px;color:var(--tx)">Datensicherung</div>';
   // Sichern
   var btnSave=document.createElement("button");
-  btnSave.style.cssText="width:100%;padding:14px;border-radius:14px;border:1.5px solid #97C459;background:#EAF3DE;color:#27500A;font-size:16px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px";
+  btnSave.style.cssText="width:100%;padding:14px;border-radius:14px;border:1.5px solid #97C459;background:#EAF3DE;color:#27500A;font-size:18px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px";
   btnSave.innerHTML='<i class="ti ti-download"></i> Daten sichern';
   btnSave.onclick=function(){overlay.remove();exportDaten();};
   sheet.appendChild(btnSave);
   // Wiederherstellen Datei
   var lbl=document.createElement("label");
-  lbl.style.cssText="width:100%;padding:14px;border-radius:14px;border:1.5px solid var(--accent);background:rgba(255,107,43,.1);color:#FF6B2B;font-size:16px;font-weight:600;text-align:center;cursor:pointer;box-sizing:border-box;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px";
+  lbl.style.cssText="width:100%;padding:14px;border-radius:14px;border:1.5px solid var(--accent);background:rgba(255,107,43,.1);color:#FF6B2B;font-size:18px;font-weight:600;text-align:center;cursor:pointer;box-sizing:border-box;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px";
   lbl.innerHTML='<i class="ti ti-upload"></i> Wiederherstellen (Datei)';
   var fileInput=document.createElement("input");
   fileInput.type="file";fileInput.accept=".json";fileInput.style.display="none";
@@ -2443,7 +2443,7 @@ function toggleDatenMenu(){
   sheet.appendChild(lbl);
   // Einfügen JSON
   var btnPaste=document.createElement("button");
-  btnPaste.style.cssText="width:100%;padding:14px;border-radius:14px;border:1.5px solid var(--accent);background:rgba(255,107,43,.06);color:#FF6B2B;font-size:16px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px";
+  btnPaste.style.cssText="width:100%;padding:14px;border-radius:14px;border:1.5px solid var(--accent);background:rgba(255,107,43,.06);color:#FF6B2B;font-size:18px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px";
   btnPaste.innerHTML='<i class="ti ti-clipboard-text"></i> Daten einfügen (JSON)';
   btnPaste.onclick=function(){overlay.remove();importDatenPaste();};
   sheet.appendChild(btnPaste);
@@ -2467,11 +2467,11 @@ function exportDaten(){
 function importDatenPaste(){
   document.getElementById("app").innerHTML=`
     <div style="display:flex;flex-direction:column;height:100vh;padding:24px;gap:16px;box-sizing:border-box">
-      <div style="font-size:20px;font-weight:700;color:var(--accent)">JSON einfügen</div>
-      <div style="font-size:14px;color:var(--tx2)">Kopiere den Inhalt der Sicherungsdatei und füge ihn unten ein:</div>
-      <textarea id="paste-area" style="flex:1;border:1px solid var(--br2);border-radius:12px;padding:12px;font-size:13px;color:var(--tx);background:var(--bg2);outline:none;resize:none;-webkit-user-select:text;user-select:text" placeholder="JSON hier einfügen…"></textarea>
-      <button onclick="importDatenFromTextarea()" style="background:var(--accent);color:white;border:none;border-radius:12px;padding:16px;font-size:17px;cursor:pointer;font-family:inherit">✓ Wiederherstellen</button>
-      <button onclick="renderDashboard()" style="background:none;border:none;color:var(--tx3);font-size:14px;cursor:pointer;font-family:inherit">Abbrechen</button>
+      <div style="font-size:23px;font-weight:700;color:var(--accent)">JSON einfügen</div>
+      <div style="font-size:16px;color:var(--tx2)">Kopiere den Inhalt der Sicherungsdatei und füge ihn unten ein:</div>
+      <textarea id="paste-area" style="flex:1;border:1px solid var(--br2);border-radius:12px;padding:12px;font-size:15px;color:var(--tx);background:var(--bg2);outline:none;resize:none;-webkit-user-select:text;user-select:text" placeholder="JSON hier einfügen…"></textarea>
+      <button onclick="importDatenFromTextarea()" style="background:var(--accent);color:white;border:none;border-radius:12px;padding:16px;font-size:20px;cursor:pointer;font-family:inherit">✓ Wiederherstellen</button>
+      <button onclick="renderDashboard()" style="background:none;border:none;color:var(--tx3);font-size:16px;cursor:pointer;font-family:inherit">Abbrechen</button>
     </div>`;
   setTimeout(()=>{const ta=document.getElementById("paste-area");if(ta)ta.focus();},200);
 }
@@ -2604,15 +2604,15 @@ function renderDashSchueler(sid){
 
       <!-- Header -->
       <div style="display:flex;align-items:center;gap:14px;padding-bottom:12px">
-        <div class="foto-initials av-${s.farbe}" style="${farbStyle(s.farbe)};width:52px;height:52px;font-size:18px;flex-shrink:0" onclick="triggerFotoUpload('${sid}')">
+        <div class="foto-initials av-${s.farbe}" style="${farbStyle(s.farbe)};width:52px;height:52px;font-size:21px;flex-shrink:0" onclick="triggerFotoUpload('${sid}')">
           ${s.foto?`<img src="${s.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/>`:''}
           ${!s.foto?initials(s):''}
         </div>
         <input type="file" id="foto-input-${sid}" accept="image/*" style="display:none" onchange="saveFoto('${sid}',this)"/>
         <div style="flex:1">
-          <div style="font-size:17px;font-weight:700">${s.vorname} ${s.nachname}${s.spitz?` <span style="font-size:13px;color:var(--tx3);font-weight:400">«${s.spitz}»</span>`:''}</div>
-          <div style="font-size:13px;color:var(--tx2);margin-top:2px">Klasse ${s.klasse} · Beginn ${fmtDate(s.beginn).day}. ${fmtDate(s.beginn).mon} ${fmtDate(s.beginn).year}</div>
-          <div style="font-size:13px;color:var(--tx2)">${s.prufort||''}</div>
+          <div style="font-size:20px;font-weight:700">${s.vorname} ${s.nachname}${s.spitz?` <span style="font-size:15px;color:var(--tx3);font-weight:400">«${s.spitz}»</span>`:''}</div>
+          <div style="font-size:15px;color:var(--tx2);margin-top:2px">Klasse ${s.klasse} · Beginn ${fmtDate(s.beginn).day}. ${fmtDate(s.beginn).mon} ${fmtDate(s.beginn).year}</div>
+          <div style="font-size:15px;color:var(--tx2)">${s.prufort||''}</div>
         </div>
       </div>
 
@@ -2621,12 +2621,12 @@ function renderDashSchueler(sid){
         <div class="stat-box accent" style="text-align:center;cursor:pointer" onclick="toggleFahrstundenDash('${sid}','past')">
           <div class="stat-lbl">Gefahren</div>
           <div class="stat-num">${gefahren.length}<span class="stat-unit">×</span></div>
-          <div style="font-size:11px;color:rgba(255,255,255,.7)">${gefahren.reduce((a,t)=>a+(t.min||0),0)} min</div>
+          <div style="font-size:13px;color:rgba(255,255,255,.7)">${gefahren.reduce((a,t)=>a+(t.min||0),0)} min</div>
         </div>
         <div class="stat-box" style="text-align:center;cursor:pointer;background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.25)" onclick="toggleFahrstundenDash('${sid}','future')">
           <div class="stat-lbl" style="color:#6366F1">Geplant</div>
           <div class="stat-num" style="color:#4338CA">${geplant.length}<span class="stat-unit" style="color:#6366F1">×</span></div>
-          <div style="font-size:11px;color:#6366F1">${geplant.reduce((a,t)=>a+(t.min||0),0)} min</div>
+          <div style="font-size:13px;color:#6366F1">${geplant.reduce((a,t)=>a+(t.min||0),0)} min</div>
         </div>
       </div>
       <div id="fahr-list-${sid}" style="display:none;margin-bottom:8px" data-showing=""></div>
@@ -2634,16 +2634,16 @@ function renderDashSchueler(sid){
 
       <!-- Badges -->
       <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
-        <button onclick="toggleTheorie('${sid}')" style="flex:1;min-width:120px;padding:10px 14px;border-radius:12px;border:none;background:${theorieBadge.bg};color:${theorieBadge.col};font-size:14px;font-weight:600;cursor:pointer;font-family:inherit">${theorieBadge.tx}</button>
-        <button onclick="togglePraxis('${sid}')" style="flex:1;min-width:120px;padding:10px 14px;border-radius:12px;border:none;background:${pruefBadge.bg};color:${pruefBadge.col};font-size:14px;font-weight:600;cursor:pointer;font-family:inherit">${pruefBadge.tx}</button>
+        <button onclick="toggleTheorie('${sid}')" style="flex:1;min-width:120px;padding:10px 14px;border-radius:12px;border:none;background:${theorieBadge.bg};color:${theorieBadge.col};font-size:16px;font-weight:600;cursor:pointer;font-family:inherit">${theorieBadge.tx}</button>
+        <button onclick="togglePraxis('${sid}')" style="flex:1;min-width:120px;padding:10px 14px;border-radius:12px;border:none;background:${pruefBadge.bg};color:${pruefBadge.col};font-size:16px;font-weight:600;cursor:pointer;font-family:inherit">${pruefBadge.tx}</button>
       </div>
 
       <!-- Sonderfahrten -->
       <div style="display:flex;gap:8px;margin-bottom:12px">
         ${SONDER_DEF.map(sf=>{
           const done=(s.sonder&&(s.sonder[sf.key]||0)>=sf.min);
-          return `<button onclick="toggleSonderDash('${sid}','${sf.key}',${sf.min})" style="flex:1;padding:8px 4px;border-radius:10px;border:none;background:${done?'rgba(59,130,246,0.2)':'rgba(59,130,246,0.07)'};color:${done?'#1D4ED8':'var(--tx3)'};font-size:13px;font-weight:${done?700:400};cursor:pointer;font-family:inherit;text-align:center">
-            <i class="ti ${done?'ti-circle-check':'ti-circle'}" style="display:block;font-size:18px;margin-bottom:2px;color:${done?'#1D4ED8':'var(--tx3)'}"></i>
+          return `<button onclick="toggleSonderDash('${sid}','${sf.key}',${sf.min})" style="flex:1;padding:8px 4px;border-radius:10px;border:none;background:${done?'rgba(59,130,246,0.2)':'rgba(59,130,246,0.07)'};color:${done?'#1D4ED8':'var(--tx3)'};font-size:15px;font-weight:${done?700:400};cursor:pointer;font-family:inherit;text-align:center">
+            <i class="ti ${done?'ti-circle-check':'ti-circle'}" style="display:block;font-size:21px;margin-bottom:2px;color:${done?'#1D4ED8':'var(--tx3)'}"></i>
             ${sf.label}
           </button>`;
         }).join('')}
@@ -2653,7 +2653,7 @@ function renderDashSchueler(sid){
       ${naechsterTermin?`<div class="card" style="margin-bottom:12px;cursor:pointer" onclick="selDate='${naechsterTermin.datum}';renderTagAnsicht('${naechsterTermin.datum}')">
         <div class="card-row" style="padding:12px 16px">
           <span class="card-label"><i class="ti ti-calendar-event" style="color:var(--accent)"></i>Nächster Termin</span>
-          <span style="font-size:14px;color:var(--tx)">${fmtDate(naechsterTermin.datum).day}. ${fmtDate(naechsterTermin.datum).mon} · ${naechsterTermin.uhr} Uhr · ${naechsterTermin.min} min</span>
+          <span style="font-size:16px;color:var(--tx)">${fmtDate(naechsterTermin.datum).day}. ${fmtDate(naechsterTermin.datum).mon} · ${naechsterTermin.uhr} Uhr · ${naechsterTermin.min} min</span>
         </div>
       </div>`:''}
 
@@ -2661,7 +2661,7 @@ function renderDashSchueler(sid){
       ${s.tel?`<div class="card" style="margin-bottom:12px;cursor:pointer" onclick="window.open('https://wa.me/${s.tel.replace(/^\+/,'').replace(/[^0-9]/g,'')}','_blank')">
         <div class="card-row" style="padding:12px 16px">
           <span class="card-label"><i class="ti ti-brand-whatsapp" style="color:#25D366"></i>WhatsApp</span>
-          <span style="font-size:14px;font-weight:600;color:#25D366">${s.tel}</span>
+          <span style="font-size:16px;font-weight:600;color:#25D366">${s.tel}</span>
         </div>
       </div>`:''}
 
@@ -2672,12 +2672,12 @@ function renderDashSchueler(sid){
       <!-- GFA klappbar -->
       <div>
         <div onclick="toggleKlapp('gfa2-${sid}')" style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;cursor:pointer">
-          <span style="font-size:12px;font-weight:600;color:var(--tx3);letter-spacing:.5px">GRUNDFAHRAUFGABEN</span>
+          <span style="font-size:14px;font-weight:600;color:var(--tx3);letter-spacing:.5px">GRUNDFAHRAUFGABEN</span>
           <i class="ti ti-chevron-down" id="chevron-gfa2-${sid}" style="color:var(--tx3)"></i>
         </div>
         <div id="klapp-gfa2-${sid}" style="display:none">
           <div class="card">
-            ${GRUNDFAHRAUFGABEN.map(g=>{const cnt=(s.gfa||{})[g.key]||0;return'<div class="gfa-row"><span class="gfa-label"><i class="ti '+g.icon+'" style="font-size:16px;margin-right:8px;color:var(--tx3)"></i>'+g.label+'</span><div class="gfa-controls"><button class="gfa-btn" onclick="changeGFADash(&quot;'+s.id+'&quot;,&quot;'+g.key+'&quot;,-1)">−</button><span class="gfa-count" id="gfa-'+s.id+'-'+g.key+'-d">'+cnt+'</span><button class="gfa-btn" onclick="changeGFADash(&quot;'+s.id+'&quot;,&quot;'+g.key+'&quot;,1)">+</button></div></div>';}).join('')}
+            ${GRUNDFAHRAUFGABEN.map(g=>{const cnt=(s.gfa||{})[g.key]||0;return'<div class="gfa-row"><span class="gfa-label"><i class="ti '+g.icon+'" style="font-size:18px;margin-right:8px;color:var(--tx3)"></i>'+g.label+'</span><div class="gfa-controls"><button class="gfa-btn" onclick="changeGFADash(&quot;'+s.id+'&quot;,&quot;'+g.key+'&quot;,-1)">−</button><span class="gfa-count" id="gfa-'+s.id+'-'+g.key+'-d">'+cnt+'</span><button class="gfa-btn" onclick="changeGFADash(&quot;'+s.id+'&quot;,&quot;'+g.key+'&quot;,1)">+</button></div></div>';}).join('')}
           </div>
         </div>
       </div>
@@ -2685,13 +2685,13 @@ function renderDashSchueler(sid){
       <!-- Notizen klappbar -->
       <div>
         <div onclick="toggleKlapp('notiz2-${sid}')" style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;cursor:pointer">
-          <span style="font-size:12px;font-weight:600;color:var(--tx3);letter-spacing:.5px">NOTIZEN</span>
+          <span style="font-size:14px;font-weight:600;color:var(--tx3);letter-spacing:.5px">NOTIZEN</span>
           <i class="ti ti-chevron-down" id="chevron-notiz2-${sid}" style="color:var(--tx3)"></i>
         </div>
         <div id="klapp-notiz2-${sid}" style="display:none">
           <div class="card" style="padding:12px 16px">
             <textarea id="notiz2-${sid}"
-              style="width:100%;min-height:120px;border:none;background:transparent;font-size:20px;color:var(--tx);outline:none;resize:none;font-family:inherit;line-height:1.7;box-sizing:border-box;-webkit-user-select:text;user-select:text"
+              style="width:100%;min-height:120px;border:none;background:transparent;font-size:23px;color:var(--tx);outline:none;resize:none;font-family:inherit;line-height:1.7;box-sizing:border-box;-webkit-user-select:text;user-select:text"
               placeholder="Notizen…"
               onblur="saveNotizTextDash('${sid}',this.value)"
             >${(s.notizen&&s.notizen.length?s.notizen.map(n=>n.text||n).join('\n'):(s.notiz&&typeof s.notiz==='string'?s.notiz:''))}</textarea>
@@ -2804,7 +2804,7 @@ function toggleNotizBadge(sid){
     </div>
     <div class="scroll" style="padding:16px">
       <textarea id="notiz-screen-${sid}"
-        style="width:100%;min-height:calc(100vh - 140px);border:none;background:transparent;font-size:24px;color:var(--tx);outline:none;resize:none;font-family:inherit;line-height:1.8;-webkit-user-select:text;user-select:text;box-sizing:border-box"
+        style="width:100%;min-height:calc(100vh - 140px);border:none;background:transparent;font-size:28px;color:var(--tx);outline:none;resize:none;font-family:inherit;line-height:1.8;-webkit-user-select:text;user-select:text;box-sizing:border-box"
         placeholder="Notizen hier eingeben…"
         onblur="saveNotizTextDash('${sid}',this.value)"
       >${text}</textarea>
@@ -2854,9 +2854,9 @@ function renderSonderDoku(sid,s){
           <i class="ti ${done?'ti-circle-check':'ti-circle'}" style="font-size:${done?'22px':'18px'};color:${done?'#27A843':'var(--tx3)'}"></i>
           <span style="font-weight:500;${done?'text-decoration:line-through;color:var(--tx3)':'color:var(--tx)'}">${sf.label}</span>
         </div>
-        <span style="font-size:13px;color:${done?'#27A843':'var(--tx2)'}">${totalMin}/${sf.required} min</span>
+        <span style="font-size:15px;color:${done?'#27A843':'var(--tx2)'}">${totalMin}/${sf.required} min</span>
       </div>
-      ${sfTermine.map(t=>{const fd=fmtDate(t.datum);return`<div style="display:flex;justify-content:space-between;padding:2px 0 2px 30px;font-size:12px;color:var(--tx2)"><span>${fd.day}. ${fd.mon} ${fd.year}</span><span>${t.min} min</span></div>`;}).join('')}
+      ${sfTermine.map(t=>{const fd=fmtDate(t.datum);return`<div style="display:flex;justify-content:space-between;padding:2px 0 2px 30px;font-size:14px;color:var(--tx2)"><span>${fd.day}. ${fd.mon} ${fd.year}</span><span>${t.min} min</span></div>`;}).join('')}
     </div>`;
   });
   html+='</div>';
@@ -2925,7 +2925,7 @@ function toggleFahrstundenDash(sid, type) {
   }
   el.innerHTML = "";
   if (!entries.length) {
-    el.innerHTML = '<div style="padding:12px 16px;font-size:14px;color:var(--tx3)">Keine Eintr\u00e4ge</div>';
+    el.innerHTML = '<div style="padding:12px 16px;font-size:16px;color:var(--tx3)">Keine Eintr\u00e4ge</div>';
     return;
   }
   var wrap = document.createElement("div");
@@ -2938,16 +2938,16 @@ function toggleFahrstundenDash(sid, type) {
     var row = document.createElement("div");
     row.style.cssText = "display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:.5px solid var(--br2);cursor:pointer;background:"+(isPruef?"rgba(226,75,74,0.06)":"var(--bg)");
     var left = document.createElement("span");
-    left.style.cssText = "font-size:15px;color:"+(isPruef?"#E24B4A":"var(--tx2)");
+    left.style.cssText = "font-size:17px;color:"+(isPruef?"#E24B4A":"var(--tx2)");
     left.textContent = dow+" "+fd.day+". "+fd.mon+(isPruef?" \uD83C\uDFAF":"");
     var right = document.createElement("div");
     right.style.cssText = "display:flex;align-items:center;gap:10px";
     var timeSpan = document.createElement("span");
-    timeSpan.style.cssText = "font-size:15px;font-weight:"+(isPruef?600:400)+";color:"+(isPruef?"#E24B4A":"var(--tx)");
+    timeSpan.style.cssText = "font-size:17px;font-weight:"+(isPruef?600:400)+";color:"+(isPruef?"#E24B4A":"var(--tx)");
     timeSpan.textContent = (e.uhr||"")+" \u00B7 "+e.min+" min";
     var icon = document.createElement("i");
     icon.className = "ti ti-pencil";
-    icon.style.cssText = "font-size:14px;color:var(--tx3)";
+    icon.style.cssText = "font-size:16px;color:var(--tx3)";
     right.appendChild(timeSpan); right.appendChild(icon);
     row.appendChild(left); row.appendChild(right);
     row.addEventListener("click", (function(datum, idx){
@@ -3004,42 +3004,42 @@ function renderAbrechnung(weekOffset=0){
   const html=`<div class="screen active" id="scr-abrech">
     <div class="topbar">
       <button class="btn-icon" onclick="renderDashboard()"><i class="ti ti-arrow-left"></i></button>
-      <span class="topbar-title"><i class="ti ti-receipt" style="font-size:18px;margin-right:6px"></i>Abrechnung</span>
+      <span class="topbar-title"><i class="ti ti-receipt" style="font-size:21px;margin-right:6px"></i>Abrechnung</span>
     </div>
     <div class="scroll">
       <!-- 4 Kacheln -->
       <div class="stat-grid" style="margin-bottom:10px">
         <div class="stat-box accent" style="text-align:center">
           <div class="stat-lbl">HEUTE \u00b7 ${tagName}</div>
-          <div style="font-size:26px;font-weight:700;color:white;margin-top:4px">${toEuro(tagMin)}</div>
-          <div style="font-size:13px;color:rgba(255,255,255,0.7);margin-top:3px">${tagMin} min</div>
+          <div style="font-size:30px;font-weight:700;color:white;margin-top:4px">${toEuro(tagMin)}</div>
+          <div style="font-size:15px;color:rgba(255,255,255,0.7);margin-top:3px">${tagMin} min</div>
         </div>
         <div class="stat-box" style="text-align:center">
           <div class="stat-lbl">WOCHE</div>
-          <div style="font-size:26px;font-weight:700;color:#E24B4A;margin-top:4px">${toEuro(wocheMin)}</div>
-          <div style="font-size:13px;color:var(--tx3);margin-top:3px">${wocheMin} min</div>
+          <div style="font-size:30px;font-weight:700;color:#E24B4A;margin-top:4px">${toEuro(wocheMin)}</div>
+          <div style="font-size:15px;color:var(--tx3);margin-top:3px">${wocheMin} min</div>
         </div>
         <div class="stat-box" style="text-align:center">
           <div class="stat-lbl">${moLang[now.getMonth()].toUpperCase()}</div>
-          <div style="font-size:26px;font-weight:700;color:#E24B4A;margin-top:4px">${toEuro(monatMin)}</div>
-          <div style="font-size:13px;color:var(--tx3);margin-top:3px">${monatMin} min</div>
+          <div style="font-size:30px;font-weight:700;color:#E24B4A;margin-top:4px">${toEuro(monatMin)}</div>
+          <div style="font-size:15px;color:var(--tx3);margin-top:3px">${monatMin} min</div>
         </div>
         <div class="stat-box" style="text-align:center">
           <div class="stat-lbl">${jahrStr}</div>
-          <div style="font-size:26px;font-weight:700;color:#E24B4A;margin-top:4px">${toEuro(jahrMin)}</div>
+          <div style="font-size:30px;font-weight:700;color:#E24B4A;margin-top:4px">${toEuro(jahrMin)}</div>
         </div>
       </div>
       <!-- Woche Mo-Fr mit Navigation -->
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;padding:0 2px">
-        <button onclick="renderAbrechnung(${weekOffset-1})" style="background:none;border:none;cursor:pointer;color:var(--accent);font-size:22px;padding:4px 10px"><i class="ti ti-chevron-left"></i></button>
-        <span style="font-size:14px;font-weight:600;color:var(--tx)">Mo\u2013Fr \u00b7 ${wkLabel}${weekOffset===0?" \u00b7 diese Woche":""}</span>
-        <button onclick="renderAbrechnung(${weekOffset+1})" style="background:none;border:none;cursor:pointer;color:${weekOffset<0?"var(--accent)":"var(--tx3)"};font-size:22px;padding:4px 10px"><i class="ti ti-chevron-right"></i></button>
+        <button onclick="renderAbrechnung(${weekOffset-1})" style="background:none;border:none;cursor:pointer;color:var(--accent);font-size:25px;padding:4px 10px"><i class="ti ti-chevron-left"></i></button>
+        <span style="font-size:16px;font-weight:600;color:var(--tx)">Mo\u2013Fr \u00b7 ${wkLabel}${weekOffset===0?" \u00b7 diese Woche":""}</span>
+        <button onclick="renderAbrechnung(${weekOffset+1})" style="background:none;border:none;cursor:pointer;color:${weekOffset<0?"var(--accent)":"var(--tx3)"};font-size:25px;padding:4px 10px"><i class="ti ti-chevron-right"></i></button>
       </div>
       <div class="stat-card" style="margin-bottom:10px">
         ${weekDays.map(d=>`<div style="margin-bottom:10px;cursor:pointer" onclick="renderTagAnsicht('${d.ds}')">
           <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">
-            <span style="font-size:14px;font-weight:${d.isToday?"700":"400"};color:${d.isToday?"var(--accent)":"var(--tx)"}">${d.name} ${parseInt(d.ds.split("-")[2])}.</span>
-            <span style="font-size:13px;color:var(--tx2)">${d.min?d.min+" min \u00b7 "+toEuro(d.min):"\u2013"}</span>
+            <span style="font-size:16px;font-weight:${d.isToday?"700":"400"};color:${d.isToday?"var(--accent)":"var(--tx)"}">${d.name} ${parseInt(d.ds.split("-")[2])}.</span>
+            <span style="font-size:15px;color:var(--tx2)">${d.min?d.min+" min \u00b7 "+toEuro(d.min):"\u2013"}</span>
           </div>
           ${d.min?`<div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${Math.round((d.min/maxDayMin)*100)}%"></div></div>`:""}
         </div>`).join("")}
@@ -3053,10 +3053,10 @@ function renderAbrechnung(weekOffset=0){
           const isCurrent=m===monatStr;
           return`<div style="margin-bottom:14px">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
-              <span style="font-size:14px;font-weight:${isCurrent?"700":"400"};color:${isCurrent?"var(--accent)":"var(--tx)"}">${mName} ${y}</span>
+              <span style="font-size:16px;font-weight:${isCurrent?"700":"400"};color:${isCurrent?"var(--accent)":"var(--tx)"}">${mName} ${y}</span>
               <div style="text-align:right">
-                <div style="font-size:15px;font-weight:700;color:${isCurrent?"#E24B4A":"var(--tx)"}">${toEuro(min)}</div>
-                <div style="font-size:11px;color:var(--tx3)">${min} min</div>
+                <div style="font-size:17px;font-weight:700;color:${isCurrent?"#E24B4A":"var(--tx)"}">${toEuro(min)}</div>
+                <div style="font-size:13px;color:var(--tx3)">${min} min</div>
               </div>
             </div>
             <div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${Math.round((min/maxMonthMin)*100)}%"></div></div>
@@ -3070,9 +3070,9 @@ function renderAbrechnung(weekOffset=0){
           <span class="card-label"><i class="ti ti-currency-euro"></i>Satz / 60 min</span>
           <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end;flex:1">
             <input type="number" id="satz-input" value="${satz}" min="1" max="999" step="0.5" onfocus="this.select()"
-              style="width:80px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:17px;color:var(--tx);padding:6px"
+              style="width:80px;text-align:center;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:20px;color:var(--tx);padding:6px"
               onchange="saveSatz(this.value)"/>
-            <span style="font-size:15px;color:var(--tx2)">\u20ac</span>
+            <span style="font-size:17px;color:var(--tx2)">\u20ac</span>
           </div>
         </div>
       </div></div>
@@ -3113,10 +3113,10 @@ function exportMonatPDF(monatStr){
   const html=`<!DOCTYPE html><html><head><meta charset="utf-8">
   <title>Abrechnung ${monatName} ${y}</title>
   <style>body{font-family:-apple-system,sans-serif;padding:20px;color:#333}
-  h1{font-size:26px;margin-bottom:4px}h2{font-size:18px;color:#666;font-weight:normal;margin-bottom:20px}
-  table{width:100%;border-collapse:collapse;font-size:20px}th{padding:14px 16px;background:#FF6B2B;color:white;text-align:left;font-size:19px}
-  td{font-size:20px}
-  .total{font-weight:700;font-size:23px;padding:16px;text-align:right;border-top:2px solid #FF6B2B}
+  h1{font-size:30px;margin-bottom:4px}h2{font-size:21px;color:#666;font-weight:normal;margin-bottom:20px}
+  table{width:100%;border-collapse:collapse;font-size:23px}th{padding:14px 16px;background:#FF6B2B;color:white;text-align:left;font-size:22px}
+  td{font-size:23px}
+  .total{font-weight:700;font-size:26px;padding:16px;text-align:right;border-top:2px solid #FF6B2B}
   @media print{button{display:none}}</style></head>
   <body>
   <h1>Fahrschule Aras — Abrechnung ${monatName} ${y}</h1>
@@ -3128,7 +3128,7 @@ function exportMonatPDF(monatStr){
   <td class="total">${toStd(total)}</td>
   <td class="total" style="color:#E24B4A">${toEuro(total)}</td></tr>
   </table>
-  <br><div style="display:flex;flex-direction:column;gap:12px;margin-top:16px"><button onclick="window.print()" style="background:#FF6B2B;color:white;border:none;padding:52px 16px;border-radius:18px;font-size:24px;font-weight:700;cursor:pointer;width:100%">🖨️ Drucken / Als PDF speichern</button><button onclick="window.close()" style="background:#eee;color:#333;border:none;padding:52px 16px;border-radius:18px;font-size:24px;font-weight:700;cursor:pointer;width:100%">✕ Schließen</button></div>
+  <br><div style="display:flex;flex-direction:column;gap:12px;margin-top:16px"><button onclick="window.print()" style="background:#FF6B2B;color:white;border:none;padding:52px 16px;border-radius:18px;font-size:28px;font-weight:700;cursor:pointer;width:100%">🖨️ Drucken / Als PDF speichern</button><button onclick="window.close()" style="background:#eee;color:#333;border:none;padding:52px 16px;border-radius:18px;font-size:28px;font-weight:700;cursor:pointer;width:100%">✕ Schließen</button></div>
   </body></html>`;
   const w=window.open('','_blank');
   w.document.write(html);
@@ -3152,23 +3152,23 @@ function exportMonatPDF(monatStr){
     if(!localStorage.getItem("fs_schueler")&&schueler.length===0){
       document.getElementById("app").innerHTML=`
         <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:32px;text-align:center;gap:16px">
-          <i class="ti ti-steering-wheel" style="font-size:64px;color:var(--accent)"></i>
-          <div style="font-size:22px;font-weight:700">Fahrschule</div>
-          <div style="font-size:14px;color:var(--tx2);line-height:1.5">Keine Daten gefunden.<br><br>
+          <i class="ti ti-steering-wheel" style="font-size:74px;color:var(--accent)"></i>
+          <div style="font-size:25px;font-weight:700">Fahrschule</div>
+          <div style="font-size:16px;color:var(--tx2);line-height:1.5">Keine Daten gefunden.<br><br>
             <strong>So geht es:</strong><br>
             1. Öffne die JSON-Sicherung in der Dateien-App<br>
             2. Tippe lange → Alles auswählen → Kopieren<br>
             3. Komm zurück und tippe auf den Button:
           </div>
-          <button onclick="importDatenPaste()" style="background:var(--accent);color:white;border:none;border-radius:12px;padding:16px 28px;font-size:17px;cursor:pointer;font-family:inherit;width:100%;margin-top:8px">
+          <button onclick="importDatenPaste()" style="background:var(--accent);color:white;border:none;border-radius:12px;padding:16px 28px;font-size:20px;cursor:pointer;font-family:inherit;width:100%;margin-top:8px">
             <i class="ti ti-clipboard"></i> JSON hier einfügen
           </button>
-          <div style="font-size:12px;color:var(--tx3)">oder</div>
-          <button onclick="document.getElementById('import-input-boot').click()" style="background:none;border:1px solid var(--br);border-radius:12px;padding:12px 20px;font-size:15px;cursor:pointer;font-family:inherit;color:var(--tx);width:100%">
+          <div style="font-size:14px;color:var(--tx3)">oder</div>
+          <button onclick="document.getElementById('import-input-boot').click()" style="background:none;border:1px solid var(--br);border-radius:12px;padding:12px 20px;font-size:17px;cursor:pointer;font-family:inherit;color:var(--tx);width:100%">
             <i class="ti ti-upload"></i> Datei auswählen
           </button>
           <input type="file" id="import-input-boot" accept=".json" style="display:none" onchange="importDaten(this)"/>
-          <button onclick="renderDashboard()" style="background:none;border:none;color:var(--tx3);font-size:13px;cursor:pointer;font-family:inherit;margin-top:4px">Leer starten</button>
+          <button onclick="renderDashboard()" style="background:none;border:none;color:var(--tx3);font-size:15px;cursor:pointer;font-family:inherit;margin-top:4px">Leer starten</button>
         </div>`;
     } else {
       renderDashboard();
