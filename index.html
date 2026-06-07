@@ -65,6 +65,17 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:-apple-sy
 .stat-box.accent .stat-unit{color:rgba(255,255,255,0.65);}
 .stat-lbl{font-size:13px;font-weight:600;color:var(--tx3);margin-bottom:3px;text-transform:uppercase;letter-spacing:.04em;}
 .stat-num{font-size:30px;font-weight:700;color:var(--tx);line-height:1.1;}
+.monat-glas{position:relative;overflow:hidden;background:rgba(55,138,221,0.13);border:1px solid rgba(55,138,221,0.38);border-radius:var(--r-lg);backdrop-filter:blur(14px) saturate(170%);-webkit-backdrop-filter:blur(14px) saturate(170%);animation:monatGlow 3.2s ease-in-out infinite;}
+@media(prefers-color-scheme:dark){.monat-glas{background:rgba(55,138,221,0.18);border-color:rgba(90,170,240,0.45);}}
+.monat-glas>*{position:relative;z-index:1;}
+.monat-glas::before{content:"";position:absolute;top:0;left:-60%;width:55%;height:100%;background:linear-gradient(120deg,transparent,rgba(255,255,255,0.45),transparent);transform:skewX(-20deg);animation:monatSheen 4.2s ease-in-out infinite;z-index:0;pointer-events:none;}
+.monat-betrag{display:inline-block;animation:monatPuls 2.4s ease-in-out infinite;}
+@keyframes monatGlow{0%,100%{box-shadow:0 4px 18px rgba(55,138,221,0.18),inset 0 1px 0 rgba(255,255,255,0.35);}50%{box-shadow:0 8px 34px rgba(55,138,221,0.42),inset 0 1px 0 rgba(255,255,255,0.55);}}
+@keyframes monatPuls{0%,100%{transform:scale(1);text-shadow:0 0 0 rgba(55,138,221,0);}50%{transform:scale(1.07);text-shadow:0 0 20px rgba(55,138,221,0.6);}}
+@keyframes monatSheen{0%{left:-60%;}55%,100%{left:135%;}}
+.muenz-layer{position:absolute;inset:0;overflow:visible;pointer-events:none;z-index:5;}
+.muenze{position:absolute;bottom:8px;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#7a5200;background:radial-gradient(circle at 35% 30%,#ffe89a,#f4b942 55%,#c98a16);box-shadow:0 1px 4px rgba(180,130,20,0.5),inset 0 1px 1px rgba(255,255,255,0.7);}
+@keyframes muenzFlug{0%{opacity:0;transform:translateY(0) scale(.5) rotate(0deg);}15%{opacity:1;}100%{opacity:0;transform:translateY(-150px) scale(1) rotate(300deg);}}
 .stat-unit{font-size:14px;color:var(--tx2);font-weight:400;margin-left:2px;}
 .list-item{background:var(--bg2);border-radius:var(--r-lg);padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;box-shadow:var(--shadow-md);transition:all .12s;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;}
 .list-item:active{box-shadow:none;opacity:.85;}
@@ -910,16 +921,9 @@ function renderNeuSchueler(fromSid){
         ${s&&s.pruefungen&&s.pruefungen.length?`
         <div style="padding:8px 14px;border-top:.5px solid var(--br)">
           <div style="font-size:14px;color:var(--tx3);margin-bottom:6px">PRÜFUNGSEINTRÄGE</div>
-          ${s.pruefungen.map((p,pi)=>`<div style="padding:6px 0;border-bottom:.5px solid var(--br2)">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-              <span style="font-size:16px">${p.versuch}. Prüfung · ${fmtDate(p.datum).day}.${fmtDate(p.datum).mon}${p.uhr?" · "+p.uhr:""}</span>
-              <button onclick="deletePruefEintrag('${s.id}',${pi})" style="background:none;border:none;color:#E24B4A;font-size:23px;cursor:pointer;padding:0 4px">×</button>
-            </div>
-            <div style="display:flex;gap:6px;flex-wrap:wrap">
-              <button class="pill ${p.bestanden===null||p.bestanden===undefined?"active":""}" id="pe-offen-${s.id}-${pi}" onclick="setPruefErgebnisInline('${s.id}',${pi},null)" style="font-size:14px;padding:5px 10px">Offen</button>
-              <button class="pill ${p.bestanden===true?"active":""}" id="pe-best-${s.id}-${pi}" onclick="setPruefErgebnisInline('${s.id}',${pi},true)" style="font-size:14px;padding:5px 10px">Bestanden ✓</button>
-              <button class="pill ${p.bestanden===false?"active":""}" id="pe-nicht-${s.id}-${pi}" onclick="setPruefErgebnisInline('${s.id}',${pi},false)" style="font-size:14px;padding:5px 10px">Nicht bestanden ✗</button>
-            </div>
+          ${s.pruefungen.map((p,pi)=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:4px 0;border-bottom:.5px solid var(--br2)">
+            <span style="font-size:16px">${p.datum} · ${p.bestanden===true?'✓ Best.':p.bestanden===false?'✗ Nicht best.':'offen'}</span>
+            <button onclick="deletePruefEintrag('${s.id}',${pi})" style="background:none;border:none;color:#E24B4A;font-size:23px;cursor:pointer;padding:0 4px">×</button>
           </div>`).join('')}
         </div>`:''}
         ${s?`
@@ -996,8 +1000,13 @@ function saveSchueler(editSid){
       if(!s.pruefungen)s.pruefungen=[];
       const warBestanden=s.pruefungen.some(p=>p.bestanden===true);
       if(prEl.checked&&!warBestanden){
-        const pt2=Object.entries(termine).sort((a,b)=>b[0].localeCompare(a[0])).flatMap(([d,ts])=>ts.filter(t=>t.sid===s.id&&t.typ==='pruef').map(t=>({...t,datum:d})))[0];
-        s.pruefungen.push({datum:pt2?pt2.datum:todayStr(),versuch:s.pruefungen.length+1,bestanden:true,prufort:s.prufort||''});
+        const offen=s.pruefungen.find(p=>p.bestanden===null||p.bestanden===undefined);
+        if(offen){
+          offen.bestanden=true;
+        } else {
+          const pt2=Object.entries(termine).sort((a,b)=>b[0].localeCompare(a[0])).flatMap(([d,ts])=>ts.filter(t=>t.sid===s.id&&t.typ==='pruef').map(t=>({...t,datum:d})))[0];
+          s.pruefungen.push({datum:pt2?pt2.datum:todayStr(),versuch:s.pruefungen.length+1,bestanden:true,prufort:s.prufort||''});
+        }
       } else if(!prEl.checked&&warBestanden){
         s.pruefungen.forEach(p=>{if(p.bestanden===true)p.bestanden=null;});
       }
@@ -2355,15 +2364,21 @@ function renderTerminDetail(date,idx){
         </div>
       </div>
 
-      <!-- GFA & Notizen als Buttons -->
-      <button class="btn-full" style="margin-top:4px;display:flex;align-items:center;justify-content:space-between;padding:16px" onclick="renderTerminGFA('${date}',${idx})">
-        <span style="display:flex;align-items:center;gap:10px;font-size:18px"><i class="ti ti-steering-wheel" style="font-size:22px;color:var(--accent)"></i>Grundfahraufgaben</span>
-        <span style="display:flex;align-items:center;gap:8px;color:var(--tx3);font-size:16px">${gfaCount}/${GRUNDFAHRAUFGABEN.length}<i class="ti ti-chevron-right" style="font-size:20px"></i></span>
-      </button>
-      <button class="btn-full" style="margin-top:8px;display:flex;align-items:center;justify-content:space-between;padding:16px" onclick="renderTerminNotiz('${date}',${idx})">
-        <span style="display:flex;align-items:center;gap:10px;font-size:18px"><i class="ti ti-note" style="font-size:22px;color:var(--accent)"></i>Notizen</span>
-        <span style="display:flex;align-items:center;gap:8px;color:var(--tx3);font-size:16px">${notizText.trim()?'<i class="ti ti-point-filled" style="color:var(--accent)"></i>':''}<i class="ti ti-chevron-right" style="font-size:20px"></i></span>
-      </button>
+      <!-- GFA -->
+      <div><div class="sec-label">Grundfahraufgaben <span style="color:var(--tx3);font-weight:400">${gfaCount}/${GRUNDFAHRAUFGABEN.length}</span></div>
+      <div class="card">
+        ${GRUNDFAHRAUFGABEN.map(g=>{const cnt=(s.gfa||{})[g.key]||0;return`<div class="gfa-row"><span class="gfa-label"><i class="ti ${g.icon}" style="font-size:18px;margin-right:8px;color:var(--tx3)"></i>${g.label}</span><div class="gfa-controls"><button class="gfa-btn" onclick="changeGFADash('${s.id}','${g.key}',-1)">−</button><span class="gfa-count" id="gfa-${s.id}-${g.key}-d">${cnt}</span><button class="gfa-btn" onclick="changeGFADash('${s.id}','${g.key}',1)">+</button></div></div>`;}).join("")}
+      </div></div>
+
+      <!-- Notizen -->
+      <div style="margin-top:12px"><div class="sec-label">Notizen</div>
+      <div class="card" style="padding:12px 16px">
+        <textarea id="notiz-termin-${e.sid}"
+          style="width:100%;min-height:120px;border:none;background:transparent;font-size:20px;color:var(--tx);outline:none;resize:none;font-family:inherit;line-height:1.6;-webkit-user-select:text;user-select:text;box-sizing:border-box"
+          placeholder="Notizen zum Schüler…"
+          onblur="saveNotizTextDash('${e.sid}',this.value)"
+        >${notizText}</textarea>
+      </div></div>
 
       <!-- Schülerkarte -->
       <button class="btn-full" style="margin-top:12px" onclick="renderDashSchueler('${e.sid}')"><i class="ti ti-user"></i> Zur Schülerkarte</button>
@@ -2374,48 +2389,6 @@ function renderTerminDetail(date,idx){
   renderApp(html);
   setTimeout(initPTR,50);
 }
-
-function renderTerminGFA(date,idx){
-  const e=(termine[date]||[])[idx];if(!e)return;
-  const s=getS(e.sid);if(!s)return;
-  const gfaCount=GRUNDFAHRAUFGABEN.filter(g=>((s.gfa||{})[g.key]||0)>0).length;
-  const rows=GRUNDFAHRAUFGABEN.map(g=>{const cnt=(s.gfa||{})[g.key]||0;return`<div class="gfa-row"><span class="gfa-label"><i class="ti ${g.icon}" style="font-size:18px;margin-right:8px;color:var(--tx3)"></i>${g.label}</span><div class="gfa-controls"><button class="gfa-btn" onclick="changeGFADash('${s.id}','${g.key}',-1)">−</button><span class="gfa-count" id="gfa-${s.id}-${g.key}-d">${cnt}</span><button class="gfa-btn" onclick="changeGFADash('${s.id}','${g.key}',1)">+</button></div></div>`;}).join("");
-  let html=`<div class="screen active">
-    <div class="topbar">
-      <button class="btn-icon" onclick="renderTerminDetail('${date}',${idx})"><i class="ti ti-arrow-left"></i></button>
-      <span class="topbar-title"><i class="ti ti-steering-wheel" style="font-size:18px;margin-right:6px"></i>Grundfahraufgaben</span>
-      <span style="width:40px"></span>
-    </div>
-    <div class="scroll">
-      <div style="font-size:15px;color:var(--tx3);margin-bottom:10px">${s.vorname} ${s.nachname} · ${gfaCount}/${GRUNDFAHRAUFGABEN.length}</div>
-      <div class="card">${rows}</div>
-      <button class="btn-full" style="margin-top:14px" onclick="renderTerminDetail('${date}',${idx})"><i class="ti ti-arrow-left"></i> Zurück zum Termin</button>
-    </div>
-  </div>`;
-  renderApp(html);
-}
-
-function renderTerminNotiz(date,idx){
-  const e=(termine[date]||[])[idx];if(!e)return;
-  const s=getS(e.sid);if(!s)return;
-  const notizText=(s.notizen&&s.notizen.length)?s.notizen.map(n=>n.text).join('\n'):'';
-  let html=`<div class="screen active">
-    <div class="topbar">
-      <button class="btn-icon" onclick="renderTerminDetail('${date}',${idx})"><i class="ti ti-arrow-left"></i></button>
-      <span class="topbar-title"><i class="ti ti-note" style="font-size:18px;margin-right:6px"></i>Notizen</span>
-      <span style="width:40px"></span>
-    </div>
-    <div class="scroll">
-      <div style="font-size:15px;color:var(--tx3);margin-bottom:10px">${s.vorname} ${s.nachname}</div>
-      <div class="card" style="padding:12px 16px">
-        <textarea id="notiz-termin-${e.sid}" style="width:100%;min-height:240px;border:none;background:transparent;font-size:20px;color:var(--tx);outline:none;resize:none;font-family:inherit;line-height:1.6;-webkit-user-select:text;user-select:text;box-sizing:border-box" placeholder="Notizen zum Schüler…" onblur="saveNotizTextDash('${e.sid}',this.value)">${notizText}</textarea>
-      </div>
-      <button class="btn-full" style="margin-top:14px" onclick="renderTerminDetail('${date}',${idx})"><i class="ti ti-arrow-left"></i> Zurück zum Termin</button>
-    </div>
-  </div>`;
-  renderApp(html);
-}
-
 function _confirmDelTagTermin(date,idx){
   const t=(termine[date]||[]);const e=t[idx];if(!e)return;
   const isAuffrisch=e.sid&&e.sid.startsWith("__auffrisch__");
@@ -2712,15 +2685,35 @@ function renderDashSchueler(sid){
       <button class="btn-full" style="background:var(--accent);color:white;border:none;margin-bottom:12px" onclick="renderNeuKalTerminVonSchueler('${sid}')"><i class="ti ti-plus"></i> Termin hinzufügen</button>
 
 
-      <!-- GFA & Notizen als Buttons -->
-      <button class="btn-full" style="margin-top:4px;display:flex;align-items:center;justify-content:space-between;padding:16px" onclick="renderSchuelerGFA('${sid}')">
-        <span style="display:flex;align-items:center;gap:10px;font-size:18px"><i class="ti ti-steering-wheel" style="font-size:22px;color:var(--accent)"></i>Grundfahraufgaben</span>
-        <span style="display:flex;align-items:center;gap:8px;color:var(--tx3);font-size:16px">${GRUNDFAHRAUFGABEN.filter(g=>((s.gfa||{})[g.key]||0)>0).length}/${GRUNDFAHRAUFGABEN.length}<i class="ti ti-chevron-right" style="font-size:20px"></i></span>
-      </button>
-      <button class="btn-full" style="margin-top:8px;display:flex;align-items:center;justify-content:space-between;padding:16px" onclick="toggleNotizBadge('${sid}')">
-        <span style="display:flex;align-items:center;gap:10px;font-size:18px"><i class="ti ti-note" style="font-size:22px;color:var(--accent)"></i>Notizen</span>
-        <span style="display:flex;align-items:center;gap:8px;color:var(--tx3);font-size:16px">${(s.notizen&&s.notizen.length)?'<i class="ti ti-point-filled" style="color:var(--accent)"></i>':''}<i class="ti ti-chevron-right" style="font-size:20px"></i></span>
-      </button>
+      <!-- GFA klappbar -->
+      <div>
+        <div onclick="toggleKlapp('gfa2-${sid}')" style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;cursor:pointer">
+          <span style="font-size:14px;font-weight:600;color:var(--tx3);letter-spacing:.5px">GRUNDFAHRAUFGABEN</span>
+          <i class="ti ti-chevron-down" id="chevron-gfa2-${sid}" style="color:var(--tx3)"></i>
+        </div>
+        <div id="klapp-gfa2-${sid}" style="display:none">
+          <div class="card">
+            ${GRUNDFAHRAUFGABEN.map(g=>{const cnt=(s.gfa||{})[g.key]||0;return'<div class="gfa-row"><span class="gfa-label"><i class="ti '+g.icon+'" style="font-size:18px;margin-right:8px;color:var(--tx3)"></i>'+g.label+'</span><div class="gfa-controls"><button class="gfa-btn" onclick="changeGFADash(&quot;'+s.id+'&quot;,&quot;'+g.key+'&quot;,-1)">−</button><span class="gfa-count" id="gfa-'+s.id+'-'+g.key+'-d">'+cnt+'</span><button class="gfa-btn" onclick="changeGFADash(&quot;'+s.id+'&quot;,&quot;'+g.key+'&quot;,1)">+</button></div></div>';}).join('')}
+          </div>
+        </div>
+      </div>
+
+      <!-- Notizen klappbar -->
+      <div>
+        <div onclick="toggleKlapp('notiz2-${sid}')" style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;cursor:pointer">
+          <span style="font-size:14px;font-weight:600;color:var(--tx3);letter-spacing:.5px">NOTIZEN</span>
+          <i class="ti ti-chevron-down" id="chevron-notiz2-${sid}" style="color:var(--tx3)"></i>
+        </div>
+        <div id="klapp-notiz2-${sid}" style="display:none">
+          <div class="card" style="padding:12px 16px">
+            <textarea id="notiz2-${sid}"
+              style="width:100%;min-height:120px;border:none;background:transparent;font-size:23px;color:var(--tx);outline:none;resize:none;font-family:inherit;line-height:1.7;box-sizing:border-box;-webkit-user-select:text;user-select:text"
+              placeholder="Notizen…"
+              onblur="saveNotizTextDash('${sid}',this.value)"
+            >${(s.notizen&&s.notizen.length?s.notizen.map(n=>n.text||n).join('\n'):(s.notiz&&typeof s.notiz==='string'?s.notiz:''))}</textarea>
+          </div>
+        </div>
+      </div>
 
     </div>
   </div>`;
@@ -2733,19 +2726,6 @@ function deletePruefEintrag(sid,pi){
   s.pruefungen.splice(pi,1);
   saveAll();
   renderNeuSchueler(sid);
-}
-
-function setPruefErgebnisInline(sid,pi,val){
-  const s=getS(sid);if(!s||!s.pruefungen||!s.pruefungen[pi])return;
-  s.pruefungen[pi].bestanden=val;
-  saveAll();
-  ["offen","best","nicht"].forEach(k=>{
-    const el=document.getElementById("pe-"+k+"-"+sid+"-"+pi);
-    if(el)el.classList.remove("active");
-  });
-  const map={"null":"offen","true":"best","false":"nicht"};
-  const active=document.getElementById("pe-"+map[String(val)]+"-"+sid+"-"+pi);
-  if(active)active.classList.add("active");
 }
 
 function toggleTheorie(sid){
@@ -2848,25 +2828,6 @@ function toggleNotizBadge(sid){
   </div>`;
   renderApp(html);
   setTimeout(()=>{initPTR();const ta=document.getElementById("notiz-screen-"+sid);if(ta)ta.focus();},100);
-}
-
-function renderSchuelerGFA(sid){
-  const s=getS(sid);if(!s)return;
-  const gfaCount=GRUNDFAHRAUFGABEN.filter(g=>((s.gfa||{})[g.key]||0)>0).length;
-  const rows=GRUNDFAHRAUFGABEN.map(g=>{const cnt=(s.gfa||{})[g.key]||0;return'<div class="gfa-row"><span class="gfa-label"><i class="ti '+g.icon+'" style="font-size:18px;margin-right:8px;color:var(--tx3)"></i>'+g.label+'</span><div class="gfa-controls"><button class="gfa-btn" onclick="changeGFADash(&quot;'+s.id+'&quot;,&quot;'+g.key+'&quot;,-1)">−</button><span class="gfa-count" id="gfa-'+s.id+'-'+g.key+'-d">'+cnt+'</span><button class="gfa-btn" onclick="changeGFADash(&quot;'+s.id+'&quot;,&quot;'+g.key+'&quot;,1)">+</button></div></div>';}).join('');
-  const html=`<div class="screen active">
-    <div class="topbar">
-      <button class="btn-icon" onclick="renderDashSchueler('${sid}')"><i class="ti ti-arrow-left"></i></button>
-      <span class="topbar-title"><i class="ti ti-steering-wheel" style="margin-right:6px"></i>Grundfahraufgaben · ${s.vorname}</span>
-    </div>
-    <div class="scroll">
-      <div style="font-size:15px;color:var(--tx3);margin-bottom:10px">${gfaCount}/${GRUNDFAHRAUFGABEN.length} begonnen</div>
-      <div class="card">${rows}</div>
-      <button class="btn-full" style="margin-top:14px" onclick="renderDashSchueler('${sid}')"><i class="ti ti-arrow-left"></i> Zurück</button>
-    </div>
-  </div>`;
-  renderApp(html);
-  setTimeout(initPTR,50);
 }
 
 function saveNotizTextDash(sid,val){
@@ -3020,7 +2981,7 @@ function renderAbrechnung(weekOffset=0){
   const now=new Date();
   const moK=["Jan","Feb","M\u00e4r","Apr","Mai","Jun","Jul","Aug","Sep","Okt","Nov","Dez"];
   const moLang=["Januar","Februar","M\u00e4rz","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
-  function toEuro(min){return((min/60)*satz).toFixed(2).replace('.',',')+" \u20ac";}
+  function toEuro(min){return((min/60)*satz).toFixed(2).replace('.',',')+"\u00a0\u20ac";}
   function getMin(prefix){return Object.entries(termine).reduce((sum,[d,ts])=>{if(d.startsWith(prefix))return sum+ts.reduce((a,e)=>a+(e.min||0),0);return sum;},0);}
   // Tag
   const tagMin=getMin(td);
@@ -3063,7 +3024,8 @@ function renderAbrechnung(weekOffset=0){
     </div>
     <div class="scroll">
       <!-- 4 Kacheln -->
-      <div class="stat-grid" style="margin-bottom:10px">
+      <div class="stat-grid" style="margin-bottom:10px;position:relative">
+        <div class="muenz-layer" id="muenz-layer"></div>
         <div class="stat-box accent" style="text-align:center">
           <div class="stat-lbl">HEUTE \u00b7 ${tagName}</div>
           <div style="font-size:30px;font-weight:700;color:white;margin-top:4px">${toEuro(tagMin)}</div>
@@ -3071,17 +3033,17 @@ function renderAbrechnung(weekOffset=0){
         </div>
         <div class="stat-box" style="text-align:center">
           <div class="stat-lbl">WOCHE</div>
-          <div style="font-size:30px;font-weight:700;color:#E24B4A;margin-top:4px">${toEuro(wocheMin)}</div>
+          <div style="font-size:25px;font-weight:700;color:#378ADD;margin-top:4px;white-space:nowrap">${toEuro(wocheMin)}</div>
           <div style="font-size:15px;color:var(--tx3);margin-top:3px">${wocheMin} min</div>
         </div>
-        <div class="stat-box" style="text-align:center">
+        <div class="stat-box monat-glas" style="text-align:center">
           <div class="stat-lbl">${moLang[now.getMonth()].toUpperCase()}</div>
-          <div style="font-size:30px;font-weight:700;color:#E24B4A;margin-top:4px">${toEuro(monatMin)}</div>
+          <div class="monat-betrag" style="font-size:25px;font-weight:700;color:#378ADD;margin-top:4px;white-space:nowrap">${toEuro(monatMin)}</div>
           <div style="font-size:15px;color:var(--tx3);margin-top:3px">${monatMin} min</div>
         </div>
         <div class="stat-box" style="text-align:center">
           <div class="stat-lbl">${jahrStr}</div>
-          <div style="font-size:30px;font-weight:700;color:#E24B4A;margin-top:4px">${toEuro(jahrMin)}</div>
+          <div style="font-size:25px;font-weight:700;color:#378ADD;margin-top:4px;white-space:nowrap">${toEuro(jahrMin)}</div>
         </div>
       </div>
       <!-- Woche Mo-Fr mit Navigation -->
@@ -3135,6 +3097,26 @@ function renderAbrechnung(weekOffset=0){
   </div>`;
   renderApp(html);
   setTimeout(initPTR,50);
+  setTimeout(spawnMuenzen,250);
+}
+
+function spawnMuenzen(){
+  const layer=document.getElementById('muenz-layer');
+  if(!layer)return;
+  layer.innerHTML='';
+  const n=6;
+  for(let i=0;i<n;i++){
+    const c=document.createElement('div');
+    c.className='muenze';
+    c.textContent='\u20ac';
+    const leftPct=8+Math.random()*38;
+    const dur=1300+Math.random()*600;
+    const delay=i*110+Math.random()*90;
+    c.style.left=leftPct+'%';
+    c.style.animation='muenzFlug '+dur+'ms ease-out '+delay+'ms forwards';
+    layer.appendChild(c);
+    setTimeout(()=>{if(c.parentNode)c.parentNode.removeChild(c);},dur+delay+120);
+  }
 }
 
 function getAbrechnungSatz(){return parseFloat(localStorage.getItem("fs_satz")||"25");}
