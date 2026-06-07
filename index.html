@@ -3036,7 +3036,7 @@ function renderAbrechnung(weekOffset=0){
           <div style="font-size:25px;font-weight:700;color:#378ADD;margin-top:4px;white-space:nowrap">${toEuro(wocheMin)}</div>
           <div style="font-size:15px;color:var(--tx3);margin-top:3px">${wocheMin} min</div>
         </div>
-        <div class="stat-box monat-glas" style="text-align:center">
+        <div class="stat-box monat-glas" style="text-align:center;cursor:pointer" onclick="renderJahresAbrechnung()">
           <div class="stat-lbl">${moLang[now.getMonth()].toUpperCase()}</div>
           <div class="monat-betrag" style="font-size:25px;font-weight:700;color:#378ADD;margin-top:4px;white-space:nowrap">${toEuro(monatMin)}</div>
           <div style="font-size:15px;color:var(--tx3);margin-top:3px">${monatMin} min</div>
@@ -3117,6 +3117,49 @@ function spawnMuenzen(){
     layer.appendChild(c);
     setTimeout(()=>{if(c.parentNode)c.parentNode.removeChild(c);},dur+delay+120);
   }
+}
+
+function renderJahresAbrechnung(year){
+  const satz=getAbrechnungSatz();
+  const moLang=["Januar","Februar","M\u00e4rz","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
+  const toEuro=min=>((min/60)*satz).toFixed(2).replace('.',',')+"\u00a0\u20ac";
+  const getMin=prefix=>Object.entries(termine).reduce((sum,[d,ts])=>d.startsWith(prefix)?sum+ts.reduce((a,e)=>a+(e.min||0),0):sum,0);
+  const jahr=year||(new Date()).getFullYear();
+  const now=new Date();
+  const isAktuell=jahr===now.getFullYear();
+  const months=[];
+  for(let m=1;m<=12;m++){months.push({name:moLang[m-1],idx:m-1,min:getMin(jahr+"-"+String(m).padStart(2,"0"))});}
+  const jahrMin=getMin(String(jahr));
+  const maxMin=Math.max(...months.map(x=>x.min),1);
+  const rows=months.map(mo=>{
+    const aktiv=isAktuell&&mo.idx===now.getMonth();
+    const w=Math.round((mo.min/maxMin)*100);
+    return `<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:.5px solid var(--br2)">
+      <span style="width:46px;flex-shrink:0;font-size:16px;${aktiv?"font-weight:700;color:#378ADD":"color:var(--tx)"}">${mo.name.substring(0,3)}</span>
+      <div style="flex:1;height:10px;background:var(--bg3);border-radius:5px;overflow:hidden"><div style="height:10px;width:${w}%;background:${aktiv?'#378ADD':'#85B7EB'};border-radius:5px"></div></div>
+      <span style="width:92px;flex-shrink:0;text-align:right;font-size:15px;font-weight:600;color:${mo.min?'#378ADD':'var(--tx3)'};white-space:nowrap">${toEuro(mo.min)}</span>
+    </div>`;
+  }).join("");
+  const html=`<div class="screen active">
+    <div class="topbar">
+      <button class="btn-icon" onclick="renderAbrechnung()"><i class="ti ti-arrow-left"></i></button>
+      <span class="topbar-title"><i class="ti ti-chart-bar" style="font-size:21px;margin-right:6px"></i>Jahr ${jahr}</span>
+    </div>
+    <div class="scroll">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <button class="btn-icon" onclick="renderJahresAbrechnung(${jahr-1})"><i class="ti ti-chevron-left"></i></button>
+        <div style="text-align:center">
+          <div style="font-size:13px;color:var(--tx3);text-transform:uppercase;letter-spacing:.04em">Gesamt ${jahr}</div>
+          <div style="font-size:30px;font-weight:700;color:#378ADD;white-space:nowrap">${toEuro(jahrMin)}</div>
+        </div>
+        <button class="btn-icon" onclick="renderJahresAbrechnung(${jahr+1})"><i class="ti ti-chevron-right"></i></button>
+      </div>
+      <div class="card" style="padding:6px 16px">${rows}</div>
+      <button class="btn-full" style="margin-top:14px" onclick="renderAbrechnung()"><i class="ti ti-arrow-left"></i> Zurück zur Abrechnung</button>
+    </div>
+  </div>`;
+  renderApp(html);
+  setTimeout(initPTR,50);
 }
 
 function getAbrechnungSatz(){return parseFloat(localStorage.getItem("fs_satz")||"25");}
