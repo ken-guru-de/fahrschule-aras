@@ -1898,8 +1898,8 @@ function renderStatistik(){
         <div class="stat-box" style="text-align:center"><div class="stat-lbl">Prüfungen gesamt</div><div class="stat-num" style="font-size:55px">${gesamt}</div></div>
       </div>
       <div class="stat-grid">
-        <div class="stat-box" style="text-align:center"><div class="stat-lbl">Bestanden</div><div class="stat-num" style="font-size:55px;color:#27500A">${bestanden}</div></div>
-        <div class="stat-box" style="text-align:center"><div class="stat-lbl">Nicht bestanden</div><div class="stat-num" style="font-size:55px;color:#A32D2D">${gesamt-bestanden}</div></div>
+        <div class="stat-box" style="text-align:center;cursor:pointer" onclick="renderStatPruefListe('best')"><div class="stat-lbl">Bestanden</div><div class="stat-num" style="font-size:55px;color:#27500A">${bestanden}</div></div>
+        <div class="stat-box" style="text-align:center;cursor:pointer" onclick="renderStatPruefListe('nicht')"><div class="stat-lbl">Nicht bestanden</div><div class="stat-num" style="font-size:55px;color:#A32D2D">${gesamt-bestanden}</div></div>
       </div>`;
 
   if(gesamt===0){
@@ -1937,6 +1937,38 @@ function renderStatistik(){
     }
   }
   html+=`</div></div>`;
+  renderApp(html);
+  setTimeout(initPTR,50);
+}
+
+function renderStatPruefListe(typ){
+  const wantBest=typ==='best';
+  const list=schueler.flatMap(s=>{
+    const sorted=(s.pruefungen||[]).slice().sort((a,b)=>(a.datum||"").localeCompare(b.datum||""));
+    return sorted.map((p,i)=>({...p,versuch:i+1,sid:s.id,name:s.vorname+" "+s.nachname,prufort:p.prufort||s.prufort})).filter(p=>p.bestanden===(wantBest?true:false));
+  }).sort((a,b)=>(b.datum||"").localeCompare(a.datum||""));
+  const titel=wantBest?'Bestanden':'Nicht bestanden';
+  const farbe=wantBest?'#27500A':'#A32D2D';
+  const bg=wantBest?'#EAF3DE':'#FCEBEB';
+  const rows=list.length?list.map(p=>{
+    const fd=fmtDate(p.datum);
+    return `<div class="pruef-result-item" onclick="renderDashSchueler('${p.sid}')" style="cursor:pointer;padding:14px 16px;gap:14px">
+      <div style="width:40px;height:40px;border-radius:50%;flex-shrink:0;text-align:center;line-height:40px;font-size:17px;font-weight:700;background:${bg};color:${farbe}">${p.versuch}</div>
+      <div style="flex:1"><div style="font-size:17px;font-weight:600;color:var(--tx)">${p.name}</div>
+      <div style="font-size:14px;color:var(--tx2);margin-top:3px">${p.versuch}. Prüfung · ${fd.day}. ${fd.mon} ${fd.year}${p.prufort?" · "+p.prufort:""}</div></div>
+      <span style="font-size:21px;color:${farbe}">${wantBest?'✓':'✗'}</span>
+    </div>`;
+  }).join(''):`<div class="empty-hint" style="padding:24px 0">Keine Einträge</div>`;
+  const html=`<div class="screen active">
+    <div class="topbar">
+      <button class="btn-icon" onclick="renderStatistik()"><i class="ti ti-arrow-left"></i></button>
+      <span class="topbar-title" style="color:${farbe}">${titel} (${list.length})</span>
+    </div>
+    <div class="scroll">
+      ${rows}
+      <button class="btn-full" style="margin-top:14px" onclick="renderStatistik()"><i class="ti ti-arrow-left"></i> Zurück zur Statistik</button>
+    </div>
+  </div>`;
   renderApp(html);
   setTimeout(initPTR,50);
 }
@@ -2688,10 +2720,6 @@ function renderDashSchueler(sid){
         </div>
       </div>`:''}
 
-      <!-- Termin hinzufügen -->
-      <button class="btn-full" style="background:var(--accent);color:white;border:none;margin-bottom:12px" onclick="renderNeuKalTerminVonSchueler('${sid}')"><i class="ti ti-plus"></i> Termin hinzufügen</button>
-
-
       <!-- GFA & Notizen als Buttons -->
       <button class="btn-full" style="margin-top:4px;display:flex;align-items:center;justify-content:space-between;padding:16px" onclick="renderSchuelerGFA('${sid}')">
         <span style="display:flex;align-items:center;gap:10px;font-size:18px"><i class="ti ti-steering-wheel" style="font-size:22px;color:var(--accent)"></i>Grundfahraufgaben</span>
@@ -2701,6 +2729,9 @@ function renderDashSchueler(sid){
         <span style="display:flex;align-items:center;gap:10px;font-size:18px"><i class="ti ti-note" style="font-size:22px;color:var(--accent)"></i>Notizen</span>
         <span style="display:flex;align-items:center;gap:8px;color:var(--tx3);font-size:16px">${(s.notizen&&s.notizen.length)?'<i class="ti ti-point-filled" style="color:var(--accent)"></i>':''}<i class="ti ti-chevron-right" style="font-size:20px"></i></span>
       </button>
+
+      <!-- Termin hinzufügen -->
+      <button class="btn-full" style="background:var(--accent);color:white;border:none;margin-top:12px" onclick="renderNeuKalTerminVonSchueler('${sid}')"><i class="ti ti-plus"></i> Termin hinzufügen</button>
 
     </div>
   </div>`;
