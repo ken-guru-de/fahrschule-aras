@@ -910,9 +910,16 @@ function renderNeuSchueler(fromSid){
         ${s&&s.pruefungen&&s.pruefungen.length?`
         <div style="padding:8px 14px;border-top:.5px solid var(--br)">
           <div style="font-size:14px;color:var(--tx3);margin-bottom:6px">PRÜFUNGSEINTRÄGE</div>
-          ${s.pruefungen.map((p,pi)=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:4px 0;border-bottom:.5px solid var(--br2)">
-            <span style="font-size:16px">${p.datum} · ${p.bestanden===true?'✓ Best.':p.bestanden===false?'✗ Nicht best.':'offen'}</span>
-            <button onclick="deletePruefEintrag('${s.id}',${pi})" style="background:none;border:none;color:#E24B4A;font-size:23px;cursor:pointer;padding:0 4px">×</button>
+          ${s.pruefungen.map((p,pi)=>`<div style="padding:6px 0;border-bottom:.5px solid var(--br2)">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+              <span style="font-size:16px">${p.versuch}. Prüfung · ${fmtDate(p.datum).day}.${fmtDate(p.datum).mon}${p.uhr?" · "+p.uhr:""}</span>
+              <button onclick="deletePruefEintrag('${s.id}',${pi})" style="background:none;border:none;color:#E24B4A;font-size:23px;cursor:pointer;padding:0 4px">×</button>
+            </div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <button class="pill ${p.bestanden===null||p.bestanden===undefined?"active":""}" id="pe-offen-${s.id}-${pi}" onclick="setPruefErgebnisInline('${s.id}',${pi},null)" style="font-size:14px;padding:5px 10px">Offen</button>
+              <button class="pill ${p.bestanden===true?"active":""}" id="pe-best-${s.id}-${pi}" onclick="setPruefErgebnisInline('${s.id}',${pi},true)" style="font-size:14px;padding:5px 10px">Bestanden ✓</button>
+              <button class="pill ${p.bestanden===false?"active":""}" id="pe-nicht-${s.id}-${pi}" onclick="setPruefErgebnisInline('${s.id}',${pi},false)" style="font-size:14px;padding:5px 10px">Nicht bestanden ✗</button>
+            </div>
           </div>`).join('')}
         </div>`:''}
         ${s?`
@@ -2710,6 +2717,20 @@ function deletePruefEintrag(sid,pi){
   s.pruefungen.splice(pi,1);
   saveAll();
   renderNeuSchueler(sid);
+}
+
+function setPruefErgebnisInline(sid,pi,val){
+  const s=getS(sid);if(!s||!s.pruefungen||!s.pruefungen[pi])return;
+  s.pruefungen[pi].bestanden=val;
+  saveAll();
+  // Pills optisch aktualisieren, ohne den Dialog neu zu zeichnen (Feldeingaben bleiben erhalten)
+  ["offen","best","nicht"].forEach(k=>{
+    const el=document.getElementById("pe-"+k+"-"+sid+"-"+pi);
+    if(el)el.classList.remove("active");
+  });
+  const map={"null":"offen","true":"best","false":"nicht"};
+  const active=document.getElementById("pe-"+map[String(val)]+"-"+sid+"-"+pi);
+  if(active)active.classList.add("active");
 }
 
 function toggleTheorie(sid){
