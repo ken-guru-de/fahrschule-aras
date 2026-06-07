@@ -411,7 +411,7 @@ function renderDashboard(dashDateOffset=0){
       const k=s.id+"_"+p.datum;
       if(_pruefSeen.has(k))return;
       _pruefSeen.add(k);
-      allePruef.push({sid:s.id,datum:p.datum,versuch:p.versuch,pi,bestanden:p.bestanden,prufort:p.prufort||s.prufort||""});
+      allePruef.push({sid:s.id,datum:p.datum,versuch:pi+1,pi,bestanden:p.bestanden,prufort:p.prufort||s.prufort||""});
     });
   });
   // Quelle 2: Kalendertermine mit typ=pruef
@@ -923,7 +923,7 @@ function renderNeuSchueler(fromSid){
           <div style="font-size:14px;color:var(--tx3);margin-bottom:6px">PRÜFUNGSEINTRÄGE</div>
           ${s.pruefungen.map((p,pi)=>`<div style="padding:6px 0;border-bottom:.5px solid var(--br2)">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-              <span style="font-size:16px">${p.versuch}. Prüfung · ${fmtDate(p.datum).day}.${fmtDate(p.datum).mon}${p.uhr?" · "+p.uhr:""}</span>
+              <span style="font-size:16px">${pi+1}. Prüfung · ${fmtDate(p.datum).day}.${fmtDate(p.datum).mon}${p.uhr?" · "+p.uhr:""}</span>
               <button onclick="deletePruefEintrag('${s.id}',${pi})" style="background:none;border:none;color:#E24B4A;font-size:23px;cursor:pointer;padding:0 4px">×</button>
             </div>
             <div style="display:flex;gap:6px;flex-wrap:wrap">
@@ -1859,8 +1859,14 @@ function saveKalTermin(date){
 // ── STATISTIK ─────────────────────────────────────────────────────────────────
 function renderStatistik(){
   syncKalenderToFahrstunden();
-  const alle=schueler.flatMap(s=>(s.pruefungen||[]).filter(p=>p.bestanden!==null&&p.bestanden!==undefined).map(p=>({...p,sid:s.id,name:s.vorname+" "+s.nachname,klasse:s.klasse,prufort:s.prufort})));
-  const alleInklOffen=schueler.flatMap(s=>(s.pruefungen||[]).map(p=>({...p,sid:s.id,name:s.vorname+" "+s.nachname,klasse:s.klasse,prufort:s.prufort})));
+  const alle=schueler.flatMap(s=>{
+    const sorted=(s.pruefungen||[]).slice().sort((a,b)=>(a.datum||"").localeCompare(b.datum||""));
+    return sorted.map((p,i)=>({...p,versuch:i+1,sid:s.id,name:s.vorname+" "+s.nachname,klasse:s.klasse,prufort:s.prufort})).filter(p=>p.bestanden!==null&&p.bestanden!==undefined);
+  });
+  const alleInklOffen=schueler.flatMap(s=>{
+    const sorted=(s.pruefungen||[]).slice().sort((a,b)=>(a.datum||"").localeCompare(b.datum||""));
+    return sorted.map((p,i)=>({...p,versuch:i+1,sid:s.id,name:s.vorname+" "+s.nachname,klasse:s.klasse,prufort:s.prufort}));
+  });
   const gesamt=alle.length;
   const bestanden=alle.filter(p=>p.bestanden).length;
   const quote=gesamt?Math.round((bestanden/gesamt)*100):0;
