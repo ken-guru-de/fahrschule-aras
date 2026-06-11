@@ -2382,6 +2382,8 @@ function showTagTerminActions(date,idx){
 
 // ── SCHALTKOMPETENZ B197 ───────────────────────────────────────────────────
 const SCHALT_SOLL=5;
+const _schaltExpanded={};
+function schaltToggle(sid,ctx){_schaltExpanded[sid]=!_schaltExpanded[sid];_schaltRer(sid,ctx);}
 function schaltCount(s){return Array.isArray(s&&s.schalt)?s.schalt.length:0;}
 function _schaltRer(sid,ctx){
   if(ctx&&ctx.indexOf('tag|')===0){const p=ctx.split('|');renderTerminDetail(p[1],parseInt(p[2],10));}
@@ -2394,12 +2396,14 @@ function schaltAdd(sid,datum,ctx){
   s.schalt.push({datum:datum});
   s.schalt.sort((a,b)=>a.datum.localeCompare(b.datum));
   saveAll();
+  _schaltExpanded[sid]=false;
   if(navigator.vibrate)navigator.vibrate(8);
   _schaltRer(sid,ctx);
 }
 function schaltRemove(sid,idx,ctx){
   const s=getS(sid);if(!s||!Array.isArray(s.schalt))return;
   s.schalt.splice(idx,1);
+  _schaltExpanded[sid]=false;
   saveAll();
   _schaltRer(sid,ctx);
 }
@@ -2430,24 +2434,44 @@ function schaltCardHTML(sid,addDatum,ctx){
   const arr=s.schalt;
   const cnt=arr.length;
   const done=cnt>=SCHALT_SOLL;
-  const segs=Array.from({length:SCHALT_SOLL},(_,i)=>`<div style="flex:1;height:9px;border-radius:5px;background:${i<cnt?'var(--accent)':'var(--bg3)'};${i<cnt?'box-shadow:0 0 6px rgba(255,107,43,.4)':''}"></div>`).join('');
+  const expanded=!!_schaltExpanded[sid];
+
+  // Komplett -> eingeklappt, nur als "erledigt" anzeigen (antippbar)
+  if(done&&!expanded){
+    return `<div class="card" style="margin-bottom:12px;border-left:3px solid #34C759;cursor:pointer" onclick="schaltToggle('${sid}','${ctx}')">
+      <div class="card-row" style="padding:14px 16px;border-bottom:none">
+        <span style="display:flex;align-items:center;gap:9px;font-size:17px;font-weight:600"><i class="ti ti-circle-check" style="font-size:22px;color:#34C759"></i>Schaltkompetenz B197</span>
+        <span style="margin-left:auto;display:flex;align-items:center;gap:9px">
+          <span style="font-size:14px;font-weight:700;color:#34C759;background:rgba(52,199,89,.14);padding:4px 11px;border-radius:20px">erledigt &middot; ${cnt}/${SCHALT_SOLL}</span>
+          <i class="ti ti-chevron-down" style="color:var(--tx3);font-size:18px"></i>
+        </span>
+      </div>
+    </div>`;
+  }
+
+  const accentCol=done?'#34C759':'var(--accent)';
+  const glow=done?'rgba(52,199,89,.4)':'rgba(255,107,43,.4)';
+  const segs=Array.from({length:SCHALT_SOLL},(_,i)=>`<div style="flex:1;height:9px;border-radius:5px;background:${i<cnt?accentCol:'var(--bg3)'};${i<cnt?'box-shadow:0 0 6px '+glow:''}"></div>`).join('');
   const list=arr.map((x,i)=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--br)">
         <span style="font-size:15px;color:var(--tx)"><i class="ti ti-circle-check" style="color:#34C759;margin-right:8px;font-size:17px;vertical-align:-2px"></i>${i+1}. Schaltfahrstunde &middot; ${fmtDate(x.datum).day}. ${fmtDate(x.datum).mon} ${fmtDate(x.datum).year}</span>
         <button onclick="schaltRemove('${sid}',${i},'${ctx}')" style="background:none;border:none;color:var(--tx3);font-size:18px;cursor:pointer;padding:4px 2px;line-height:1"><i class="ti ti-x"></i></button>
       </div>`).join('');
   const hasDatum=arr.some(x=>x.datum===addDatum);
+  const nachtragBtn=`<button class="btn-full" style="margin-top:8px;background:transparent;border:1.5px solid var(--br2);color:var(--accent)" onclick="schaltAddDialog('${sid}','${addDatum}','${ctx}')"><i class="ti ti-calendar-plus"></i> Anderes Datum / nachtragen</button>`;
   let action='';
   if(done){
     action=`<div style="margin-top:12px;padding:11px 14px;border-radius:12px;background:rgba(52,199,89,.13);color:#34C759;font-weight:600;font-size:15px;text-align:center"><i class="ti ti-circle-check"></i> Schaltkompetenz vollst&auml;ndig dokumentiert</div>`;
   } else if(hasDatum){
-    action=`<div style="margin-top:12px;padding:10px 14px;border-radius:12px;background:rgba(255,107,43,.10);color:var(--accent);font-weight:600;font-size:14px;text-align:center">F&uuml;r ${fmtDate(addDatum).day}. ${fmtDate(addDatum).mon} bereits erfasst &middot; noch ${SCHALT_SOLL-cnt} offen</div><button class="btn-full" style="margin-top:8px;background:transparent;border:1.5px solid var(--br2);color:var(--accent)" onclick="schaltAddDialog('${sid}','${addDatum}','${ctx}')"><i class="ti ti-calendar-plus"></i> Anderes Datum / nachtragen</button>`;
+    action=`<div style="margin-top:12px;padding:10px 14px;border-radius:12px;background:rgba(255,107,43,.10);color:var(--accent);font-weight:600;font-size:14px;text-align:center">F&uuml;r ${fmtDate(addDatum).day}. ${fmtDate(addDatum).mon} bereits erfasst &middot; noch ${SCHALT_SOLL-cnt} offen</div>`+nachtragBtn;
   } else {
-    action=`<button class="btn-full" style="background:var(--accent);color:#fff;border:none;margin-top:12px" onclick="schaltAdd('${sid}','${addDatum}','${ctx}')"><i class="ti ti-plus"></i> Schaltfahrstunde am ${fmtDate(addDatum).day}. ${fmtDate(addDatum).mon} erfassen</button><button class="btn-full" style="margin-top:8px;background:transparent;border:1.5px solid var(--br2);color:var(--accent)" onclick="schaltAddDialog('${sid}','${addDatum}','${ctx}')"><i class="ti ti-calendar-plus"></i> Anderes Datum / nachtragen</button>`;
+    action=`<button class="btn-full" style="background:var(--accent);color:#fff;border:none;margin-top:12px" onclick="schaltAdd('${sid}','${addDatum}','${ctx}')"><i class="ti ti-plus"></i> Schaltfahrstunde am ${fmtDate(addDatum).day}. ${fmtDate(addDatum).mon} erfassen</button>`+nachtragBtn;
   }
-  return `<div class="card" style="margin-bottom:12px;border-left:3px solid var(--accent)">
-      <div class="card-row" style="padding:14px 16px;border-bottom:1px solid var(--br)">
-        <span style="display:flex;align-items:center;gap:9px;font-size:17px;font-weight:600"><i class="ti ti-manual-gearbox" style="font-size:22px;color:var(--accent)"></i>Schaltkompetenz B197</span>
-        <span style="margin-left:auto;font-size:19px;font-weight:700;color:${done?'#34C759':'var(--accent)'}">${cnt}<span style="font-size:14px;color:var(--tx3);font-weight:500">/${SCHALT_SOLL}</span></span>
+  const headerClick=done?` style="padding:14px 16px;border-bottom:1px solid var(--br);cursor:pointer" onclick="schaltToggle('${sid}','${ctx}')"`:` style="padding:14px 16px;border-bottom:1px solid var(--br)"`;
+  const chevron=done?`<i class="ti ti-chevron-up" style="color:var(--tx3);font-size:18px;margin-left:9px"></i>`:'';
+  return `<div class="card" style="margin-bottom:12px;border-left:3px solid ${accentCol}">
+      <div class="card-row"${headerClick}>
+        <span style="display:flex;align-items:center;gap:9px;font-size:17px;font-weight:600"><i class="ti ti-manual-gearbox" style="font-size:22px;color:${accentCol}"></i>Schaltkompetenz B197</span>
+        <span style="margin-left:auto;display:flex;align-items:center;font-size:19px;font-weight:700;color:${accentCol}">${cnt}<span style="font-size:14px;color:var(--tx3);font-weight:500">/${SCHALT_SOLL}</span>${chevron}</span>
       </div>
       <div style="padding:14px 16px">
         <div style="display:flex;gap:6px;margin-bottom:${list?'14px':'4px'}">${segs}</div>
