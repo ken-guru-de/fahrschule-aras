@@ -355,6 +355,7 @@ const GRUNDFAHRAUFGABEN=[
   {key:"stopp_ohne",  label:"Stopschild ohne Haltelinie",icon:"ti-octagon-off"},
   {key:"stadtautobahn",label:"Stadtautobahn",            icon:"ti-road"},
   {key:"strassenbahn",label:"Straßenbahn",               icon:"ti-train"},
+  {key:"gefahrenbremsung",label:"Gefahrenbremsung",      icon:"ti-alert-triangle"},
 ];
 const SONDER=[{key:"ueberland",label:"Überlandfahrt",icon:"ti-trees",min:270},{key:"autobahn",label:"Autobahnfahrt",icon:"ti-road",min:225},{key:"nacht",label:"Nachtfahrt",icon:"ti-moon",min:135}];
 const MONATE=["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
@@ -1052,7 +1053,7 @@ function saveSchueler(editSid){
     }
     saveAll();syncFahrstundenToKalender();renderDashSchueler(editSid);
   }else{
-    const tel2=document.getElementById('n-tel').value.trim();const ptuhr='';const ns={id:"s"+Date.now(),vorname:vn,nachname:nn,spitz:sp,geschlecht:AppState.geschlecht||'m',tel:tel2,farbe:AppState.selFarbe||"blue",klasse:kl,beginn:bg,prufort:pf,prueftermin:pt,pruefzeit:ptuhr,theorie:th,sonder:[false,false,false],notiz:"",fahrstunden:[],pruefungen:[],gfa:{laengs:0,rechts:0,umkehr:0,rueckwaerts:0,stopp_mit:0,stopp_ohne:0,stadtautobahn:0,strassenbahn:0},foto:null};
+    const tel2=document.getElementById('n-tel').value.trim();const ptuhr='';const ns={id:"s"+Date.now(),vorname:vn,nachname:nn,spitz:sp,geschlecht:AppState.geschlecht||'m',tel:tel2,farbe:AppState.selFarbe||"blue",klasse:kl,beginn:bg,prufort:pf,prueftermin:pt,pruefzeit:ptuhr,theorie:th,sonder:[false,false,false],notiz:"",fahrstunden:[],pruefungen:[],gfa:{laengs:0,rechts:0,umkehr:0,rueckwaerts:0,stopp_mit:0,stopp_ohne:0,stadtautobahn:0,strassenbahn:0,gefahrenbremsung:0},foto:null};
     schueler.push(ns);
     saveAll();
     syncKalenderToFahrstunden();
