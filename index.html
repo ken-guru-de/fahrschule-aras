@@ -3073,49 +3073,53 @@ function changeGFADash(sid,key,d){
 function toggleFahrstundenDash(sid, type) {
   var el = document.getElementById("fahr-list-" + sid);
   if (!el) return;
-  var showing = el.dataset.showing === type;
-  if (showing) { el.style.display="none"; el.dataset.showing=""; return; }
-  el.dataset.showing = type;
+  var showing = el.dataset.showing === "all";
+  if (showing) { el.style.display = "none"; el.dataset.showing = ""; return; }
+  el.dataset.showing = "all";
   el.style.display = "block";
   var td = todayStr();
   var wt = ["So","Mo","Di","Mi","Do","Fr","Sa"];
-  var entries;
-  if (type === "past") {
-    entries = Object.entries(termine)
-      .filter(function(kv){return kv[0]<td;})
-      .flatMap(function(kv){return kv[1].filter(function(t){return t.sid===sid;}).map(function(t){return Object.assign({datum:kv[0]},t);});})
-      .sort(function(a,b){return b.datum.localeCompare(a.datum);});
-  } else {
-    entries = Object.entries(termine)
-      .filter(function(kv){return kv[0]>=td;})
-      .flatMap(function(kv){return kv[1].filter(function(t){return t.sid===sid;}).map(function(t){return Object.assign({datum:kv[0]},t);});})
-      .sort(function(a,b){
-        var aP=a.typ==="pruef"?0:1, bP=b.typ==="pruef"?0:1;
-        if(aP!==bP)return aP-bP;
-        return a.datum.localeCompare(b.datum)||(a.uhr||"").localeCompare(b.uhr||"");
-      });
-  }
+  // ALLE Termine des Schuelers: chronologisch aufsteigend, Pruefung(en) ans Ende
+  var entries = Object.entries(termine)
+    .flatMap(function(kv){ return kv[1].filter(function(t){return t.sid===sid;}).map(function(t){return Object.assign({datum:kv[0]},t);}); })
+    .sort(function(a,b){
+      var aP=a.typ==="pruef"?1:0, bP=b.typ==="pruef"?1:0;
+      if(aP!==bP) return aP-bP;
+      return a.datum.localeCompare(b.datum)||(a.uhr||"").localeCompare(b.uhr||"");
+    });
   el.innerHTML = "";
   if (!entries.length) {
     el.innerHTML = '<div style="padding:12px 16px;font-size:16px;color:var(--tx3)">Keine Eintr\u00e4ge</div>';
     return;
   }
+  var erledigtAnz = entries.filter(function(e){return e.datum<td;}).length;
+  var head = document.createElement("div");
+  head.style.cssText = "font-size:13px;color:var(--tx3);font-weight:600;padding:2px 4px 8px;display:flex;justify-content:space-between";
+  head.innerHTML = '<span>Alle Termine</span><span>'+entries.length+' gesamt \u00b7 '+erledigtAnz+' erledigt</span>';
+  el.appendChild(head);
   var wrap = document.createElement("div");
   wrap.style.cssText = "border-radius:14px;overflow:hidden;border:.5px solid var(--br2);margin-bottom:4px";
   entries.forEach(function(e) {
     var fd = fmtDate(e.datum);
     var dow = wt[new Date(e.datum).getDay()];
     var isPruef = e.typ === "pruef";
+    var erledigt = e.datum < td;
     var realIdx = (termine[e.datum]||[]).findIndex(function(t){return t.sid===e.sid&&t.uhr===e.uhr&&t.min===e.min;});
+    var bg = isPruef ? "rgba(226,75,74,0.06)" : (erledigt ? "rgba(52,199,89,0.05)" : "var(--bg)");
     var row = document.createElement("div");
-    row.style.cssText = "display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:.5px solid var(--br2);cursor:pointer;background:"+(isPruef?"rgba(226,75,74,0.06)":"var(--bg)");
+    row.style.cssText = "display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:.5px solid var(--br2);cursor:pointer;background:"+bg;
     var left = document.createElement("span");
-    left.style.cssText = "font-size:17px;color:"+(isPruef?"#E24B4A":"var(--tx2)");
-    left.textContent = dow+" "+fd.day+". "+fd.mon+(isPruef?" \uD83C\uDFAF":"");
+    var dateCol = isPruef ? "#E24B4A" : (erledigt ? "var(--tx3)" : "var(--tx2)");
+    left.style.cssText = "font-size:17px;color:"+dateCol+";display:flex;align-items:center";
+    var statusIcon = erledigt
+      ? '<i class="ti ti-circle-check" style="color:#34C759;margin-right:8px;font-size:18px"></i>'
+      : '<i class="ti ti-circle" style="color:var(--tx3);margin-right:8px;font-size:18px;opacity:.45"></i>';
+    left.innerHTML = statusIcon + '<span>'+dow+" "+fd.day+". "+fd.mon+(isPruef?" \uD83C\uDFAF":"")+'</span>';
     var right = document.createElement("div");
     right.style.cssText = "display:flex;align-items:center;gap:10px";
     var timeSpan = document.createElement("span");
-    timeSpan.style.cssText = "font-size:17px;font-weight:"+(isPruef?600:400)+";color:"+(isPruef?"#E24B4A":"var(--tx)");
+    var timeCol = isPruef ? "#E24B4A" : (erledigt ? "var(--tx2)" : "var(--tx)");
+    timeSpan.style.cssText = "font-size:17px;font-weight:"+(isPruef?600:400)+";color:"+timeCol;
     timeSpan.textContent = (e.uhr||"")+" \u00B7 "+e.min+" min";
     var icon = document.createElement("i");
     icon.className = "ti ti-pencil";
