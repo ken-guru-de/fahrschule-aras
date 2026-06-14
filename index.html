@@ -479,13 +479,17 @@ function renderDashboard(dashDateOffset=0){
   const anzeigeTermine=(termine[anzeigeDatum]||[]).sort((a,b)=>a.uhr.localeCompare(b.uhr));
   const anzeigeTotalMin=anzeigeTermine.reduce((a,t)=>a+(t.min||0),0);
   const anzeigeLblShort=anzeigeDatum===td?"Heute":fmtDate(anzeigeDatum).day+". "+fmtDate(anzeigeDatum).mon;
+  const _lblParts=anzeigeLabel.split(" · ");
+  const lblTop=_lblParts.length>1?_lblParts[0]:"";
+  const lblMain=_lblParts.length>1?_lblParts[1]:anzeigeLabel;
 
   html+=`<div>
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
       <button onclick="renderDashboard(${dashDateOffset-1})" style="background:rgba(10,40,120,0.45);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border:1.5px solid rgba(100,150,255,0.5);border-radius:50%;color:#a8c4ff;font-size:25px;width:52px;height:52px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 15px rgba(10,40,120,0.3)"><i class="ti ti-chevron-left"></i></button>
-      <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
-        <span style="font-size:20px;font-weight:800;letter-spacing:.04em;color:var(--tx);text-transform:uppercase">${anzeigeLabel}</span>
-        ${dashDateOffset!==0?`<button onclick="renderDashboard(0)" style="background:none;border:1px solid var(--accent);border-radius:8px;color:var(--accent);font-size:13px;padding:2px 10px;cursor:pointer;font-family:inherit">Heute</button>`:''}
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;flex:1;min-width:0;padding:0 10px">
+        ${lblTop?`<span style="font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--tx3);text-transform:uppercase;text-align:center;line-height:1.1">${lblTop}</span>`:''}
+        <span style="font-size:20px;font-weight:800;letter-spacing:.02em;color:var(--tx);text-transform:uppercase;text-align:center;line-height:1.15">${lblMain}</span>
+        ${dashDateOffset!==0?`<button onclick="renderDashboard(0)" style="background:none;border:1px solid var(--accent);border-radius:8px;color:var(--accent);font-size:13px;padding:2px 10px;margin-top:2px;cursor:pointer;font-family:inherit">Heute</button>`:''}
       </div>
       <button onclick="renderDashboard(${dashDateOffset+1})" style="background:rgba(10,40,120,0.45);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border:1.5px solid rgba(100,150,255,0.5);border-radius:50%;color:#a8c4ff;font-size:25px;width:52px;height:52px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 15px rgba(10,40,120,0.3)"><i class="ti ti-chevron-right"></i></button>
     </div>`;
