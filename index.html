@@ -2047,62 +2047,6 @@ function renderStatPruefListe(typ){
 }
 
 // ── TERMIN BEARBEITEN (Dashboard) ────────────────────────────────────────────
-function renderEditDashTermin(date,idx){
-  const t=(termine[date]||[])[idx];
-  if(!t){console.warn("kein Termin",date,idx);return;}
-  const isAuffrisch3=t.sid&&t.sid.startsWith("__auffrisch__");
-  const auffrischName3=isAuffrisch3?t.sid.replace("__auffrisch__:",""):"";
-  const s=isAuffrisch3?null:getS(t.sid);
-  if(!s&&!isAuffrisch3){console.warn("Schueler nicht gefunden",t.sid);return;}
-  const fd=fmtDate(date);
-  AppState.et.date=date;AppState.et.idx=idx;AppState.et.min=t.min;AppState.et.typ=t.typ||'normal';AppState.et.isAuffrisch=isAuffrisch3;AppState.et.backSid=t.sid;
-  let html=`<div class="screen active" id="scr-edit-termin">
-    <div class="topbar">
-      <button class="btn-icon" onclick="AppState.et.backSid?renderDashSchueler(AppState.et.backSid):renderDashboard()"><i class="ti ti-arrow-left"></i></button>
-      <span class="topbar-title">Termin bearbeiten</span>
-    </div>
-    <div class="scroll">
-      <div style="display:flex;align-items:center;gap:14px;margin-bottom:4px">
-        ${isAuffrisch3?`<div class="avatar" style="background:rgba(255,107,43,.15);color:var(--accent)">🔄</div>`:(s.foto?`<div class="avatar" style="overflow:hidden;flex-shrink:0"><img src="${s.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/></div>`:`<div class="avatar av-${s.farbe}">${initials(s)}</div>`)}
-        <div><div style="font-size:20px;font-weight:600">${isAuffrisch3?auffrischName3:s.vorname+" "+s.nachname}</div>
-        <div style="font-size:15px;color:var(--tx2)">${fd.day}. ${fd.mon} ${fd.year}</div></div>
-      </div>
-      <div><div class="sec-label">Termin</div>
-      <div class="card">
-        <div class="card-row"><span class="card-label"><i class="ti ti-user"></i>Schüler</span>
-          <select id="et-sid">
-            ${schueler.map(sc=>`<option value="${sc.id}" ${sc.id===t.sid?"selected":""}>${sc.vorname} ${sc.nachname}${sc.spitz?" «"+sc.spitz+"»":""}</option>`).join("")}
-          </select>
-        </div>
-        <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Uhrzeit</span><input type="time" step="300" id="et-uhr" value="${t.uhr}"/></div>
-        <div class="card-row" style="align-items:flex-start;flex-direction:column;gap:8px;padding:12px 14px">
-          <span style="font-size:15px;color:var(--tx2);font-weight:500">Art der Fahrt</span>
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;width:100%">
-            <button class="pill ${!t.typ||t.typ==='normal'?'active':''}" id="dtyp-normal" onclick="setDTyp('normal')">Fahrstunde</button>
-            <button class="pill ${t.typ==='pruef'?'active':''}" id="dtyp-pruef" onclick="setDTyp('pruef')">Prüfung</button>
-            <button class="pill ${t.typ==='ueberland'?'active':''}" id="dtyp-ueberland" onclick="setDTyp('ueberland')">Überland</button>
-            <button class="pill ${t.typ==='autobahn'?'active':''}" id="dtyp-autobahn" onclick="setDTyp('autobahn')">Autobahn</button>
-            <button class="pill ${t.typ==='nacht'?'active':''}" id="dtyp-nacht" onclick="setDTyp('nacht')">Nacht</button>
-            <button class="pill ${t.typ==='auffrisch'?'active':''}" id="dtyp-auffrisch" onclick="setDTyp('auffrisch')">Auffrisch.</button>
-          </div>
-        </div>
-        <div class="card-row"><span class="card-label"><i class="ti ti-hourglass"></i>Minuten</span>
-          <div style="display:flex;align-items:center;gap:10px;justify-content:flex-end;flex:1">
-            <button class="cir-btn" onclick="changeETMin(-5)">−</button>
-            <span id="et-min-disp" style="font-size:18px;font-weight:500;min-width:52px;text-align:center">${t.min} min</span>
-            <button class="cir-btn" onclick="changeETMin(5)">+</button>
-          </div>
-        </div>
-        <div class="card-row" style="align-items:flex-start;padding-top:12px"><span class="card-label" style="padding-top:2px"><i class="ti ti-notes"></i>Notiz</span><textarea id="et-notiz" style="flex:1;border:none;background:transparent;font-size:17px;color:var(--tx);font-family:inherit;outline:none;text-align:left;resize:none;height:60px" placeholder="Optional…">${t.notiz||""}</textarea></div>
-      </div></div>
-      <button class="btn-full" onclick="saveEditDashTermin()"><i class="ti ti-circle-check"></i> Speichern</button>
-      <button class="btn-full" style="margin-top:6px" onclick="renderSchueler('${t.sid}')"><i class="ti ti-user"></i> Zum Schüler</button>
-      <button class="btn-full danger" style="margin-top:6px" onclick="deleteEditDashTermin()"><i class="ti ti-trash"></i> Termin löschen</button>
-    </div>
-  </div>`;
-  renderApp(html);
-  setTimeout(initPTR,50);
-}
 
 function changeETMin(d){
   AppState.et.min=Math.max(10,Math.min(300,(AppState.et.min||80)+d));
@@ -2110,53 +2054,6 @@ function changeETMin(d){
   if(el)el.textContent=AppState.et.min+" min";
 }
 
-function setDTyp(typ){
-  AppState.et.typ=typ;
-  ["normal","pruef","ueberland","autobahn","nacht","auffrisch"].forEach(t=>{const el=document.getElementById("dtyp-"+t);if(el)el.classList.toggle("active",t===typ);});
-  if(typ==="normal"||typ==="auffrisch")AppState.et.min=80;
-  else if(typ==="pruef")AppState.et.min=100;
-  else if(typ==="ueberland")AppState.et.min=270;
-  else if(typ==="autobahn")AppState.et.min=225;
-  else if(typ==="nacht")AppState.et.min=135;
-  const el=document.getElementById("et-min-disp");if(el)el.textContent=AppState.et.min+" min";
-}
-
-function saveEditDashTermin(){
-  const date=AppState.et.date;const idx=AppState.et.idx;
-  if(!termine[date]||!termine[date][idx])return;
-  termine[date][idx].sid=document.getElementById("et-sid").value;
-  termine[date][idx].uhr=document.getElementById("et-uhr").value;
-  termine[date][idx].min=AppState.et.min||80;
-  termine[date][idx].typ=AppState.et.typ||'normal';
-  termine[date][idx].notiz=document.getElementById("et-notiz").value.trim();
-  termine[date].sort((a,b)=>a.uhr.localeCompare(b.uhr));
-  saveAll();renderTagAnsicht(date);
-}
-
-function deleteEditDashTermin(){
-  const date=AppState.et.date;const idx=AppState.et.idx;
-  if(!termine[date])return;
-  const t=termine[date][idx];const s=getS(t.sid);
-  const name=s?s.vorname+" "+s.nachname:"Termin";
-  showModal({
-    title:"Termin löschen",
-    msg:`${name} · ${t.uhr} Uhr wirklich löschen?`,
-    btns:[
-      {label:"Löschen",danger:true,action:"_doDeleteEditDashTermin()"},
-      {label:"Abbrechen",action:"closeModal()"},
-    ]
-  });
-}
-function _doDeleteEditDashTermin(){
-  closeModal();
-  const date=AppState.et.date;const idx=AppState.et.idx;
-  if(!termine[date])return;
-  termine[date].splice(idx,1);
-  if(!termine[date].length)delete termine[date];
-  saveAll();renderDashboard();
-}
-
-// ── TAGESANSICHT ─────────────────────────────────────────────────────────────
 function renderTagAnsicht(date){
   const p=date.split("-");
   const fd=fmtDate(date);
@@ -2225,25 +2122,28 @@ function renderTagAnsicht(date){
 
 function renderEditKalTermin(date,idx){
   const t=(termine[date]||[])[idx];if(!t)return;
+  const isTheorie3=t.typ==="theorie"||(t.sid&&t.sid.startsWith("__theorie__"));
+  const theorieTitel3=isTheorie3?((t.sid&&t.sid.indexOf(":")>=0)?t.sid.split(":").slice(1).join(":"):"Theorie"):"";
   const isAuffrisch3=t.sid&&t.sid.startsWith("__auffrisch__");
-  const s=isAuffrisch3?null:getS(t.sid);if(!s&&!isAuffrisch3)return;
+  const s=(isAuffrisch3||isTheorie3)?null:getS(t.sid);if(!s&&!isAuffrisch3&&!isTheorie3)return;
   const auffrischName3=isAuffrisch3?t.sid.replace("__auffrisch__:",""):"";
-  AppState.et.date=date;AppState.et.idx=idx;AppState.et.min=t.min;
+  AppState.et.date=date;AppState.et.idx=idx;AppState.et.min=t.min;AppState.et.typ=t.typ||'normal';AppState.et.isAuffrisch=isAuffrisch3;AppState.et.isTheorie=isTheorie3;
+  const _backSid=AppState.et.backSid;
   const fd=fmtDate(date);
   let html=`<div class="screen active" id="scr-edit-kaltermin">
     <div class="topbar">
-      <button class="btn-icon" onclick="renderTagAnsicht('${date}')"><i class="ti ti-x"></i></button>
+      <button class="btn-icon" onclick="${_backSid?`renderDashSchueler('${_backSid}')`:`renderTagAnsicht('${date}')`}"><i class="ti ti-${_backSid?'arrow-left':'x'}"></i></button>
       <span class="topbar-title">Termin bearbeiten</span>
     </div>
     <div class="scroll">
       <div style="display:flex;align-items:center;gap:14px;margin-bottom:4px">
-        ${isAuffrisch3?`<div class="avatar" style="background:rgba(255,107,43,.15);color:var(--accent)">🔄</div>`:(s.foto?`<div class="avatar" style="overflow:hidden;flex-shrink:0"><img src="${s.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/></div>`:`<div class="avatar av-${s.farbe}">${initials(s)}</div>`)}
-        <div><div style="font-size:20px;font-weight:600">${isAuffrisch3?auffrischName3:s.vorname+" "+s.nachname}</div>
+        ${isTheorie3?`<div class="avatar" style="background:rgba(0,0,0,0.06);color:var(--tx2)"><i class="ti ti-book" style="font-size:20px"></i></div>`:isAuffrisch3?`<div class="avatar" style="background:rgba(255,107,43,.15);color:var(--accent)">🔄</div>`:(s.foto?`<div class="avatar" style="overflow:hidden;flex-shrink:0"><img src="${s.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/></div>`:`<div class="avatar av-${s.farbe}">${initials(s)}</div>`)}
+        <div><div style="font-size:20px;font-weight:600">${isTheorie3?theorieTitel3:isAuffrisch3?auffrischName3:s.vorname+" "+s.nachname}</div>
         <div style="font-size:15px;color:var(--tx2)">${fd.day}. ${fd.mon} ${fd.year}</div></div>
       </div>
       <div><div class="sec-label">Termin</div>
       <div class="card">
-        ${isAuffrisch3?`<div class="card-row"><span class="card-label"><i class="ti ti-user-check"></i>Name</span><span style="flex:1;text-align:right;font-size:17px">${auffrischName3}</span></div>`:`<div class="card-row"><span class="card-label"><i class="ti ti-user"></i>Schüler</span>
+        ${isTheorie3?`<div class="card-row"><span class="card-label"><i class="ti ti-book"></i>Titel</span><input type="text" id="ekt-theorie-titel" value="${theorieTitel3}" style="flex:1;text-align:right;border:none;background:transparent;font-size:17px;color:var(--tx);outline:none"/></div>`:isAuffrisch3?`<div class="card-row"><span class="card-label"><i class="ti ti-user-check"></i>Name</span><span style="flex:1;text-align:right;font-size:17px">${auffrischName3}</span></div>`:`<div class="card-row"><span class="card-label"><i class="ti ti-user"></i>Schüler</span>
           <select id="ekt-sid">
             ${schueler.map(sc=>"<option value=\""+sc.id+"\" "+(sc.id===t.sid?"selected":"")+">"+sc.vorname+" "+sc.nachname+(sc.spitz?" «"+sc.spitz+"»":"")+"</option>").join("")}
           </select></div>`}
@@ -2256,7 +2156,7 @@ function renderEditKalTermin(date,idx){
         </div>
         <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Startzeit</span><input type="time" step="300" id="ekt-uhr" value="${t.uhr}" oninput="ektUpdateEnd()"/></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-clock-check"></i>Endzeit</span><span id="ekt-endzeit" style="flex:1;text-align:right;font-size:17px;font-weight:500;color:var(--accent)"></span></div>
-        <div class="card-row" style="align-items:flex-start;flex-direction:column;gap:8px;padding:12px 14px">
+        <div class="card-row" style="align-items:flex-start;flex-direction:column;gap:8px;padding:12px 14px;${isTheorie3?'display:none':''}">
           <span style="font-size:15px;color:var(--tx2);font-weight:500">Art der Fahrt</span>
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;width:100%">
             <button class="pill ${!t.typ||t.typ==='normal'?'active':''}" id="ektyp-normal" onclick="setEKTyp('normal')">Fahrstunde</button>
@@ -2279,6 +2179,7 @@ function renderEditKalTermin(date,idx){
         </div>
       </div></div>
       <button class="btn-full" onclick="saveEktTermin('${date}',${idx})"><i class="ti ti-circle-check"></i> Speichern</button>
+      ${(!isAuffrisch3&&!isTheorie3&&s)?`<button class="btn-full" style="margin-top:6px" onclick="renderDashSchueler('${t.sid}')"><i class="ti ti-user"></i> Zum Schüler</button>`:""}
       <button class="btn-full danger" style="margin-top:6px" onclick="deleteEktTermin('${date}',${idx})"><i class="ti ti-trash"></i> Termin löschen</button>
     </div>
   </div>`;
@@ -2325,7 +2226,12 @@ function saveEktTermin(date,idx){
   const ekJahr=document.getElementById('ekt-dat-jahr').value;
   const newDate=(ekTag&&ekMon&&ekJahr)?ekJahr+'-'+String(ekMon).padStart(2,'0')+'-'+String(ekTag).padStart(2,'0'):date;
   const entry=termine[date][idx];
-  if(!isAuffrisch3){const ektSid=document.getElementById('ekt-sid');if(ektSid)entry.sid=ektSid.value;}
+  const isTheorieE=AppState.et.isTheorie||entry.typ==="theorie"||(entry.sid&&entry.sid.startsWith("__theorie__"));
+  if(isTheorieE){
+    const tt=document.getElementById('ekt-theorie-titel');
+    const titel=tt&&tt.value.trim()?tt.value.trim():"Theoriestunde";
+    entry.sid="__theorie__:"+titel;entry.typ="theorie";
+  } else if(!isAuffrisch3){const ektSid=document.getElementById('ekt-sid');if(ektSid)entry.sid=ektSid.value;}
   entry.uhr=document.getElementById("ekt-uhr").value;
   entry.min=AppState.et.min||80;
   if(AppState.et.typ)entry.typ=AppState.et.typ;
@@ -2441,15 +2347,15 @@ function _doDelDashTermin(date,idx){
 }
 function showTagTerminActions(date,idx){
   const t=(termine[date]||[]);const e=t[idx];if(!e)return;
+  const isTheorie=e.typ==="theorie"||(e.sid&&e.sid.startsWith("__theorie__"));
   const isAuffrisch=e.sid&&e.sid.startsWith("__auffrisch__");
-  const s=isAuffrisch?null:getS(e.sid);
-  if(!isAuffrisch&&s){
+  const s=(isAuffrisch||isTheorie)?null:getS(e.sid);
+  if(!isAuffrisch&&!isTheorie&&s){
     renderTerminDetail(date,idx);
     return;
   }
-  // Auffrischung: simple modal
-  const name="Auffrischung: "+e.sid.replace("__auffrisch__:","");
   const fd=fmtDate(date);
+  const name=isTheorie?((e.sid&&e.sid.indexOf(":")>=0)?e.sid.split(":").slice(1).join(":"):"Theorie"):("Auffrischung: "+e.sid.replace("__auffrisch__:",""));
   showModal({title:name,msg:`${fd.day}. ${fd.mon} ${fd.year} · ${e.uhr} Uhr · ${e.min} min`,btns:[
     {label:"Bearbeiten",primary:true,action:`closeModal();renderEditKalTermin('${date}',${idx})`},
     {label:"Löschen",danger:true,action:`closeModal();_confirmDelTagTermin('${date}',${idx})`},
@@ -3203,7 +3109,7 @@ function toggleFahrstundenDash(sid, type) {
     right.appendChild(timeSpan); right.appendChild(icon);
     row.appendChild(left); row.appendChild(right);
     row.addEventListener("click", (function(datum, idx){
-      return function(){ AppState.et.backSid=sid; renderEditDashTermin(datum,idx); };
+      return function(){ AppState.et.backSid=sid; renderEditKalTermin(datum,idx); };
     })(e.datum, realIdx));
     wrap.appendChild(row);
   });
