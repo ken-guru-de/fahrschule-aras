@@ -291,6 +291,11 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:-apple-sy
   .stat-bar-bg { height: 10px; }
   .stat-bar-fill { height: 10px; }
 }
+
+.comm-bar{display:flex;gap:8px;margin-top:10px}
+.comm-btn{flex:1;padding:10px;border-radius:12px;border:1px solid var(--br2);background:var(--bg2);font-size:16px;font-weight:600}
+.comm-card{background:var(--bg2);border-radius:16px;padding:12px;margin-top:10px}
+
 </style>
 </head>
 <body>
@@ -370,6 +375,33 @@ function showSyncStatus(msg){
   if(!el)return;
   el.textContent=msg;el.style.opacity="1";
   setTimeout(()=>{el.style.opacity="0";},2000);
+}
+
+
+function normalizePhone(phone){
+  if(!phone) return "";
+  let p=String(phone).trim().replace(/[^\d+]/g,'');
+  if(p.startsWith('0049')) p='+49'+p.slice(4);
+  else if(p.startsWith('0')) p='+49'+p.slice(1);
+  return p;
+}
+function openWhatsAppPhone(phone,msg=''){
+  const tel=normalizePhone(phone).replace('+','');
+  let url='https://wa.me/'+tel;
+  if(msg) url+='?text='+encodeURIComponent(msg);
+  window.open(url,'_blank');
+}
+function callPhone(phone){ location.href='tel:'+normalizePhone(phone); }
+function copyPhone(phone){ navigator.clipboard && navigator.clipboard.writeText(normalizePhone(phone)); }
+
+
+function renderCommPanel(phone){
+ const p=phone||'';
+ return `<div class="comm-card"><div class="comm-bar">
+ <button class="comm-btn" onclick="openWhatsAppPhone('${p}')">💬 WhatsApp</button>
+ <button class="comm-btn" onclick="callPhone('${p}')">📞 Anrufen</button>
+ <button class="comm-btn" onclick="copyPhone('${p}')">📋 Kopieren</button>
+ </div></div>`;
 }
 
 function saveAll(){
@@ -495,6 +527,20 @@ function renderDashboard(dashDateOffset=0){
     </div>`;
   if(anzeigeTermine.length){
     anzeigeTermine.forEach((t,ti)=>{
+      if(t.typ==="theorie"||(t.sid&&t.sid.startsWith("__theorie__"))){
+        const titel=(t.sid&&t.sid.indexOf(":")>=0)?t.sid.split(":").slice(1).join(":"):"Theorie";
+        const endZeitT=(()=>{const [h,m]=t.uhr.split(":").map(Number);const tot=h*60+m+t.min;return String(Math.floor(tot/60)%24).padStart(2,"0")+":"+String(tot%60).padStart(2,"0");})();
+        const realIdxT=(termine[anzeigeDatum]||[]).findIndex(x=>x===t);
+        html+=`<div class="list-item" style="margin-bottom:6px;user-select:none"
+          oncontextmenu="event.preventDefault();showTerminActions('${anzeigeDatum}',${realIdxT},'')"
+          ontouchstart="_lpStart(event,'${anzeigeDatum}',${realIdxT},'')"
+          ontouchend="_lpEnd()" ontouchmove="_lpEnd()">
+          <div class="avatar" style="background:rgba(0,0,0,0.06);color:var(--tx2);flex-shrink:0"><i class="ti ti-book" style="font-size:20px"></i></div>
+          <div class="item-info"><div class="item-name">${titel}</div><div class="item-sub">${t.uhr}–${endZeitT}Uhr · ${t.min} min${t.notiz?" · "+t.notiz:""}</div></div>
+          <span class="badge" style="background:rgba(0,0,0,0.06);color:var(--tx2)">Theorie</span>
+        </div>`;
+        return;
+      }
       const s=getS(t.sid);if(!s)return;
       const nick=s.spitz?` «${s.spitz}»`:"";
       const endZeit=(()=>{const [h,m]=t.uhr.split(":").map(Number);const tot=h*60+m+t.min;return String(Math.floor(tot/60)%24).padStart(2,"0")+":"+String(tot%60).padStart(2,"0");})();
@@ -1694,6 +1740,7 @@ function renderNeuKalTermin(date){
           <div style="display:flex;gap:6px">
             <button class="pill active" id="kpers-schueler" onclick="setKPers('schueler')" style="font-size:15px;padding:7px 14px">Schüler</button>
             <button class="pill" id="kpers-auffrisch" onclick="setKPers('auffrisch')" style="font-size:15px;padding:7px 14px">Auffrischung</button>
+            <button class="pill" id="kpers-theorie" onclick="setKPers('theorie')" style="font-size:15px;padding:7px 14px">Theorie</button>
           </div>
         </div>
         <div class="card-row" id="k-schueler-row"><span class="card-label"><i class="ti ti-user"></i>Schüler</span>
@@ -1706,6 +1753,9 @@ function renderNeuKalTermin(date){
         </div>
         <div class="card-row" id="k-auffrisch-row" style="display:none"><span class="card-label"><i class="ti ti-user-check"></i>Name</span>
           <input type="text" id="k-auffrisch-name" placeholder="Name eingeben" style="flex:1;text-align:left;border:none;background:transparent;font-size:17px;color:var(--tx);outline:none"/>
+        </div>
+        <div class="card-row" id="k-theorie-row" style="display:none"><span class="card-label"><i class="ti ti-book"></i>Titel</span>
+          <input type="text" id="k-theorie-titel" placeholder="z.B. Theorie Grundstoff" value="Theoriestunde" style="flex:1;text-align:left;border:none;background:transparent;font-size:17px;color:var(--tx);outline:none"/>
         </div>
         <div class="card-row"><span class="card-label"><i class="ti ti-clock"></i>Startzeit</span><input type="time" step="300" id="k-uhr" value="09:00" oninput="kalUpdateEnd()"/></div>
         <div class="card-row"><span class="card-label"><i class="ti ti-clock-check"></i>Endzeit</span><span id="k-endzeit" style="flex:1;text-align:right;font-size:17px;font-weight:500;color:var(--accent)">10:20</span></div>
@@ -1801,16 +1851,34 @@ function setKPers(typ){
   AppState.kal.pers=typ;
   document.getElementById("kpers-schueler").classList.toggle("active",typ==="schueler");
   document.getElementById("kpers-auffrisch").classList.toggle("active",typ==="auffrisch");
+  var thBtn=document.getElementById("kpers-theorie");if(thBtn)thBtn.classList.toggle("active",typ==="theorie");
   document.getElementById("k-schueler-row").style.display=typ==="schueler"?"":"none";
   document.getElementById("k-auffrisch-row").style.display=typ==="auffrisch"?"":"none";
+  var thRow=document.getElementById("k-theorie-row");if(thRow)thRow.style.display=typ==="theorie"?"":"none";
+  var alleBtn=document.getElementById("k-alle-btn");if(alleBtn)alleBtn.parentElement.style.display=typ==="schueler"?"":"none";
+  // Art-der-Fahrt-Block bei Theorie ausblenden (kein Fahrt-Typ nötig)
+  var artBlock=document.getElementById("ktyp-normal");
+  if(artBlock){var artRow=artBlock.closest(".card-row");if(artRow)artRow.style.display=typ==="theorie"?"none":"";}
+  if(typ==="theorie"){AppState.kal.typ="theorie";AppState.kal.min=90;var md=document.getElementById("kal-min-disp");if(md)md.textContent="90 min";kalUpdateEnd();}
 }
 
 function saveKalTermin(date){
   try{
   const uhr=document.getElementById("k-uhr")?document.getElementById("k-uhr").value:"";
   if(!uhr)return;
-  const isAuffrisch=(AppState.kal.pers||"schueler")==="auffrisch";
+  const persMode=AppState.kal.pers||"schueler";
+  const isAuffrisch=persMode==="auffrisch";
+  const isTheorie=persMode==="theorie";
   let sid;
+  if(isTheorie){
+    const tEl=document.getElementById("k-theorie-titel");
+    const titel=tEl&&tEl.value.trim()?tEl.value.trim():"Theoriestunde";
+    if(!termine[date])termine[date]=[];
+    const tnotizEl=document.getElementById('k-notiz');const tnotiz=tnotizEl?tnotizEl.value.trim():'';
+    termine[date].push({sid:"__theorie__:"+titel,uhr,min:AppState.kal.min||90,notiz:tnotiz,typ:"theorie"});
+    termine[date].sort((a,b)=>a.uhr.localeCompare(b.uhr));
+    saveAll();selDate=date;renderTagAnsicht(date);return;
+  }
   if(!isAuffrisch){
     sid=document.getElementById("k-sid")?document.getElementById("k-sid").value:"";
     if(!sid){
@@ -2114,14 +2182,16 @@ function renderTagAnsicht(date){
     const sorted=[...t].sort((a,b)=>a.uhr.localeCompare(b.uhr));
     let totalMin=0;
     sorted.forEach((e,i)=>{
+      const isTheorie2=e.typ==="theorie"||(e.sid&&e.sid.startsWith("__theorie__"));
+      const theorieTitel=isTheorie2?((e.sid&&e.sid.indexOf(":")>=0)?e.sid.split(":").slice(1).join(":"):"Theorie"):"";
       const isAuffrisch2=e.sid&&e.sid.startsWith("__auffrisch__");
       const auffrischName=isAuffrisch2?e.sid.replace("__auffrisch__:",""):"";
-      const s=isAuffrisch2?null:getS(e.sid);if(!s&&!isAuffrisch2)return;
+      const s=(isAuffrisch2||isTheorie2)?null:getS(e.sid);if(!s&&!isAuffrisch2&&!isTheorie2)return;
       const nick=s&&s.spitz?` «${s.spitz}»`:"";
       const endMin=(()=>{const [h,m]=e.uhr.split(":").map(Number);const tot=h*60+m+e.min;return String(Math.floor(tot/60)%24).padStart(2,"0")+":"+String(tot%60).padStart(2,"0");})();
       const isSonder=e.typ==='ueberland'||e.typ==='autobahn'||e.typ==='nacht';
       const isPruef=e.typ==="pruef";
-      const dotCol=isPruef?"#E24B4A":isSonder?"#378ADD":"#639922";
+      const dotCol=isPruef?"#E24B4A":isSonder?"#378ADD":isTheorie2?"#8a8a8e":"#639922";
       totalMin+=e.min;
       const realIdx=t.indexOf(e);
       html+=`<div class="card" style="margin-bottom:8px;cursor:pointer" onclick="showTagTerminActions('${date}',${realIdx})">
@@ -2132,9 +2202,9 @@ function renderTagAnsicht(date){
           </div>
           <div style="width:3px;border-radius:2px;background:${dotCol};align-self:stretch;flex-shrink:0"></div>
           <div style="flex:1">
-            <div style="font-size:17px;font-weight:500">${isAuffrisch2?"🔄 "+auffrischName:s.vorname+nick+" "+s.nachname}</div>
-            <div style="font-size:14px;color:var(--tx2);margin-top:2px">${e.min} min${isAuffrisch2?" · Auffrischung":s?" · Kl. "+s.klasse:""}${e.notiz?" · "+e.notiz:""}${isPruef&&s&&s.prufort?" · "+s.prufort:""}${(!isAuffrisch2&&s&&s.klasse==='B197')?` · <span style="color:var(--accent);font-weight:600">Schalt ${schaltCount(s)}/${SCHALT_SOLL}</span>`:""}</div>
-            ${!isAuffrisch2?`<div style="margin-top:5px;padding-bottom:2px"><span class="badge badge-${s.klasse}">${s.klasse}</span></div>`:""}
+            <div style="font-size:17px;font-weight:500">${isTheorie2?"📖 "+theorieTitel:isAuffrisch2?"🔄 "+auffrischName:s.vorname+nick+" "+s.nachname}</div>
+            <div style="font-size:14px;color:var(--tx2);margin-top:2px">${e.min} min${isTheorie2?" · Theorie":isAuffrisch2?" · Auffrischung":s?" · Kl. "+s.klasse:""}${e.notiz?" · "+e.notiz:""}${isPruef&&s&&s.prufort?" · "+s.prufort:""}${(!isAuffrisch2&&s&&s.klasse==='B197')?` · <span style="color:var(--accent);font-weight:600">Schalt ${schaltCount(s)}/${SCHALT_SOLL}</span>`:""}</div>
+            ${(!isAuffrisch2&&!isTheorie2)?`<div style="margin-top:5px;padding-bottom:2px"><span class="badge badge-${s.klasse}">${s.klasse}</span></div>`:""}
           </div>
           <i class="ti ti-chevron-right" style="color:var(--tx3);font-size:18px"></i>
         </div>
@@ -2333,18 +2403,20 @@ function _lpEnd(){
 
 function showTerminActions(date,idx,sid){
   const t=(termine[date]||[])[idx];if(!t)return;
+  const isTheorieT=t.typ==="theorie"||(t.sid&&t.sid.startsWith("__theorie__"));
   const s=getS(sid);
-  const name=s?s.vorname+" "+s.nachname:"Termin";
+  const name=isTheorieT?((t.sid&&t.sid.indexOf(":")>=0)?t.sid.split(":").slice(1).join(":"):"Theorie"):(s?s.vorname+" "+s.nachname:"Termin");
   const fd=fmtDate(date);
+  const btns=[
+    {label:"\u270e Bearbeiten",primary:true,action:`closeModal();renderEditKalTermin('${date}',${idx})`},
+  ];
+  if(!isTheorieT&&sid){btns.push({label:"\u2192 Zum Sch\u00fcler",action:`closeModal();renderDashSchueler('${sid}')`});}
+  btns.push({label:"Termin l\u00f6schen",danger:true,action:`closeModal();_confirmDelDashTermin('${date}',${idx})`});
+  btns.push({label:"Abbrechen",action:"closeModal()"});
   showModal({
     title:`${name}`,
-    msg:`${fd.day}. ${fd.mon} ${fd.year} · ${t.uhr} Uhr · ${t.min} min`,
-    btns:[
-      {label:"✎ Bearbeiten",primary:true,action:`closeModal();renderEditKalTermin('${date}',${idx})`},
-      {label:"→ Zum Schüler",action:`closeModal();renderDashSchueler('${sid}')`},
-      {label:"Termin löschen",danger:true,action:`closeModal();_confirmDelDashTermin('${date}',${idx})`},
-      {label:"Abbrechen",action:"closeModal()"},
-    ]
+    msg:`${fd.day}. ${fd.mon} ${fd.year} \u00b7 ${t.uhr} Uhr \u00b7 ${t.min} min`,
+    btns:btns
   });
 }
 function _confirmDelDashTermin(date,idx){
