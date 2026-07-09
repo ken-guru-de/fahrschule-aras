@@ -543,18 +543,19 @@ function renderDashboard(dashDateOffset=0){
       }
       const s=getS(t.sid);if(!s)return;
       const nick=s.spitz?` «${s.spitz}»`:"";
+      const isPruefT=t.typ==="pruef";
       const endZeit=(()=>{const [h,m]=t.uhr.split(":").map(Number);const tot=h*60+m+t.min;return String(Math.floor(tot/60)%24).padStart(2,"0")+":"+String(tot%60).padStart(2,"0");})();
       const tIdx=Object.values(termine[anzeigeDatum]||[]).indexOf(t);
       const realIdx=(termine[anzeigeDatum]||[]).findIndex((x,i)=>x===t||( x.sid===t.sid&&x.uhr===t.uhr&&x.min===t.min));
-      html+=`<div class="list-item" style="margin-bottom:6px;user-select:none" 
+      html+=`<div class="list-item" style="margin-bottom:6px;user-select:none${isPruefT?";border-left:4px solid #E24B4A;background:rgba(226,75,74,0.12)":""}" 
         onclick="renderDashSchueler('${s.id}')"
         oncontextmenu="event.preventDefault();showTerminActions('${anzeigeDatum}',${realIdx},'${s.id}')"
         ontouchstart="_lpStart(event,'${anzeigeDatum}',${realIdx},'${s.id}')"
         ontouchend="_lpEnd()"
         ontouchmove="_lpEnd()">
         ${s.foto?`<div class="avatar" style="overflow:hidden;flex-shrink:0"><img src="${s.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/></div>`:`<div class="avatar av-${s.farbe}">${initials(s)}</div>`}
-        <div class="item-info"><div class="item-name">${s.vorname}${nick} ${s.nachname}</div><div class="item-sub">${t.uhr}–${endZeit}Uhr · ${t.min} min${t.notiz?" · "+t.notiz:""}</div></div>
-        <span class="badge badge-${s.klasse}">${s.klasse}</span>
+        <div class="item-info"><div class="item-name">${s.vorname}${nick} ${s.nachname}</div><div class="item-sub">${t.uhr}–${endZeit}Uhr · ${t.min} min${isPruefT&&s.prufort?" · "+s.prufort:""}${t.notiz?" · "+t.notiz:""}</div></div>
+        ${isPruefT?`<span class="badge" style="background:#E24B4A;color:white">Prüfung</span>`:`<span class="badge badge-${s.klasse}">${s.klasse}</span>`}
         <i class="ti ti-chevron-right" style="color:var(--tx3);font-size:18px"></i>
       </div>`;
     });
