@@ -88,7 +88,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:-apple-sy
 .av-green{background:#C0DD97;color:#27500A;}
 .av-amber{background:#FAC775;color:#633806;}
 .item-name{font-size:18px;font-weight:600;}
-.item-sub{font-size:15px;color:var(--tx2);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.item-sub{font-size:15px;color:var(--tx2);margin-top:3px;}
 .item-info{flex:1;min-width:0;}
 .badge{font-size:14px;font-weight:700;padding:4px 10px;border-radius:20px;flex-shrink:0;letter-spacing:.02em;}
 .badge-B{background:var(--accent-dark);color:white;}
@@ -555,7 +555,7 @@ function renderDashboard(dashDateOffset=0){
       const _elId=`swipe-dt-${anzeigeDatum}-${realIdx}`;
       html+=`<div class="swipe-wrap">
         <div class="swipe-del-bg" onclick="_confirmDelDashTermin('${anzeigeDatum}',${realIdx})"><i class="ti ti-trash"></i></div>
-        <div class="swipe-item list-item" id="${_elId}" style="user-select:none${isPruefT?";border-left:4px solid #E24B4A;background:rgba(226,75,74,0.12)":""}"
+        <div class="swipe-item list-item" id="${_elId}" style="user-select:none${isPruefT?";border-left:4px solid #E24B4A;background:linear-gradient(rgba(226,75,74,0.14),rgba(226,75,74,0.14)),var(--bg)":""}"
           onclick="handleDashTerminTap('${_elId}','${s.id}')"
           oncontextmenu="event.preventDefault();showTerminActions('${anzeigeDatum}',${realIdx},'${s.id}')"
           ontouchstart="_lpStart(event,'${anzeigeDatum}',${realIdx},'${s.id}')"
@@ -751,6 +751,11 @@ function handleDashTerminTap(elId,sid){
   const el=document.getElementById(elId);
   if(el&&el.classList.contains("swiped")){el.style.transition="transform .2s ease";el.style.transform="translateX(0)";el.classList.remove("swiped");return;}
   if(sid)renderDashSchueler(sid);
+}
+function handleTagTerminTap(elId,date,idx){
+  const el=document.getElementById(elId);
+  if(el&&el.classList.contains("swiped")){el.style.transition="transform .2s ease";el.style.transform="translateX(0)";el.classList.remove("swiped");return;}
+  showTagTerminActions(date,idx);
 }
 function confirmDelete(sid){
   const s=getS(sid);if(!s)return;
@@ -2107,19 +2112,26 @@ function renderTagAnsicht(date){
       const dotCol=isPruef?"#E24B4A":isSonder?"#378ADD":isTheorie2?"#8a8a8e":"#639922";
       totalMin+=e.min;
       const realIdx=t.indexOf(e);
-      html+=`<div class="card" style="margin-bottom:8px;cursor:pointer" onclick="showTagTerminActions('${date}',${realIdx})">
-        <div class="card-row" style="gap:14px;padding:14px 16px 14px;align-items:flex-start">
-          <div style="display:flex;flex-direction:column;align-items:center;gap:2px;min-width:44px">
-            <span style="font-size:16px;font-weight:600;color:var(--tx)">${e.uhr}</span>
-            <span style="font-size:13px;color:var(--tx3)">–${endMin}</span>
+      const _elIdTag=`swipe-tag-${date}-${realIdx}`;
+      html+=`<div class="swipe-wrap">
+        <div class="swipe-del-bg" onclick="_confirmDelTagTermin('${date}',${realIdx})"><i class="ti ti-trash"></i></div>
+        <div class="swipe-item card" id="${_elIdTag}" style="cursor:pointer"
+          onclick="handleTagTerminTap('${_elIdTag}','${date}',${realIdx})"
+          ontouchstart="_lpStart(event,'${date}',${realIdx},'')"
+          ontouchend="_lpEnd()" ontouchmove="_lpEnd()">
+          <div class="card-row" style="gap:14px;padding:14px 16px 14px;align-items:flex-start">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:2px;min-width:44px">
+              <span style="font-size:16px;font-weight:600;color:var(--tx)">${e.uhr}</span>
+              <span style="font-size:13px;color:var(--tx3)">–${endMin}</span>
+            </div>
+            <div style="width:3px;border-radius:2px;background:${dotCol};align-self:stretch;flex-shrink:0"></div>
+            <div style="flex:1">
+              <div style="font-size:17px;font-weight:500">${isTheorie2?"📖 "+theorieTitel:isAuffrisch2?"🔄 "+auffrischName:s.vorname+nick+" "+s.nachname}</div>
+              <div style="font-size:14px;color:var(--tx2);margin-top:2px">${e.min} min${isTheorie2?" · Theorie":isAuffrisch2?" · Auffrischung":s?" · Kl. "+s.klasse:""}${e.notiz?" · "+e.notiz:""}${isPruef&&s&&s.prufort?" · "+s.prufort:""}${(!isAuffrisch2&&s&&s.klasse==='B197')?` · <span style="color:var(--accent);font-weight:600">Schalt ${schaltCount(s)}/${SCHALT_SOLL}</span>`:""}</div>
+              ${(!isAuffrisch2&&!isTheorie2)?`<div style="margin-top:5px;padding-bottom:2px"><span class="badge badge-${s.klasse}">${s.klasse}</span></div>`:""}
+            </div>
+            <i class="ti ti-chevron-right" style="color:var(--tx3);font-size:18px"></i>
           </div>
-          <div style="width:3px;border-radius:2px;background:${dotCol};align-self:stretch;flex-shrink:0"></div>
-          <div style="flex:1">
-            <div style="font-size:17px;font-weight:500">${isTheorie2?"📖 "+theorieTitel:isAuffrisch2?"🔄 "+auffrischName:s.vorname+nick+" "+s.nachname}</div>
-            <div style="font-size:14px;color:var(--tx2);margin-top:2px">${e.min} min${isTheorie2?" · Theorie":isAuffrisch2?" · Auffrischung":s?" · Kl. "+s.klasse:""}${e.notiz?" · "+e.notiz:""}${isPruef&&s&&s.prufort?" · "+s.prufort:""}${(!isAuffrisch2&&s&&s.klasse==='B197')?` · <span style="color:var(--accent);font-weight:600">Schalt ${schaltCount(s)}/${SCHALT_SOLL}</span>`:""}</div>
-            ${(!isAuffrisch2&&!isTheorie2)?`<div style="margin-top:5px;padding-bottom:2px"><span class="badge badge-${s.klasse}">${s.klasse}</span></div>`:""}
-          </div>
-          <i class="ti ti-chevron-right" style="color:var(--tx3);font-size:18px"></i>
         </div>
       </div>`;
     });
@@ -2133,7 +2145,7 @@ function renderTagAnsicht(date){
     </div>
   </div>`;
   renderApp(html);
-  setTimeout(initPTR,50);
+  setTimeout(()=>{initPTR();initSwipe();},50);
 }
 
 function renderEditKalTermin(date,idx){
