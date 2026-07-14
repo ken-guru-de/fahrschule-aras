@@ -88,7 +88,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:-apple-sy
 .av-green{background:#C0DD97;color:#27500A;}
 .av-amber{background:#FAC775;color:#633806;}
 .item-name{font-size:18px;font-weight:600;}
-.item-sub{font-size:15px;color:var(--tx2);margin-top:3px;}
+.item-sub{font-size:15px;color:var(--tx2);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .item-info{flex:1;min-width:0;}
 .badge{font-size:14px;font-weight:700;padding:4px 10px;border-radius:20px;flex-shrink:0;letter-spacing:.02em;}
 .badge-B{background:var(--accent-dark);color:white;}
@@ -531,13 +531,18 @@ function renderDashboard(dashDateOffset=0){
         const titel=(t.sid&&t.sid.indexOf(":")>=0)?t.sid.split(":").slice(1).join(":"):"Theorie";
         const endZeitT=(()=>{const [h,m]=t.uhr.split(":").map(Number);const tot=h*60+m+t.min;return String(Math.floor(tot/60)%24).padStart(2,"0")+":"+String(tot%60).padStart(2,"0");})();
         const realIdxT=(termine[anzeigeDatum]||[]).findIndex(x=>x===t);
-        html+=`<div class="list-item" style="margin-bottom:6px;user-select:none"
-          oncontextmenu="event.preventDefault();showTerminActions('${anzeigeDatum}',${realIdxT},'')"
-          ontouchstart="_lpStart(event,'${anzeigeDatum}',${realIdxT},'')"
-          ontouchend="_lpEnd()" ontouchmove="_lpEnd()">
-          <div class="avatar" style="background:rgba(0,0,0,0.06);color:var(--tx2);flex-shrink:0"><i class="ti ti-book" style="font-size:20px"></i></div>
-          <div class="item-info"><div class="item-name">${titel}</div><div class="item-sub">${t.uhr}–${endZeitT}Uhr · ${t.min} min${t.notiz?" · "+t.notiz:""}</div></div>
-          <span class="badge" style="background:rgba(0,0,0,0.06);color:var(--tx2)">Theorie</span>
+        const _elIdT=`swipe-dt-${anzeigeDatum}-${realIdxT}`;
+        html+=`<div class="swipe-wrap">
+          <div class="swipe-del-bg" onclick="_confirmDelDashTermin('${anzeigeDatum}',${realIdxT})"><i class="ti ti-trash"></i></div>
+          <div class="swipe-item list-item" id="${_elIdT}" style="user-select:none"
+            onclick="handleDashTerminTap('${_elIdT}',null)"
+            oncontextmenu="event.preventDefault();showTerminActions('${anzeigeDatum}',${realIdxT},'')"
+            ontouchstart="_lpStart(event,'${anzeigeDatum}',${realIdxT},'')"
+            ontouchend="_lpEnd()" ontouchmove="_lpEnd()">
+            <div class="avatar" style="background:rgba(0,0,0,0.06);color:var(--tx2);flex-shrink:0"><i class="ti ti-book" style="font-size:20px"></i></div>
+            <div class="item-info"><div class="item-name">${titel}</div><div class="item-sub">${t.uhr}–${endZeitT}Uhr · ${t.min} min${t.notiz?" · "+t.notiz:""}</div></div>
+            <span class="badge" style="background:rgba(0,0,0,0.06);color:var(--tx2)">Theorie</span>
+          </div>
         </div>`;
         return;
       }
@@ -547,16 +552,20 @@ function renderDashboard(dashDateOffset=0){
       const endZeit=(()=>{const [h,m]=t.uhr.split(":").map(Number);const tot=h*60+m+t.min;return String(Math.floor(tot/60)%24).padStart(2,"0")+":"+String(tot%60).padStart(2,"0");})();
       const tIdx=Object.values(termine[anzeigeDatum]||[]).indexOf(t);
       const realIdx=(termine[anzeigeDatum]||[]).findIndex((x,i)=>x===t||( x.sid===t.sid&&x.uhr===t.uhr&&x.min===t.min));
-      html+=`<div class="list-item" style="margin-bottom:6px;user-select:none${isPruefT?";border-left:4px solid #E24B4A;background:rgba(226,75,74,0.12)":""}" 
-        onclick="renderDashSchueler('${s.id}')"
-        oncontextmenu="event.preventDefault();showTerminActions('${anzeigeDatum}',${realIdx},'${s.id}')"
-        ontouchstart="_lpStart(event,'${anzeigeDatum}',${realIdx},'${s.id}')"
-        ontouchend="_lpEnd()"
-        ontouchmove="_lpEnd()">
-        ${s.foto?`<div class="avatar" style="overflow:hidden;flex-shrink:0"><img src="${s.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/></div>`:`<div class="avatar av-${s.farbe}">${initials(s)}</div>`}
-        <div class="item-info"><div class="item-name">${s.vorname}${nick} ${s.nachname}</div><div class="item-sub">${t.uhr}–${endZeit}Uhr · ${t.min} min${isPruefT&&s.prufort?" · "+s.prufort:""}${t.notiz?" · "+t.notiz:""}</div></div>
-        ${isPruefT?`<span class="badge" style="background:#E24B4A;color:white">Prüfung</span>`:`<span class="badge badge-${s.klasse}">${s.klasse}</span>`}
-        <i class="ti ti-chevron-right" style="color:var(--tx3);font-size:18px"></i>
+      const _elId=`swipe-dt-${anzeigeDatum}-${realIdx}`;
+      html+=`<div class="swipe-wrap">
+        <div class="swipe-del-bg" onclick="_confirmDelDashTermin('${anzeigeDatum}',${realIdx})"><i class="ti ti-trash"></i></div>
+        <div class="swipe-item list-item" id="${_elId}" style="user-select:none${isPruefT?";border-left:4px solid #E24B4A;background:rgba(226,75,74,0.12)":""}"
+          onclick="handleDashTerminTap('${_elId}','${s.id}')"
+          oncontextmenu="event.preventDefault();showTerminActions('${anzeigeDatum}',${realIdx},'${s.id}')"
+          ontouchstart="_lpStart(event,'${anzeigeDatum}',${realIdx},'${s.id}')"
+          ontouchend="_lpEnd()"
+          ontouchmove="_lpEnd()">
+          ${s.foto?`<div class="avatar" style="overflow:hidden;flex-shrink:0"><img src="${s.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/></div>`:`<div class="avatar av-${s.farbe}">${initials(s)}</div>`}
+          <div class="item-info"><div class="item-name">${s.vorname}${nick} ${s.nachname}</div><div class="item-sub">${t.uhr}–${endZeit}Uhr · ${t.min} min${isPruefT&&s.prufort?" · "+s.prufort:""}${t.notiz?" · "+t.notiz:""}</div></div>
+          ${isPruefT?`<span class="badge" style="background:#E24B4A;color:white">Prüfung</span>`:`<span class="badge badge-${s.klasse}">${s.klasse}</span>`}
+          <i class="ti ti-chevron-right" style="color:var(--tx3);font-size:18px"></i>
+        </div>
       </div>`;
     });
   }else{
@@ -589,6 +598,7 @@ function renderDashboard(dashDateOffset=0){
   renderApp(html);
   setTimeout(()=>{
     initPTR();
+    initSwipe();
     const lbl=document.getElementById("ddb-lbl");
     const min=document.getElementById("ddb-min");
     const isPast=anzeigeDatum<td;
@@ -736,6 +746,11 @@ function handleTap(sid){
   const el=document.getElementById("swipe-"+sid);
   if(el&&el.classList.contains("swiped")){el.style.transition="transform .2s ease";el.style.transform="translateX(0)";el.classList.remove("swiped");return;}
   renderDashSchueler(sid);
+}
+function handleDashTerminTap(elId,sid){
+  const el=document.getElementById(elId);
+  if(el&&el.classList.contains("swiped")){el.style.transition="transform .2s ease";el.style.transform="translateX(0)";el.classList.remove("swiped");return;}
+  if(sid)renderDashSchueler(sid);
 }
 function confirmDelete(sid){
   const s=getS(sid);if(!s)return;
@@ -2299,7 +2314,7 @@ function _lpStart(e,date,idx,sid){
     _lpEnd();
     el.classList.remove("lp-active");
     if(navigator.vibrate)navigator.vibrate(40);
-    showTerminActions(date,idx,sid);
+    renderEditKalTermin(date,idx);
   },500);
   el.classList.add("lp-active");
 }
