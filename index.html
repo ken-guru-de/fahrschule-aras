@@ -421,6 +421,7 @@ function saveAll(){
 
 let schueler=load("fs_schueler",[]);;
 let termine=load("fs_termine",{});
+let termineTrash=load("fs_trash",[]);
 
 function toKey(y,m,d){return y+"-"+String(m).padStart(2,"0")+"-"+String(d).padStart(2,"0");}
 function todayStr(){const t=new Date();return toKey(t.getFullYear(),t.getMonth()+1,t.getDate());}
@@ -2266,6 +2267,7 @@ function deleteEktTermin(date,idx){
 function _doDeleteEktTermin(date,idx){
   closeModal();
   if(!termine[date])return;
+  _pushTerminTrash(date,termine[date][idx]);
   termine[date].splice(idx,1);
   if(!termine[date].length)delete termine[date];
   saveAll();renderTagAnsicht(date);
@@ -2307,6 +2309,57 @@ function showTerminActions(date,idx,sid){
     btns:btns
   });
 }
+function _pushTerminTrash(date,t){
+  if(!t)return;
+  termineTrash.unshift({date:date,termin:JSON.parse(JSON.stringify(t)),deletedAt:Date.now()});
+  if(termineTrash.length>30)termineTrash.length=30;
+  save("fs_trash",termineTrash);
+}
+function _restoreTerminTrash(i){
+  const entry=termineTrash[i];if(!entry)return;
+  if(!termine[entry.date])termine[entry.date]=[];
+  termine[entry.date].push(entry.termin);
+  termineTrash.splice(i,1);
+  save("fs_trash",termineTrash);
+  saveAll();
+  const ov=document.getElementById("trash-overlay");if(ov)ov.remove();
+  renderTagAnsicht(entry.date);
+}
+function _permaDeleteTrashEntry(i){
+  termineTrash.splice(i,1);
+  save("fs_trash",termineTrash);
+  renderTerminTrash();
+}
+function renderTerminTrash(){
+  const existing=document.getElementById("trash-overlay");
+  if(existing){existing.remove();}
+  const overlay=document.createElement("div");
+  overlay.id="trash-overlay";
+  overlay.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:1000;display:flex;align-items:flex-end;justify-content:center;padding-bottom:env(safe-area-inset-bottom)";
+  overlay.addEventListener("click",function(e){if(e.target===overlay)overlay.remove();});
+  const sheet=document.createElement("div");
+  sheet.style.cssText="background:var(--bg2);border-radius:20px 20px 0 0;padding:20px 20px 28px;width:100%;max-width:520px;max-height:75vh;overflow-y:auto;box-sizing:border-box;display:flex;flex-direction:column;gap:10px";
+  let inner='<div style="font-size:20px;font-weight:700;margin-bottom:4px;color:var(--tx)">Gel\u00f6schte Termine</div>';
+  if(!termineTrash.length){
+    inner+='<div style="font-size:15px;color:var(--tx3);padding:12px 0">Keine gel\u00f6schten Termine.</div>';
+  }else{
+    termineTrash.forEach((entry,i)=>{
+      const t=entry.termin||{};
+      const isTheorie=t.typ==="theorie"||(t.sid&&t.sid.startsWith("__theorie__"));
+      const isAuffrisch=t.sid&&t.sid.startsWith("__auffrisch__");
+      const s=(isTheorie||isAuffrisch||!t.sid)?null:getS(t.sid);
+      const name=isTheorie?((t.sid&&t.sid.indexOf(":")>=0)?t.sid.split(":").slice(1).join(":"):"Theorie"):isAuffrisch?t.sid.replace("__auffrisch__:",""):(s?s.vorname+" "+s.nachname:"Unbekannt");
+      const fd=fmtDate(entry.date);
+      inner+=`<div class="list-item" style="cursor:default">
+        <div class="item-info"><div class="item-name">${name}</div><div class="item-sub">${fd.day}. ${fd.mon} ${fd.year} \u00b7 ${t.uhr||"?"} Uhr \u00b7 ${t.min||0} min</div></div>
+        <button onclick="_restoreTerminTrash(${i})" style="background:var(--accent);color:white;border:none;border-radius:10px;padding:9px 14px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0"><i class="ti ti-arrow-back-up"></i> Zur\u00fcckholen</button>
+      </div>`;
+    });
+  }
+  sheet.innerHTML=inner;
+  overlay.appendChild(sheet);
+  document.body.appendChild(overlay);
+}
 function _confirmDelDashTermin(date,idx){
   const t=(termine[date]||[])[idx];if(!t)return;
   const s=getS(t.sid);
@@ -2323,6 +2376,7 @@ function _confirmDelDashTermin(date,idx){
 function _doDelDashTermin(date,idx){
   closeModal();
   if(!termine[date])return;
+  _pushTerminTrash(date,termine[date][idx]);
   termine[date].splice(idx,1);
   if(!termine[date].length)delete termine[date];
   saveAll();if(AppState.et.backSid)renderDashSchueler(AppState.et.backSid);else renderDashboard();
@@ -2570,6 +2624,12 @@ function toggleDatenMenu(){
   btnPaste.innerHTML='<i class="ti ti-clipboard-text"></i> Daten einfügen (JSON)';
   btnPaste.onclick=function(){overlay.remove();importDatenPaste();};
   sheet.appendChild(btnPaste);
+  // Papierkorb
+  var btnTrash=document.createElement("button");
+  btnTrash.style.cssText="width:100%;padding:14px;border-radius:14px;border:1.5px solid var(--br2);background:var(--bg);color:var(--tx);font-size:18px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px";
+  btnTrash.innerHTML='<i class="ti ti-trash-off"></i> Gel\u00f6schte Termine'+(termineTrash.length?' <span style="background:var(--accent);color:white;border-radius:10px;padding:1px 9px;font-size:13px">'+termineTrash.length+'</span>':'');
+  btnTrash.onclick=function(){overlay.remove();renderTerminTrash();};
+  sheet.appendChild(btnTrash);
   overlay.appendChild(sheet);
   document.body.appendChild(overlay);
 }
