@@ -425,6 +425,7 @@ let termine=load("fs_termine",{});
 function toKey(y,m,d){return y+"-"+String(m).padStart(2,"0")+"-"+String(d).padStart(2,"0");}
 function todayStr(){const t=new Date();return toKey(t.getFullYear(),t.getMonth()+1,t.getDate());}
 function _adjWeekday(dateStr,dir){const d=new Date(dateStr);do{d.setDate(d.getDate()+dir);}while(d.getDay()===0||d.getDay()===6);return toKey(d.getFullYear(),d.getMonth()+1,d.getDate());}
+function wochentagKurz(dateStr){return["So","Mo","Di","Mi","Do","Fr","Sa"][new Date(dateStr).getDay()];}
 function initials(s){return s.vorname[0]+s.nachname[0];}
 function getS(id){return schueler.find(s=>s.id===id);}
 function fmtDate(d){const p=d.split("-");return{day:parseInt(p[2]),mon:MONATE_K[parseInt(p[1])-1],year:p[0]};}
@@ -497,13 +498,13 @@ function renderDashboard(dashDateOffset=0,fixedDate=null){
   if(fixedDate){
     anzeigeDatum=fixedDate;
     const fd2=fmtDate(anzeigeDatum);
-    anzeigeLabel=anzeigeDatum===td?"Heute":fd2.day+". "+fd2.mon+" "+fd2.year;
+    anzeigeLabel=anzeigeDatum===td?"Heute":wochentagKurz(anzeigeDatum)+", "+fd2.day+". "+fd2.mon+" "+fd2.year;
   } else if(dashDateOffset===0&&!heuteTermine.length){
     const alleKeys=Object.keys(termine).filter(d=>d>td).sort();
     if(alleKeys.length){
       anzeigeDatum=alleKeys[0];
       const fd2=fmtDate(anzeigeDatum);
-      anzeigeLabel="Nächster Termin · "+fd2.day+". "+fd2.mon;
+      anzeigeLabel="Nächster Termin · "+wochentagKurz(anzeigeDatum)+", "+fd2.day+". "+fd2.mon;
     }
   } else if(dashDateOffset!==0){
     // Navigate by working days
@@ -513,7 +514,7 @@ function renderDashboard(dashDateOffset=0,fixedDate=null){
     if(allKeys[targetIdx]){
       anzeigeDatum=allKeys[targetIdx];
       const fd2=fmtDate(anzeigeDatum);
-      anzeigeLabel=anzeigeDatum===td?"Heute":fd2.day+". "+fd2.mon+" "+fd2.year;
+      anzeigeLabel=anzeigeDatum===td?"Heute":wochentagKurz(anzeigeDatum)+", "+fd2.day+". "+fd2.mon+" "+fd2.year;
     }
   }
   const anzeigeTermine=(termine[anzeigeDatum]||[]).sort((a,b)=>a.uhr.localeCompare(b.uhr));
