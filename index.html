@@ -2109,7 +2109,7 @@ function renderTagAnsicht(date){
       const endMin=(()=>{const [h,m]=e.uhr.split(":").map(Number);const tot=h*60+m+e.min;return String(Math.floor(tot/60)%24).padStart(2,"0")+":"+String(tot%60).padStart(2,"0");})();
       const isSonder=e.typ==='ueberland'||e.typ==='autobahn'||e.typ==='nacht';
       const isPruef=e.typ==="pruef";
-      const dotCol=isPruef?"#E24B4A":isSonder?"#378ADD":isTheorie2?"#8a8a8e":"#639922";
+      const dotCol=isPruef?"#E24B4A":e.typ==='autobahn'?"#378ADD":e.typ==='ueberland'?"#E8B923":e.typ==='nacht'?"#1A1A1A":isTheorie2?"#8a8a8e":"#639922";
       totalMin+=e.min;
       const realIdx=t.indexOf(e);
       const _elIdTag=`swipe-tag-${date}-${realIdx}`;
@@ -2124,7 +2124,7 @@ function renderTagAnsicht(date){
               <span style="font-size:16px;font-weight:600;color:var(--tx)">${e.uhr}</span>
               <span style="font-size:13px;color:var(--tx3)">–${endMin}</span>
             </div>
-            <div style="width:3px;border-radius:2px;background:${dotCol};align-self:stretch;flex-shrink:0"></div>
+            <div style="width:3px;border-radius:2px;background:${dotCol};align-self:stretch;flex-shrink:0;box-shadow:0 0 0 1px var(--br2)"></div>
             <div style="flex:1">
               <div style="font-size:17px;font-weight:500">${isTheorie2?"📖 "+theorieTitel:isAuffrisch2?"🔄 "+auffrischName:s.vorname+nick+" "+s.nachname}</div>
               <div style="font-size:14px;color:var(--tx2);margin-top:2px">${e.min} min${isTheorie2?" · Theorie":isAuffrisch2?" · Auffrischung":s?" · Kl. "+s.klasse:""}${e.notiz?" · "+e.notiz:""}${isPruef&&s&&s.prufort?" · "+s.prufort:""}${(!isAuffrisch2&&s&&s.klasse==='B197')?` · <span style="color:var(--accent);font-weight:600">Schalt ${schaltCount(s)}/${SCHALT_SOLL}</span>`:""}</div>
