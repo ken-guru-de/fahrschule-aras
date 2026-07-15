@@ -1831,8 +1831,8 @@ function setKTyp(typ){
   ["normal","pruef","ueberland","autobahn","nacht","auffrisch"].forEach(t=>{const el=document.getElementById("ktyp-"+t);if(el)el.classList.toggle("active",t===typ);});
   if(typ==="normal")AppState.kal.min=80;
   else if(typ==="pruef")AppState.kal.min=100;
-  else if(typ==="ueberland")AppState.kal.min=225;
-  else if(typ==="autobahn")AppState.kal.min=220;
+  else if(typ==="ueberland")AppState.kal.min=270;
+  else if(typ==="autobahn")AppState.kal.min=225;
   else if(typ==="nacht")AppState.kal.min=135;
   else if(typ==="auffrisch")AppState.kal.min=80;
   const el=document.getElementById("kal-min-disp");if(el)el.textContent=AppState.kal.min+" min";
@@ -2107,9 +2107,14 @@ function renderTagAnsicht(date){
       const s=(isAuffrisch2||isTheorie2)?null:getS(e.sid);if(!s&&!isAuffrisch2&&!isTheorie2)return;
       const nick=s&&s.spitz?` «${s.spitz}»`:"";
       const endMin=(()=>{const [h,m]=e.uhr.split(":").map(Number);const tot=h*60+m+e.min;return String(Math.floor(tot/60)%24).padStart(2,"0")+":"+String(tot%60).padStart(2,"0");})();
-      const isSonder=e.typ==='ueberland'||e.typ==='autobahn'||e.typ==='nacht';
+      const notizLc2=(e.notiz||'').toLowerCase();
+      const sonderTyp=e.typ==='ueberland'||e.typ==='autobahn'||e.typ==='nacht'?e.typ
+        :notizLc2.includes('überland')?'ueberland'
+        :notizLc2.includes('autobahn')?'autobahn'
+        :notizLc2.includes('nacht')?'nacht':'';
+      const isSonder=!!sonderTyp;
       const isPruef=e.typ==="pruef";
-      const dotCol=isPruef?"#E24B4A":e.typ==='autobahn'?"#378ADD":e.typ==='ueberland'?"#E8B923":e.typ==='nacht'?"#1A1A1A":isTheorie2?"#8a8a8e":"#639922";
+      const dotCol=isPruef?"#E24B4A":sonderTyp==='autobahn'?"#378ADD":sonderTyp==='ueberland'?"#E8B923":sonderTyp==='nacht'?"#1A1A1A":isTheorie2?"#8a8a8e":"#639922";
       totalMin+=e.min;
       const realIdx=t.indexOf(e);
       const _elIdTag=`swipe-tag-${date}-${realIdx}`;
