@@ -554,23 +554,25 @@ function renderDashboard(dashDateOffset=0){
         :notizLcT.includes('überland')?'ueberland'
         :notizLcT.includes('autobahn')?'autobahn'
         :notizLcT.includes('nacht')?'nacht':'';
-      const sonderRgbT=sonderTypT==='autobahn'?'55,138,221':sonderTypT==='ueberland'?'232,185,35':sonderTypT==='nacht'?'26,26,26':'';
+      const fieldHexT=isPruefT?"#E24B4A":sonderTypT==='autobahn'?"#378ADD":sonderTypT==='ueberland'?"#E8B923":sonderTypT==='nacht'?"#1A1A1A":"";
+      const fieldTxtT=fieldHexT?(sonderTypT==='ueberland'?"#141414":"#ffffff"):"";
+      const fieldTxt2T=fieldHexT?(sonderTypT==='ueberland'?"rgba(20,20,20,.75)":"rgba(255,255,255,.8)"):"";
       const endZeit=(()=>{const [h,m]=t.uhr.split(":").map(Number);const tot=h*60+m+t.min;return String(Math.floor(tot/60)%24).padStart(2,"0")+":"+String(tot%60).padStart(2,"0");})();
       const tIdx=Object.values(termine[anzeigeDatum]||[]).indexOf(t);
       const realIdx=(termine[anzeigeDatum]||[]).findIndex((x,i)=>x===t||( x.sid===t.sid&&x.uhr===t.uhr&&x.min===t.min));
       const _elId=`swipe-dt-${anzeigeDatum}-${realIdx}`;
       html+=`<div class="swipe-wrap">
         <div class="swipe-del-bg" onclick="_confirmDelDashTermin('${anzeigeDatum}',${realIdx})"><i class="ti ti-trash"></i></div>
-        <div class="swipe-item list-item" id="${_elId}" style="user-select:none${isPruefT?";border-left:4px solid #E24B4A;background:linear-gradient(rgba(226,75,74,0.14),rgba(226,75,74,0.14)),var(--bg)":sonderTypT?`;border-left:4px solid rgb(${sonderRgbT});background:linear-gradient(rgba(${sonderRgbT},0.14),rgba(${sonderRgbT},0.14)),var(--bg)`:""}"
+        <div class="swipe-item list-item" id="${_elId}" style="user-select:none${fieldHexT?`;background:${fieldHexT}`:""}"
           onclick="handleDashTerminTap('${_elId}','${s.id}')"
           oncontextmenu="event.preventDefault();showTerminActions('${anzeigeDatum}',${realIdx},'${s.id}')"
           ontouchstart="_lpStart(event,'${anzeigeDatum}',${realIdx},'${s.id}')"
           ontouchend="_lpEnd()"
           ontouchmove="_lpEnd()">
           ${s.foto?`<div class="avatar" style="overflow:hidden;flex-shrink:0"><img src="${s.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/></div>`:`<div class="avatar av-${s.farbe}">${initials(s)}</div>`}
-          <div class="item-info"><div class="item-name">${s.vorname}${nick} ${s.nachname}</div><div class="item-sub">${t.uhr}–${endZeit}Uhr · ${t.min} min${isPruefT&&s.prufort?" · "+s.prufort:""}${t.notiz?" · "+t.notiz:""}</div></div>
+          <div class="item-info"><div class="item-name" style="color:${fieldTxtT||"var(--tx)"}">${s.vorname}${nick} ${s.nachname}</div><div class="item-sub" style="color:${fieldTxt2T||"var(--tx2)"}">${t.uhr}–${endZeit}Uhr · ${t.min} min${isPruefT&&s.prufort?" · "+s.prufort:""}${t.notiz?" · "+t.notiz:""}</div></div>
           ${isPruefT?`<span class="badge" style="background:#E24B4A;color:white">Prüfung</span>`:`<span class="badge badge-${s.klasse}">${s.klasse}</span>`}
-          <i class="ti ti-chevron-right" style="color:var(--tx3);font-size:18px"></i>
+          <i class="ti ti-chevron-right" style="color:${fieldTxt2T||"var(--tx3)"};font-size:18px"></i>
         </div>
       </div>`;
     });
@@ -2120,30 +2122,31 @@ function renderTagAnsicht(date){
         :notizLc2.includes('nacht')?'nacht':'';
       const isSonder=!!sonderTyp;
       const isPruef=e.typ==="pruef";
-      const dotCol=isPruef?"#E24B4A":sonderTyp==='autobahn'?"#378ADD":sonderTyp==='ueberland'?"#E8B923":sonderTyp==='nacht'?"#1A1A1A":isTheorie2?"#8a8a8e":"#639922";
-      const fieldRgb=isPruef?"226,75,74":sonderTyp==='autobahn'?"55,138,221":sonderTyp==='ueberland'?"232,185,35":sonderTyp==='nacht'?"26,26,26":"";
-      const fieldStyle=fieldRgb?`;border-left:4px solid rgb(${fieldRgb});background:linear-gradient(rgba(${fieldRgb},0.14),rgba(${fieldRgb},0.14)),var(--bg2)`:"";
+      const fieldHex=isPruef?"#E24B4A":sonderTyp==='autobahn'?"#378ADD":sonderTyp==='ueberland'?"#E8B923":sonderTyp==='nacht'?"#1A1A1A":"";
+      const fieldTxt=fieldHex?(sonderTyp==='ueberland'?"#141414":"#ffffff"):"";
+      const fieldTxt2=fieldHex?(sonderTyp==='ueberland'?"rgba(20,20,20,.75)":"rgba(255,255,255,.8)"):"";
+      const dotCol=fieldHex||(isTheorie2?"#8a8a8e":"#639922");
       totalMin+=e.min;
       const realIdx=t.indexOf(e);
       const _elIdTag=`swipe-tag-${date}-${realIdx}`;
       html+=`<div class="swipe-wrap">
         <div class="swipe-del-bg" onclick="_confirmDelTagTermin('${date}',${realIdx})"><i class="ti ti-trash"></i></div>
-        <div class="swipe-item card" id="${_elIdTag}" style="cursor:pointer${fieldStyle}"
+        <div class="swipe-item card" id="${_elIdTag}" style="cursor:pointer${fieldHex?`;background:${fieldHex}`:""}"
           onclick="handleTagTerminTap('${_elIdTag}','${date}',${realIdx})"
           ontouchstart="_lpStart(event,'${date}',${realIdx},'')"
           ontouchend="_lpEnd()" ontouchmove="_lpEnd()">
-          <div class="card-row" style="gap:14px;padding:14px 16px 14px;align-items:flex-start">
+          <div class="card-row" style="gap:14px;padding:14px 16px 14px;align-items:flex-start${fieldHex?";border-bottom-color:transparent":""}">
             <div style="display:flex;flex-direction:column;align-items:center;gap:2px;min-width:44px">
-              <span style="font-size:16px;font-weight:600;color:var(--tx)">${e.uhr}</span>
-              <span style="font-size:13px;color:var(--tx3)">–${endMin}</span>
+              <span style="font-size:16px;font-weight:600;color:${fieldTxt||"var(--tx)"}">${e.uhr}</span>
+              <span style="font-size:13px;color:${fieldTxt2||"var(--tx3)"}">–${endMin}</span>
             </div>
-            ${fieldRgb?"":`<div style="width:3px;border-radius:2px;background:${dotCol};align-self:stretch;flex-shrink:0;box-shadow:0 0 0 1px var(--br2)"></div>`}
+            ${fieldHex?"":`<div style="width:3px;border-radius:2px;background:${dotCol};align-self:stretch;flex-shrink:0;box-shadow:0 0 0 1px var(--br2)"></div>`}
             <div style="flex:1">
-              <div style="font-size:17px;font-weight:500">${isTheorie2?"📖 "+theorieTitel:isAuffrisch2?"🔄 "+auffrischName:s.vorname+nick+" "+s.nachname}</div>
-              <div style="font-size:14px;color:var(--tx2);margin-top:2px">${e.min} min${isTheorie2?" · Theorie":isAuffrisch2?" · Auffrischung":s?" · Kl. "+s.klasse:""}${e.notiz?" · "+e.notiz:""}${isPruef&&s&&s.prufort?" · "+s.prufort:""}${(!isAuffrisch2&&s&&s.klasse==='B197')?` · <span style="color:var(--accent);font-weight:600">Schalt ${schaltCount(s)}/${SCHALT_SOLL}</span>`:""}</div>
+              <div style="font-size:17px;font-weight:500;color:${fieldTxt||"var(--tx)"}">${isTheorie2?"📖 "+theorieTitel:isAuffrisch2?"🔄 "+auffrischName:s.vorname+nick+" "+s.nachname}</div>
+              <div style="font-size:14px;color:${fieldTxt2||"var(--tx2)"};margin-top:2px">${e.min} min${isTheorie2?" · Theorie":isAuffrisch2?" · Auffrischung":s?" · Kl. "+s.klasse:""}${e.notiz?" · "+e.notiz:""}${isPruef&&s&&s.prufort?" · "+s.prufort:""}${(!isAuffrisch2&&s&&s.klasse==='B197')?` · <span style="color:${fieldTxt||"var(--accent)"};font-weight:600">Schalt ${schaltCount(s)}/${SCHALT_SOLL}</span>`:""}</div>
               ${(!isAuffrisch2&&!isTheorie2)?`<div style="margin-top:5px;padding-bottom:2px"><span class="badge badge-${s.klasse}">${s.klasse}</span></div>`:""}
             </div>
-            <i class="ti ti-chevron-right" style="color:var(--tx3);font-size:18px"></i>
+            <i class="ti ti-chevron-right" style="color:${fieldTxt2||"var(--tx3)"};font-size:18px"></i>
           </div>
         </div>
       </div>`;
