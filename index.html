@@ -424,6 +424,7 @@ let termine=load("fs_termine",{});
 
 function toKey(y,m,d){return y+"-"+String(m).padStart(2,"0")+"-"+String(d).padStart(2,"0");}
 function todayStr(){const t=new Date();return toKey(t.getFullYear(),t.getMonth()+1,t.getDate());}
+function _adjWeekday(dateStr,dir){const d=new Date(dateStr);do{d.setDate(d.getDate()+dir);}while(d.getDay()===0||d.getDay()===6);return toKey(d.getFullYear(),d.getMonth()+1,d.getDate());}
 function initials(s){return s.vorname[0]+s.nachname[0];}
 function getS(id){return schueler.find(s=>s.id===id);}
 function fmtDate(d){const p=d.split("-");return{day:parseInt(p[2]),mon:MONATE_K[parseInt(p[1])-1],year:p[0]};}
@@ -435,7 +436,7 @@ function todayMinCheck(){}
 function farbStyle(farbe){const f=FARBEN.find(x=>x.key===farbe)||FARBEN[0];return`background:${f.bg};color:${f.tx}`;}
 
 // ── DASHBOARD ─────────────────────────────────────────────────────────────────
-function renderDashboard(dashDateOffset=0){
+function renderDashboard(dashDateOffset=0,fixedDate=null){
   const td=todayStr();
   const heuteTermine=(termine[td]||[]).sort((a,b)=>a.uhr.localeCompare(b.uhr));
   const allePruef=[];
@@ -477,7 +478,7 @@ function renderDashboard(dashDateOffset=0){
     <div class="topbar">
       <div style="display:flex;align-items:center;justify-content:space-between;width:100%;gap:2px">
         <button class="btn-icon" onclick="toggleDatenMenu()" title="Datensicherung"><i class="ti ti-steering-wheel" style="font-size:30px"></i></button>
-        <button class="btn-icon" onclick="renderKalender()"><i class="ti ti-calendar"></i></button>
+        <button class="btn-icon" onclick="${fixedDate?"buildKalender()":"renderKalender()"}"><i class="ti ti-calendar"></i></button>
         <button class="btn-icon" onclick="renderListe()"><i class="ti ti-users"></i></button>
         <button class="btn-icon" onclick="renderNeuSchueler()"><i class="ti ti-user-plus"></i></button>
         <button class="btn-icon" onclick="renderAbrechnung()"><i class="ti ti-receipt"></i></button>
@@ -493,7 +494,11 @@ function renderDashboard(dashDateOffset=0){
   // Find display date based on offset
   let anzeigeDatum=td;
   let anzeigeLabel="Heute";
-  if(dashDateOffset===0&&!heuteTermine.length){
+  if(fixedDate){
+    anzeigeDatum=fixedDate;
+    const fd2=fmtDate(anzeigeDatum);
+    anzeigeLabel=anzeigeDatum===td?"Heute":fd2.day+". "+fd2.mon+" "+fd2.year;
+  } else if(dashDateOffset===0&&!heuteTermine.length){
     const alleKeys=Object.keys(termine).filter(d=>d>td).sort();
     if(alleKeys.length){
       anzeigeDatum=alleKeys[0];
@@ -518,15 +523,18 @@ function renderDashboard(dashDateOffset=0){
   const lblTop=_lblParts.length>1?_lblParts[0]:"";
   const lblMain=_lblParts.length>1?_lblParts[1]:anzeigeLabel;
 
+  const _navPrev=fixedDate?`renderDashboard(0,'${_adjWeekday(anzeigeDatum,-1)}')`:`renderDashboard(${dashDateOffset-1})`;
+  const _navNext=fixedDate?`renderDashboard(0,'${_adjWeekday(anzeigeDatum,1)}')`:`renderDashboard(${dashDateOffset+1})`;
+  const _showHeuteBtn=fixedDate?anzeigeDatum!==td:dashDateOffset!==0;
   html+=`<div>
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-      <button onclick="renderDashboard(${dashDateOffset-1})" style="background:rgba(10,40,120,0.45);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border:1.5px solid rgba(100,150,255,0.5);border-radius:50%;color:#a8c4ff;font-size:25px;width:52px;height:52px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 15px rgba(10,40,120,0.3)"><i class="ti ti-chevron-left"></i></button>
+      <button onclick="${_navPrev}" style="background:rgba(10,40,120,0.45);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border:1.5px solid rgba(100,150,255,0.5);border-radius:50%;color:#a8c4ff;font-size:25px;width:52px;height:52px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 15px rgba(10,40,120,0.3)"><i class="ti ti-chevron-left"></i></button>
       <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;flex:1;min-width:0;padding:0 10px">
         ${lblTop?`<span style="font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--tx3);text-transform:uppercase;text-align:center;line-height:1.1">${lblTop}</span>`:''}
         <span style="font-size:20px;font-weight:800;letter-spacing:.02em;color:var(--tx);text-transform:uppercase;text-align:center;line-height:1.15">${lblMain}</span>
-        ${dashDateOffset!==0?`<button onclick="renderDashboard(0)" style="background:none;border:1px solid var(--accent);border-radius:8px;color:var(--accent);font-size:13px;padding:2px 10px;margin-top:2px;cursor:pointer;font-family:inherit">Heute</button>`:''}
+        ${_showHeuteBtn?`<button onclick="renderDashboard(0)" style="background:none;border:1px solid var(--accent);border-radius:8px;color:var(--accent);font-size:13px;padding:2px 10px;margin-top:2px;cursor:pointer;font-family:inherit">Heute</button>`:''}
       </div>
-      <button onclick="renderDashboard(${dashDateOffset+1})" style="background:rgba(10,40,120,0.45);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border:1.5px solid rgba(100,150,255,0.5);border-radius:50%;color:#a8c4ff;font-size:25px;width:52px;height:52px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 15px rgba(10,40,120,0.3)"><i class="ti ti-chevron-right"></i></button>
+      <button onclick="${_navNext}" style="background:rgba(10,40,120,0.45);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border:1.5px solid rgba(100,150,255,0.5);border-radius:50%;color:#a8c4ff;font-size:25px;width:52px;height:52px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 15px rgba(10,40,120,0.3)"><i class="ti ti-chevron-right"></i></button>
     </div>`;
   if(anzeigeTermine.length){
     anzeigeTermine.forEach((t,ti)=>{
@@ -582,6 +590,7 @@ function renderDashboard(dashDateOffset=0){
   }else{
     html+=`<div style="padding:12px 0;font-size:15px;color:var(--tx3)">Keine Termine geplant</div>`;
   }
+  html+=`<button class="btn-full" style="margin-top:8px" onclick="renderNeuKalTermin('${anzeigeDatum}')"><i class="ti ti-plus"></i> Termin hinzufügen</button>`;
   html+=`</div>`;
   if(allePruef.length){
     const pruefOffen=allePruef.filter(ep=>ep.bestanden===null||ep.bestanden===undefined);
@@ -2087,87 +2096,9 @@ function changeETMin(d){
 }
 
 function renderTagAnsicht(date){
-  const p=date.split("-");
-  const fd=fmtDate(date);
-  const wochentage=["So","Mo","Di","Mi","Do","Fr","Sa"];
-  const dow=wochentage[new Date(date).getDay()];
-  const t=termine[date]||[];
-  const td=todayStr();
-
-  let html=`<div class="screen active" id="scr-tag">
-    <div class="topbar">
-      <button class="btn-icon" onclick="buildKalender()"><i class="ti ti-calendar"></i></button>
-      <button class="btn-icon" onclick="(d=>{do{d.setDate(d.getDate()-1);}while(d.getDay()===0||d.getDay()===6);const nd=toKey(d.getFullYear(),d.getMonth()+1,d.getDate());selDate=nd;renderTagAnsicht(nd);})(new Date('${date}'))" style="font-size:28px;color:#4A90D9"><i class="ti ti-chevron-left"></i></button>
-      <span class="topbar-title">${dow}, ${fd.day}. ${fd.mon} <span style="font-size:15px;opacity:0.7">${fd.year}</span></span>
-      <button class="btn-icon" onclick="(d=>{do{d.setDate(d.getDate()+1);}while(d.getDay()===0||d.getDay()===6);const nd=toKey(d.getFullYear(),d.getMonth()+1,d.getDate());selDate=nd;renderTagAnsicht(nd);})(new Date('${date}'))" style="font-size:28px;color:#4A90D9"><i class="ti ti-chevron-right"></i></button>
-      <button class="btn-icon" onclick="renderNeuKalTermin('${date}')"><i class="ti ti-plus"></i></button>
-    </div>
-    <div class="scroll">`;
-
-  if(!t.length){
-    html+=`<div class="empty-hint"><i class="ti ti-calendar-off" style="font-size:37px;display:block;margin:0 auto 10px"></i>Keine Termine<br><span style="font-size:14px">Tippe + um einen Termin hinzuzufügen</span></div>`;
-  } else {
-    // Sort by time
-    const sorted=[...t].sort((a,b)=>a.uhr.localeCompare(b.uhr));
-    let totalMin=0;
-    sorted.forEach((e,i)=>{
-      const isTheorie2=e.typ==="theorie"||(e.sid&&e.sid.startsWith("__theorie__"));
-      const theorieTitel=isTheorie2?((e.sid&&e.sid.indexOf(":")>=0)?e.sid.split(":").slice(1).join(":"):"Theorie"):"";
-      const isAuffrisch2=e.sid&&e.sid.startsWith("__auffrisch__");
-      const auffrischName=isAuffrisch2?e.sid.replace("__auffrisch__:",""):"";
-      const s=(isAuffrisch2||isTheorie2)?null:getS(e.sid);if(!s&&!isAuffrisch2&&!isTheorie2)return;
-      const nick=s&&s.spitz?` «${s.spitz}»`:"";
-      const endMin=(()=>{const [h,m]=e.uhr.split(":").map(Number);const tot=h*60+m+e.min;return String(Math.floor(tot/60)%24).padStart(2,"0")+":"+String(tot%60).padStart(2,"0");})();
-      const notizLc2=(e.notiz||'').toLowerCase();
-      const sonderTyp=e.typ==='ueberland'||e.typ==='autobahn'||e.typ==='nacht'?e.typ
-        :notizLc2.includes('überland')?'ueberland'
-        :notizLc2.includes('autobahn')?'autobahn'
-        :notizLc2.includes('nacht')?'nacht':'';
-      const isSonder=!!sonderTyp;
-      const isPruef=e.typ==="pruef";
-      const fieldHex=isPruef?"#E24B4A":sonderTyp==='autobahn'?"#378ADD":sonderTyp==='ueberland'?"#E8B923":sonderTyp==='nacht'?"#1A1A1A":"";
-      const fieldTxt=fieldHex?(sonderTyp==='ueberland'?"#141414":"#ffffff"):"";
-      const fieldTxt2=fieldHex?(sonderTyp==='ueberland'?"rgba(20,20,20,.75)":"rgba(255,255,255,.8)"):"";
-      const dotCol=fieldHex||(isTheorie2?"#8a8a8e":"#639922");
-      totalMin+=e.min;
-      const realIdx=t.indexOf(e);
-      const _elIdTag=`swipe-tag-${date}-${realIdx}`;
-      const nameBlockTag=isTheorie2?`<div style="font-size:17px;font-weight:700;color:${fieldTxt||"var(--tx)"}">📖 ${theorieTitel}</div>`
-        :isAuffrisch2?`<div style="font-size:17px;font-weight:700;color:${fieldTxt||"var(--tx)"}">🔄 ${auffrischName}</div>`
-        :`<div style="font-size:17px;font-weight:700;color:${fieldTxt||"var(--tx)"};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.vorname}${nick}</div><div style="font-size:14px;font-weight:600;color:${fieldTxt2||"var(--tx2)"};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px">${s.nachname}</div>`;
-      html+=`<div class="swipe-wrap">
-        <div class="swipe-del-bg" onclick="_confirmDelTagTermin('${date}',${realIdx})"><i class="ti ti-trash"></i></div>
-        <div class="swipe-item card" id="${_elIdTag}" style="cursor:pointer${fieldHex?`;background:${fieldHex}`:""}"
-          onclick="handleTagTerminTap('${_elIdTag}','${date}',${realIdx})"
-          ontouchstart="_lpStart(event,'${date}',${realIdx},'')"
-          ontouchend="_lpEnd()" ontouchmove="_lpEnd()">
-          <div class="card-row" style="gap:14px;padding:14px 16px 14px;align-items:flex-start${fieldHex?";border-bottom-color:transparent":""}">
-            <div style="display:flex;flex-direction:column;align-items:center;gap:2px;min-width:44px">
-              <span style="font-size:16px;font-weight:600;color:${fieldTxt||"var(--tx)"}">${e.uhr}</span>
-              <span style="font-size:13px;color:${fieldTxt2||"var(--tx3)"}">–${endMin}</span>
-            </div>
-            ${fieldHex?"":`<div style="width:3px;border-radius:2px;background:${dotCol};align-self:stretch;flex-shrink:0;box-shadow:0 0 0 1px var(--br2)"></div>`}
-            <div style="flex:1;min-width:0">
-              ${nameBlockTag}
-              <div style="font-size:14px;color:${fieldTxt2||"var(--tx2)"};margin-top:2px">${e.min} min${isTheorie2?" · Theorie":isAuffrisch2?" · Auffrischung":s?" · Kl. "+s.klasse:""}${e.notiz?" · "+e.notiz:""}${isPruef&&s&&s.prufort?" · "+s.prufort:""}${(!isAuffrisch2&&s&&s.klasse==='B197')?` · <span style="color:${fieldTxt||"var(--accent)"};font-weight:600">Schalt ${schaltCount(s)}/${SCHALT_SOLL}</span>`:""}</div>
-              ${(!isAuffrisch2&&!isTheorie2)?`<div style="margin-top:5px;padding-bottom:2px"><span class="badge badge-${s.klasse}">${s.klasse}</span></div>`:""}
-            </div>
-            <i class="ti ti-chevron-right" style="color:${fieldTxt2||"var(--tx3)"};font-size:18px"></i>
-          </div>
-        </div>
-      </div>`;
-    });
-    html+=`<div class="stat-box" style="margin-top:4px">
-      <div class="stat-lbl">Gesamtzeit heute</div>
-      <div class="stat-num">${totalMin}<span class="stat-unit">min</span></div>
-    </div>`;
-  }
-
-  html+=`<button class="btn-full" style="margin-top:8px" onclick="renderNeuKalTermin('${date}')"><i class="ti ti-plus"></i> Termin hinzufügen</button>
-    </div>
-  </div>`;
-  renderApp(html);
-  setTimeout(()=>{initPTR();initSwipe();},50);
+  // Vereinheitlicht: nutzt jetzt dieselbe Ansicht wie das Dashboard (Heute),
+  // nur mit fest vorgegebenem Datum statt relativem Offset.
+  renderDashboard(0,date);
 }
 
 function renderEditKalTermin(date,idx){
