@@ -549,13 +549,19 @@ function renderDashboard(dashDateOffset=0){
       const s=getS(t.sid);if(!s)return;
       const nick=s.spitz?` «${s.spitz}»`:"";
       const isPruefT=t.typ==="pruef";
+      const notizLcT=(t.notiz||'').toLowerCase();
+      const sonderTypT=t.typ==='ueberland'||t.typ==='autobahn'||t.typ==='nacht'?t.typ
+        :notizLcT.includes('überland')?'ueberland'
+        :notizLcT.includes('autobahn')?'autobahn'
+        :notizLcT.includes('nacht')?'nacht':'';
+      const sonderRgbT=sonderTypT==='autobahn'?'55,138,221':sonderTypT==='ueberland'?'232,185,35':sonderTypT==='nacht'?'26,26,26':'';
       const endZeit=(()=>{const [h,m]=t.uhr.split(":").map(Number);const tot=h*60+m+t.min;return String(Math.floor(tot/60)%24).padStart(2,"0")+":"+String(tot%60).padStart(2,"0");})();
       const tIdx=Object.values(termine[anzeigeDatum]||[]).indexOf(t);
       const realIdx=(termine[anzeigeDatum]||[]).findIndex((x,i)=>x===t||( x.sid===t.sid&&x.uhr===t.uhr&&x.min===t.min));
       const _elId=`swipe-dt-${anzeigeDatum}-${realIdx}`;
       html+=`<div class="swipe-wrap">
         <div class="swipe-del-bg" onclick="_confirmDelDashTermin('${anzeigeDatum}',${realIdx})"><i class="ti ti-trash"></i></div>
-        <div class="swipe-item list-item" id="${_elId}" style="user-select:none${isPruefT?";border-left:4px solid #E24B4A;background:linear-gradient(rgba(226,75,74,0.14),rgba(226,75,74,0.14)),var(--bg)":""}"
+        <div class="swipe-item list-item" id="${_elId}" style="user-select:none${isPruefT?";border-left:4px solid #E24B4A;background:linear-gradient(rgba(226,75,74,0.14),rgba(226,75,74,0.14)),var(--bg)":sonderTypT?`;border-left:4px solid rgb(${sonderRgbT});background:linear-gradient(rgba(${sonderRgbT},0.14),rgba(${sonderRgbT},0.14)),var(--bg)`:""}"
           onclick="handleDashTerminTap('${_elId}','${s.id}')"
           oncontextmenu="event.preventDefault();showTerminActions('${anzeigeDatum}',${realIdx},'${s.id}')"
           ontouchstart="_lpStart(event,'${anzeigeDatum}',${realIdx},'${s.id}')"
@@ -2115,12 +2121,14 @@ function renderTagAnsicht(date){
       const isSonder=!!sonderTyp;
       const isPruef=e.typ==="pruef";
       const dotCol=isPruef?"#E24B4A":sonderTyp==='autobahn'?"#378ADD":sonderTyp==='ueberland'?"#E8B923":sonderTyp==='nacht'?"#1A1A1A":isTheorie2?"#8a8a8e":"#639922";
+      const fieldRgb=isPruef?"226,75,74":sonderTyp==='autobahn'?"55,138,221":sonderTyp==='ueberland'?"232,185,35":sonderTyp==='nacht'?"26,26,26":"";
+      const fieldStyle=fieldRgb?`;border-left:4px solid rgb(${fieldRgb});background:linear-gradient(rgba(${fieldRgb},0.14),rgba(${fieldRgb},0.14)),var(--bg2)`:"";
       totalMin+=e.min;
       const realIdx=t.indexOf(e);
       const _elIdTag=`swipe-tag-${date}-${realIdx}`;
       html+=`<div class="swipe-wrap">
         <div class="swipe-del-bg" onclick="_confirmDelTagTermin('${date}',${realIdx})"><i class="ti ti-trash"></i></div>
-        <div class="swipe-item card" id="${_elIdTag}" style="cursor:pointer"
+        <div class="swipe-item card" id="${_elIdTag}" style="cursor:pointer${fieldStyle}"
           onclick="handleTagTerminTap('${_elIdTag}','${date}',${realIdx})"
           ontouchstart="_lpStart(event,'${date}',${realIdx},'')"
           ontouchend="_lpEnd()" ontouchmove="_lpEnd()">
@@ -2129,7 +2137,7 @@ function renderTagAnsicht(date){
               <span style="font-size:16px;font-weight:600;color:var(--tx)">${e.uhr}</span>
               <span style="font-size:13px;color:var(--tx3)">–${endMin}</span>
             </div>
-            <div style="width:3px;border-radius:2px;background:${dotCol};align-self:stretch;flex-shrink:0;box-shadow:0 0 0 1px var(--br2)"></div>
+            ${fieldRgb?"":`<div style="width:3px;border-radius:2px;background:${dotCol};align-self:stretch;flex-shrink:0;box-shadow:0 0 0 1px var(--br2)"></div>`}
             <div style="flex:1">
               <div style="font-size:17px;font-weight:500">${isTheorie2?"📖 "+theorieTitel:isAuffrisch2?"🔄 "+auffrischName:s.vorname+nick+" "+s.nachname}</div>
               <div style="font-size:14px;color:var(--tx2);margin-top:2px">${e.min} min${isTheorie2?" · Theorie":isAuffrisch2?" · Auffrischung":s?" · Kl. "+s.klasse:""}${e.notiz?" · "+e.notiz:""}${isPruef&&s&&s.prufort?" · "+s.prufort:""}${(!isAuffrisch2&&s&&s.klasse==='B197')?` · <span style="color:var(--accent);font-weight:600">Schalt ${schaltCount(s)}/${SCHALT_SOLL}</span>`:""}</div>
