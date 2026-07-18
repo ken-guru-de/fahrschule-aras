@@ -583,7 +583,7 @@ function renderDashboard(dashDateOffset=0,fixedDate=null){
           ontouchend="_lpEnd()"
           ontouchmove="_lpEnd()">
           ${s.foto?`<div class="avatar" style="overflow:hidden;flex-shrink:0"><img src="${s.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/></div>`:`<div class="avatar av-${s.farbe}">${initials(s)}</div>`}
-          <div class="item-info"><div class="item-name" style="color:${fieldTxtT||"var(--tx)"}"><div class="item-name-first">${s.vorname}${nick}</div><div class="item-name-last" style="color:${fieldTxt2T||"var(--tx2)"}">${s.nachname}</div></div><div class="item-sub" style="color:${fieldTxt2T||"var(--tx2)"}">${t.uhr}–${endZeit}Uhr · ${t.min} min${isPruefT&&s.prufort?" · "+s.prufort:""}${t.notiz?" · "+t.notiz:""}</div></div>
+          <div class="item-info"><div class="item-name" style="color:${fieldTxtT||"var(--tx)"}"><div class="item-name-first">${s.vorname}${nick}</div><div class="item-name-last" style="color:${fieldTxt2T||"var(--tx2)"}">${s.nachname}</div></div><div class="item-sub" style="color:${fieldTxt2T||"var(--tx2)"}">${t.uhr}–${endZeit}Uhr · ${t.min} min${isPruefT?(()=>{const _mp=(s.pruefungen||[]).find(p=>p.datum===anzeigeDatum);const _po=(_mp&&_mp.prufort)||s.prufort;return _po?" · "+_po:"";})():""}${t.notiz?" · "+t.notiz:""}</div></div>
           ${isPruefT?`<span class="badge" style="background:#E24B4A;color:white">Prüfung</span>`:`<span class="badge badge-${s.klasse}">${s.klasse}</span>`}
           <i class="ti ti-chevron-right" style="color:${fieldTxt2T||"var(--tx3)"};font-size:18px"></i>
         </div>
@@ -1025,6 +1025,12 @@ function renderNeuSchueler(fromSid){
               <button class="pill ${p.bestanden===true?"active":""}" id="pe-best-${s.id}-${pi}" onclick="setPruefErgebnisInline('${s.id}',${pi},true)" style="font-size:14px;padding:5px 10px">Bestanden ✓</button>
               <button class="pill ${p.bestanden===false?"active":""}" id="pe-nicht-${s.id}-${pi}" onclick="setPruefErgebnisInline('${s.id}',${pi},false)" style="font-size:14px;padding:5px 10px">Nicht bestanden ✗</button>
             </div>
+            <div style="display:flex;align-items:center;gap:6px;margin-top:8px">
+              <i class="ti ti-map-pin" style="font-size:16px;color:var(--tx3)"></i>
+              <select onchange="setPruefortInline('${s.id}',${pi},this.value)" style="flex:1;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:15px;color:var(--tx);padding:5px 6px">
+                ${PRUFORTE.map(o=>`<option value="${o}" ${(p.prufort||s.prufort)===o?"selected":""}>${o}</option>`).join("")}
+              </select>
+            </div>
           </div>`).join('')}
         </div>`:''}
         ${s?`
@@ -1448,6 +1454,11 @@ function renderNeuPruefungInline(sid){
             <button class="pill" id="pn-nicht" onclick="setPNResult(false)" style="font-size:15px;padding:6px 10px">Nicht bestanden ✗</button>
           </div>
         </div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-map-pin"></i>Prüfort</span>
+          <select id="pn-prufort" style="flex:1;max-width:60%;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:16px;color:var(--tx);padding:6px">
+            ${PRUFORTE.map(o=>`<option value="${o}" ${s.prufort===o?"selected":""}>${o}</option>`).join("")}
+          </select>
+        </div>
       </div></div>
       <button class="btn-full" onclick="saveNeuPruefung('${sid}')"><i class="ti ti-circle-check"></i> Prüfung speichern</button>
     </div>
@@ -1472,7 +1483,8 @@ function saveNeuPruefung(sid){
   const datum=(pnTag&&pnMon&&pnJahr)?pnJahr+'-'+String(pnMon).padStart(2,'0')+'-'+String(pnTag).padStart(2,'0'):'';if(!datum)return;
   if(!s.pruefungen)s.pruefungen=[];
   const pnuhr=document.getElementById("pn-uhr")?document.getElementById("pn-uhr").value:"08:00";
-  s.pruefungen.push({datum,uhr:pnuhr,versuch:AppState.pn.versuch||1,bestanden:AppState.pn.bestanden});
+  const pnPfEl=document.getElementById('pn-prufort');
+  s.pruefungen.push({datum,uhr:pnuhr,versuch:AppState.pn.versuch||1,bestanden:AppState.pn.bestanden,prufort:pnPfEl?pnPfEl.value:(s.prufort||'')});
   s.pruefungen.sort((a,b)=>a.datum.localeCompare(b.datum));
   saveAll();renderSchueler(sid);
 }
@@ -1509,6 +1521,11 @@ function renderEditPruefung(sid,idx){
             <button class="pill ${p.bestanden===false?"active":""}" id="pe-nicht" onclick="setPEResult(false)" style="font-size:15px;padding:6px 10px">Nicht bestanden ✗</button>
           </div>
         </div>
+        <div class="card-row"><span class="card-label"><i class="ti ti-map-pin"></i>Prüfort</span>
+          <select id="pe-prufort" style="flex:1;max-width:60%;border:.5px solid var(--br2);border-radius:6px;background:var(--bg2);font-size:16px;color:var(--tx);padding:6px">
+            ${PRUFORTE.map(o=>`<option value="${o}" ${(p.prufort||s.prufort)===o?"selected":""}>${o}</option>`).join("")}
+          </select>
+        </div>
       </div></div>
       <button class="btn-full" onclick="saveEditPruefung('${sid}',${idx})"><i class="ti ti-circle-check"></i> Speichern</button>
       <button class="btn-full danger" style="margin-top:6px" onclick="deletePruefung('${sid}',${idx})"><i class="ti ti-trash"></i> Prüfung löschen</button>
@@ -1527,7 +1544,11 @@ function setPEResult(val){
   else{const el=document.getElementById("pe-nicht");if(el)el.classList.add("active");}
 }
 function saveEditPruefung(sid,idx){const s=getS(sid);if(!s)return;const peTag=document.getElementById('pe-datum-tag').value,peMon=document.getElementById('pe-datum-mon').value,peJahr=document.getElementById('pe-datum-jahr').value;
-  const datum=(peTag&&peMon&&peJahr)?peJahr+'-'+String(peMon).padStart(2,'0')+'-'+String(peTag).padStart(2,'0'):'';if(!datum)return;s.pruefungen[idx]={datum,versuch:AppState.pr.versuch||1,bestanden:AppState.pr.bestanden};s.pruefungen.sort((a,b)=>a.datum.localeCompare(b.datum));saveAll();renderSchueler(sid);}
+  const datum=(peTag&&peMon&&peJahr)?peJahr+'-'+String(peMon).padStart(2,'0')+'-'+String(peTag).padStart(2,'0'):'';if(!datum)return;
+  const peUhrEl=document.getElementById('pe-uhr');const pePfEl=document.getElementById('pe-prufort');
+  const alt=s.pruefungen[idx]||{};
+  s.pruefungen[idx]={...alt,datum,uhr:peUhrEl?peUhrEl.value:(alt.uhr||''),versuch:AppState.pr.versuch||1,bestanden:AppState.pr.bestanden,prufort:pePfEl?pePfEl.value:(alt.prufort||s.prufort||'')};
+  s.pruefungen.sort((a,b)=>a.datum.localeCompare(b.datum));saveAll();renderSchueler(sid);}
 function deletePruefung(sid,idx){
   const s=getS(sid);if(!s)return;
   showModal({
@@ -2900,6 +2921,12 @@ function setPruefErgebnisInline(sid,pi,val){
   const map={"null":"offen","true":"best","false":"nicht"};
   const active=document.getElementById("pe-"+map[String(val)]+"-"+sid+"-"+pi);
   if(active)active.classList.add("active");
+}
+
+function setPruefortInline(sid,pi,val){
+  const s=getS(sid);if(!s||!s.pruefungen||!s.pruefungen[pi])return;
+  s.pruefungen[pi].prufort=val;
+  saveAll();
 }
 
 function toggleTheorie(sid){
