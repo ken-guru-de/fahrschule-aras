@@ -539,6 +539,8 @@ function renderDashboard(dashDateOffset=0,fixedDate=null){
       <button onclick="${_navNext}" style="background:rgba(10,40,120,0.45);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border:1.5px solid rgba(100,150,255,0.5);border-radius:50%;color:#a8c4ff;font-size:25px;width:52px;height:52px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 15px rgba(10,40,120,0.3)"><i class="ti ti-chevron-right"></i></button>
     </div>`;
   if(anzeigeTermine.length){
+    // Kartenhöhe proportional zur Dauer: 80 min ≈ Standardhöhe, längere Termine entsprechend höher
+    const _hMin=m=>Math.max(70,Math.round((m||80)*0.9));
     anzeigeTermine.forEach((t,ti)=>{
       if(t.typ==="theorie"||(t.sid&&t.sid.startsWith("__theorie__"))){
         const titel=(t.sid&&t.sid.indexOf(":")>=0)?t.sid.split(":").slice(1).join(":"):"Theorie";
@@ -547,7 +549,7 @@ function renderDashboard(dashDateOffset=0,fixedDate=null){
         const _elIdT=`swipe-dt-${anzeigeDatum}-${realIdxT}`;
         html+=`<div class="swipe-wrap">
           <div class="swipe-del-bg" onclick="_confirmDelDashTermin('${anzeigeDatum}',${realIdxT})"><i class="ti ti-trash"></i></div>
-          <div class="swipe-item list-item" id="${_elIdT}" style="user-select:none"
+          <div class="swipe-item list-item" id="${_elIdT}" style="user-select:none;min-height:${_hMin(t.min)}px"
             onclick="handleDashTerminTap('${_elIdT}',null)"
             oncontextmenu="event.preventDefault();showTerminActions('${anzeigeDatum}',${realIdxT},'')"
             ontouchstart="_lpStart(event,'${anzeigeDatum}',${realIdxT},'')"
@@ -576,7 +578,7 @@ function renderDashboard(dashDateOffset=0,fixedDate=null){
       const _elId=`swipe-dt-${anzeigeDatum}-${realIdx}`;
       html+=`<div class="swipe-wrap">
         <div class="swipe-del-bg" onclick="_confirmDelDashTermin('${anzeigeDatum}',${realIdx})"><i class="ti ti-trash"></i></div>
-        <div class="swipe-item list-item" id="${_elId}" style="user-select:none${fieldHexT?`;background:${fieldHexT}`:""}"
+        <div class="swipe-item list-item" id="${_elId}" style="user-select:none;min-height:${_hMin(t.min)}px${fieldHexT?`;background:${fieldHexT}`:""}"
           onclick="handleDashTerminTap('${_elId}','${s.id}')"
           oncontextmenu="event.preventDefault();showTerminActions('${anzeigeDatum}',${realIdx},'${s.id}')"
           ontouchstart="_lpStart(event,'${anzeigeDatum}',${realIdx},'${s.id}')"
